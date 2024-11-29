@@ -14,7 +14,7 @@ plugins {
 
 android {
     namespace = "com.rve.rvkernelmanager"
-    compileSdk = 33
+    compileSdk = 35
 
     signingConfigs {
         create("release") {
