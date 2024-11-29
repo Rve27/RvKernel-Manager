@@ -1,3 +1,10 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 plugins {
     id("com.android.application")
@@ -7,6 +14,15 @@ plugins {
 android {
     namespace = "com.rve.rvkernelmanager"
     compileSdk = 33
+
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
     
     defaultConfig {
         applicationId = "com.rve.rvkernelmanager"
@@ -29,6 +45,7 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+	    signingConfig = signingConfigs["release"]
         }
     }
 

@@ -21,10 +21,10 @@ jobs:
 
     - name: Write keystore
       run: |
-        echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> gradle.properties
-        echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> gradle.properties
-        echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
-        echo "KEYSTORE_FILE=$GITHUB_WORKSPACE/key.jks" >> gradle.properties
+        echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > keystore.properties
+        echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> keystore.properties
+        echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> keystore.properties
+        echo "storeFile=$GITHUB_WORKSPACE/key.jks" >> keystore.properties
         echo "${{ secrets.KEYSTORE }}" | base64 -d > $GITHUB_WORKSPACE/key.jks
 
     - name: Setup Java
