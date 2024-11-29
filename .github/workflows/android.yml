@@ -1,0 +1,52 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    path:
+      - 'rvkernel-manager/**'
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./rvkernel-manager
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Write keystore
+      run: |
+        echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> gradle.properties
+        echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> gradle.properties
+        echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+        echo "KEYSTORE_FILE=$GITHUB_WORKSPACE/key.jks" >> gradle.properties
+        echo "${{ secrets.KEYSTORE }}" | base64 -d > $GITHUB_WORKSPACE/key.jks
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew clean assembleRelease
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: RvKernel-Manager
+        path: rvkernel-manager/app/build/outputs/apk/release/*.apk
