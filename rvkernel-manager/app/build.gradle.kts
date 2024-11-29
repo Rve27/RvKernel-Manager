@@ -56,15 +56,16 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
     }
+
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "11"
 }
 
 dependencies {
