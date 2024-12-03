@@ -2,9 +2,10 @@ package com.rve.rvkernelmanager.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val YELLOW = Color(0xFFeed502)
-val YELLOW_LIGHT = Color(0xFFffff52)
-val SECONDARY_LIGHT = Color(0xffa9817f)
+val md_theme_light_primary = Color(0xFF476810)
+val md_theme_light_onPrimary = Color(0xFFFFFFFF)
+val md_theme_light_primaryContainer = Color(0xFFC7F089)
 
-val YELLOW_DARK = Color(0xFFb7a400)
-val SECONDARY_DARK = Color(0xFF4c2b2b)
+val md_theme_dark_primary = Color(0xFFACD370)
+val md_theme_dark_onPrimary = Color(0xFF213600)
+val md_theme_dark_primaryContainer = Color(0xFF324F00)
