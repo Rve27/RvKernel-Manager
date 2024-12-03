@@ -54,19 +54,28 @@ private fun TopBar(
 
 @Composable
 fun KernelSupportedCard() {
-    ElevatedCard {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
+    ElevatedCard(
+	colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column {
                 Text(
                     text = stringResource(R.string.kernel_supported_title),
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.kernel_supported_summary),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
