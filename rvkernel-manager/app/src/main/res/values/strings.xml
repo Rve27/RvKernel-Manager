@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">RvKernel Manager</string>
 
+    <!-- Kernel Supported -->
+    <string name="kernel_supported_title">Kernel Supported</string>
+    <string name="kernel_supported_summary">RvKernel Be4 v0.7</string>
 </resources>
