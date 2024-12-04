@@ -51,8 +51,15 @@ private fun TopBar(
     val githubUrl = stringResource(id = R.string.repo_url)
 
     TopAppBar(
+	colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
         title = {
-            Text(stringResource(R.string.app_name))
+            Text(
+                text = stringResource(R.string.app_name),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+	    )
+		
         },
         actions = {
             IconButton(onClick = {
@@ -62,7 +69,7 @@ private fun TopBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_github),
                     contentDescription = "Github",
-		    tint = MaterialTheme.colorScheme.primary,
+		    tint = MaterialTheme.colorScheme.onPrimaryContainer,
 		    modifier = Modifier.size(25.dp)
                 )
             }
