@@ -63,7 +63,7 @@ private fun TopBar(
                     painter = painterResource(id = R.drawable.ic_github),
                     contentDescription = "Github",
 		    tint = MaterialTheme.colorScheme.primary,
-		    modifier = Modifier.size(10.dp)
+		    modifier = Modifier.size(25.dp)
                 )
             }
         },
