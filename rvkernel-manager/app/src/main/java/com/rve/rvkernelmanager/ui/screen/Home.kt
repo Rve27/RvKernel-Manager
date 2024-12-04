@@ -1,5 +1,7 @@
 package com.rve.rvkernelmanager.ui.screen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,7 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,9 +47,25 @@ fun HomeScreen() {
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
+    val context = LocalContext.current
+    val githubUrl = stringResource(id = R.string.repo_url)
+
     TopAppBar(
-        title = { 
+        title = {
             Text(stringResource(R.string.app_name))
+        },
+        actions = {
+            IconButton(onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
+                context.startActivity(intent)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_github),
+                    contentDescription = "Github",
+		    tint = MaterialTheme.colorScheme.primary,
+		    modifier = Modifier.size(10.dp)
+                )
+            }
         },
         windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
         scrollBehavior = scrollBehavior
