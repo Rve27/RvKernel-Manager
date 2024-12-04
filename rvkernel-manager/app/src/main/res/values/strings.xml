@@ -4,6 +4,7 @@
 
     <!-- Top Bar -->
     <string name="repo_url">https://github.com/Rv-Trees/RvKernel-Manager-Kotlin</string>
+    <string name="telegram_url">https://t.me/rvegroup</string>
 
     <!-- Kernel Supported -->
     <string name="kernel_supported_title">Kernel Supported</string>

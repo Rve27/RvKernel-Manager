@@ -50,6 +50,7 @@ private fun TopBar(
 ) {
     val context = LocalContext.current
     val githubUrl = stringResource(id = R.string.repo_url)
+    val telegramUrl = stringResource(id = R.string.telegram_url)
 
     TopAppBar(
 	colors = TopAppBarDefaults.topAppBarColors(
@@ -72,6 +73,18 @@ private fun TopBar(
                     contentDescription = "Github",
 		    tint = MaterialTheme.colorScheme.onPrimaryContainer,
 		    modifier = Modifier.size(25.dp)
+                )
+            }
+
+	    IconButton(onClick = {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
+                context.startActivity(intent)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_telegram),
+                    contentDescription = "Telegram Group",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(25.dp)
                 )
             }
         },
