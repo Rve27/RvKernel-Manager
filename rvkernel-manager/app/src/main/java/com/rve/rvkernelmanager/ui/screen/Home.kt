@@ -64,27 +64,37 @@ private fun TopBar(
 		
         },
         actions = {
-            IconButton(onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
-                context.startActivity(intent)
-            }) {
+            IconButton(
+		onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
+                    context.startActivity(intent)
+	        },
+		modifier = Modifier
+		    .size(35.dp)
+		    .padding(end = 12.dp)
+	    ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_github),
                     contentDescription = "Github",
 		    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-		    modifier = Modifier.size(25.dp)
+		    modifier = Modifier.size(35.dp)
                 )
             }
 
-	    IconButton(onClick = {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
-                context.startActivity(intent)
-            }) {
+	    IconButton(
+		onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
+                    context.startActivity(intent)
+                },
+		modifier = Modifier
+                    .size(35.dp)
+                    .padding(end = 12.dp)
+	    ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_telegram),
                     contentDescription = "Telegram Group",
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(25.dp)
+                    modifier = Modifier.size(35.dp)
                 )
             }
         },
