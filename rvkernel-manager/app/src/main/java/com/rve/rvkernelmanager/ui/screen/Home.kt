@@ -55,6 +55,7 @@ private fun TopBar(
 @Composable
 fun KernelSupportedCard() {
     Card(
+	shape = CardDefaults.shape,
 	colors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer
         )
@@ -62,7 +63,7 @@ fun KernelSupportedCard() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
