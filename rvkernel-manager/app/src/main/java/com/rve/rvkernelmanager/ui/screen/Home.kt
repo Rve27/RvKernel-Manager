@@ -54,7 +54,7 @@ private fun TopBar(
 
 @Composable
 fun KernelSupportedCard() {
-    ElevatedCard(
+    Card(
 	colors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer
         )
