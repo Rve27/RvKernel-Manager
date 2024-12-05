@@ -53,15 +53,8 @@ private fun TopBar(
     val telegramUrl = stringResource(id = R.string.telegram_url)
 
     TopAppBar(
-	colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
         title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-	    )
-		
+            Text(stringResource(R.string.app_name))
         },
         actions = {
             IconButton(
