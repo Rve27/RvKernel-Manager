@@ -54,7 +54,10 @@ private fun TopBar(
 
     TopAppBar(
         title = {
-            Text(stringResource(R.string.app_name))
+	    Text(
+                text = stringResource(R.string.app_name),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+	    )
         },
         actions = {
             IconButton(
