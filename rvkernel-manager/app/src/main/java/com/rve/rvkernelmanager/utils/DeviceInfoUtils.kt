@@ -13,6 +13,10 @@ fun getAndroidVersion(): String {
     return Build.VERSION.RELEASE
 }
 
+fun getSOC(): String {
+    return Build.SOC_MODEL
+}
+
 fun getTotalRam(context: Context): String {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val memoryInfo = ActivityManager.MemoryInfo()
