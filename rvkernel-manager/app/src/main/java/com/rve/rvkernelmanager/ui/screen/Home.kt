@@ -42,7 +42,7 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             KernelSupportedCard()
-	    KernelVersionCard()
+	    DeviceInfoCard()
         }
     }
 }
@@ -135,7 +135,7 @@ fun KernelSupportedCard() {
 }
 
 @Composable
-fun KernelVersionCard() {
+fun DeviceInfoCard() {
     val context = LocalContext.current
     val deviceCodename = remember { getDeviceCodename() }
     val kernelVersion = remember { getKernelVersion() }
