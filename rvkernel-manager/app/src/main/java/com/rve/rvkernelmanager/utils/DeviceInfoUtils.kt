@@ -23,3 +23,19 @@ fun getTotalRam(context: Context): String {
 
     return "$totalRam GB"
 }
+
+fun getSystemProperty(key: String, defaultValue: String): String {
+    return try {
+        val systemPropertiesClass = Class.forName("android.os.SystemProperties")
+        val getMethod = systemPropertiesClass.getMethod("get", String::class.java, String::class.java)
+        getMethod.invoke(null, key, defaultValue) as String
+    } catch (e: Exception) {
+        e.printStackTrace()
+        defaultValue
+    }
+}
+
+fun getRvOSVersion(): String? {
+    val rvosVersion = getSystemProperty("ro.rvos.version", "")
+    return if (rvosVersion.isNotEmpty()) rvosVersion else null
+}

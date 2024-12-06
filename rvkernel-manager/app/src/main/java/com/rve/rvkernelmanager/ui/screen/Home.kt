@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getTotalRam
 import com.rve.rvkernelmanager.utils.getAndroidVersion
+import com.rve.rvkernelmanager.utils.getRvOSVersion
 import com.rve.rvkernelmanager.utils.getKernelVersion
 import com.rve.rvkernelmanager.R
 
@@ -142,6 +143,7 @@ fun DeviceInfoCard() {
     val deviceCodename = remember { getDeviceCodename() }
     val ramInfo = remember { getTotalRam(context) }
     val androidVersion = remember { getAndroidVersion() }
+    val rvosVersion = remember { getRvOSVersion() }
     val kernelVersion = remember { getKernelVersion() }
 
     Card(
@@ -193,6 +195,22 @@ fun DeviceInfoCard() {
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
 		Spacer(Modifier.height(16.dp))
+
+		rvosVersion?.let {
+		    Text(
+                        text = stringResource(R.string.rvos_version),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = rvosVersion,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+		    Spacer(Modifier.height(16.dp))
+		}
+
                 Text(
                     text = stringResource(R.string.kernel_version),
                     style = MaterialTheme.typography.titleSmall,
