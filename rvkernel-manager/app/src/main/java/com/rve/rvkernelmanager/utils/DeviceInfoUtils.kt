@@ -9,6 +9,10 @@ fun getDeviceCodename(): String {
     return Build.DEVICE
 }
 
+fun getAndroidVersion(): String {
+    return Build.VERSION.RELEASE
+}
+
 fun getTotalRam(context: Context): String {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val memoryInfo = ActivityManager.MemoryInfo()

@@ -17,6 +17,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getTotalRam
+import com.rve.rvkernelmanager.utils.getAndroidVersion
 import com.rve.rvkernelmanager.utils.getKernelVersion
 import com.rve.rvkernelmanager.R
 
@@ -140,6 +141,7 @@ fun DeviceInfoCard() {
     val context = LocalContext.current
     val deviceCodename = remember { getDeviceCodename() }
     val ramInfo = remember { getTotalRam(context) }
+    val androidVersion = remember { getAndroidVersion() }
     val kernelVersion = remember { getKernelVersion() }
 
     Card(
@@ -175,6 +177,18 @@ fun DeviceInfoCard() {
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = ramInfo,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+		Spacer(Modifier.height(16.dp))
+		Text(
+                    text = stringResource(R.string.android_version),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = androidVersion,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )

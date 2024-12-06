@@ -13,6 +13,7 @@
     <!-- Device Info -->
     <string name="device_codename">Device Codename</string>
     <string name="ram_info">RAM</string>
+    <string name="android_version">Android Version</string>
     <string name="kernel_version">Kernel Version</string>
 
     <!-- Bottom Navigation -->
