@@ -11,6 +11,7 @@
     <string name="kernel_supported_summary">RvKernel Be4 v0.7</string>
 
     <!-- Device Info -->
+    <string name="device_codename">Device Codename</string>
     <string name="kernel_version">Kernel Version</string>
 
     <!-- Bottom Navigation -->

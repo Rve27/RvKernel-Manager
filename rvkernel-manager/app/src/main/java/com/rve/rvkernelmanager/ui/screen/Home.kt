@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getKernelVersion
 import com.rve.rvkernelmanager.R
 
@@ -136,6 +137,7 @@ fun KernelSupportedCard() {
 @Composable
 fun KernelVersionCard() {
     val context = LocalContext.current
+    val deviceCodename = remember { getDeviceCodename() }
     val kernelVersion = remember { getKernelVersion() }
 
     Card(
@@ -151,6 +153,18 @@ fun KernelVersionCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
+		Text(
+                    text = stringResource(R.string.device_codename),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = deviceCodename,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+		Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.kernel_version),
                     style = MaterialTheme.typography.titleSmall,
