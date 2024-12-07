@@ -113,9 +113,7 @@ private fun TopBar(
 fun KernelSupportedCard() {
     Card(
 	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+	colors = CardDefaults.cardColors()
     ) {
         Row(
             modifier = Modifier
@@ -152,9 +150,7 @@ fun DeviceInfoCard() {
 
     Card(
         shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        colors = CardDefaults.cardColors()
     ) {
         Row(
             modifier = Modifier
@@ -247,9 +243,7 @@ fun DeviceInfoCard() {
 fun CopyrightCard() {
     Card(
 	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+	colors = CardDefaults.cardColors()
     ) {
         Row(
             modifier = Modifier
