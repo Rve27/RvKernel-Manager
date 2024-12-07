@@ -111,7 +111,7 @@ private fun TopBar(
 
 @Composable
 fun KernelSupportedCard() {
-    Card(
+    ElevatedCard(
 	shape = CardDefaults.shape,
 	colors = CardDefaults.cardColors()
     ) {
@@ -148,7 +148,7 @@ fun DeviceInfoCard() {
     val rvosVersion = remember { getRvOSVersion() }
     val kernelVersion = remember { getKernelVersion() }
 
-    Card(
+    ElevatedCard(
         shape = CardDefaults.shape,
         colors = CardDefaults.cardColors()
     ) {
@@ -241,7 +241,7 @@ fun DeviceInfoCard() {
 
 @Composable
 fun CopyrightCard() {
-    Card(
+    ElevatedCard(
 	shape = CardDefaults.shape,
 	colors = CardDefaults.cardColors()
     ) {
