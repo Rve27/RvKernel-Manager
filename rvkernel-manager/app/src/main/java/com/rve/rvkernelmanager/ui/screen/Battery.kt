@@ -1,5 +1,6 @@
 package com.rve.rvkernelmanager.ui.screen
 
+import java.io.File
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import com.rve.rvkernelmanager.utils.writeFastCharging
+import com.rve.rvkernelmanager.utils.readFastCharging
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,6 +110,8 @@ private fun TopBar(
 
 @Composable
 fun ChargingCard() {
+    val hasFastCharging = File("/sys/kernel/fast_charge/force_fast_charge").exists()
+
     ElevatedCard(
 	shape = CardDefaults.shape,
 	colors = CardDefaults.cardColors()
@@ -124,6 +129,32 @@ fun ChargingCard() {
 		    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(Modifier.height(4.dp))
+
+		if (hasFastCharging) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.fast_charging),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.weight(1f)
+                        )
+                        var isChecked by remember { mutableStateOf(readFastCharging() == "1") }
+
+                        Switch(
+                            modifier = Modifier.semantics { contentDescription = "Fast Charging" },
+                            checked = isChecked,
+                            onCheckedChange = { checked ->
+                                val success = writeFastCharging(if (checked) "1" else "0")
+                                if (success) {
+                                    isChecked = checked
+                                }
+                            }
+                        )
+                    }
+                }
 	    }
         }
     }
