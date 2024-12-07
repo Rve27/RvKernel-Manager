@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">RvKernel Manager</string>
 
+    <!-- Charging -->
+    <string name="charging_title">Charging</string>
+    <string name="fast_charging">Fast charging</string>
+
     <!-- Top Bar -->
     <string name="repo_url">https://github.com/Rv-Trees/RvKernel-Manager-Kotlin</string>
     <string name="telegram_url">https://t.me/rvegroup</string>
