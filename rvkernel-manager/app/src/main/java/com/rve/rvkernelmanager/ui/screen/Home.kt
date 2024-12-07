@@ -47,6 +47,8 @@ fun HomeScreen() {
         ) {
             KernelSupportedCard()
 	    DeviceInfoCard()
+	    CopyrightCard()
+	    Spacer(Modifier)
         }
     }
 }
@@ -235,6 +237,42 @@ fun DeviceInfoCard() {
                     text = kernelVersion,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CopyrightCard() {
+    Card(
+	shape = CardDefaults.shape,
+	colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "Copyright",
+                    style = MaterialTheme.typography.titleSmall,
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "© 2024 Rve. Licensed under the GNU General Public License v3.0.",
+                    style = MaterialTheme.typography.bodyMedium,
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Text(
+                    text = "Developed by Rve.",
+                    style = MaterialTheme.typography.bodyMedium,
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
