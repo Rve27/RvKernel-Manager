@@ -33,7 +33,6 @@ fun NoRootDialog(onConfirm: () -> Unit) {
                 modifier = Modifier.wrapContentWidth().wrapContentHeight(),
                 shape = MaterialTheme.shapes.large,
                 tonalElevation = AlertDialogDefaults.TonalElevation,
-		color = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
