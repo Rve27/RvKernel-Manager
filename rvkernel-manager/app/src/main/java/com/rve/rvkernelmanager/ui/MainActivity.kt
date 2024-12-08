@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rve.rvkernelmanager.ui.navigation.Route
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationActions
@@ -24,9 +28,13 @@ import com.rve.rvkernelmanager.ui.screen.BatteryScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.rve.rvkernelmanager.utils.RootUtils.isDeviceRooted
 import com.rve.rvkernelmanager.utils.NoRootDialog
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+	val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()

@@ -9,11 +9,10 @@
         android:supportsRtl="true" 
 	android:windowSoftInputMode="adjustResize"
 	android:enableOnBackInvokedCallback="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/RvTheme.Splash">
         <activity 
 	    android:name=".ui.MainActivity"
-            android:exported="true"
-	    android:theme="@style/AppTheme">
+            android:exported="true">
             <intent-filter>
                 <action 
                     android:name="android.intent.action.MAIN" />
