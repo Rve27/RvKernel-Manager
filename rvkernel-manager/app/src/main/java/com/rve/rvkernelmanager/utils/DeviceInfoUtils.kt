@@ -1,5 +1,6 @@
 package com.rve.rvkernelmanager.utils
 
+import android.system.Os
 import android.os.Build
 import android.content.Context
 import android.app.ActivityManager
@@ -42,4 +43,13 @@ fun getSystemProperty(key: String, defaultValue: String): String {
 fun getRvOSVersion(): String? {
     val rvosVersion = getSystemProperty("ro.rvos.version", "")
     return if (rvosVersion.isNotEmpty()) rvosVersion else null
+}
+
+fun getKernelVersion(): String {
+    return try {
+        Os.uname().release
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "Unable to get kernel version"
+    }
 }
