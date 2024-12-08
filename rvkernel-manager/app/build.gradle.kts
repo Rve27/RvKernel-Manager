@@ -58,9 +58,9 @@ android {
     }
 
     buildFeatures {
-        
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
@@ -91,4 +91,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.topjohnwu.libsu.core)
 }
