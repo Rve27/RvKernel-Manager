@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">RvKernel Manager</string>
 
+    <!-- CPU -->
+    <string name="little_cluster">Little Cluster</string>
+    <string name="frequency">Frequency</string>
+
     <!-- Charging -->
     <string name="charging_title">Charging</string>
     <string name="fast_charging">Fast charging</string>

@@ -23,6 +23,7 @@ import com.rve.rvkernelmanager.ui.navigation.Route
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationActions
 import com.rve.rvkernelmanager.ui.screen.HomeScreen
+import com.rve.rvkernelmanager.ui.screen.SoCScreen
 import com.rve.rvkernelmanager.ui.screen.BatteryScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.rve.rvkernelmanager.utils.NoRootDialog
@@ -106,6 +107,9 @@ private fun RvKernelManagerNavHost(
         }
 	composable<Route.Battery> {
 	    BatteryScreen()
+	}
+	composable<Route.SoC> {
+	    SoCScreen()
 	}
     }
 }
