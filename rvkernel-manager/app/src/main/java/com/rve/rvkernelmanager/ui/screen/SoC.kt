@@ -43,9 +43,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.MIN_FREQ_CPU0_PATH
 import com.rve.rvkernelmanager.utils.MAX_FREQ_CPU0_PATH
+import com.rve.rvkernelmanager.utils.GOV_CPU0_PATH
+import com.rve.rvkernelmanager.utils.readFile
+import com.rve.rvkernelmanager.utils.writeFile
 import com.rve.rvkernelmanager.utils.readFreqFile
 import com.rve.rvkernelmanager.utils.writeFreqFile
 import com.rve.rvkernelmanager.utils.readAvailableFreqCPU0
+import com.rve.rvkernelmanager.utils.readAvailableGovCPU0
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,15 +85,20 @@ fun CPUCard() {
     var maxFreqCPU0 by remember { mutableStateOf("0") }
     var availableFreqCPU0 by remember { mutableStateOf(listOf<String>()) }
     var showAvailableFreqCPU0 by remember { mutableStateOf(false) }
+    var govCPU0 by remember { mutableStateOf("Loading...") }
+    var availableGovCPU0 by remember { mutableStateOf(listOf<String>()) }
+    var showAvailableGovCPU0 by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                minFreqCPU0 = readFreqFile("$MIN_FREQ_CPU0_PATH")
-                maxFreqCPU0 = readFreqFile("$MAX_FREQ_CPU0_PATH")
+                minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
+                maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
                 availableFreqCPU0 = readAvailableFreqCPU0()
+		govCPU0 = readFile(GOV_CPU0_PATH)
+		availableGovCPU0 = readAvailableGovCPU0()
             } else if (event == Lifecycle.Event.ON_PAUSE) {
             }
         }
@@ -152,6 +161,25 @@ fun CPUCard() {
                     Text("$maxFreqCPU0 MHz")
                 }
             }
+	    Spacer(Modifier.height(4.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.gov),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
+                ElevatedButton(onClick = {
+                    currentFileTarget = "$GOV_CPU0_PATH"
+                    showAvailableGovCPU0 = true
+                }) {
+                    Text("$govCPU0")
+                }
+            }
 
             if (showAvailableFreqCPU0) {
                 AvailableFreqCPU0Dialog(
@@ -162,6 +190,18 @@ fun CPUCard() {
                         showAvailableFreqCPU0 = false
                         minFreqCPU0 = readFreqFile("$MIN_FREQ_CPU0_PATH")
                         maxFreqCPU0 = readFreqFile("$MAX_FREQ_CPU0_PATH")
+                    }
+                )
+            }
+
+	    if (showAvailableGovCPU0) {
+                AvailableGovCPU0Dialog(
+                    availableGovCPU0 = availableGovCPU0,
+                    onDismiss = { showAvailableGovCPU0 = false },
+                    onGovSelected = { selectedGov ->
+                        writeFile(currentFileTarget, selectedGov)
+                        showAvailableGovCPU0 = false
+                        govCPU0 = readFreqFile("$GOV_CPU0_PATH")
                     }
                 )
             }
@@ -192,6 +232,41 @@ fun AvailableFreqCPU0Dialog(
                     ) {
                         Text(
                             text = "$freq MHz",
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text("Close") }
+        }
+    )
+}
+
+@Composable
+fun AvailableGovCPU0Dialog(
+    availableGovCPU0: List<String>,
+    onDismiss: () -> Unit,
+    onGovSelected: (String) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Available governors") },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.8f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                availableGovCPU0.forEach { gov ->
+                    TextButton(
+                        onClick = { onGovSelected(gov) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "$gov",
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }

@@ -1,5 +1,7 @@
 package com.rve.rvkernelmanager.utils
 
+import java.io.File
+import com.topjohnwu.superuser.Shell
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -55,3 +57,24 @@ fun NoRootDialog(onConfirm: () -> Unit) {
     }
 }
 
+fun readFile(filePath: String): String {
+    return try {
+        val file = File(filePath)
+        if (file.exists()) {
+            file.readText().trim()
+        } else {
+            "null"
+        }
+    } catch (e: Exception) {
+        "error"
+    }
+}
+
+fun writeFile(filePath: String, value: String) {
+    try {
+        val command = "echo $value > $filePath"
+        Shell.cmd(command).exec()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}

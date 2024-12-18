@@ -6,6 +6,8 @@ import com.topjohnwu.superuser.Shell
 const val MIN_FREQ_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
 const val MAX_FREQ_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq"
 const val AVAILABLE_FREQ_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies"
+const val GOV_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
+const val AVAILABLE_GOV_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
 
 fun readFreqFile(filePath: String): String {
     return try {
@@ -39,6 +41,21 @@ fun readAvailableFreqCPU0(): List<String> {
                 .trim()
                 .split(" ")
                 .map { (it.toInt() / 1000).toString() }
+        } else {
+            listOf("null")
+        }
+    } catch (e: Exception) {
+        listOf("error")
+    }
+}
+
+fun readAvailableGovCPU0(): List<String> {
+    return try {
+        val file = File("$AVAILABLE_GOV_CPU0_PATH")
+        if (file.exists()) {
+            file.readText()
+                .trim()
+                .split(" ")
         } else {
             listOf("null")
         }
