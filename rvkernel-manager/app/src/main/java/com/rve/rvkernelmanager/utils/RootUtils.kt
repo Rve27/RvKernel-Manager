@@ -2,6 +2,7 @@ package com.rve.rvkernelmanager.utils
 
 import java.io.File
 import com.topjohnwu.superuser.Shell
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -59,14 +60,16 @@ fun NoRootDialog(onConfirm: () -> Unit) {
 
 fun readFile(filePath: String): String {
     return try {
-        val file = File(filePath)
-        if (file.exists()) {
-            file.readText().trim()
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.joinToString("\n").trim()
         } else {
-            "null"
+            Log.e("ReadFile", "Failed to read file at $filePath: ${result.err}")
+            ""
         }
     } catch (e: Exception) {
-        "error"
+        Log.e("ReadFile", "Error executing shell command for $filePath: ${e.message}", e)
+        ""
     }
 }
 
