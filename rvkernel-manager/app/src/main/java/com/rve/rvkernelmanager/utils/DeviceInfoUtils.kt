@@ -6,6 +6,8 @@ import android.content.Context
 import android.app.ActivityManager
 import kotlin.math.ceil
 
+const val FULL_KERNEL_VERSION_PATH = "/proc/version"
+
 fun getDeviceCodename(): String {
     return Build.DEVICE
 }

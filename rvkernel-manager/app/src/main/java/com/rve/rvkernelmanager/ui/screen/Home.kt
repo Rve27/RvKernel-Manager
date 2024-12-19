@@ -1,5 +1,7 @@
 package com.rve.rvkernelmanager.ui.screen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +25,9 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -36,6 +41,8 @@ import com.rve.rvkernelmanager.utils.getSOC
 import com.rve.rvkernelmanager.utils.getAndroidVersion
 import com.rve.rvkernelmanager.utils.getRvOSVersion
 import com.rve.rvkernelmanager.utils.getKernelVersion
+import com.rve.rvkernelmanager.utils.readFile
+import com.rve.rvkernelmanager.utils.FULL_KERNEL_VERSION_PATH
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +82,10 @@ fun DeviceInfoCard() {
     val getSoc = remember { getSOC() }
     val androidVersion = remember { getAndroidVersion() }
     val rvosVersion = remember { getRvOSVersion() }
-    val kernelVersion = remember { getKernelVersion() }
+    val defaultKernelVersion = remember { getKernelVersion() }
+
+    var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
+    var isFullKernelVersion by remember { mutableStateOf(false) }
 
     ElevatedCard(
         shape = CardDefaults.shape,
@@ -88,7 +98,7 @@ fun DeviceInfoCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-		Text(
+                Text(
                     text = stringResource(R.string.device_codename),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -99,8 +109,8 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-		Spacer(Modifier.height(16.dp))
-		Text(
+                Spacer(Modifier.height(16.dp))
+                Text(
                     text = stringResource(R.string.ram_info),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -111,8 +121,8 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-		Spacer(Modifier.height(16.dp))
-		Text(
+                Spacer(Modifier.height(16.dp))
+                Text(
                     text = stringResource(R.string.soc),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -123,8 +133,8 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-		Spacer(Modifier.height(16.dp))
-		Text(
+                Spacer(Modifier.height(16.dp))
+                Text(
                     text = stringResource(R.string.android_version),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -135,10 +145,10 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-		Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
-		rvosVersion?.let {
-		    Text(
+                rvosVersion?.let {
+                    Text(
                         text = stringResource(R.string.rvos_version),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -149,8 +159,8 @@ fun DeviceInfoCard() {
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
-		    Spacer(Modifier.height(16.dp))
-		}
+                    Spacer(Modifier.height(16.dp))
+                }
 
                 Text(
                     text = stringResource(R.string.kernel_version),
@@ -161,7 +171,17 @@ fun DeviceInfoCard() {
                 Text(
                     text = kernelVersion,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .clickable {
+                            if (isFullKernelVersion) {
+                                kernelVersion = defaultKernelVersion
+                            } else {
+                                kernelVersion = readFile(FULL_KERNEL_VERSION_PATH)
+                            }
+                            isFullKernelVersion = !isFullKernelVersion
+                        }
+                        .animateContentSize()
                 )
             }
         }
