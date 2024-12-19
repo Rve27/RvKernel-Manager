@@ -90,7 +90,9 @@ fun DeviceInfoCard() {
 
     ElevatedCard(
         shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors()
+        colors = CardDefaults.cardColors(
+	    containerColor = MaterialTheme.colorScheme.primaryContainer
+	)
     ) {
         Row(
             modifier = Modifier
@@ -194,7 +196,9 @@ fun DeviceInfoCard() {
 fun CopyrightCard() {
     ElevatedCard(
 	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors()
+	colors = CardDefaults.cardColors(
+	    containerColor = MaterialTheme.colorScheme.primaryContainer
+	)
     ) {
         Row(
             modifier = Modifier
@@ -212,12 +216,12 @@ fun CopyrightCard() {
                 Text(
                     text = "© 2024 Rve. Licensed under the GNU General Public License v3.0.",
                     style = MaterialTheme.typography.bodyMedium,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
                     text = "Developed by Rve.",
                     style = MaterialTheme.typography.bodyMedium,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
