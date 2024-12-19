@@ -189,8 +189,8 @@ fun CPUCard() {
                     onFreqSelected = { selectedFreq ->
                         writeFreqFile(currentFileTarget, selectedFreq)
                         showAvailableFreqCPU0 = false
-                        minFreqCPU0 = readFreqFile("$MIN_FREQ_CPU0_PATH")
-                        maxFreqCPU0 = readFreqFile("$MAX_FREQ_CPU0_PATH")
+                        minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
+                        maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
                     }
                 )
             }
@@ -202,7 +202,7 @@ fun CPUCard() {
                     onGovSelected = { selectedGov ->
                         writeFile(currentFileTarget, selectedGov)
                         showAvailableGovCPU0 = false
-                        govCPU0 = readFreqFile("$GOV_CPU0_PATH")
+                        govCPU0 = readFile(GOV_CPU0_PATH)
                     }
                 )
             }
