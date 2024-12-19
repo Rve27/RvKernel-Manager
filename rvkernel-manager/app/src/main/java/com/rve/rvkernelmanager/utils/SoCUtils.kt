@@ -1,6 +1,7 @@
 package com.rve.rvkernelmanager.utils
 
 import java.io.File
+import android.util.Log
 import com.topjohnwu.superuser.Shell
 
 const val MIN_FREQ_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
@@ -11,15 +12,16 @@ const val AVAILABLE_GOV_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/sca
 
 fun readFreqFile(filePath: String): String {
     return try {
-	val file = File(filePath)
+        val file = File(filePath)
         if (file.exists()) {
             val freq = file.readText().trim()
             (freq.toInt() / 1000).toString()
         } else {
-            "null"
+            ""
         }
     } catch (e: Exception) {
-        "error"
+        Log.e("readFreqFile", "Error reading file $filePath: ${e.message}", e)
+        ""
     }
 }
 

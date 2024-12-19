@@ -98,8 +98,8 @@ fun CPUCard() {
                 minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
                 maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
                 availableFreqCPU0 = readAvailableFreqCPU0()
-		govCPU0 = readFile(GOV_CPU0_PATH)
-		availableGovCPU0 = readAvailableGovCPU0()
+                govCPU0 = readFile(GOV_CPU0_PATH)
+                availableGovCPU0 = readAvailableGovCPU0()
             } else if (event == Lifecycle.Event.ON_PAUSE) {
             }
         }
@@ -136,11 +136,16 @@ fun CPUCard() {
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.weight(1f)
                 )
+                val minFreqCPU0Display = if (minFreqCPU0.isEmpty()) {
+                    "error"
+                } else {
+                    "$minFreqCPU0 MHz"
+                }
                 ElevatedButton(onClick = {
-                    currentFileTarget = "$MIN_FREQ_CPU0_PATH"
+                    currentFileTarget = MIN_FREQ_CPU0_PATH
                     showAvailableFreqCPU0 = true
                 }) {
-                    Text("$minFreqCPU0 MHz")
+                    Text(minFreqCPU0Display)
                 }
             }
             Spacer(Modifier.height(4.dp))
@@ -155,14 +160,19 @@ fun CPUCard() {
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.weight(1f)
                 )
+                val maxFreqCPU0Display = if (maxFreqCPU0.isEmpty()) {
+                    "error"
+                } else {
+                    "$maxFreqCPU0 MHz"
+                }
                 ElevatedButton(onClick = {
-                    currentFileTarget = "$MAX_FREQ_CPU0_PATH"
+                    currentFileTarget = MAX_FREQ_CPU0_PATH
                     showAvailableFreqCPU0 = true
                 }) {
-                    Text("$maxFreqCPU0 MHz")
+                    Text(maxFreqCPU0Display)
                 }
             }
-	    Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(4.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -175,10 +185,10 @@ fun CPUCard() {
                     modifier = Modifier.weight(1f)
                 )
                 ElevatedButton(onClick = {
-                    currentFileTarget = "$GOV_CPU0_PATH"
+                    currentFileTarget = GOV_CPU0_PATH
                     showAvailableGovCPU0 = true
                 }) {
-                    Text("$govCPU0")
+                    Text(govCPU0)
                 }
             }
 
@@ -195,7 +205,7 @@ fun CPUCard() {
                 )
             }
 
-	    if (showAvailableGovCPU0) {
+            if (showAvailableGovCPU0) {
                 AvailableGovCPU0Dialog(
                     availableGovCPU0 = availableGovCPU0,
                     onDismiss = { showAvailableGovCPU0 = false },
