@@ -44,10 +44,11 @@ fun readAvailableFreqCPU0(): List<String> {
                 .split(" ")
                 .map { (it.toInt() / 1000).toString() }
         } else {
-            listOf("null")
+            emptyList()
         }
     } catch (e: Exception) {
-        listOf("error")
+        Log.e("readAvailableFreqCPU0", "Error reading file $AVAILABLE_FREQ_CPU0_PATH: ${e.message}", e)
+        emptyList()
     }
 }
 

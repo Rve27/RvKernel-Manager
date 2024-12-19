@@ -236,15 +236,24 @@ fun AvailableFreqCPU0Dialog(
                     .fillMaxHeight(0.8f)
                     .verticalScroll(rememberScrollState())
             ) {
-                availableFreqCPU0.forEach { freq ->
-                    TextButton(
-                        onClick = { onFreqSelected(freq) },
+                if (availableFreqCPU0.isEmpty()) {
+                    Text(
+                        text = "Failed to read available frequencies",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "$freq MHz",
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                    )
+                } else {
+                    availableFreqCPU0.forEach { freq ->
+                        TextButton(
+                            onClick = { onFreqSelected(freq) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "$freq MHz",
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
                     }
                 }
             }
