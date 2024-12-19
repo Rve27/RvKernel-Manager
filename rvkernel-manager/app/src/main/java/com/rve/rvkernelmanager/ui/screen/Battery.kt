@@ -64,6 +64,7 @@ fun BatteryScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ChargingCard()
+	    Spacer(Modifier)
         }
     }
 }

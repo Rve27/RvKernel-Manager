@@ -75,6 +75,7 @@ fun SoCScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 	    CPUCard()
+	    Spacer(Modifier)
 	}
     }
 }
