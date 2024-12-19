@@ -258,7 +258,6 @@ fun AvailableGovCPU0Dialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.8f)
                     .verticalScroll(rememberScrollState())
             ) {
                 availableGovCPU0.forEach { gov ->
