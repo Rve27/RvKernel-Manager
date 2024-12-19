@@ -43,7 +43,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.MIN_FREQ_CPU0_PATH
 import com.rve.rvkernelmanager.utils.MAX_FREQ_CPU0_PATH
+import com.rve.rvkernelmanager.utils.AVAILABLE_FREQ_CPU0_PATH
+import com.rve.rvkernelmanager.utils.AVAILABLE_GOV_CPU0_PATH
 import com.rve.rvkernelmanager.utils.GOV_CPU0_PATH
+import com.rve.rvkernelmanager.utils.setPermissions
 import com.rve.rvkernelmanager.utils.readFile
 import com.rve.rvkernelmanager.utils.writeFile
 import com.rve.rvkernelmanager.utils.readFreqFile
@@ -95,13 +98,21 @@ fun CPUCard() {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
+                setPermissions(644, MIN_FREQ_CPU0_PATH)
                 minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
+                
+                setPermissions(644, MAX_FREQ_CPU0_PATH)
                 maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
+                
+                setPermissions(644, AVAILABLE_FREQ_CPU0_PATH)
                 availableFreqCPU0 = readAvailableFreqCPU0()
+                
+                setPermissions(644, GOV_CPU0_PATH)
                 govCPU0 = readFile(GOV_CPU0_PATH)
+                
+                setPermissions(644, AVAILABLE_GOV_CPU0_PATH)
                 availableGovCPU0 = readAvailableGovCPU0()
-            } else if (event == Lifecycle.Event.ON_PAUSE) {
-            }
+            } else if (event == Lifecycle.Event.ON_PAUSE) { }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
 

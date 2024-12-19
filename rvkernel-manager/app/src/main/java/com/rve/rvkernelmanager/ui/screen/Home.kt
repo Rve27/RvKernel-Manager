@@ -41,6 +41,7 @@ import com.rve.rvkernelmanager.utils.getSOC
 import com.rve.rvkernelmanager.utils.getAndroidVersion
 import com.rve.rvkernelmanager.utils.getRvOSVersion
 import com.rve.rvkernelmanager.utils.getKernelVersion
+import com.rve.rvkernelmanager.utils.setPermissions
 import com.rve.rvkernelmanager.utils.readFile
 import com.rve.rvkernelmanager.utils.FULL_KERNEL_VERSION_PATH
 import com.rve.rvkernelmanager.R
@@ -177,6 +178,7 @@ fun DeviceInfoCard() {
                             if (isFullKernelVersion) {
                                 kernelVersion = defaultKernelVersion
                             } else {
+				setPermissions(644, FULL_KERNEL_VERSION_PATH)
                                 kernelVersion = readFile(FULL_KERNEL_VERSION_PATH)
                             }
                             isFullKernelVersion = !isFullKernelVersion

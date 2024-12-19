@@ -62,6 +62,10 @@ fun NoRootDialog(onConfirm: () -> Unit) {
     }
 }
 
+fun setPermissions(permission: Int, filePath: String) {
+    Shell.cmd("chmod $permission $filePath").exec()
+}
+
 fun readFile(filePath: String): String {
     return try {
         val result = Shell.cmd("cat $filePath").exec()
