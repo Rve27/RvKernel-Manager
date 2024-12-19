@@ -60,39 +60,9 @@ fun HomeScreen() {
                 .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            KernelSupportedCard()
 	    DeviceInfoCard()
 	    CopyrightCard()
 	    Spacer(Modifier)
-        }
-    }
-}
-
-@Composable
-fun KernelSupportedCard() {
-    ElevatedCard(
-	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.kernel_supported_title),
-                    style = MaterialTheme.typography.titleSmall,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.kernel_supported_summary),
-                    style = MaterialTheme.typography.bodyMedium,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
         }
     }
 }
