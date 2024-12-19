@@ -27,17 +27,10 @@ import com.rve.rvkernelmanager.ui.screen.SoCScreen
 import com.rve.rvkernelmanager.ui.screen.BatteryScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.rve.rvkernelmanager.utils.NoRootDialog
+import com.rve.rvkernelmanager.utils.isRooted
 import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
-    init {
-        Shell.setDefaultBuilder(
-            Shell.Builder.create()
-                .setFlags(Shell.FLAG_MOUNT_MASTER)
-                .setTimeout(10)
-        )
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -47,8 +40,8 @@ class MainActivity : ComponentActivity() {
         var isShellReady by mutableStateOf(false)
         var showNoRootDialog by mutableStateOf(false)
 
-	Shell.getShell { shell ->
-            if (shell.isRoot) {
+        Shell.getShell { shell ->
+            if (isRooted()) {
                 isShellReady = true
             } else {
                 showNoRootDialog = true
@@ -87,6 +80,20 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    companion object {
+        init {
+	    @Suppress("DEPRECATION")
+            if (Shell.getCachedShell() == null) {
+                Shell.setDefaultBuilder(
+                    Shell.Builder.create()
+                        .setFlags(Shell.FLAG_MOUNT_MASTER)
+                        .setFlags(Shell.FLAG_REDIRECT_STDERR)
+                        .setTimeout(20)
+                )
             }
         }
     }

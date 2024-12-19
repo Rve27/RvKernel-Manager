@@ -23,6 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+fun isRooted(): Boolean {
+    return java.lang.Boolean.TRUE == Shell.isAppGrantedRoot()
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoRootDialog(onConfirm: () -> Unit) {
