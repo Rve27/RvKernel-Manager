@@ -91,11 +91,16 @@ fun readFile(filePath: String): String {
     }
 }
 
-fun writeFile(filePath: String, value: String) {
-    try {
+fun writeFile(filePath: String, value: String): Boolean {
+    return try {
         val command = "echo $value > $filePath"
-        Shell.cmd(command).exec()
+        val result = Shell.cmd(command).exec()
+        if (result.isSuccess) true else {
+            Log.e("WriteFile", "Failed to write file at $filePath: ${result.err}")
+            false
+        }
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("WriteFile", "Error executing shell command for $filePath: ${e.message}", e)
+        false
     }
 }
