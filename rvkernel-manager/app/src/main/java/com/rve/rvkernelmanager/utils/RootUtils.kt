@@ -62,6 +62,16 @@ fun NoRootDialog(onConfirm: () -> Unit) {
     }
 }
 
+fun testFile(filePath: String): Boolean {
+    return if (File(filePath).exists()) {
+        true
+    } else {
+        Shell.cmd("test -f $filePath && echo true || echo false")
+            .exec()
+            .out[0] == "true"
+    }
+}
+
 fun setPermissions(permission: Int, filePath: String) {
     Shell.cmd("chmod $permission $filePath").exec()
 }
