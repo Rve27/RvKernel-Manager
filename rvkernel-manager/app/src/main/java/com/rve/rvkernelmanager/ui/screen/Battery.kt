@@ -36,9 +36,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.utils.hasFastCharging
-import com.rve.rvkernelmanager.utils.writeFastCharging
-import com.rve.rvkernelmanager.utils.readFastCharging
+import com.rve.rvkernelmanager.utils.testFile
+import com.rve.rvkernelmanager.utils.readFile
+import com.rve.rvkernelmanager.utils.writeFile
+import com.rve.rvkernelmanager.utils.FAST_CHARGING_PATH
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,16 +70,15 @@ fun BatteryScreen() {
     }
 }
 
-
 @Composable
 fun ChargingCard() {
-    val hasFastCharging: Boolean = remember { hasFastCharging() }
+    val hasFastCharging = testFile(FAST_CHARGING_PATH)
 
     ElevatedCard(
-	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors(
-	    containerColor = MaterialTheme.colorScheme.primaryContainer
-	)
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -90,11 +90,11 @@ fun ChargingCard() {
                 Text(
                     text = stringResource(R.string.charging_title),
                     style = MaterialTheme.typography.titleLarge,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(4.dp))
 
-		if (hasFastCharging()) {
+                if (hasFastCharging) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -105,13 +105,13 @@ fun ChargingCard() {
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.weight(1f)
                         )
-                        var isChecked by remember { mutableStateOf(readFastCharging() == "1") }
+                        var isChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
 
                         Switch(
                             modifier = Modifier.semantics { contentDescription = "Fast Charging" },
                             checked = isChecked,
                             onCheckedChange = { checked ->
-                                val success = writeFastCharging(if (checked) "1" else "0")
+                                val success = writeFile(FAST_CHARGING_PATH, if (checked) "1" else "0")
                                 if (success) {
                                     isChecked = checked
                                 }
@@ -119,7 +119,7 @@ fun ChargingCard() {
                         )
                     }
                 }
-	    }
+            }
         }
     }
 }
