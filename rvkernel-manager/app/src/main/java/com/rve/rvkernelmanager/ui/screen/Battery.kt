@@ -68,8 +68,11 @@ fun BatteryScreen() {
                 .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ChargingCard()
-	    Spacer(Modifier)
+            var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
+            if (hasFastCharging) {
+                ChargingCard()
+            }
+            Spacer(Modifier)
         }
     }
 }
