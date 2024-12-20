@@ -1,9 +1,13 @@
 package com.rve.rvkernelmanager.ui.screen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
@@ -21,8 +25,10 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +38,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.DialogProperties
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getTotalRam
@@ -69,6 +78,7 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 	    DeviceInfoCard()
+	    DonateCard()
 	    CopyrightCard()
 	    Spacer(Modifier)
         }
@@ -189,6 +199,120 @@ fun DeviceInfoCard() {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun DonateCard() {
+    var showDonateDialog by remember { mutableStateOf(false) }
+    var showDanaQR by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val paypalUrl = stringResource(id = R.string.paypal_url)
+
+    ElevatedCard(
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        modifier = Modifier.clickable { showDonateDialog = true }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.donate_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.donate_summary),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
+    }
+
+    if (showDonateDialog) {
+        AlertDialog(
+            onDismissRequest = { showDonateDialog = false },
+            containerColor = MaterialTheme.colorScheme.background,
+            tonalElevation = 8.dp,
+            title = {
+                Text(
+                    text = stringResource(R.string.donate_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            text = {
+                Column {
+		    Spacer(Modifier.height(16.dp))
+
+                    Text(
+                        text = stringResource(R.string.paypal),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paypalUrl))
+                            context.startActivity(intent)
+                        }
+                    )
+                    Spacer(Modifier.height(16.dp))
+
+                    Text(
+                        text = stringResource(R.string.dana),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { 
+                            showDanaQR = true
+                            showDonateDialog = false
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDonateDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+
+    if (showDanaQR) {
+        AlertDialog(
+            onDismissRequest = { showDanaQR = false },
+            containerColor = MaterialTheme.colorScheme.background,
+            tonalElevation = 8.dp,
+            properties = DialogProperties(dismissOnClickOutside = true),
+            title = {
+                Text(
+                    text = stringResource(R.string.dana),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
+            text = {
+                Image(
+                    painter = painterResource(id = R.drawable.dana_qr),
+                    contentDescription = "Dana QR Code",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    contentScale = ContentScale.Fit
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showDanaQR = false }) {
+                    Text("Close")
+                }
+            }
+        )
     }
 }
 

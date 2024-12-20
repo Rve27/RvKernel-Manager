@@ -24,6 +24,13 @@
     <string name="rvos_version">RvOS Version</string>
     <string name="kernel_version">Kernel Version</string>
 
+    <!-- Donate -->
+    <string name="donate_title">Donate</string>
+    <string name="donate_summary">Click this if you want to donate or buy me a coffee.</string>
+    <string name="dana">Dana (Indonesia only)</string>
+    <string name="paypal">PayPal</string>
+    <string name="paypal_url">https://paypal.me/rve27</string>
+
     <!-- Bottom Navigation -->
     <string name="tab_home">Home</string>
     <string name="tab_soc">SoC</string>
