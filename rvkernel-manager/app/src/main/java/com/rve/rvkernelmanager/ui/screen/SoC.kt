@@ -267,6 +267,8 @@ fun AvailableFreqCPU0Dialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+	containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 8.dp,
         title = {
 	    Text("Available frequencies",
 	        color = MaterialTheme.colorScheme.onBackground
@@ -295,7 +297,7 @@ fun AvailableFreqCPU0Dialog(
                             Text(
                                 text = "$freq MHz",
                                 modifier = Modifier.fillMaxWidth(),
-				color = MaterialTheme.colorScheme.onBackground
+				color = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
@@ -304,13 +306,9 @@ fun AvailableFreqCPU0Dialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-		Text("Close",
-		    color = MaterialTheme.colorScheme.onBackground
-		)
+		Text("Close")
 	    }
-        },
-	containerColor = MaterialTheme.colorScheme.background,
-	tonalElevation = 8.dp
+        }
     )
 }
 
@@ -322,6 +320,8 @@ fun AvailableGovCPU0Dialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+	containerColor = MaterialTheme.colorScheme.background,
+	tonalElevation = 8.dp,
         title = {
 	    Text("Available governors",
 	        color = MaterialTheme.colorScheme.onBackground
@@ -341,7 +341,7 @@ fun AvailableGovCPU0Dialog(
                         Text(
                             text = "$gov",
                             modifier = Modifier.fillMaxWidth(),
-			    color = MaterialTheme.colorScheme.onBackground
+			    color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -349,12 +349,8 @@ fun AvailableGovCPU0Dialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-		Text("Close",
-		    color = MaterialTheme.colorScheme.onBackground
-		)
+		Text("Close")
 	    }
-        },
-	containerColor = MaterialTheme.colorScheme.background,
-	tonalElevation = 8.dp
+        }
     )
 }
