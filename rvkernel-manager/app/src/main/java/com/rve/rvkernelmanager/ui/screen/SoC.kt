@@ -25,6 +25,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -123,7 +124,9 @@ fun CPUCard() {
 
     ElevatedCard(
         shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors()
+        colors = CardDefaults.cardColors(
+	    containerColor = MaterialTheme.colorScheme.primaryContainer
+	)
     ) {
         Column(
             modifier = Modifier
@@ -132,8 +135,8 @@ fun CPUCard() {
         ) {
             Text(
                 text = stringResource(R.string.little_cluster),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(Modifier.height(4.dp))
 
@@ -152,11 +155,19 @@ fun CPUCard() {
                 } else {
                     "$minFreqCPU0 MHz"
                 }
-                ElevatedButton(onClick = {
-                    currentFileTarget = MIN_FREQ_CPU0_PATH
-                    showAvailableFreqCPU0 = true
-                }) {
-                    Text(minFreqCPU0Display)
+                ElevatedButton(
+		    onClick = {
+                        currentFileTarget = MIN_FREQ_CPU0_PATH
+                        showAvailableFreqCPU0 = true
+                    },
+		    colors = ButtonDefaults.elevatedButtonColors(
+			containerColor = MaterialTheme.colorScheme.primary
+		    ) 
+		) {
+                    Text(
+			text = "$minFreqCPU0Display",
+			color = MaterialTheme.colorScheme.onPrimary
+		    )
                 }
             }
             Spacer(Modifier.height(4.dp))
@@ -176,11 +187,19 @@ fun CPUCard() {
                 } else {
                     "$maxFreqCPU0 MHz"
                 }
-                ElevatedButton(onClick = {
-                    currentFileTarget = MAX_FREQ_CPU0_PATH
-                    showAvailableFreqCPU0 = true
-                }) {
-                    Text(maxFreqCPU0Display)
+                ElevatedButton(
+		    onClick = {
+                        currentFileTarget = MAX_FREQ_CPU0_PATH
+                        showAvailableFreqCPU0 = true
+                    },
+		    colors = ButtonDefaults.elevatedButtonColors(
+			containerColor = MaterialTheme.colorScheme.primary
+		    ) 
+		) {
+                    Text(
+			text = "$maxFreqCPU0Display",
+			color = MaterialTheme.colorScheme.onPrimary
+		    )
                 }
             }
             Spacer(Modifier.height(4.dp))
@@ -195,11 +214,19 @@ fun CPUCard() {
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.weight(1f)
                 )
-                ElevatedButton(onClick = {
-                    currentFileTarget = GOV_CPU0_PATH
-                    showAvailableGovCPU0 = true
-                }) {
-                    Text(govCPU0)
+                ElevatedButton(
+		    onClick = {
+                        currentFileTarget = GOV_CPU0_PATH
+                        showAvailableGovCPU0 = true
+                    },
+		    colors = ButtonDefaults.elevatedButtonColors(
+			containerColor = MaterialTheme.colorScheme.primary
+		    )
+		) {
+                    Text(
+			text = "$govCPU0",
+			color = MaterialTheme.colorScheme.onPrimary
+		    )
                 }
             }
 
@@ -239,7 +266,11 @@ fun AvailableFreqCPU0Dialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Available frequencies") },
+        title = {
+	    Text("Available frequencies",
+	        color = MaterialTheme.colorScheme.onBackground
+	    )
+	},
         text = {
             Column(
                 modifier = Modifier
@@ -251,7 +282,7 @@ fun AvailableFreqCPU0Dialog(
                     Text(
                         text = "Failed to read available frequencies",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
@@ -263,6 +294,7 @@ fun AvailableFreqCPU0Dialog(
                             Text(
                                 text = "$freq MHz",
                                 modifier = Modifier.fillMaxWidth(),
+				color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -270,8 +302,14 @@ fun AvailableFreqCPU0Dialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
-        }
+            TextButton(onClick = onDismiss) {
+		Text("Close",
+		    color = MaterialTheme.colorScheme.onBackground
+		)
+	    }
+        },
+	containerColor = MaterialTheme.colorScheme.background,
+	tonalElevation = 8.dp
     )
 }
 
@@ -283,7 +321,11 @@ fun AvailableGovCPU0Dialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Available governors") },
+        title = {
+	    Text("Available governors",
+	        color = MaterialTheme.colorScheme.onBackground
+	    )
+	},
         text = {
             Column(
                 modifier = Modifier
@@ -298,13 +340,20 @@ fun AvailableGovCPU0Dialog(
                         Text(
                             text = "$gov",
                             modifier = Modifier.fillMaxWidth(),
+			    color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
-        }
+            TextButton(onClick = onDismiss) {
+		Text("Close",
+		    color = MaterialTheme.colorScheme.onBackground
+		)
+	    }
+        },
+	containerColor = MaterialTheme.colorScheme.background,
+	tonalElevation = 8.dp
     )
 }
