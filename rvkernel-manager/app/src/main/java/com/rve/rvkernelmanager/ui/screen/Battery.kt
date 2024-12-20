@@ -69,6 +69,7 @@ fun BatteryScreen() {
     }
 }
 
+
 @Composable
 fun ChargingCard() {
     val hasFastCharging: Boolean = remember { hasFastCharging() }
@@ -88,7 +89,7 @@ fun ChargingCard() {
             Column {
                 Text(
                     text = stringResource(R.string.charging_title),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
 		    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(4.dp))
