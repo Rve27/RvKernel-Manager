@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -35,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.testFile
 import com.rve.rvkernelmanager.utils.readFile
@@ -72,7 +76,23 @@ fun BatteryScreen() {
 
 @Composable
 fun ChargingCard() {
-    val hasFastCharging = testFile(FAST_CHARGING_PATH)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var isChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
+    var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                hasFastCharging = testFile(FAST_CHARGING_PATH)
+                isChecked = readFile(FAST_CHARGING_PATH) == "1"
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     ElevatedCard(
         shape = CardDefaults.shape,
@@ -105,8 +125,6 @@ fun ChargingCard() {
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.weight(1f)
                         )
-                        var isChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
-
                         Switch(
                             modifier = Modifier.semantics { contentDescription = "Fast Charging" },
                             checked = isChecked,
