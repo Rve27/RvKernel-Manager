@@ -86,29 +86,30 @@ fun SoCScreen() {
 
 @Composable
 fun CPUCard() {
-    var minFreqCPU0 by remember { mutableStateOf("0") }
-    var maxFreqCPU0 by remember { mutableStateOf("0") }
+    setPermissions(644, MIN_FREQ_CPU0_PATH)
+    setPermissions(644, MAX_FREQ_CPU0_PATH)
+    var minFreqCPU0 by remember { mutableStateOf(readFreqFile(MIN_FREQ_CPU0_PATH)) }
+    var maxFreqCPU0 by remember { mutableStateOf(readFreqFile(MAX_FREQ_CPU0_PATH)) }
     var availableFreqCPU0 by remember { mutableStateOf(listOf<String>()) }
     var showAvailableFreqCPU0 by remember { mutableStateOf(false) }
-    var govCPU0 by remember { mutableStateOf("Loading...") }
+
+    setPermissions(644, GOV_CPU0_PATH)
+    var govCPU0 by remember { mutableStateOf(readFile(GOV_CPU0_PATH)) }
     var availableGovCPU0 by remember { mutableStateOf(listOf<String>()) }
     var showAvailableGovCPU0 by remember { mutableStateOf(false) }
+
     var currentFileTarget by remember { mutableStateOf("") }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                setPermissions(644, MIN_FREQ_CPU0_PATH)
                 minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
-                
-                setPermissions(644, MAX_FREQ_CPU0_PATH)
                 maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
-                
+
                 setPermissions(644, AVAILABLE_FREQ_CPU0_PATH)
                 availableFreqCPU0 = readAvailableFreqCPU0()
                 
-                setPermissions(644, GOV_CPU0_PATH)
                 govCPU0 = readFile(GOV_CPU0_PATH)
                 
                 setPermissions(644, AVAILABLE_GOV_CPU0_PATH)
