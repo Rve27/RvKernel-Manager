@@ -333,16 +333,25 @@ fun AvailableGovCPU0Dialog(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                availableGovCPU0.forEach { gov ->
-                    TextButton(
-                        onClick = { onGovSelected(gov) },
+		if (availableGovCPU0.isEmpty()) {
+		Text(
+                        text = "Failed to read available governors",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "$gov",
-                            modifier = Modifier.fillMaxWidth(),
-			    color = MaterialTheme.colorScheme.primary
-                        )
+                    )
+                } else {
+                    availableGovCPU0.forEach { gov ->
+                        TextButton(
+                            onClick = { onGovSelected(gov) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "$gov",
+                                modifier = Modifier.fillMaxWidth(),
+			        color = MaterialTheme.colorScheme.primary
+                            )
+			}
                     }
                 }
             }

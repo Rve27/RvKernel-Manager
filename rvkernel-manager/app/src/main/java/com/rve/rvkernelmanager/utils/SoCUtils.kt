@@ -60,9 +60,10 @@ fun readAvailableGovCPU0(): List<String> {
                 .trim()
                 .split(" ")
         } else {
-            listOf("null")
+            emptyList()
         }
     } catch (e: Exception) {
-        listOf("error")
+        Log.e("readAvailableGovCPU0", "Error reading file $AVAILABLE_GOV_CPU0_PATH: ${e.message}", e)
+	emptyList()
     }
 }
