@@ -36,7 +36,7 @@ fun TopBar(
         title = {
 	    Text(
                 text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onBackground
 	    )
         },
         actions = {
@@ -52,7 +52,7 @@ fun TopBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_github),
                     contentDescription = "Github",
-		    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+		    tint = MaterialTheme.colorScheme.onBackground,
 		    modifier = Modifier.size(35.dp)
                 )
             }
@@ -69,7 +69,7 @@ fun TopBar(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_telegram),
                     contentDescription = "Telegram Group",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(35.dp)
                 )
             }
