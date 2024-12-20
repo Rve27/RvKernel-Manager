@@ -75,7 +75,9 @@ fun ChargingCard() {
 
     ElevatedCard(
 	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors()
+	colors = CardDefaults.cardColors(
+	    containerColor = MaterialTheme.colorScheme.primaryContainer
+	)
     ) {
         Row(
             modifier = Modifier
@@ -87,7 +89,7 @@ fun ChargingCard() {
                 Text(
                     text = stringResource(R.string.charging_title),
                     style = MaterialTheme.typography.titleMedium,
-		    color = MaterialTheme.colorScheme.primary
+		    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(4.dp))
 
