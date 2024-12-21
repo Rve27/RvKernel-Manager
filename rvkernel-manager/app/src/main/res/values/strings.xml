@@ -4,6 +4,7 @@
 
     <!-- CPU -->
     <string name="little_cluster">Little Cluster</string>
+    <string name="big_cluster">Big Cluster</string>
     <string name="min_freq">Minimum frequency</string>
     <string name="max_freq">Maximum frequency</string>
     <string name="gov">Governor</string>

@@ -10,6 +10,13 @@ const val AVAILABLE_FREQ_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/sc
 const val GOV_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
 const val AVAILABLE_GOV_CPU0_PATH = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
 
+const val MIN_FREQ_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
+const val MAX_FREQ_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
+const val AVAILABLE_FREQ_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_frequencies"
+const val AVAILABLE_BOOST_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies"
+const val GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
+const val AVAILABLE_GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_governors"
+
 fun readFreqFile(filePath: String): String {
     return try {
         val file = File(filePath)
@@ -35,9 +42,9 @@ fun writeFreqFile(filePath: String, frequency: String) {
     }
 }
 
-fun readAvailableFreqCPU0(): List<String> {
+fun readAvailableFreq(filePath: String): List<String> {
     return try {
-        val file = File("$AVAILABLE_FREQ_CPU0_PATH")
+        val file = File("$filePath")
         if (file.exists()) {
             file.readText()
                 .trim()
@@ -47,14 +54,22 @@ fun readAvailableFreqCPU0(): List<String> {
             emptyList()
         }
     } catch (e: Exception) {
-        Log.e("readAvailableFreqCPU0", "Error reading file $AVAILABLE_FREQ_CPU0_PATH: ${e.message}", e)
+        Log.e("readAvailableFreq", "Error reading file $filePath: ${e.message}", e)
         emptyList()
     }
 }
 
-fun readAvailableGovCPU0(): List<String> {
+fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> {
+    val regularFreq = readAvailableFreq(freqPath)
+    val boostFreq = readAvailableFreq(boostPath)
+    return (regularFreq + boostFreq)
+	.distinct()
+	.sortedBy { it.toIntOrNull() ?: 0 }
+}
+
+fun readAvailableGov(filePath: String): List<String> {
     return try {
-        val file = File("$AVAILABLE_GOV_CPU0_PATH")
+        val file = File("$filePath")
         if (file.exists()) {
             file.readText()
                 .trim()
@@ -63,7 +78,7 @@ fun readAvailableGovCPU0(): List<String> {
             emptyList()
         }
     } catch (e: Exception) {
-        Log.e("readAvailableGovCPU0", "Error reading file $AVAILABLE_GOV_CPU0_PATH: ${e.message}", e)
+        Log.e("readAvailableGov", "Error reading file $filePath: ${e.message}", e)
 	emptyList()
     }
 }
