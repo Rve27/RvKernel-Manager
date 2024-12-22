@@ -87,7 +87,7 @@ fun SoCScreen() {
         ) {
 	    LittleClusterCard()
 
-	    var hasBigCluster by remember { mutableStateOf(testFile(AVAILABLE_FREQ_CPU4_PATH)) }
+	    val hasBigCluster by remember { mutableStateOf(testFile(AVAILABLE_FREQ_CPU4_PATH)) }
 	    if (hasBigCluster) {
 	        BigClusterCard()
 	    }
