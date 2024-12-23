@@ -3,6 +3,7 @@
     <string name="app_name">RvKernel Manager</string>
 
     <!-- CPU -->
+    <string name="cpu">CPU</string>
     <string name="little_cluster">Little Cluster</string>
     <string name="big_cluster">Big Cluster</string>
     <string name="min_freq">Minimum frequency</string>

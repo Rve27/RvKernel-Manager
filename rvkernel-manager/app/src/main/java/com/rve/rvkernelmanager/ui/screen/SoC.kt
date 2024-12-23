@@ -70,6 +70,7 @@ fun LittleClusterCard(scope: CoroutineScope) {
     var showAvailableFreqCPU0 by remember { mutableStateOf(false) }
     var showAvailableGovCPU0 by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
+    val hasBigCluster = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -84,6 +85,7 @@ fun LittleClusterCard(scope: CoroutineScope) {
             govCPU0 = readFile(GOV_CPU0_PATH)
             availableFreqCPU0 = readAvailableFreq(AVAILABLE_FREQ_CPU0_PATH)
             availableGovCPU0 = readAvailableGov(AVAILABLE_GOV_CPU0_PATH)
+            hasBigCluster.value = testFile(AVAILABLE_FREQ_CPU4_PATH)
         }
     }
 
@@ -126,7 +128,9 @@ fun LittleClusterCard(scope: CoroutineScope) {
                 .padding(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.little_cluster),
+                text = if (hasBigCluster.value) {
+                    stringResource(R.string.little_cluster)
+                } else stringResource(R.string.cpu),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
