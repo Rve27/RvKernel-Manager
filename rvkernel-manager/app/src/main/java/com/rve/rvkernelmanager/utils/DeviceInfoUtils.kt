@@ -9,6 +9,7 @@ import kotlin.math.ceil
 import com.topjohnwu.superuser.Shell
 
 const val FULL_KERNEL_VERSION_PATH = "/proc/version"
+const val CPU_INFO_PATH = "/proc/cpuinfo"
 
 fun getDeviceCodename(): String {
     return Build.DEVICE
@@ -18,8 +19,34 @@ fun getAndroidVersion(): String {
     return Build.VERSION.RELEASE
 }
 
-fun getSOC(): String {
+fun getCPU(): String {
     return Build.SOC_MODEL
+}
+
+fun getCPUInfo(): String {
+    return try {
+        val hardwareResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Hardware' | head -n 1").exec()
+        val coresResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'processor' | wc -l").exec()
+        val archResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Processor' | head -n 1").exec()
+
+        val hardware = if (hardwareResult.isSuccess) {
+            hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
+        } else "Unknown"
+
+        val cores = if (coresResult.isSuccess) {
+            coresResult.out.firstOrNull()?.trim() ?: "0"
+        } else "0"
+
+        val arch = if (archResult.isSuccess) {
+            val processor = archResult.out.firstOrNull()?.trim() ?: ""
+            if (processor.contains("AArch64")) "AArch64" else "Unknown"
+        } else "Unknown"
+
+        "$hardware\n$cores Cores ($arch)"
+    } catch (e: Exception) {
+        Log.e("getCPUInfo", "Exception during command execution", e)
+        "Exception during command execution"
+    }
 }
 
 fun getGPUModel(): String {

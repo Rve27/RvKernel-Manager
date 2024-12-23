@@ -45,7 +45,8 @@ import androidx.compose.ui.window.DialogProperties
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getTotalRam
-import com.rve.rvkernelmanager.utils.getSOC
+import com.rve.rvkernelmanager.utils.getCPU
+import com.rve.rvkernelmanager.utils.getCPUInfo
 import com.rve.rvkernelmanager.utils.getGPUModel
 import com.rve.rvkernelmanager.utils.getGLESVersion
 import com.rve.rvkernelmanager.utils.getAndroidVersion
@@ -91,12 +92,14 @@ fun DeviceInfoCard() {
     val context = LocalContext.current
     val deviceCodename = remember { getDeviceCodename() }
     val ramInfo = remember { getTotalRam(context) }
-    val getSoc = remember { getSOC() }
+    val getCPUOnly = remember { getCPU() }
     val defaultGPUModel = remember { getGPUModel() }
     val androidVersion = remember { getAndroidVersion() }
     val rvosVersion = remember { getRvOSVersion() }
     val defaultKernelVersion = remember { getKernelVersion() }
 
+    var getCPU by remember { mutableStateOf(getCPUOnly) }
+    var isCPUInfo by remember { mutableStateOf(false) }
     var gpuModel by remember { mutableStateOf(defaultGPUModel) }
     var isGLESVersion by remember { mutableStateOf(false) }
     var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
@@ -140,15 +143,25 @@ fun DeviceInfoCard() {
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = stringResource(R.string.soc),
+                    text = stringResource(R.string.cpu),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = getSoc,
+                    text = getCPU,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .clickable {
+                            if (isCPUInfo) {
+                                getCPU = getCPUOnly
+                            } else {
+                                getCPU = getCPUInfo()
+                            }
+                            isCPUInfo = !isCPUInfo
+                        }
+                        .animateContentSize()
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
