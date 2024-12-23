@@ -55,6 +55,7 @@ fun SoCScreen() {
             if (hasBigCluster.value) {
                 BigClusterCard(scope)
             }
+            GPUCard(scope)
             Spacer(Modifier)
         }
     }
@@ -181,7 +182,8 @@ fun LittleClusterCard(scope: CoroutineScope) {
                                 maxFreqCPU0 = newMaxFreq
                             }
                         }
-                    }
+                    },
+                    isClusterCard = true
                 )
             }
 
@@ -328,7 +330,8 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
                                 maxFreqCPU4 = newMaxFreq
                             }
                         }
-                    }
+                    },
+                    isClusterCard = true
                 )
             }
 
@@ -343,6 +346,147 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
                             withContext(Dispatchers.Main) {
                                 showAvailableGovCPU4 = false
                                 govCPU4 = newGov
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
+    var minFreqGPU by remember { mutableStateOf("0") }
+    var maxFreqGPU by remember { mutableStateOf("0") }
+    var govGPU by remember { mutableStateOf("loading") }
+    var availableFreqGPU by remember { mutableStateOf(listOf<String>()) }
+    var availableGovGPU by remember { mutableStateOf(listOf<String>()) }
+    var showAvailableFreqGPU by remember { mutableStateOf(false) }
+    var showAvailableGovGPU by remember { mutableStateOf(false) }
+    var currentFileTarget by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            setPermissions(644, AVAILABLE_FREQ_GPU_PATH)
+            setPermissions(644, MIN_FREQ_GPU_PATH)
+            setPermissions(644, MAX_FREQ_GPU_PATH)
+            setPermissions(644, AVAILABLE_GOV_GPU_PATH)
+            setPermissions(644, GOV_GPU_PATH)
+            
+            minFreqGPU = readFile(MIN_FREQ_GPU_PATH)
+            maxFreqGPU = readFile(MAX_FREQ_GPU_PATH)
+            govGPU = readFile(GOV_GPU_PATH)
+            availableGovGPU = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
+            availableFreqGPU = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch(Dispatchers.IO) {
+                    val newMinFreq = readFile(MIN_FREQ_GPU_PATH)
+                    val newMaxFreq = readFile(MAX_FREQ_GPU_PATH)
+                    val newGov = readFile(GOV_GPU_PATH)
+                    val newAvailableGov = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
+                    val newAvailableFreq = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
+                    
+                    withContext(Dispatchers.Main) {
+                        minFreqGPU = newMinFreq
+                        maxFreqGPU = newMaxFreq
+                        govGPU = newGov
+                        availableGovGPU = newAvailableGov
+                        availableFreqGPU = newAvailableFreq
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    ElevatedCard(
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.gpu),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.min_freq),
+                value = minFreqGPU,
+                onClick = {
+                    currentFileTarget = MIN_FREQ_GPU_PATH
+                    showAvailableFreqGPU = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.max_freq),
+                value = maxFreqGPU,
+                onClick = {
+                    currentFileTarget = MAX_FREQ_GPU_PATH
+                    showAvailableFreqGPU = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            GovRow(
+                value = govGPU,
+                onClick = {
+                    currentFileTarget = GOV_GPU_PATH
+                    showAvailableGovGPU = true
+                }
+            )
+
+            if (showAvailableFreqGPU) {
+                FreqDialog(
+                    frequencies = availableFreqGPU,
+                    onDismiss = { showAvailableFreqGPU = false },
+                    onSelected = { selectedFreq ->
+                        scope.launch(Dispatchers.IO) {
+                            writeFreqGPU(currentFileTarget, selectedFreq)
+                            val newMinFreq = readFile(MIN_FREQ_GPU_PATH)
+                            val newMaxFreq = readFile(MAX_FREQ_GPU_PATH)
+                            withContext(Dispatchers.Main) {
+                                showAvailableFreqGPU = false
+                                minFreqGPU = newMinFreq
+                                maxFreqGPU = newMaxFreq
+                            }
+                        }
+                    }
+                )
+            }
+
+            if (showAvailableGovGPU) {
+                GovDialog(
+                    governors = availableGovGPU,
+                    onDismiss = { showAvailableGovGPU = false },
+                    onSelected = { selectedGov ->
+                        scope.launch(Dispatchers.IO) {
+                            writeFile(currentFileTarget, selectedGov)
+                            val newGov = readFile(GOV_GPU_PATH)
+                            withContext(Dispatchers.Main) {
+                                showAvailableGovGPU = false
+                                govGPU = newGov
                             }
                         }
                     }
@@ -415,7 +559,8 @@ private fun GovRow(
 private fun FreqDialog(
     frequencies: List<String>,
     onDismiss: () -> Unit,
-    onSelected: (String) -> Unit
+    onSelected: (String) -> Unit,
+    isClusterCard: Boolean = false
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -431,7 +576,7 @@ private fun FreqDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.8f)
+                    .then(if (isClusterCard) Modifier.fillMaxHeight(0.8f) else Modifier)
                     .verticalScroll(rememberScrollState())
             ) {
                 if (frequencies.isEmpty()) {

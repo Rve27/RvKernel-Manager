@@ -17,6 +17,12 @@ const val AVAILABLE_BOOST_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/s
 const val GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
 const val AVAILABLE_GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_governors"
 
+const val MIN_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
+const val MAX_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
+const val AVAILABLE_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
+const val GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
+const val AVAILABLE_GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
+
 fun readFreqFile(filePath: String): String {
     return try {
         val file = File(filePath)
@@ -80,5 +86,52 @@ fun readAvailableGov(filePath: String): List<String> {
     } catch (e: Exception) {
         Log.e("readAvailableGov", "Error reading file $filePath: ${e.message}", e)
 	emptyList()
+    }
+}
+
+fun writeFreqGPU(filePath: String, frequency: String) {
+    try {
+        val freqInKHz = frequency.replace("000000", "")
+        val command = "echo $freqInKHz > $filePath"
+        Shell.cmd(command).exec()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun readAvailableFreqGPU(filePath: String): List<String> {
+    return try {
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()
+                ?.trim()
+                ?.split(" ")
+                ?.map { (it.toInt() / 1000000).toString() }
+                ?: emptyList()
+        } else {
+            Log.e("readAvailableFreqGPU", "Command execution failed: ${result.err}")
+            emptyList()
+        }
+    } catch (e: Exception) {
+        Log.e("readAvailableFreqGPU", "Error reading file $filePath: ${e.message}", e)
+        emptyList()
+    }
+}
+
+fun readAvailableGovGPU(filePath: String): List<String> {
+    return try {
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()
+                ?.trim()
+                ?.split(" ")
+                ?: emptyList()
+        } else {
+            Log.e("readAvailableGovGPU", "Command execution failed: ${result.err}")
+            emptyList()
+        }
+    } catch (e: Exception) {
+        Log.e("readAvailableGovGPU", "Error reading file $filePath: ${e.message}", e)
+        emptyList()
     }
 }
