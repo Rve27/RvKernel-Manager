@@ -23,7 +23,7 @@ const val AVAILABLE_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_available_freq
 const val GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
 const val AVAILABLE_GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
 
-fun readFreqFile(filePath: String): String {
+fun readFreqCPU(filePath: String): String {
     return try {
         val file = File(filePath)
         if (file.exists()) {
@@ -33,12 +33,12 @@ fun readFreqFile(filePath: String): String {
             ""
         }
     } catch (e: Exception) {
-        Log.e("readFreqFile", "Error reading file $filePath: ${e.message}", e)
+        Log.e("readFreqCPU", "Error reading file $filePath: ${e.message}", e)
         ""
     }
 }
 
-fun writeFreqFile(filePath: String, frequency: String) {
+fun writeFreqCPU(filePath: String, frequency: String) {
     try {
         val freqInKHz = (frequency.toInt() * 1000).toString()
         val command = "echo $freqInKHz > $filePath"
@@ -48,7 +48,7 @@ fun writeFreqFile(filePath: String, frequency: String) {
     }
 }
 
-fun readAvailableFreq(filePath: String): List<String> {
+fun readAvailableFreqCPU(filePath: String): List<String> {
     return try {
         val file = File("$filePath")
         if (file.exists()) {
@@ -60,20 +60,20 @@ fun readAvailableFreq(filePath: String): List<String> {
             emptyList()
         }
     } catch (e: Exception) {
-        Log.e("readAvailableFreq", "Error reading file $filePath: ${e.message}", e)
+        Log.e("readAvailableFreqCPU", "Error reading file $filePath: ${e.message}", e)
         emptyList()
     }
 }
 
 fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> {
-    val regularFreq = readAvailableFreq(freqPath)
-    val boostFreq = readAvailableFreq(boostPath)
+    val regularFreq = readAvailableFreqCPU(freqPath)
+    val boostFreq = readAvailableFreqCPU(boostPath)
     return (regularFreq + boostFreq)
 	.distinct()
 	.sortedBy { it.toIntOrNull() ?: 0 }
 }
 
-fun readAvailableGov(filePath: String): List<String> {
+fun readAvailableGovCPU(filePath: String): List<String> {
     return try {
         val file = File("$filePath")
         if (file.exists()) {

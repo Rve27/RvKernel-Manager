@@ -80,12 +80,12 @@ fun LittleClusterCard(scope: CoroutineScope) {
             setPermissions(644, MAX_FREQ_CPU0_PATH)
             setPermissions(644, AVAILABLE_GOV_CPU0_PATH)
             setPermissions(644, GOV_CPU0_PATH)
-            
-            minFreqCPU0 = readFreqFile(MIN_FREQ_CPU0_PATH)
-            maxFreqCPU0 = readFreqFile(MAX_FREQ_CPU0_PATH)
+
+            minFreqCPU0 = readFreqCPU(MIN_FREQ_CPU0_PATH)
+            maxFreqCPU0 = readFreqCPU(MAX_FREQ_CPU0_PATH)
             govCPU0 = readFile(GOV_CPU0_PATH)
-            availableFreqCPU0 = readAvailableFreq(AVAILABLE_FREQ_CPU0_PATH)
-            availableGovCPU0 = readAvailableGov(AVAILABLE_GOV_CPU0_PATH)
+            availableFreqCPU0 = readAvailableFreqCPU(AVAILABLE_FREQ_CPU0_PATH)
+            availableGovCPU0 = readAvailableGovCPU(AVAILABLE_GOV_CPU0_PATH)
             hasBigCluster.value = testFile(AVAILABLE_FREQ_CPU4_PATH)
         }
     }
@@ -95,11 +95,11 @@ fun LittleClusterCard(scope: CoroutineScope) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 scope.launch(Dispatchers.IO) {
-                    val newMinFreq = readFreqFile(MIN_FREQ_CPU0_PATH)
-                    val newMaxFreq = readFreqFile(MAX_FREQ_CPU0_PATH)
+                    val newMinFreq = readFreqCPU(MIN_FREQ_CPU0_PATH)
+                    val newMaxFreq = readFreqCPU(MAX_FREQ_CPU0_PATH)
                     val newGov = readFile(GOV_CPU0_PATH)
-                    val newAvailableFreq = readAvailableFreq(AVAILABLE_FREQ_CPU0_PATH)
-                    val newAvailableGov = readAvailableGov(AVAILABLE_GOV_CPU0_PATH)
+                    val newAvailableFreq = readAvailableFreqCPU(AVAILABLE_FREQ_CPU0_PATH)
+                    val newAvailableGov = readAvailableGovCPU(AVAILABLE_GOV_CPU0_PATH)
                     
                     withContext(Dispatchers.Main) {
                         minFreqCPU0 = newMinFreq
@@ -173,9 +173,9 @@ fun LittleClusterCard(scope: CoroutineScope) {
                     onDismiss = { showAvailableFreqCPU0 = false },
                     onSelected = { selectedFreq ->
                         scope.launch(Dispatchers.IO) {
-                            writeFreqFile(currentFileTarget, selectedFreq)
-                            val newMinFreq = readFreqFile(MIN_FREQ_CPU0_PATH)
-                            val newMaxFreq = readFreqFile(MAX_FREQ_CPU0_PATH)
+                            writeFreqCPU(currentFileTarget, selectedFreq)
+                            val newMinFreq = readFreqCPU(MIN_FREQ_CPU0_PATH)
+                            val newMaxFreq = readFreqCPU(MAX_FREQ_CPU0_PATH)
                             withContext(Dispatchers.Main) {
                                 showAvailableFreqCPU0 = false
                                 minFreqCPU0 = newMinFreq
@@ -226,10 +226,10 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
             setPermissions(644, AVAILABLE_GOV_CPU4_PATH)
             setPermissions(644, GOV_CPU4_PATH)
             
-            minFreqCPU4 = readFreqFile(MIN_FREQ_CPU4_PATH)
-            maxFreqCPU4 = readFreqFile(MAX_FREQ_CPU4_PATH)
+            minFreqCPU4 = readFreqCPU(MIN_FREQ_CPU4_PATH)
+            maxFreqCPU4 = readFreqCPU(MAX_FREQ_CPU4_PATH)
             govCPU4 = readFile(GOV_CPU4_PATH)
-            availableGovCPU4 = readAvailableGov(AVAILABLE_GOV_CPU4_PATH)
+            availableGovCPU4 = readAvailableGovCPU(AVAILABLE_GOV_CPU4_PATH)
             availableFreqCPU4 = readAvailableFreqBoost(
                 AVAILABLE_FREQ_CPU4_PATH,
                 AVAILABLE_BOOST_CPU4_PATH
@@ -242,10 +242,10 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 scope.launch(Dispatchers.IO) {
-                    val newMinFreq = readFreqFile(MIN_FREQ_CPU4_PATH)
-                    val newMaxFreq = readFreqFile(MAX_FREQ_CPU4_PATH)
+                    val newMinFreq = readFreqCPU(MIN_FREQ_CPU4_PATH)
+                    val newMaxFreq = readFreqCPU(MAX_FREQ_CPU4_PATH)
                     val newGov = readFile(GOV_CPU4_PATH)
-                    val newAvailableGov = readAvailableGov(AVAILABLE_GOV_CPU4_PATH)
+                    val newAvailableGov = readAvailableGovCPU(AVAILABLE_GOV_CPU4_PATH)
                     val newAvailableFreq = readAvailableFreqBoost(
                         AVAILABLE_FREQ_CPU4_PATH,
                         AVAILABLE_BOOST_CPU4_PATH
@@ -321,9 +321,9 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     onDismiss = { showAvailableFreqCPU4 = false },
                     onSelected = { selectedFreq ->
                         scope.launch(Dispatchers.IO) {
-                            writeFreqFile(currentFileTarget, selectedFreq)
-                            val newMinFreq = readFreqFile(MIN_FREQ_CPU4_PATH)
-                            val newMaxFreq = readFreqFile(MAX_FREQ_CPU4_PATH)
+                            writeFreqCPU(currentFileTarget, selectedFreq)
+                            val newMinFreq = readFreqCPU(MIN_FREQ_CPU4_PATH)
+                            val newMaxFreq = readFreqCPU(MAX_FREQ_CPU4_PATH)
                             withContext(Dispatchers.Main) {
                                 showAvailableFreqCPU4 = false
                                 minFreqCPU4 = newMinFreq
