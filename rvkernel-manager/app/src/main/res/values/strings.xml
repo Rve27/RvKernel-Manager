@@ -10,6 +10,9 @@
     <string name="max_freq">Maximum frequency</string>
     <string name="gov">Governor</string>
 
+    <!-- GPU -->
+    <string name="gpu">GPU</string>
+
     <!-- Charging -->
     <string name="charging_title">Charging</string>
     <string name="fast_charging">Fast charging</string>

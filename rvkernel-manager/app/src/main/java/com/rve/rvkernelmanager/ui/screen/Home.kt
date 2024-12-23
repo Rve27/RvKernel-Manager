@@ -46,6 +46,8 @@ import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.getDeviceCodename
 import com.rve.rvkernelmanager.utils.getTotalRam
 import com.rve.rvkernelmanager.utils.getSOC
+import com.rve.rvkernelmanager.utils.getGPUModel
+import com.rve.rvkernelmanager.utils.getGLESVersion
 import com.rve.rvkernelmanager.utils.getAndroidVersion
 import com.rve.rvkernelmanager.utils.getRvOSVersion
 import com.rve.rvkernelmanager.utils.getKernelVersion
@@ -90,10 +92,13 @@ fun DeviceInfoCard() {
     val deviceCodename = remember { getDeviceCodename() }
     val ramInfo = remember { getTotalRam(context) }
     val getSoc = remember { getSOC() }
+    val defaultGPUModel = remember { getGPUModel() }
     val androidVersion = remember { getAndroidVersion() }
     val rvosVersion = remember { getRvOSVersion() }
     val defaultKernelVersion = remember { getKernelVersion() }
 
+    var gpuModel by remember { mutableStateOf(defaultGPUModel) }
+    var isGLESVersion by remember { mutableStateOf(false) }
     var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
     var isFullKernelVersion by remember { mutableStateOf(false) }
 
@@ -144,6 +149,28 @@ fun DeviceInfoCard() {
                     text = getSoc,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.gpu),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = gpuModel,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .clickable {
+                            if (isGLESVersion) {
+                                gpuModel = defaultGPUModel
+                            } else {
+                                gpuModel = getGLESVersion()
+                            }
+                            isGLESVersion = !isGLESVersion
+                        }
+                        .animateContentSize()
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(

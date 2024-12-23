@@ -4,7 +4,9 @@ import android.system.Os
 import android.os.Build
 import android.content.Context
 import android.app.ActivityManager
+import android.util.Log
 import kotlin.math.ceil
+import com.topjohnwu.superuser.Shell
 
 const val FULL_KERNEL_VERSION_PATH = "/proc/version"
 
@@ -18,6 +20,36 @@ fun getAndroidVersion(): String {
 
 fun getSOC(): String {
     return Build.SOC_MODEL
+}
+
+fun getGPUModel(): String {
+    return try {
+        val result = Shell.cmd("dumpsys SurfaceFlinger | grep GLES | head -n 1 | cut -f 2 -d ','").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()?.trim() ?: "Unknown GPU"
+        } else {
+            Log.e("getGPUVersion", "Command execution failed: ${result.err}")
+            "Command execution failed"
+        }
+    } catch (e: Exception) {
+        Log.e("getGPUVersion", "Exception during command execution", e)
+        "Exception during command execution"
+    }
+}
+
+fun getGLESVersion(): String {
+    return try {
+        val result = Shell.cmd("dumpsys SurfaceFlinger | grep GLES | head -n 1 | cut -f 2,3,4,5 -d ','").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()?.trim() ?: "Unknown GPU"
+        } else {
+            Log.e("getGLESVersion", "Command execution failed: ${result.err}")
+            "Command execution failed"
+        }
+    } catch (e: Exception) {
+        Log.e("getGLESVersion", "Exception during command execution", e)
+        "Exception during command execution"
+    }
 }
 
 fun getTotalRam(context: Context): String {
