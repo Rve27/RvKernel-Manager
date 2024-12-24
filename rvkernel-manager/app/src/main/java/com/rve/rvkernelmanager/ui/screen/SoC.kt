@@ -369,6 +369,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var showAdrenoBoost by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
     val hasAdrenoBoost = remember { mutableStateOf(false) }
+    val hasGPUThrottling = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -388,6 +389,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             adrenoBoost = readFile(ADRENO_BOOST_PATH)
             gpuThrottling = readFile(GPU_THROTTLING_PATH)
             hasAdrenoBoost.value = testFile(ADRENO_BOOST_PATH)
+            hasGPUThrottling.value = testFile(GPU_THROTTLING_PATH)
         }
     }
 
@@ -404,6 +406,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     val newAdrenoBoost = readFile(ADRENO_BOOST_PATH)
                     val newGPUThrottling = readFile(GPU_THROTTLING_PATH)
                     val isAdrenoBoostExists = testFile(ADRENO_BOOST_PATH)
+                    val isGPUThrottlingExists = testFile(GPU_THROTTLING_PATH)
                     
                     withContext(Dispatchers.Main) {
                         minFreqGPU = newMinFreq
@@ -414,6 +417,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         adrenoBoost = newAdrenoBoost
                         gpuThrottling = newGPUThrottling
                         hasAdrenoBoost.value = isAdrenoBoostExists
+                        hasGPUThrottling.value = isGPUThrottlingExists
                     }
                 }
             }
@@ -509,27 +513,29 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                 }
             }
 
-            Spacer(Modifier.height(4.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.gpu_throttling),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = gpuThrottlingStatus,
-                    onCheckedChange = { isChecked ->
-                        scope.launch(Dispatchers.IO) {
-                            val newValue = if (isChecked) "1" else "0"
-                            writeFile(GPU_THROTTLING_PATH, newValue)
-                            gpuThrottling = readFile(GPU_THROTTLING_PATH)
+            if (hasGPUThrottling.value) {
+                Spacer(Modifier.height(4.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.gpu_throttling),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = gpuThrottlingStatus,
+                        onCheckedChange = { isChecked ->
+                            scope.launch(Dispatchers.IO) {
+                                val newValue = if (isChecked) "1" else "0"
+                                writeFile(GPU_THROTTLING_PATH, newValue)
+                                gpuThrottling = readFile(GPU_THROTTLING_PATH)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             if (showAvailableFreqGPU) {
