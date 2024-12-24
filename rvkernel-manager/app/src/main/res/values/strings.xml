@@ -12,6 +12,7 @@
 
     <!-- GPU -->
     <string name="gpu">GPU</string>
+    <string name="adreno_boost">Adreno Boost</string>
 
     <!-- Charging -->
     <string name="charging_title">Charging</string>

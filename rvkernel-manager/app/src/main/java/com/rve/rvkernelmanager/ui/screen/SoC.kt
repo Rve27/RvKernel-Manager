@@ -360,10 +360,12 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var minFreqGPU by remember { mutableStateOf("0") }
     var maxFreqGPU by remember { mutableStateOf("0") }
     var govGPU by remember { mutableStateOf("loading") }
+    var adrenoBoost by remember { mutableStateOf("loading") }
     var availableFreqGPU by remember { mutableStateOf(listOf<String>()) }
     var availableGovGPU by remember { mutableStateOf(listOf<String>()) }
     var showAvailableFreqGPU by remember { mutableStateOf(false) }
     var showAvailableGovGPU by remember { mutableStateOf(false) }
+    var showAdrenoBoostDialog by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -373,12 +375,14 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             setPermissions(644, MAX_FREQ_GPU_PATH)
             setPermissions(644, AVAILABLE_GOV_GPU_PATH)
             setPermissions(644, GOV_GPU_PATH)
+            setPermissions(644, ADRENO_BOOST_PATH)
             
             minFreqGPU = readFile(MIN_FREQ_GPU_PATH)
             maxFreqGPU = readFile(MAX_FREQ_GPU_PATH)
             govGPU = readFile(GOV_GPU_PATH)
             availableGovGPU = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
             availableFreqGPU = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
+            adrenoBoost = readFile(ADRENO_BOOST_PATH)
         }
     }
 
@@ -392,6 +396,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     val newGov = readFile(GOV_GPU_PATH)
                     val newAvailableGov = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
                     val newAvailableFreq = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
+                    val newAdrenoBoost = readFile(ADRENO_BOOST_PATH)
                     
                     withContext(Dispatchers.Main) {
                         minFreqGPU = newMinFreq
@@ -399,6 +404,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         govGPU = newGov
                         availableGovGPU = newAvailableGov
                         availableFreqGPU = newAvailableFreq
+                        adrenoBoost = newAdrenoBoost
                     }
                 }
             }
@@ -407,6 +413,14 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    val adrenoBoostText = when (adrenoBoost) {
+        "0" -> "Off"
+        "1" -> "Low"
+        "2" -> "Medium"
+        "3" -> "High"
+        else -> "Unknown"
     }
 
     ElevatedCard(
@@ -457,6 +471,34 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                 }
             )
 
+            Spacer(Modifier.height(4.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.adreno_boost),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
+                ElevatedButton(
+                    onClick = {
+                        currentFileTarget = ADRENO_BOOST_PATH
+                        showAdrenoBoostDialog = true
+                    },
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = adrenoBoostText,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+
             if (showAvailableFreqGPU) {
                 FreqDialog(
                     frequencies = availableFreqGPU,
@@ -487,6 +529,23 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                             withContext(Dispatchers.Main) {
                                 showAvailableGovGPU = false
                                 govGPU = newGov
+                            }
+                        }
+                    }
+                )
+            }
+
+            if (showAdrenoBoostDialog) {
+                AdrenoBoostDialog(
+                    currentBoost = adrenoBoost,
+                    onDismiss = { showAdrenoBoostDialog = false },
+                    onSelected = { selectedBoost ->
+                        scope.launch(Dispatchers.IO) {
+                            writeFile(currentFileTarget, selectedBoost)
+                            val newBoost = readFile(ADRENO_BOOST_PATH)
+                            withContext(Dispatchers.Main) {
+                                showAdrenoBoostDialog = false
+                                adrenoBoost = newBoost
                             }
                         }
                     }
@@ -651,6 +710,52 @@ private fun GovDialog(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+fun AdrenoBoostDialog(
+    currentBoost: String,
+    onDismiss: () -> Unit,
+    onSelected: (String) -> Unit
+) {
+    val boostOptions = listOf("0" to "Off", "1" to "Low", "2" to "Medium", "3" to "High")
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 8.dp,
+        title = {
+            Text(
+                text = stringResource(R.string.adreno_boost),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                boostOptions.forEach { (value, label) ->
+                    TextButton(
+                        onClick = { onSelected(value) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = label,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = if (value == currentBoost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
             }

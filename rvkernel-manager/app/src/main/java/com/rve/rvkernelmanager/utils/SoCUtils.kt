@@ -22,6 +22,7 @@ const val MAX_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
 const val AVAILABLE_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
 const val GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
 const val AVAILABLE_GOV_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
+const val ADRENO_BOOST_PATH = "/sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost"
 
 fun readFreqCPU(filePath: String): String {
     return try {
