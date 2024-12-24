@@ -365,8 +365,9 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var availableGovGPU by remember { mutableStateOf(listOf<String>()) }
     var showAvailableFreqGPU by remember { mutableStateOf(false) }
     var showAvailableGovGPU by remember { mutableStateOf(false) }
-    var showAdrenoBoostDialog by remember { mutableStateOf(false) }
+    var showAdrenoBoost by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
+    val hasAdrenoBoost = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -383,6 +384,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             availableGovGPU = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
             availableFreqGPU = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
             adrenoBoost = readFile(ADRENO_BOOST_PATH)
+            hasAdrenoBoost.value = testFile(ADRENO_BOOST_PATH)
         }
     }
 
@@ -397,6 +399,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     val newAvailableGov = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
                     val newAvailableFreq = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
                     val newAdrenoBoost = readFile(ADRENO_BOOST_PATH)
+                    val isAdrenoBoostExists = testFile(ADRENO_BOOST_PATH)
                     
                     withContext(Dispatchers.Main) {
                         minFreqGPU = newMinFreq
@@ -405,6 +408,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         availableGovGPU = newAvailableGov
                         availableFreqGPU = newAvailableFreq
                         adrenoBoost = newAdrenoBoost
+                        hasAdrenoBoost.value = isAdrenoBoostExists
                     }
                 }
             }
@@ -449,7 +453,6 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     showAvailableFreqGPU = true
                 }
             )
-            
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
@@ -460,7 +463,6 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     showAvailableFreqGPU = true
                 }
             )
-            
             Spacer(Modifier.height(4.dp))
 
             GovRow(
@@ -471,31 +473,32 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                 }
             )
 
+            if (hasAdrenoBoost.value) {
             Spacer(Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.adreno_boost),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.weight(1f)
-                )
-                ElevatedButton(
-                    onClick = {
-                        currentFileTarget = ADRENO_BOOST_PATH
-                        showAdrenoBoostDialog = true
-                    },
-                    colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = adrenoBoostText,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        text = stringResource(R.string.adreno_boost),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.weight(1f)
                     )
+                    ElevatedButton(
+                        onClick = {
+                            currentFileTarget = ADRENO_BOOST_PATH
+                            showAdrenoBoost = true
+                        },
+                        colors = ButtonDefaults.elevatedButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text(
+                            text = adrenoBoostText,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
 
@@ -535,17 +538,17 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                 )
             }
 
-            if (showAdrenoBoostDialog) {
+            if (showAdrenoBoost) {
                 AdrenoBoostDialog(
                     currentBoost = adrenoBoost,
-                    onDismiss = { showAdrenoBoostDialog = false },
+                    onDismiss = { showAdrenoBoost = false },
                     onSelected = { selectedBoost ->
                         scope.launch(Dispatchers.IO) {
                             writeFile(currentFileTarget, selectedBoost)
-                            val newBoost = readFile(ADRENO_BOOST_PATH)
+                            val newAdrenoBoost = readFile(ADRENO_BOOST_PATH)
                             withContext(Dispatchers.Main) {
-                                showAdrenoBoostDialog = false
-                                adrenoBoost = newBoost
+                                showAdrenoBoost = false
+                                adrenoBoost = newAdrenoBoost
                             }
                         }
                     }
