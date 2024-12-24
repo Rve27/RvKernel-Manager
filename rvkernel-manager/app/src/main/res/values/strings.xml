@@ -13,6 +13,7 @@
     <!-- GPU -->
     <string name="gpu">GPU</string>
     <string name="adreno_boost">Adreno Boost</string>
+    <string name="gpu_throttling">GPU Throttling</string>
 
     <!-- Charging -->
     <string name="charging_title">Charging</string>

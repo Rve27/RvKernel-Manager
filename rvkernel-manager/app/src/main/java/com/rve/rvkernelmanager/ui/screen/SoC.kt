@@ -361,6 +361,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var maxFreqGPU by remember { mutableStateOf("0") }
     var govGPU by remember { mutableStateOf("loading") }
     var adrenoBoost by remember { mutableStateOf("loading") }
+    var gpuThrottling by remember { mutableStateOf("0") }
     var availableFreqGPU by remember { mutableStateOf(listOf<String>()) }
     var availableGovGPU by remember { mutableStateOf(listOf<String>()) }
     var showAvailableFreqGPU by remember { mutableStateOf(false) }
@@ -377,6 +378,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             setPermissions(644, AVAILABLE_GOV_GPU_PATH)
             setPermissions(644, GOV_GPU_PATH)
             setPermissions(644, ADRENO_BOOST_PATH)
+            setPermissions(644, GPU_THROTTLING_PATH)
             
             minFreqGPU = readFile(MIN_FREQ_GPU_PATH)
             maxFreqGPU = readFile(MAX_FREQ_GPU_PATH)
@@ -384,6 +386,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             availableGovGPU = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
             availableFreqGPU = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
             adrenoBoost = readFile(ADRENO_BOOST_PATH)
+            gpuThrottling = readFile(GPU_THROTTLING_PATH)
             hasAdrenoBoost.value = testFile(ADRENO_BOOST_PATH)
         }
     }
@@ -399,6 +402,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                     val newAvailableGov = readAvailableGovGPU(AVAILABLE_GOV_GPU_PATH)
                     val newAvailableFreq = readAvailableFreqGPU(AVAILABLE_FREQ_GPU_PATH)
                     val newAdrenoBoost = readFile(ADRENO_BOOST_PATH)
+                    val newGPUThrottling = readFile(GPU_THROTTLING_PATH)
                     val isAdrenoBoostExists = testFile(ADRENO_BOOST_PATH)
                     
                     withContext(Dispatchers.Main) {
@@ -408,6 +412,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         availableGovGPU = newAvailableGov
                         availableFreqGPU = newAvailableFreq
                         adrenoBoost = newAdrenoBoost
+                        gpuThrottling = newGPUThrottling
                         hasAdrenoBoost.value = isAdrenoBoostExists
                     }
                 }
@@ -426,6 +431,8 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
         "3" -> "High"
         else -> "Unknown"
     }
+
+    val gpuThrottlingStatus = gpuThrottling == "1"
 
     ElevatedCard(
         shape = CardDefaults.shape,
@@ -474,7 +481,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             )
 
             if (hasAdrenoBoost.value) {
-            Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -500,6 +507,29 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         )
                     }
                 }
+            }
+
+            Spacer(Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.gpu_throttling),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = gpuThrottlingStatus,
+                    onCheckedChange = { isChecked ->
+                        scope.launch(Dispatchers.IO) {
+                            val newValue = if (isChecked) "1" else "0"
+                            writeFile(GPU_THROTTLING_PATH, newValue)
+                            gpuThrottling = readFile(GPU_THROTTLING_PATH)
+                        }
+                    }
+                )
             }
 
             if (showAvailableFreqGPU) {
