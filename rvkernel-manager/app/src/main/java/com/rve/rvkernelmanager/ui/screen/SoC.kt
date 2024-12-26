@@ -123,6 +123,7 @@ private fun GovRow(
 @Composable
 private fun FreqDialog(
     frequencies: List<String>,
+    currentFreq: String,
     onDismiss: () -> Unit,
     onSelected: (String) -> Unit,
 ) {
@@ -158,7 +159,7 @@ private fun FreqDialog(
                             Text(
                                 text = "$freq MHz",
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary
+                                color = if (freq == currentFreq) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -176,6 +177,7 @@ private fun FreqDialog(
 @Composable
 private fun GovDialog(
     governors: List<String>,
+    currentGov: String,
     onDismiss: () -> Unit,
     onSelected: (String) -> Unit
 ) {
@@ -211,7 +213,7 @@ private fun GovDialog(
                             Text(
                                 text = gov,
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary
+                                color = if (gov == currentGov) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -337,6 +339,7 @@ fun SoCBaseCard(
             if (showFreqDialog) {
                 FreqDialog(
                     frequencies = availableFreq,
+                    currentFreq = if (currentFileTarget == "min") minFreq else maxFreq,
                     onDismiss = { showFreqDialog = false },
                     onSelected = { selectedFreq ->
                         onFreqSelected(currentFileTarget, selectedFreq)
@@ -348,6 +351,7 @@ fun SoCBaseCard(
             if (showGovDialog) {
                 GovDialog(
                     governors = availableGov,
+                    currentGov = gov,
                     onDismiss = { showGovDialog = false },
                     onSelected = { selectedGov ->
                         onGovSelected(selectedGov)
@@ -712,6 +716,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             if (showAvailableFreqGPU) {
                 FreqDialog(
                     frequencies = availableFreqGPU,
+                    currentFreq = if (currentFileTarget == MIN_FREQ_GPU_PATH) minFreqGPU else maxFreqGPU,
                     onDismiss = { showAvailableFreqGPU = false },
                     onSelected = { selectedFreq ->
                         scope.launch(Dispatchers.IO) {
@@ -731,6 +736,7 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             if (showAvailableGovGPU) {
                 GovDialog(
                     governors = availableGovGPU,
+                    currentGov = govGPU,
                     onDismiss = { showAvailableGovGPU = false },
                     onSelected = { selectedGov ->
                         scope.launch(Dispatchers.IO) {
