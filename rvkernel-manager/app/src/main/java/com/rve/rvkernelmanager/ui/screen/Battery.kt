@@ -43,6 +43,7 @@ import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.testFile
 import com.rve.rvkernelmanager.utils.readFile
 import com.rve.rvkernelmanager.utils.writeFile
+import com.rve.rvkernelmanager.utils.ENABLE_CHARGING_PATH
 import com.rve.rvkernelmanager.utils.FAST_CHARGING_PATH
 import com.rve.rvkernelmanager.utils.THERMAL_CHARGING_PATH
 import com.rve.rvkernelmanager.R
@@ -81,6 +82,8 @@ fun BatteryScreen() {
 @Composable
 fun ChargingCard() {
     val lifecycleOwner = LocalLifecycleOwner.current
+    var isEnableChargingChecked by remember { mutableStateOf(readFile(ENABLE_CHARGING_PATH) == "1") }
+    var hasEnableCharging by remember { mutableStateOf(testFile(ENABLE_CHARGING_PATH)) }
     var isFastChargingChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
     var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
     var isThermalChargingChecked by remember { mutableStateOf(readFile(THERMAL_CHARGING_PATH) == "0") }
@@ -89,6 +92,8 @@ fun ChargingCard() {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
+                hasEnableCharging = testFile(ENABLE_CHARGING_PATH)
+                isEnableChargingChecked = readFile(ENABLE_CHARGING_PATH) == "1"
                 hasFastCharging = testFile(FAST_CHARGING_PATH)
                 isFastChargingChecked = readFile(FAST_CHARGING_PATH) == "1"
                 hasThermalCharging = testFile(THERMAL_CHARGING_PATH)
@@ -117,6 +122,30 @@ fun ChargingCard() {
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(Modifier.height(4.dp))
+
+            if (hasEnableCharging) {
+                Row(
+                   modifier = Modifier.fillMaxWidth(),
+                   verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.enable_charging),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        modifier = Modifier.semantics { contentDescription = "Enable Charging" },
+                        checked = isEnableChargingChecked,
+                        onCheckedChange = { checked ->
+                            val success = writeFile(ENABLE_CHARGING_PATH, if (checked) "1" else "0")
+                            if (success) {
+                                isEnableChargingChecked = checked
+                            }
+                        }
+                    )
+                }
+            }
 
             if (hasFastCharging) {
                 Row(

@@ -17,6 +17,7 @@
 
     <!-- Charging -->
     <string name="charging_title">Charging</string>
+    <string name="enable_charging">Enable Charging</string>
     <string name="fast_charging">Fast charging</string>
     <string name="thermal_charging">Thermal Charging</string>
 
