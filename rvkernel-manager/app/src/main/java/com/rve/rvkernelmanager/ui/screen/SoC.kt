@@ -62,15 +62,310 @@ fun SoCScreen() {
 }
 
 @Composable
-fun LittleClusterCard(scope: CoroutineScope) {
+private fun FreqRow(
+    label: String,
+    value: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ElevatedButton(
+            onClick = onClick,
+            colors = ButtonDefaults.elevatedButtonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Text(
+                text = if (value.isEmpty()) "error" else "$value MHz",
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
+@Composable
+private fun GovRow(
+    value: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.gov),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        ElevatedButton(
+            onClick = onClick,
+            colors = ButtonDefaults.elevatedButtonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            Text(
+                text = if (value.trim().isEmpty()) "error" else value,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
+@Composable
+private fun FreqDialog(
+    frequencies: List<String>,
+    onDismiss: () -> Unit,
+    onSelected: (String) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 8.dp,
+        title = {
+            Text(
+                "Available frequencies",
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                if (frequencies.isEmpty()) {
+                    Text(
+                        text = "Failed to read available frequencies",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    frequencies.forEach { freq ->
+                        TextButton(
+                            onClick = { onSelected(freq) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "$freq MHz",
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+private fun GovDialog(
+    governors: List<String>,
+    onDismiss: () -> Unit,
+    onSelected: (String) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 8.dp,
+        title = {
+            Text(
+                "Available governors",
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                if (governors.isEmpty()) {
+                    Text(
+                        text = "Failed to read available governors",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    governors.forEach { gov ->
+                        TextButton(
+                            onClick = { onSelected(gov) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = gov,
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+fun AdrenoBoostDialog(
+    currentBoost: String,
+    onDismiss: () -> Unit,
+    onSelected: (String) -> Unit
+) {
+    val boostOptions = listOf("0" to "Off", "1" to "Low", "2" to "Medium", "3" to "High")
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        tonalElevation = 8.dp,
+        title = {
+            Text(
+                text = stringResource(R.string.adreno_boost),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                boostOptions.forEach { (value, label) ->
+                    TextButton(
+                        onClick = { onSelected(value) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = label,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = if (value == currentBoost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+@Composable
+fun SoCBaseCard(
+    title: String,
+    minFreq: String,
+    maxFreq: String,
+    gov: String,
+    availableFreq: List<String>,
+    availableGov: List<String>,
+    onFreqSelected: (String, String) -> Unit,
+    onGovSelected: (String) -> Unit
+) {
+    var showFreqDialog by remember { mutableStateOf(false) }
+    var showGovDialog by remember { mutableStateOf(false) }
+    var currentFileTarget by remember { mutableStateOf("") }
+
+    ElevatedCard(
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.min_freq),
+                value = minFreq,
+                onClick = {
+                    currentFileTarget = "min"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.max_freq),
+                value = maxFreq,
+                onClick = {
+                    currentFileTarget = "max"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            GovRow(
+                value = gov,
+                onClick = {
+                    showGovDialog = true
+                }
+            )
+
+            if (showFreqDialog) {
+                FreqDialog(
+                    frequencies = availableFreq,
+                    onDismiss = { showFreqDialog = false },
+                    onSelected = { selectedFreq ->
+                        onFreqSelected(currentFileTarget, selectedFreq)
+                        showFreqDialog = false
+                    }
+                )
+            }
+
+            if (showGovDialog) {
+                GovDialog(
+                    governors = availableGov,
+                    onDismiss = { showGovDialog = false },
+                    onSelected = { selectedGov ->
+                        onGovSelected(selectedGov)
+                        showGovDialog = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LittleClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var minFreqCPU0 by remember { mutableStateOf("0") }
     var maxFreqCPU0 by remember { mutableStateOf("0") }
     var govCPU0 by remember { mutableStateOf("loading") }
     var availableFreqCPU0 by remember { mutableStateOf(listOf<String>()) }
     var availableGovCPU0 by remember { mutableStateOf(listOf<String>()) }
-    var showAvailableFreqCPU0 by remember { mutableStateOf(false) }
-    var showAvailableGovCPU0 by remember { mutableStateOf(false) }
-    var currentFileTarget by remember { mutableStateOf("") }
     val hasBigCluster = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -117,94 +412,33 @@ fun LittleClusterCard(scope: CoroutineScope) {
         }
     }
 
-    ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = if (hasBigCluster.value) {
-                    stringResource(R.string.little_cluster)
-                } else stringResource(R.string.cpu),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.min_freq),
-                value = minFreqCPU0,
-                onClick = {
-                    currentFileTarget = MIN_FREQ_CPU0_PATH
-                    showAvailableFreqCPU0 = true
+    SoCBaseCard(
+        title = if (hasBigCluster.value) stringResource(R.string.little_cluster) 
+                else stringResource(R.string.cpu),
+        minFreq = minFreqCPU0,
+        maxFreq = maxFreqCPU0,
+        gov = govCPU0,
+        availableFreq = availableFreqCPU0,
+        availableGov = availableGovCPU0,
+        onFreqSelected = { target, selectedFreq ->
+            scope.launch(Dispatchers.IO) {
+                val path = when (target) {
+                    "min" -> MIN_FREQ_CPU0_PATH
+                    "max" -> MAX_FREQ_CPU0_PATH
+                    else -> return@launch
                 }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.max_freq),
-                value = maxFreqCPU0,
-                onClick = {
-                    currentFileTarget = MAX_FREQ_CPU0_PATH
-                    showAvailableFreqCPU0 = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            GovRow(
-                value = govCPU0,
-                onClick = {
-                    currentFileTarget = GOV_CPU0_PATH
-                    showAvailableGovCPU0 = true
-                }
-            )
-
-            if (showAvailableFreqCPU0) {
-                FreqDialog(
-                    frequencies = availableFreqCPU0,
-                    onDismiss = { showAvailableFreqCPU0 = false },
-                    onSelected = { selectedFreq ->
-                        scope.launch(Dispatchers.IO) {
-                            writeFreqCPU(currentFileTarget, selectedFreq)
-                            val newMinFreq = readFreqCPU(MIN_FREQ_CPU0_PATH)
-                            val newMaxFreq = readFreqCPU(MAX_FREQ_CPU0_PATH)
-                            withContext(Dispatchers.Main) {
-                                showAvailableFreqCPU0 = false
-                                minFreqCPU0 = newMinFreq
-                                maxFreqCPU0 = newMaxFreq
-                            }
-                        }
-                    },
-                    isClusterCard = true
-                )
+                writeFreqCPU(path, selectedFreq)
+                minFreqCPU0 = readFreqCPU(MIN_FREQ_CPU0_PATH)
+                maxFreqCPU0 = readFreqCPU(MAX_FREQ_CPU0_PATH)
             }
-
-            if (showAvailableGovCPU0) {
-                GovDialog(
-                    governors = availableGovCPU0,
-                    onDismiss = { showAvailableGovCPU0 = false },
-                    onSelected = { selectedGov ->
-                        scope.launch(Dispatchers.IO) {
-                            writeFile(currentFileTarget, selectedGov)
-                            val newGov = readFile(GOV_CPU0_PATH)
-                            withContext(Dispatchers.Main) {
-                                showAvailableGovCPU0 = false
-                                govCPU0 = newGov
-                            }
-                        }
-                    }
-                )
+        },
+        onGovSelected = { selectedGov ->
+            scope.launch(Dispatchers.IO) {
+                writeFile(GOV_CPU0_PATH, selectedGov)
+                govCPU0 = readFile(GOV_CPU0_PATH)
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -214,9 +448,6 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
     var govCPU4 by remember { mutableStateOf("loading") }
     var availableFreqCPU4 by remember { mutableStateOf(listOf<String>()) }
     var availableGovCPU4 by remember { mutableStateOf(listOf<String>()) }
-    var showAvailableFreqCPU4 by remember { mutableStateOf(false) }
-    var showAvailableGovCPU4 by remember { mutableStateOf(false) }
-    var currentFileTarget by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -225,7 +456,7 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
             setPermissions(644, MAX_FREQ_CPU4_PATH)
             setPermissions(644, AVAILABLE_GOV_CPU4_PATH)
             setPermissions(644, GOV_CPU4_PATH)
-            
+
             minFreqCPU4 = readFreqCPU(MIN_FREQ_CPU4_PATH)
             maxFreqCPU4 = readFreqCPU(MAX_FREQ_CPU4_PATH)
             govCPU4 = readFile(GOV_CPU4_PATH)
@@ -267,92 +498,32 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
         }
     }
 
-    ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.big_cluster),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.min_freq),
-                value = minFreqCPU4,
-                onClick = {
-                    currentFileTarget = MIN_FREQ_CPU4_PATH
-                    showAvailableFreqCPU4 = true
+    SoCBaseCard(
+        title = stringResource(R.string.big_cluster),
+        minFreq = minFreqCPU4,
+        maxFreq = maxFreqCPU4,
+        gov = govCPU4,
+        availableFreq = availableFreqCPU4,
+        availableGov = availableGovCPU4,
+        onFreqSelected = { target, selectedFreq ->
+            scope.launch(Dispatchers.IO) {
+                val path = when (target) {
+                    "min" -> MIN_FREQ_CPU4_PATH
+                    "max" -> MAX_FREQ_CPU4_PATH
+                    else -> return@launch
                 }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.max_freq),
-                value = maxFreqCPU4,
-                onClick = {
-                    currentFileTarget = MAX_FREQ_CPU4_PATH
-                    showAvailableFreqCPU4 = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            GovRow(
-                value = govCPU4,
-                onClick = {
-                    currentFileTarget = GOV_CPU4_PATH
-                    showAvailableGovCPU4 = true
-                }
-            )
-
-            if (showAvailableFreqCPU4) {
-                FreqDialog(
-                    frequencies = availableFreqCPU4,
-                    onDismiss = { showAvailableFreqCPU4 = false },
-                    onSelected = { selectedFreq ->
-                        scope.launch(Dispatchers.IO) {
-                            writeFreqCPU(currentFileTarget, selectedFreq)
-                            val newMinFreq = readFreqCPU(MIN_FREQ_CPU4_PATH)
-                            val newMaxFreq = readFreqCPU(MAX_FREQ_CPU4_PATH)
-                            withContext(Dispatchers.Main) {
-                                showAvailableFreqCPU4 = false
-                                minFreqCPU4 = newMinFreq
-                                maxFreqCPU4 = newMaxFreq
-                            }
-                        }
-                    },
-                    isClusterCard = true
-                )
+                writeFreqCPU(path, selectedFreq)
+                minFreqCPU4 = readFreqCPU(MIN_FREQ_CPU4_PATH)
+                maxFreqCPU4 = readFreqCPU(MAX_FREQ_CPU4_PATH)
             }
-
-            if (showAvailableGovCPU4) {
-                GovDialog(
-                    governors = availableGovCPU4,
-                    onDismiss = { showAvailableGovCPU4 = false },
-                    onSelected = { selectedGov ->
-                        scope.launch(Dispatchers.IO) {
-                            writeFile(currentFileTarget, selectedGov)
-                            val newGov = readFile(GOV_CPU4_PATH)
-                            withContext(Dispatchers.Main) {
-                                showAvailableGovCPU4 = false
-                                govCPU4 = newGov
-                            }
-                        }
-                    }
-                )
+        },
+        onGovSelected = { selectedGov ->
+            scope.launch(Dispatchers.IO) {
+                writeFile(GOV_CPU4_PATH, selectedGov)
+                govCPU4 = readFile(GOV_CPU4_PATH)
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -592,217 +763,4 @@ fun GPUCard(scope: CoroutineScope = rememberCoroutineScope()) {
             }
         }
     }
-}
-
-@Composable
-private fun FreqRow(
-    label: String,
-    value: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.weight(1f)
-        )
-        ElevatedButton(
-            onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                text = if (value.isEmpty()) "error" else "$value MHz",
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
-
-@Composable
-private fun GovRow(
-    value: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(R.string.gov),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.weight(1f)
-        )
-        ElevatedButton(
-            onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                text = if (value.trim().isEmpty()) "error" else value,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
-
-@Composable
-private fun FreqDialog(
-    frequencies: List<String>,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit,
-    isClusterCard: Boolean = false
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
-        tonalElevation = 8.dp,
-        title = {
-            Text(
-                "Available frequencies",
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .then(if (isClusterCard) Modifier.fillMaxHeight(0.8f) else Modifier)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (frequencies.isEmpty()) {
-                    Text(
-                        text = "Failed to read available frequencies",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    frequencies.forEach { freq ->
-                        TextButton(
-                            onClick = { onSelected(freq) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "$freq MHz",
-                                modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
-}
-
-@Composable
-private fun GovDialog(
-    governors: List<String>,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
-        tonalElevation = 8.dp,
-        title = {
-            Text(
-                "Available governors",
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (governors.isEmpty()) {
-                    Text(
-                        text = "Failed to read available governors",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    governors.forEach { gov ->
-                        TextButton(
-                            onClick = { onSelected(gov) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = gov,
-                                modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
-}
-
-@Composable
-fun AdrenoBoostDialog(
-    currentBoost: String,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit
-) {
-    val boostOptions = listOf("0" to "Off", "1" to "Low", "2" to "Medium", "3" to "High")
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
-        tonalElevation = 8.dp,
-        title = {
-            Text(
-                text = stringResource(R.string.adreno_boost),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                boostOptions.forEach { (value, label) ->
-                    TextButton(
-                        onClick = { onSelected(value) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = label,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = if (value == currentBoost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
 }
