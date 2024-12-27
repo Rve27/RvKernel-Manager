@@ -25,6 +25,7 @@ import com.rve.rvkernelmanager.ui.navigation.BottomNavigationActions
 import com.rve.rvkernelmanager.ui.screen.HomeScreen
 import com.rve.rvkernelmanager.ui.screen.SoCScreen
 import com.rve.rvkernelmanager.ui.screen.BatteryScreen
+import com.rve.rvkernelmanager.ui.screen.WIPScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.rve.rvkernelmanager.utils.NoRootDialog
 import com.rve.rvkernelmanager.utils.isRooted
@@ -118,6 +119,9 @@ private fun RvKernelManagerNavHost(
 	composable<Route.SoC> {
 	    SoCScreen()
 	}
+        composable<Route.Misc> {
+            WIPScreen()
+        }
     }
 }
 
