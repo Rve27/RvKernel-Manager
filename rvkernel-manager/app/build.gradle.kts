@@ -39,7 +39,7 @@ android {
             useSupportLibrary = true
         }
 
-	ndk {
+        ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
     }
@@ -52,9 +52,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-	    isShrinkResources = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-	    signingConfig = signingConfigs["release"]
+            signingConfig = signingConfigs["release"]
         }
     }
 
@@ -71,17 +71,15 @@ android {
     }
 
     packaging {
-	jniLibs {
+        jniLibs {
             useLegacyPackaging = true
         }
 
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-    }
 
-    packagingOptions {
-	    resources.excludes += "DebugProbesKt.bin"
+        resources.excludes += "DebugProbesKt.bin"
     }
 }
 
