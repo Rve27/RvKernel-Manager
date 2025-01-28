@@ -17,6 +17,13 @@ const val AVAILABLE_BOOST_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/s
 const val GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
 const val AVAILABLE_GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_governors"
 
+const val MIN_FREQ_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
+const val MAX_FREQ_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
+const val AVAILABLE_FREQ_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_frequencies"
+const val AVAILABLE_BOOST_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_boost_frequencies"
+const val GOV_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
+const val AVAILABLE_GOV_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
+
 const val MIN_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
 const val MAX_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
 const val AVAILABLE_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"

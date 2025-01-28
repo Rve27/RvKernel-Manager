@@ -27,10 +27,12 @@ fun SoCScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val scope = rememberCoroutineScope()
     val hasBigCluster = remember { mutableStateOf(false) }
+    val hasPrimeCluster = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             hasBigCluster.value = testFile(AVAILABLE_FREQ_CPU4_PATH)
+	    hasPrimeCluster.value = testFile(AVAILABLE_FREQ_CPU7_PATH)
         }
     }
 
@@ -54,6 +56,9 @@ fun SoCScreen() {
             LittleClusterCard(scope)
             if (hasBigCluster.value) {
                 BigClusterCard(scope)
+            }
+	    if (hasPrimeCluster.value) {
+                PrimeClusterCard(scope)
             }
             GPUCard(scope)
             Spacer(Modifier)
@@ -525,6 +530,91 @@ fun BigClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
             scope.launch(Dispatchers.IO) {
                 writeFile(GOV_CPU4_PATH, selectedGov)
                 govCPU4 = readFile(GOV_CPU4_PATH)
+            }
+        }
+    )
+}
+
+@Composable
+fun PrimeClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
+    var minFreqCPU7 by remember { mutableStateOf("0") }
+    var maxFreqCPU7 by remember { mutableStateOf("0") }
+    var govCPU7 by remember { mutableStateOf("loading") }
+    var availableFreqCPU7 by remember { mutableStateOf(listOf<String>()) }
+    var availableGovCPU7 by remember { mutableStateOf(listOf<String>()) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            setPermissions(644, AVAILABLE_FREQ_CPU7_PATH)
+            setPermissions(644, MIN_FREQ_CPU7_PATH)
+            setPermissions(644, MAX_FREQ_CPU7_PATH)
+            setPermissions(644, AVAILABLE_GOV_CPU7_PATH)
+            setPermissions(644, GOV_CPU7_PATH)
+
+            minFreqCPU7 = readFreqCPU(MIN_FREQ_CPU7_PATH)
+            maxFreqCPU7 = readFreqCPU(MAX_FREQ_CPU7_PATH)
+            govCPU7 = readFile(GOV_CPU7_PATH)
+            availableGovCPU7 = readAvailableGovCPU(AVAILABLE_GOV_CPU7_PATH)
+            availableFreqCPU7 = readAvailableFreqBoost(
+                AVAILABLE_FREQ_CPU7_PATH,
+                AVAILABLE_BOOST_CPU7_PATH
+            )
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch(Dispatchers.IO) {
+                    val newMinFreq = readFreqCPU(MIN_FREQ_CPU7_PATH)
+                    val newMaxFreq = readFreqCPU(MAX_FREQ_CPU7_PATH)
+                    val newGov = readFile(GOV_CPU7_PATH)
+                    val newAvailableGov = readAvailableGovCPU(AVAILABLE_GOV_CPU7_PATH)
+                    val newAvailableFreq = readAvailableFreqBoost(
+                        AVAILABLE_FREQ_CPU7_PATH,
+                        AVAILABLE_BOOST_CPU7_PATH
+                    )
+                    
+                    withContext(Dispatchers.Main) {
+                        minFreqCPU7 = newMinFreq
+                        maxFreqCPU7 = newMaxFreq
+                        govCPU7 = newGov
+                        availableGovCPU7 = newAvailableGov
+                        availableFreqCPU7 = newAvailableFreq
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    SoCBaseCard(
+        title = stringResource(R.string.prime_cluster),
+        minFreq = minFreqCPU7,
+        maxFreq = maxFreqCPU7,
+        gov = govCPU7,
+        availableFreq = availableFreqCPU7,
+        availableGov = availableGovCPU7,
+        onFreqSelected = { target, selectedFreq ->
+            scope.launch(Dispatchers.IO) {
+                val path = when (target) {
+                    "min" -> MIN_FREQ_CPU7_PATH
+                    "max" -> MAX_FREQ_CPU7_PATH
+                    else -> return@launch
+                }
+                writeFreqCPU(path, selectedFreq)
+                minFreqCPU7 = readFreqCPU(MIN_FREQ_CPU7_PATH)
+                maxFreqCPU7 = readFreqCPU(MAX_FREQ_CPU7_PATH)
+            }
+        },
+        onGovSelected = { selectedGov ->
+            scope.launch(Dispatchers.IO) {
+                writeFile(GOV_CPU7_PATH, selectedGov)
+                govCPU7 = readFile(GOV_CPU7_PATH)
             }
         }
     )
