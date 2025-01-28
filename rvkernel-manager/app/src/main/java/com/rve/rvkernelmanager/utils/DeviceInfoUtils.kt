@@ -102,15 +102,15 @@ fun getSystemProperty(key: String, defaultValue: String): String {
 }
 
 fun getRvOSVersion(): String? {
-    val majorVersion = getSystemProperty("ro.rvos.version.major", "")
-    val minorVersion = getSystemProperty("ro.rvos.version.minor", "")
+    val rvosVersion = getSystemProperty("ro.rvos.version", "")
+    val rvosBuildType = getSystemProperty("ro.rvos.build.type", "")
     
-    return if (majorVersion.isNotEmpty() || minorVersion.isNotEmpty()) {
+    return if (rvosVersion.isNotEmpty() || rvosBuildType.isNotEmpty()) {
         buildString {
-            append(majorVersion)
-            if (minorVersion.isNotEmpty()) {
+            append(rvosVersion)
+            if (rvosBuildType.isNotEmpty()) {
                 append(" ")
-                append(minorVersion)
+                append(rvosBuildType)
             }
         }
     } else null
