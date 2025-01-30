@@ -49,36 +49,6 @@ fun getCPUInfo(): String {
     }
 }
 
-fun getGPUModel(): String {
-    return try {
-        val result = Shell.cmd("dumpsys SurfaceFlinger | grep GLES | head -n 1 | cut -f 2 -d ','").exec()
-        if (result.isSuccess) {
-            result.out.firstOrNull()?.trim() ?: "Unknown GPU"
-        } else {
-            Log.e("getGPUVersion", "Command execution failed: ${result.err}")
-            "Command execution failed"
-        }
-    } catch (e: Exception) {
-        Log.e("getGPUVersion", "Exception during command execution", e)
-        "Exception during command execution"
-    }
-}
-
-fun getGLESVersion(): String {
-    return try {
-        val result = Shell.cmd("dumpsys SurfaceFlinger | grep GLES | head -n 1 | cut -f 2,3,4,5 -d ','").exec()
-        if (result.isSuccess) {
-            result.out.firstOrNull()?.trim() ?: "Unknown GPU"
-        } else {
-            Log.e("getGLESVersion", "Command execution failed: ${result.err}")
-            "Command execution failed"
-        }
-    } catch (e: Exception) {
-        Log.e("getGLESVersion", "Exception during command execution", e)
-        "Exception during command execution"
-    }
-}
-
 fun getTotalRam(context: Context): String {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val memoryInfo = ActivityManager.MemoryInfo()
