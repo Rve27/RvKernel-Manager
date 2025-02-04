@@ -628,7 +628,6 @@ fun MiscCard(scope: CoroutineScope = rememberCoroutineScope()) {
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            setPermissions(644, THERMAL_SCONFIG_PATH)
             thermalSconfig = readFile(THERMAL_SCONFIG_PATH)
             hasThermalSconfig.value = testFile(THERMAL_SCONFIG_PATH)
         }
@@ -688,10 +687,10 @@ fun MiscCard(scope: CoroutineScope = rememberCoroutineScope()) {
                         checked = thermalSconfigStatus,
                         onCheckedChange = { isChecked ->
                             scope.launch(Dispatchers.IO) {
-                                setPermissions(644, THERMAL_SCONFIG_PATH)  // Set to 644 before writing
+                                setPermissions(644, THERMAL_SCONFIG_PATH)
                                 val newValue = if (isChecked) "10" else "0"
                                 writeFile(THERMAL_SCONFIG_PATH, newValue)
-                                setPermissions(444, THERMAL_SCONFIG_PATH)  // Set to 444 after writing
+                                setPermissions(444, THERMAL_SCONFIG_PATH)
                                 thermalSconfig = readFile(THERMAL_SCONFIG_PATH)
                             }
                         }
