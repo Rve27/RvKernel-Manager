@@ -82,7 +82,7 @@ fun getRvOSVersion(): String? {
 }
 
 fun getSomethingOSVersion(): String? {
-    val somethingVersion = getSystemProperty("ro.something.version")
+    val somethingVersion = getSystemProperty("ro.somethingos.version")
     return if (somethingVersion.isNotEmpty()) somethingVersion else null
 }
 
