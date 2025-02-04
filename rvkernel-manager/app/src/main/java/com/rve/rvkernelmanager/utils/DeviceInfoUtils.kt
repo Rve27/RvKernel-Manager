@@ -77,13 +77,7 @@ fun getRvOSVersion(): String? {
     val rvosBuildType = getSystemProperty("ro.rvos.build.type")
     
     return if (rvosVersion.isNotEmpty() || rvosBuildType.isNotEmpty()) {
-        buildString {
-            append(rvosVersion)
-            if (rvosBuildType.isNotEmpty()) {
-                append(" ")
-                append(rvosBuildType)
-            }
-        }
+        "$rvosVersion${if (rvosBuildType.isNotEmpty()) " $rvosBuildType" else ""}"
     } else null
 }
 
