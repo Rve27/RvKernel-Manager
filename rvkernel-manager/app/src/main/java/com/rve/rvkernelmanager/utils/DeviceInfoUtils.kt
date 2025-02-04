@@ -10,6 +10,7 @@ import com.topjohnwu.superuser.Shell
 
 const val FULL_KERNEL_VERSION_PATH = "/proc/version"
 const val CPU_INFO_PATH = "/proc/cpuinfo"
+const val GPU_MODEL_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_model"
 
 fun getDeviceCodename(): String {
     return Build.DEVICE
@@ -92,5 +93,20 @@ fun getKernelVersion(): String {
     } catch (e: Exception) {
         e.printStackTrace()
         "Unable to get kernel version"
+    }
+}
+
+fun getGPUModel(): String {
+    return try {
+        val result = Shell.cmd("cat $GPU_MODEL_PATH").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()?.trim()?.replace("Adreno", "Adreno (TM) ") ?: "Unknown"
+        } else {
+            Log.e("getFormattedGPUModel", "Command execution failed: ${result.err}")
+            "Unknown"
+        }
+    } catch (e: Exception) {
+        Log.e("getFormattedGPUModel", "Error reading GPU model: ${e.message}", e)
+        "Unknown"
     }
 }

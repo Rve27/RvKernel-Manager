@@ -43,16 +43,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.utils.getDeviceCodename
-import com.rve.rvkernelmanager.utils.getTotalRam
-import com.rve.rvkernelmanager.utils.getCPU
-import com.rve.rvkernelmanager.utils.getCPUInfo
-import com.rve.rvkernelmanager.utils.getAndroidVersion
-import com.rve.rvkernelmanager.utils.getRvOSVersion
-import com.rve.rvkernelmanager.utils.getKernelVersion
-import com.rve.rvkernelmanager.utils.setPermissions
-import com.rve.rvkernelmanager.utils.readFile
-import com.rve.rvkernelmanager.utils.FULL_KERNEL_VERSION_PATH
+import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +88,7 @@ fun DeviceInfoCard() {
 
     var getCPU by remember { mutableStateOf(getCPUOnly) }
     var isCPUInfo by remember { mutableStateOf(false) }
+    var gpuModel by remember {mutableStateOf(getGPUModel()) }
     var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
     var isFullKernelVersion by remember { mutableStateOf(false) }
 
@@ -157,6 +149,18 @@ fun DeviceInfoCard() {
                             isCPUInfo = !isCPUInfo
                         }
                         .animateContentSize()
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.gpu),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = gpuModel,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
