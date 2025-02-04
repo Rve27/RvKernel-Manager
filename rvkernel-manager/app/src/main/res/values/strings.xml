@@ -16,6 +16,10 @@
     <string name="adreno_boost">Adreno Boost</string>
     <string name="gpu_throttling">GPU Throttling</string>
 
+    <!-- Misc -->
+    <string name="misc_category">Misc</string>
+    <string name="unlock_cpu_freq">Unlock CPU Frequency</string>
+
     <!-- Charging -->
     <string name="charging_title">Charging</string>
     <string name="enable_charging">Enable Charging</string>

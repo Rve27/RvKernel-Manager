@@ -60,6 +60,7 @@ fun SoCScreen() {
 	    if (hasPrimeCluster.value) {
                 PrimeClusterCard(scope)
             }
+            MiscCard(scope)
             GPUCard(scope)
             Spacer(Modifier)
         }
@@ -618,6 +619,87 @@ fun PrimeClusterCard(scope: CoroutineScope = rememberCoroutineScope()) {
             }
         }
     )
+}
+
+@Composable
+fun MiscCard(scope: CoroutineScope = rememberCoroutineScope()) {
+    var thermalSconfig by remember { mutableStateOf("0") }
+    val hasThermalSconfig = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            setPermissions(644, THERMAL_SCONFIG_PATH)
+            thermalSconfig = readFile(THERMAL_SCONFIG_PATH)
+            hasThermalSconfig.value = testFile(THERMAL_SCONFIG_PATH)
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch(Dispatchers.IO) {
+                    val isThermalSconfigExists = testFile(THERMAL_SCONFIG_PATH)
+                    
+                    withContext(Dispatchers.Main) {
+                        hasThermalSconfig.value = isThermalSconfigExists
+                    }
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    val thermalSconfigStatus = thermalSconfig == "10"
+
+    ElevatedCard(
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.misc_category),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(Modifier.height(4.dp))
+
+            if (hasThermalSconfig.value) {
+                Spacer(Modifier.height(4.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.unlock_cpu_freq),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = thermalSconfigStatus,
+                        onCheckedChange = { isChecked ->
+                            scope.launch(Dispatchers.IO) {
+                                setPermissions(644, THERMAL_SCONFIG_PATH)  // Set to 644 before writing
+                                val newValue = if (isChecked) "10" else "0"
+                                writeFile(THERMAL_SCONFIG_PATH, newValue)
+                                setPermissions(444, THERMAL_SCONFIG_PATH)  // Set to 444 after writing
+                                thermalSconfig = readFile(THERMAL_SCONFIG_PATH)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
