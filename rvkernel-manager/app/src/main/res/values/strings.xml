@@ -35,6 +35,7 @@
     <string name="ram_info">RAM</string>
     <string name="android_version">Android Version</string>
     <string name="rvos_version">RvOS Version</string>
+    <string name="something_version">SomethingOS Version</string>
     <string name="kernel_version">Kernel Version</string>
 
     <!-- Donate -->

@@ -84,6 +84,7 @@ fun DeviceInfoCard() {
     val getCPUOnly = remember { getCPU() }
     val androidVersion = remember { getAndroidVersion() }
     val rvosVersion = remember { getRvOSVersion() }
+    val somethingVersion = remember {getSomethingOSVersion() }
     val defaultKernelVersion = remember { getKernelVersion() }
 
     var getCPU by remember { mutableStateOf(getCPUOnly) }
@@ -185,6 +186,21 @@ fun DeviceInfoCard() {
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = rvosVersion,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                somethingVersion?.let {
+                    Text(
+                        text = stringResource(R.string.something_version),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = somethingVersion,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )

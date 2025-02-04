@@ -81,6 +81,11 @@ fun getRvOSVersion(): String? {
     } else null
 }
 
+fun getSomethingOSVersion(): String? {
+    val somethingVersion = getSystemProperty("ro.something.version")
+    return if (somethingVersion.isNotEmpty()) somethingVersion else null
+}
+
 fun getKernelVersion(): String {
     return try {
         Os.uname().release
