@@ -61,20 +61,20 @@ fun getTotalRam(context: Context): String {
     return "$totalRam GB"
 }
 
-fun getSystemProperty(key: String, defaultValue: String): String {
+fun getSystemProperty(key: String): String {
     return try {
         val systemPropertiesClass = Class.forName("android.os.SystemProperties")
-        val getMethod = systemPropertiesClass.getMethod("get", String::class.java, String::class.java)
-        getMethod.invoke(null, key, defaultValue) as String
+        val getMethod = systemPropertiesClass.getMethod("get", String::class.java)
+        getMethod.invoke(null, key) as String
     } catch (e: Exception) {
         e.printStackTrace()
-        defaultValue
+        ""
     }
 }
 
 fun getRvOSVersion(): String? {
-    val rvosVersion = getSystemProperty("ro.rvos.version", "")
-    val rvosBuildType = getSystemProperty("ro.rvos.build.type", "")
+    val rvosVersion = getSystemProperty("ro.rvos.version")
+    val rvosBuildType = getSystemProperty("ro.rvos.build.type")
     
     return if (rvosVersion.isNotEmpty() || rvosBuildType.isNotEmpty()) {
         buildString {
