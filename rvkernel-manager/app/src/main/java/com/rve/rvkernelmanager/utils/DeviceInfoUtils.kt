@@ -100,13 +100,17 @@ fun getGPUModel(): String {
     return try {
         val result = Shell.cmd("cat $GPU_MODEL_PATH").exec()
         if (result.isSuccess) {
-            result.out.firstOrNull()?.trim()?.replace("Adreno", "Adreno (TM) ") ?: "Unknown"
+            val gpuModel = result.out.firstOrNull()?.trim() ?: "Unknown"
+            val formattedModel = gpuModel
+                .replace("Adreno", "Adreno (TM) ")
+                .replace(Regex("v\\d+"), "")
+            formattedModel
         } else {
-            Log.e("getFormattedGPUModel", "Command execution failed: ${result.err}")
+            Log.e("getGPUModel", "Command execution failed: ${result.err}")
             "Unknown"
         }
     } catch (e: Exception) {
-        Log.e("getFormattedGPUModel", "Error reading GPU model: ${e.message}", e)
+        Log.e("getGPUModel", "Error reading GPU model: ${e.message}", e)
         "Unknown"
     }
 }
