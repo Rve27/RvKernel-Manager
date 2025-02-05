@@ -51,6 +51,8 @@ import com.rve.rvkernelmanager.R
 @Composable
 fun BatteryScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val hasEnableCharging = testFile(ENABLE_CHARGING_PATH)
+    val hasFastCharging = testFile(FAST_CHARGING_PATH)
 
     Scaffold(
         topBar = {
@@ -69,8 +71,7 @@ fun BatteryScreen() {
                 .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
-            if (hasFastCharging) {
+            if (hasEnableCharging || hasFastCharging) {
                 ChargingCard()
             }
             Spacer(Modifier)
