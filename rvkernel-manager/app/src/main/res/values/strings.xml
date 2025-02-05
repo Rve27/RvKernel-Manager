@@ -28,7 +28,7 @@
 
     <!-- Top Bar -->
     <string name="repo_url">https://github.com/Rv-Trees/RvKernel-Manager-Kotlin</string>
-    <string name="telegram_url">https://t.me/rvegroup</string>
+    <string name="telegram_url">https://t.me/rvosuniverse</string>
 
     <!-- Device Info -->
     <string name="device_codename">Device Codename</string>
