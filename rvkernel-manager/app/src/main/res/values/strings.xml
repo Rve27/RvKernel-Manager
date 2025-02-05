@@ -27,7 +27,7 @@
     <string name="thermal_charging">Thermal Charging</string>
 
     <!-- Top Bar -->
-    <string name="repo_url">https://github.com/Rv-Trees/RvKernel-Manager-Kotlin</string>
+    <string name="repo_url">https://github.com/Rv-Project/RvKernel-Manager-Kotlin</string>
     <string name="telegram_url">https://t.me/rvosuniverse</string>
 
     <!-- Device Info -->
