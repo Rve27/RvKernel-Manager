@@ -45,7 +45,6 @@ import com.rve.rvkernelmanager.utils.readFile
 import com.rve.rvkernelmanager.utils.writeFile
 import com.rve.rvkernelmanager.utils.ENABLE_CHARGING_PATH
 import com.rve.rvkernelmanager.utils.FAST_CHARGING_PATH
-import com.rve.rvkernelmanager.utils.THERMAL_CHARGING_PATH
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,8 +85,6 @@ fun ChargingCard() {
     var hasEnableCharging by remember { mutableStateOf(testFile(ENABLE_CHARGING_PATH)) }
     var isFastChargingChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
     var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
-    var isThermalChargingChecked by remember { mutableStateOf(readFile(THERMAL_CHARGING_PATH) == "0") }
-    var hasThermalCharging by remember { mutableStateOf(testFile(THERMAL_CHARGING_PATH)) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -96,8 +93,6 @@ fun ChargingCard() {
                 isEnableChargingChecked = readFile(ENABLE_CHARGING_PATH) == "1"
                 hasFastCharging = testFile(FAST_CHARGING_PATH)
                 isFastChargingChecked = readFile(FAST_CHARGING_PATH) == "1"
-                hasThermalCharging = testFile(THERMAL_CHARGING_PATH)
-                isThermalChargingChecked = readFile(THERMAL_CHARGING_PATH) == "0"
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -165,30 +160,6 @@ fun ChargingCard() {
                             val success = writeFile(FAST_CHARGING_PATH, if (checked) "1" else "0")
                             if (success) {
                                 isFastChargingChecked = checked
-                            }
-                        }
-                    )
-                }
-            }
-
-            if (hasThermalCharging) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.thermal_charging),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        modifier = Modifier.semantics { contentDescription = "Thermal Charging" },
-                        checked = isThermalChargingChecked,
-                        onCheckedChange = { checked ->
-                            val success = writeFile(THERMAL_CHARGING_PATH, if (checked) "0" else "1")
-                            if (success) {
-                                isThermalChargingChecked = checked
                             }
                         }
                     )
