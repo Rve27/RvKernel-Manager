@@ -370,7 +370,7 @@ fun CopyrightCard() {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = "© 2024 Rve. Licensed under the GNU General Public License v3.0.",
+                    text = "© 2024-2025 Rve. Licensed under the GNU General Public License v3.0.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
