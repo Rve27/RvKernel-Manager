@@ -2,32 +2,15 @@ package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.Switch
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -40,19 +23,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.utils.testFile
-import com.rve.rvkernelmanager.utils.readFile
-import com.rve.rvkernelmanager.utils.writeFile
-import com.rve.rvkernelmanager.utils.ENABLE_CHARGING_PATH
-import com.rve.rvkernelmanager.utils.FAST_CHARGING_PATH
+import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.BatteryUtils
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BatteryScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val hasEnableCharging = testFile(ENABLE_CHARGING_PATH)
-    val hasFastCharging = testFile(FAST_CHARGING_PATH)
+    val hasEnableCharging = testFile(BatteryUtils.ENABLE_CHARGING_PATH)
+    val hasFastCharging = testFile(BatteryUtils.FAST_CHARGING_PATH)
 
     Scaffold(
         topBar = {
@@ -71,6 +51,7 @@ fun BatteryScreen() {
                 .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+	    BatteryInfoCard()
             if (hasEnableCharging || hasFastCharging) {
                 ChargingCard()
             }
@@ -80,20 +61,154 @@ fun BatteryScreen() {
 }
 
 @Composable
+fun BatteryInfoCard() {
+    val context = LocalContext.current
+    var battTech by remember { mutableStateOf("") }
+    var battHealth by remember { mutableStateOf("") }
+    var battTemp by remember { mutableStateOf("") }
+    var battVoltage by remember { mutableStateOf("") }
+    var battDesignCapacity by remember { mutableStateOf("") }
+    var battMaximumCapacity by remember { mutableStateOf("") }
+
+    DisposableEffect(Unit) {
+        val tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
+            battTemp = temp
+        }
+        val voltageReceiver = BatteryUtils.registerBatteryVoltageListener(context) { voltage ->
+            battVoltage = voltage
+	}
+	val maxCapacityReceiver = BatteryUtils.registerBatteryCapacityListener(context) { maxCapacity ->
+	    battMaximumCapacity = maxCapacity
+	}
+        onDispose {
+            context.unregisterReceiver(tempReceiver)
+	    context.unregisterReceiver(voltageReceiver)
+	    context.unregisterReceiver(maxCapacityReceiver)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        battTech = BatteryUtils.getBatteryTechnology(context)
+        battHealth = BatteryUtils.getBatteryHealth(context)
+	battDesignCapacity = BatteryUtils.getBatteryDesignCapacity(context)
+    }
+
+    ElevatedCard(
+        shape = CardDefaults.shape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = stringResource(R.string.batt_info_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(16.dp))
+                
+                Text(
+                    text = stringResource(R.string.batt_tech),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battTech,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(16.dp))
+                
+                Text(
+                    text = stringResource(R.string.batt_health),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battHealth,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(16.dp))
+                
+                Text(
+                    text = stringResource(R.string.batt_temp),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battTemp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+		Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.batt_volt),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battVoltage,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+		Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.batt_design_capacity),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battDesignCapacity,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+		Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.batt_max_capacity),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = battMaximumCapacity,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun ChargingCard() {
     val lifecycleOwner = LocalLifecycleOwner.current
-    var isEnableChargingChecked by remember { mutableStateOf(readFile(ENABLE_CHARGING_PATH) == "1") }
-    var hasEnableCharging by remember { mutableStateOf(testFile(ENABLE_CHARGING_PATH)) }
-    var isFastChargingChecked by remember { mutableStateOf(readFile(FAST_CHARGING_PATH) == "1") }
-    var hasFastCharging by remember { mutableStateOf(testFile(FAST_CHARGING_PATH)) }
+    var isEnableChargingChecked by remember { mutableStateOf(readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1") }
+    var hasEnableCharging by remember { mutableStateOf(testFile(BatteryUtils.ENABLE_CHARGING_PATH)) }
+    var isFastChargingChecked by remember { mutableStateOf(readFile(BatteryUtils.FAST_CHARGING_PATH) == "1") }
+    var hasFastCharging by remember { mutableStateOf(testFile(BatteryUtils.FAST_CHARGING_PATH)) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                hasEnableCharging = testFile(ENABLE_CHARGING_PATH)
-                isEnableChargingChecked = readFile(ENABLE_CHARGING_PATH) == "1"
-                hasFastCharging = testFile(FAST_CHARGING_PATH)
-                isFastChargingChecked = readFile(FAST_CHARGING_PATH) == "1"
+                hasEnableCharging = testFile(BatteryUtils.ENABLE_CHARGING_PATH)
+                isEnableChargingChecked = readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
+                hasFastCharging = testFile(BatteryUtils.FAST_CHARGING_PATH)
+                isFastChargingChecked = readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -134,7 +249,7 @@ fun ChargingCard() {
                         modifier = Modifier.semantics { contentDescription = "Enable Charging" },
                         checked = isEnableChargingChecked,
                         onCheckedChange = { checked ->
-                            val success = writeFile(ENABLE_CHARGING_PATH, if (checked) "1" else "0")
+                            val success = writeFile(BatteryUtils.ENABLE_CHARGING_PATH, if (checked) "1" else "0")
                             if (success) {
                                 isEnableChargingChecked = checked
                             }
@@ -158,7 +273,7 @@ fun ChargingCard() {
                         modifier = Modifier.semantics { contentDescription = "Fast Charging" },
                         checked = isFastChargingChecked,
                         onCheckedChange = { checked ->
-                            val success = writeFile(FAST_CHARGING_PATH, if (checked) "1" else "0")
+                            val success = writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
                             if (success) {
                                 isFastChargingChecked = checked
                             }

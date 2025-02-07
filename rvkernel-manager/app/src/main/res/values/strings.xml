@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RvKernel Manager</string>
+    <string name="not_available">N/A</string>
 
     <!-- CPU -->
     <string name="cpu">CPU</string>
@@ -50,4 +51,13 @@
     <string name="tab_soc">SoC</string>
     <string name="tab_battery">Battery</string>
     <string name="tab_storage">Storage</string>
+
+    <!-- Battery Info -->
+    <string name="batt_info_title">Battery Information</string>
+    <string name="batt_tech">Technology</string>
+    <string name="batt_health">Health</string>
+    <string name="batt_temp">Temperature</string>
+    <string name="batt_volt">Voltage</string>
+    <string name="batt_design_capacity">Design capacity</string>
+    <string name="batt_max_capacity">Maximum capacity</string>
 </resources>
