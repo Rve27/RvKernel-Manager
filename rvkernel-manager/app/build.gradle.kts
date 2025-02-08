@@ -17,7 +17,7 @@ android {
     namespace = "com.rve.rvkernelmanager"
     compileSdk = 35
     buildToolsVersion = "35.0.1"
-    ndkVersion = "27.2.12479018"
+    ndkVersion = "28.0.13004108"
 
     signingConfigs {
         create("release") {
