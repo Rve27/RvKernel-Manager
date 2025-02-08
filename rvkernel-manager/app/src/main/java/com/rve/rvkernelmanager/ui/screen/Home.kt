@@ -96,10 +96,7 @@ fun DeviceInfoCard() {
     }
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Row(
             modifier = Modifier
@@ -110,38 +107,32 @@ fun DeviceInfoCard() {
             Column {
                 Text(
                     text = stringResource(R.string.device_codename),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = deviceCodename,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.ram_info),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = ramInfo,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.cpu),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = getCPU,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
                         .clickable { isCPUInfo = !isCPUInfo }
                         .animateContentSize()
@@ -149,40 +140,34 @@ fun DeviceInfoCard() {
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.gpu),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = gpuModel,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.android_version),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = androidVersion,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
 
                 rvosVersion?.let { version ->
                     Text(
                         text = stringResource(R.string.rvos_version),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        style = MaterialTheme.typography.titleSmall
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = version,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(Modifier.height(16.dp))
                 }
@@ -190,28 +175,24 @@ fun DeviceInfoCard() {
                 somethingVersion?.let { version ->
                     Text(
                         text = stringResource(R.string.something_version),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        style = MaterialTheme.typography.titleSmall
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = version,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(Modifier.height(16.dp))
                 }
 
                 Text(
                     text = stringResource(R.string.kernel_version),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = kernelVersion,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
                         .clickable { isFullKernelVersion = !isFullKernelVersion }
                         .animateContentSize()
@@ -230,9 +211,6 @@ fun DonateCard() {
 
     ElevatedCard(
         shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
         modifier = Modifier.clickable { showDonateDialog = true }
     ) {
         Row(
@@ -244,14 +222,12 @@ fun DonateCard() {
             Column {
                 Text(
                     text = stringResource(R.string.donate_title),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = stringResource(R.string.donate_summary),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -260,13 +236,11 @@ fun DonateCard() {
     if (showDonateDialog) {
         AlertDialog(
             onDismissRequest = { showDonateDialog = false },
-            containerColor = MaterialTheme.colorScheme.background,
             tonalElevation = 8.dp,
             title = {
                 Text(
                     text = stringResource(R.string.donate_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.titleLarge
                 )
             },
             text = {
@@ -276,7 +250,7 @@ fun DonateCard() {
                     Text(
                         text = stringResource(R.string.paypal),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+			color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paypalUrl))
                             context.startActivity(intent)
@@ -287,7 +261,7 @@ fun DonateCard() {
                     Text(
                         text = stringResource(R.string.dana),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+			color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable { 
                             showDanaQR = true
                             showDonateDialog = false
@@ -306,14 +280,12 @@ fun DonateCard() {
     if (showDanaQR) {
         AlertDialog(
             onDismissRequest = { showDanaQR = false },
-            containerColor = MaterialTheme.colorScheme.background,
             tonalElevation = 8.dp,
             properties = DialogProperties(dismissOnClickOutside = true),
             title = {
                 Text(
                     text = stringResource(R.string.dana),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.titleLarge
                 )
             },
             text = {
@@ -339,9 +311,6 @@ fun DonateCard() {
 fun CopyrightCard() {
     ElevatedCard(
 	shape = CardDefaults.shape,
-	colors = CardDefaults.cardColors(
-	    containerColor = MaterialTheme.colorScheme.primaryContainer
-	)
     ) {
         Row(
             modifier = Modifier
@@ -352,19 +321,16 @@ fun CopyrightCard() {
             Column {
                 Text(
                     text = "Copyright",
-                    style = MaterialTheme.typography.titleSmall,
-		    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = "© 2024-2025 Rve. Licensed under the GNU General Public License v3.0.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     text = "Developed by Rve.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

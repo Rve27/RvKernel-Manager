@@ -32,12 +32,12 @@
     <string name="telegram_url">https://t.me/rvosuniverse</string>
 
     <!-- Device Info -->
-    <string name="device_codename">Device Codename</string>
+    <string name="device_codename">Device codename</string>
     <string name="ram_info">RAM</string>
-    <string name="android_version">Android Version</string>
-    <string name="rvos_version">RvOS Version</string>
-    <string name="something_version">SomethingOS Version</string>
-    <string name="kernel_version">Kernel Version</string>
+    <string name="android_version">Android version</string>
+    <string name="rvos_version">RvOS version</string>
+    <string name="something_version">SomethingOS version</string>
+    <string name="kernel_version">Kernel version</string>
 
     <!-- Donate -->
     <string name="donate_title">Donate</string>
