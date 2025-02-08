@@ -44,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,17 +80,17 @@ fun HomeScreen() {
 @Composable
 fun DeviceInfoCard() {
     val context = LocalContext.current
-    val deviceCodename = remember { getDeviceCodename() }
-    val ramInfo = remember { getTotalRam(context) }
-    val getCPUOnly = remember { getCPU() }
-    val androidVersion = remember { getAndroidVersion() }
-    val rvosVersion = remember { getRvOSVersion() }
-    val somethingVersion = remember {getSomethingOSVersion() }
-    val defaultKernelVersion = remember { getKernelVersion() }
+    val deviceCodename = remember { Utils.getDeviceCodename() }
+    val ramInfo = remember { Utils.getTotalRam(context) }
+    val getCPUOnly = remember { Utils.getCPU() }
+    val androidVersion = remember { Utils.getAndroidVersion() }
+    val rvosVersion = remember { Utils.getRvOSVersion() }
+    val somethingVersion = remember { Utils.getSomethingOSVersion() }
+    val defaultKernelVersion = remember { Utils.getKernelVersion() }
 
     var getCPU by remember { mutableStateOf(getCPUOnly) }
     var isCPUInfo by remember { mutableStateOf(false) }
-    var gpuModel by remember {mutableStateOf(getGPUModel()) }
+    var gpuModel by remember {mutableStateOf(Utils.getGPUModel()) }
     var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
     var isFullKernelVersion by remember { mutableStateOf(false) }
 
@@ -145,7 +146,7 @@ fun DeviceInfoCard() {
                             if (isCPUInfo) {
                                 getCPU = getCPUOnly
                             } else {
-                                getCPU = getCPUInfo()
+                                getCPU = Utils.getCPUInfo()
                             }
                             isCPUInfo = !isCPUInfo
                         }
@@ -222,8 +223,8 @@ fun DeviceInfoCard() {
                             if (isFullKernelVersion) {
                                 kernelVersion = defaultKernelVersion
                             } else {
-				setPermissions(644, FULL_KERNEL_VERSION_PATH)
-                                kernelVersion = readFile(FULL_KERNEL_VERSION_PATH)
+				setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
+                                kernelVersion = readFile(Utils.FULL_KERNEL_VERSION_PATH)
                             }
                             isFullKernelVersion = !isFullKernelVersion
                         }
