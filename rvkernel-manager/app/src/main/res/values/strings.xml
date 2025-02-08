@@ -50,7 +50,7 @@
     <string name="tab_home">Home</string>
     <string name="tab_soc">SoC</string>
     <string name="tab_battery">Battery</string>
-    <string name="tab_storage">Storage</string>
+    <string name="tab_misc">Misc</string>
 
     <!-- Battery Info -->
     <string name="batt_info_title">Battery Information</string>
