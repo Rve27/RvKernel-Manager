@@ -3,36 +3,10 @@ package com.rve.rvkernelmanager.ui.screen
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -80,25 +54,52 @@ fun HomeScreen() {
 @Composable
 fun DeviceInfoCard() {
     val context = LocalContext.current
-    val deviceCodename = remember { Utils.getDeviceCodename() }
-    val ramInfo = remember { Utils.getTotalRam(context) }
-    val getCPUOnly = remember { Utils.getCPU() }
-    val androidVersion = remember { Utils.getAndroidVersion() }
-    val rvosVersion = remember { Utils.getRvOSVersion() }
-    val somethingVersion = remember { Utils.getSomethingOSVersion() }
-    val defaultKernelVersion = remember { Utils.getKernelVersion() }
-
-    var getCPU by remember { mutableStateOf(getCPUOnly) }
+    var deviceCodename by remember { mutableStateOf("") }
+    var ramInfo by remember { mutableStateOf("") }
+    var getCPUOnly by remember { mutableStateOf("") }
+    var androidVersion by remember { mutableStateOf("") }
+    var rvosVersion by remember { mutableStateOf<String?>(null) }
+    var somethingVersion by remember { mutableStateOf<String?>(null) }
+    var defaultKernelVersion by remember { mutableStateOf("") }
+    var getCPU by remember { mutableStateOf("") }
     var isCPUInfo by remember { mutableStateOf(false) }
-    var gpuModel by remember {mutableStateOf(Utils.getGPUModel()) }
-    var kernelVersion by remember { mutableStateOf(defaultKernelVersion) }
+    var gpuModel by remember { mutableStateOf("") }
+    var kernelVersion by remember { mutableStateOf("") }
     var isFullKernelVersion by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        deviceCodename = Utils.getDeviceCodename()
+        ramInfo = Utils.getTotalRam(context)
+        getCPUOnly = Utils.getCPU()
+        androidVersion = Utils.getAndroidVersion()
+        rvosVersion = Utils.getRvOSVersion()
+        somethingVersion = Utils.getSomethingOSVersion()
+        defaultKernelVersion = Utils.getKernelVersion()
+        gpuModel = Utils.getGPUModel()
+    }
+
+    LaunchedEffect(isCPUInfo) {
+        getCPU = if (isCPUInfo) {
+            Utils.getCPUInfo()
+        } else {
+            Utils.getCPU()
+        }
+    }
+
+    LaunchedEffect(isFullKernelVersion) {
+        kernelVersion = if (isFullKernelVersion) {
+            setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
+            readFile(Utils.FULL_KERNEL_VERSION_PATH)
+        } else {
+            Utils.getKernelVersion()
+        }
+    }
 
     ElevatedCard(
         shape = CardDefaults.shape,
         colors = CardDefaults.cardColors(
-	    containerColor = MaterialTheme.colorScheme.primaryContainer
-	)
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -142,14 +143,7 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
-                        .clickable {
-                            if (isCPUInfo) {
-                                getCPU = getCPUOnly
-                            } else {
-                                getCPU = Utils.getCPUInfo()
-                            }
-                            isCPUInfo = !isCPUInfo
-                        }
+                        .clickable { isCPUInfo = !isCPUInfo }
                         .animateContentSize()
                 )
                 Spacer(Modifier.height(16.dp))
@@ -178,7 +172,7 @@ fun DeviceInfoCard() {
                 )
                 Spacer(Modifier.height(16.dp))
 
-                rvosVersion?.let {
+                rvosVersion?.let { version ->
                     Text(
                         text = stringResource(R.string.rvos_version),
                         style = MaterialTheme.typography.titleSmall,
@@ -186,14 +180,14 @@ fun DeviceInfoCard() {
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = rvosVersion,
+                        text = version,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Spacer(Modifier.height(16.dp))
                 }
 
-                somethingVersion?.let {
+                somethingVersion?.let { version ->
                     Text(
                         text = stringResource(R.string.something_version),
                         style = MaterialTheme.typography.titleSmall,
@@ -201,7 +195,7 @@ fun DeviceInfoCard() {
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = somethingVersion,
+                        text = version,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -219,15 +213,7 @@ fun DeviceInfoCard() {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
-                        .clickable {
-                            if (isFullKernelVersion) {
-                                kernelVersion = defaultKernelVersion
-                            } else {
-				setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
-                                kernelVersion = readFile(Utils.FULL_KERNEL_VERSION_PATH)
-                            }
-                            isFullKernelVersion = !isFullKernelVersion
-                        }
+                        .clickable { isFullKernelVersion = !isFullKernelVersion }
                         .animateContentSize()
                 )
             }
