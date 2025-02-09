@@ -113,7 +113,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
                     text = cpu,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
-                        .clickable { viewModel.toggleCPUInfo() }
+                        .clickable { viewModel.showCPUInfo() }
                         .animateContentSize()
                 )
                 Spacer(Modifier.height(16.dp))
@@ -173,7 +173,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
                     text = kernelVersion,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
-                        .clickable { viewModel.toggleFullKernelVersion() }
+                        .clickable { viewModel.showFullKernelVersion() }
                         .animateContentSize()
                 )
             }

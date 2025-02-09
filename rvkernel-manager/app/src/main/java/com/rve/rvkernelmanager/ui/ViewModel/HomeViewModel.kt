@@ -54,7 +54,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun toggleCPUInfo() {
+    fun showCPUInfo() {
         _isCPUInfo.value = !_isCPUInfo.value
         _cpu.value = if (_isCPUInfo.value) {
             Utils.getCPUInfo()
@@ -63,7 +63,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun toggleFullKernelVersion() {
+    fun showFullKernelVersion() {
         _isFullKernelVersion.value = !_isFullKernelVersion.value
         _kernelVersion.value = if (_isFullKernelVersion.value) {
             setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
