@@ -1,30 +1,40 @@
 package com.rve.rvkernelmanager.ui.screen
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.animateContentSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.animateContentSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.TopBar
+import com.rve.rvkernelmanager.ui.ViewModel.HomeViewModel
 import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.loadDeviceInfo(context)
+    }
 
     Scaffold(
         topBar = {
@@ -43,57 +53,26 @@ fun HomeScreen() {
                 .padding(top = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-	    DeviceInfoCard()
-	    DonateCard()
-	    CopyrightCard()
-	    Spacer(Modifier)
+            DeviceInfoCard(viewModel)
+            DonateCard()
+            CopyrightCard()
+            Spacer(Modifier)
         }
     }
 }
 
 @Composable
-fun DeviceInfoCard() {
-    val context = LocalContext.current
-    var deviceCodename by remember { mutableStateOf("") }
-    var ramInfo by remember { mutableStateOf("") }
-    var getCPUOnly by remember { mutableStateOf("") }
-    var androidVersion by remember { mutableStateOf("") }
-    var rvosVersion by remember { mutableStateOf<String?>(null) }
-    var somethingVersion by remember { mutableStateOf<String?>(null) }
-    var defaultKernelVersion by remember { mutableStateOf("") }
-    var getCPU by remember { mutableStateOf("") }
-    var isCPUInfo by remember { mutableStateOf(false) }
-    var gpuModel by remember { mutableStateOf("") }
-    var kernelVersion by remember { mutableStateOf("") }
-    var isFullKernelVersion by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        deviceCodename = Utils.getDeviceCodename()
-        ramInfo = Utils.getTotalRam(context)
-        getCPUOnly = Utils.getCPU()
-        androidVersion = Utils.getAndroidVersion()
-        rvosVersion = Utils.getRvOSVersion()
-        somethingVersion = Utils.getSomethingOSVersion()
-        defaultKernelVersion = Utils.getKernelVersion()
-        gpuModel = Utils.getGPUModel()
-    }
-
-    LaunchedEffect(isCPUInfo) {
-        getCPU = if (isCPUInfo) {
-            Utils.getCPUInfo()
-        } else {
-            Utils.getCPU()
-        }
-    }
-
-    LaunchedEffect(isFullKernelVersion) {
-        kernelVersion = if (isFullKernelVersion) {
-            setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
-            readFile(Utils.FULL_KERNEL_VERSION_PATH)
-        } else {
-            Utils.getKernelVersion()
-        }
-    }
+fun DeviceInfoCard(viewModel: HomeViewModel) {
+    val deviceCodename by viewModel.deviceCodename.collectAsState()
+    val ramInfo by viewModel.ramInfo.collectAsState()
+    val cpu by viewModel.cpu.collectAsState()
+    val gpuModel by viewModel.gpuModel.collectAsState()
+    val androidVersion by viewModel.androidVersion.collectAsState()
+    val rvosVersion by viewModel.rvosVersion.collectAsState()
+    val somethingVersion by viewModel.somethingVersion.collectAsState()
+    val kernelVersion by viewModel.kernelVersion.collectAsState()
+    val isCPUInfo by viewModel.isCPUInfo.collectAsState()
+    val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
     ElevatedCard(
         shape = CardDefaults.shape
@@ -131,10 +110,10 @@ fun DeviceInfoCard() {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = getCPU,
+                    text = cpu,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
-                        .clickable { isCPUInfo = !isCPUInfo }
+                        .clickable { viewModel.toggleCPUInfo() }
                         .animateContentSize()
                 )
                 Spacer(Modifier.height(16.dp))
@@ -194,7 +173,7 @@ fun DeviceInfoCard() {
                     text = kernelVersion,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
-                        .clickable { isFullKernelVersion = !isFullKernelVersion }
+                        .clickable { viewModel.toggleFullKernelVersion() }
                         .animateContentSize()
                 )
             }
