@@ -70,10 +70,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val battMaximumCapacity by viewModel.battMaximumCapacity.collectAsState()
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Row(
             modifier = Modifier
@@ -84,86 +81,73 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             Column {
                 Text(
                     text = stringResource(R.string.batt_info_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.height(16.dp))
                 
                 Text(
                     text = stringResource(R.string.batt_tech),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battTech,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 
                 Text(
                     text = stringResource(R.string.batt_health),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battHealth,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
                 
                 Text(
                     text = stringResource(R.string.batt_temp),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battTemp,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
 
                 Text(
                     text = stringResource(R.string.batt_volt),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battVoltage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
 
                 Text(
                     text = stringResource(R.string.batt_design_capacity),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battDesignCapacity,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(Modifier.height(16.dp))
 
                 Text(
                     text = stringResource(R.string.batt_max_capacity),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = battMaximumCapacity,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
@@ -178,18 +162,14 @@ fun ChargingCard(viewModel: BatteryViewModel) {
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Column(
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = stringResource(R.string.charging_title),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(4.dp))
 
@@ -201,7 +181,6 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                     Text(
                         text = stringResource(R.string.enable_charging),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
@@ -222,7 +201,6 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                     Text(
                         text = stringResource(R.string.fast_charging),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
