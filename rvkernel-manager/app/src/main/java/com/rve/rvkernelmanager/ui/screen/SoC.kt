@@ -67,18 +67,13 @@ private fun FreqRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.weight(1f)
         )
         ElevatedButton(
-            onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+            onClick = onClick
         ) {
             Text(
-                text = if (value.isEmpty()) "error" else "$value MHz",
-                color = MaterialTheme.colorScheme.onPrimary
+                text = if (value.isEmpty()) "error" else "$value MHz"
             )
         }
     }
@@ -96,18 +91,13 @@ private fun GovRow(
         Text(
             text = stringResource(R.string.gov),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.weight(1f)
         )
         ElevatedButton(
             onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
         ) {
             Text(
-                text = if (value.trim().isEmpty()) "error" else value,
-                color = MaterialTheme.colorScheme.onPrimary
+                text = if (value.trim().isEmpty()) "error" else value
             )
         }
     }
@@ -122,12 +112,10 @@ private fun FreqDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
         tonalElevation = 8.dp,
         title = {
             Text(
-                "Available frequencies",
-                color = MaterialTheme.colorScheme.onBackground
+                "Available frequencies"
             )
         },
         text = {
@@ -140,7 +128,6 @@ private fun FreqDialog(
                     Text(
                         text = "Failed to read available frequencies",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
@@ -176,12 +163,10 @@ private fun GovDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
         tonalElevation = 8.dp,
         title = {
             Text(
-                "Available governors",
-                color = MaterialTheme.colorScheme.onBackground
+                "Available governors"
             )
         },
         text = {
@@ -194,7 +179,6 @@ private fun GovDialog(
                     Text(
                         text = "Failed to read available governors",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
@@ -231,12 +215,10 @@ fun AdrenoBoostDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.background,
         tonalElevation = 8.dp,
         title = {
             Text(
-                text = stringResource(R.string.adreno_boost),
-                color = MaterialTheme.colorScheme.onBackground
+                text = stringResource(R.string.adreno_boost)
             )
         },
         text = {
@@ -283,10 +265,7 @@ fun SoCBaseCard(
     var currentFileTarget by remember { mutableStateOf("") }
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Column(
             modifier = Modifier
@@ -295,8 +274,7 @@ fun SoCBaseCard(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(4.dp))
 
@@ -437,10 +415,7 @@ fun MiscCard(viewModel: SoCViewModel) {
     val thermalSconfigStatus = thermalSconfig == "10"
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Column(
             modifier = Modifier
@@ -449,8 +424,7 @@ fun MiscCard(viewModel: SoCViewModel) {
         ) {
             Text(
                 text = stringResource(R.string.misc_category),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(4.dp))
 
@@ -463,7 +437,6 @@ fun MiscCard(viewModel: SoCViewModel) {
                     Text(
                         text = stringResource(R.string.unlock_cpu_freq),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
@@ -506,10 +479,7 @@ fun GPUCard(viewModel: SoCViewModel) {
     val gpuThrottlingStatus = gpuThrottling == "1"
 
     ElevatedCard(
-        shape = CardDefaults.shape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        shape = CardDefaults.shape
     ) {
         Column(
             modifier = Modifier
@@ -518,8 +488,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         ) {
             Text(
                 text = stringResource(R.string.gpu),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(4.dp))
 
@@ -560,21 +529,16 @@ fun GPUCard(viewModel: SoCViewModel) {
                     Text(
                         text = stringResource(R.string.adreno_boost),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
                     ElevatedButton(
                         onClick = {
                             currentFileTarget = ADRENO_BOOST_PATH
                             showAdrenoBoost = true
-                        },
-                        colors = ButtonDefaults.elevatedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
+                        }
                     ) {
                         Text(
-                            text = adrenoBoostText,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            text = adrenoBoostText
                         )
                     }
                 }
@@ -589,7 +553,6 @@ fun GPUCard(viewModel: SoCViewModel) {
                     Text(
                         text = stringResource(R.string.gpu_throttling),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
