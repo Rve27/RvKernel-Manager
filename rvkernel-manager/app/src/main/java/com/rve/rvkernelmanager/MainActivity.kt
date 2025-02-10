@@ -14,7 +14,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.screen.*
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
-import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.RootUtils
 import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         var showNoRootDialog by mutableStateOf(false)
 
         Shell.getShell { shell ->
-            if (isRooted()) {
+            if (RootUtils.isRooted()) {
                 isShellReady = true
             } else {
                 showNoRootDialog = true
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
             RvKernelManagerTheme {
                 when {
                     showNoRootDialog -> {
-                        NoRootDialog { finish() }
+                        RootUtils.NoRootDialog { finish() }
                     }
                     isShellReady -> {
                         RvKernelManagerTheme {

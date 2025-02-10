@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RvKernel Manager</string>
+    <string name="root_summary">RvKernel Manager requires root access!</string>
     <string name="not_available">N/A</string>
+    <string name="exit">Exit</string>
     <string name="change">Change</string>
 
     <!-- CPU -->
