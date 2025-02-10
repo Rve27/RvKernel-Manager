@@ -271,7 +271,7 @@ fun SoCBaseCard(
     var showGovDialog by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Column(
@@ -442,7 +442,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     val gpuThrottlingStatus = gpuThrottling == "1"
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Column(

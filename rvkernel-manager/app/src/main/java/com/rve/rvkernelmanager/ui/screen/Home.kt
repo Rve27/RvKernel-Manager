@@ -72,7 +72,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Row(
@@ -186,7 +186,7 @@ fun DonateCard() {
     val context = LocalContext.current
     val paypalUrl = stringResource(id = R.string.paypal_url)
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape,
         modifier = Modifier.clickable { showDonateDialog = true }
     ) {
@@ -286,7 +286,7 @@ fun DonateCard() {
 
 @Composable
 fun CopyrightCard() {
-    ElevatedCard(
+    Card(
 	shape = CardDefaults.shape,
     ) {
         Row(

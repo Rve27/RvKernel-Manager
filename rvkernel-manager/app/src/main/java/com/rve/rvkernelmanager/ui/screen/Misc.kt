@@ -51,7 +51,7 @@ fun MiscCard(viewModel: MiscViewModel) {
     val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
     val thermalSconfigStatus = thermalSconfig == "10"
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Column(

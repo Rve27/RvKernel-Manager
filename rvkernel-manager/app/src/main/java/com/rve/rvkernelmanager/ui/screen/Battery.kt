@@ -67,7 +67,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val battDesignCapacity by viewModel.battDesignCapacity.collectAsState()
     val battMaximumCapacity by viewModel.battMaximumCapacity.collectAsState()
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Row(
@@ -159,7 +159,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
     val isFastChargingChecked by viewModel.isFastChargingChecked.collectAsState()
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
 
-    ElevatedCard(
+    Card(
         shape = CardDefaults.shape
     ) {
         Column(
