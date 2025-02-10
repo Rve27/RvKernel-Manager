@@ -68,12 +68,8 @@ private fun FreqRow(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
 	)
-        ElevatedButton(
-            onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
+        Button(
+            onClick = onClick
         ) {
             Text(
                 text = if (value.isEmpty()) "error" else "$value MHz"
@@ -96,12 +92,8 @@ private fun GovRow(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
-        ElevatedButton(
-            onClick = onClick,
-            colors = ButtonDefaults.elevatedButtonColors(
-		containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
+        Button(
+            onClick = onClick
         ) {
             Text(
                 text = if (value.trim().isEmpty()) "error" else value
@@ -495,15 +487,11 @@ fun GPUCard(viewModel: SoCViewModel) {
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
-                    ElevatedButton(
+                    Button(
                         onClick = {
                             currentFileTarget = SoCUtils.ADRENO_BOOST_PATH
                             showAdrenoBoost = true
-                        },
-			colors = ButtonDefaults.elevatedButtonColors(
-			    containerColor = MaterialTheme.colorScheme.secondary,
-			    contentColor = MaterialTheme.colorScheme.onSecondary
-			)
+                        }
                     ) {
                         Text(
                             text = adrenoBoostText
