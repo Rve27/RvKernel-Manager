@@ -11,9 +11,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.SoCViewModel
-import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -460,7 +460,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 label = stringResource(R.string.min_freq),
                 value = minFreqGPU,
                 onClick = {
-                    currentFileTarget = MIN_FREQ_GPU_PATH
+                    currentFileTarget = SoCUtils.MIN_FREQ_GPU_PATH
                     showAvailableFreqGPU = true
                 }
             )
@@ -470,7 +470,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 label = stringResource(R.string.max_freq),
                 value = maxFreqGPU,
                 onClick = {
-                    currentFileTarget = MAX_FREQ_GPU_PATH
+                    currentFileTarget = SoCUtils.MAX_FREQ_GPU_PATH
                     showAvailableFreqGPU = true
                 }
             )
@@ -479,7 +479,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             GovRow(
                 value = govGPU,
                 onClick = {
-                    currentFileTarget = GOV_GPU_PATH
+                    currentFileTarget = SoCUtils.GOV_GPU_PATH
                     showAvailableGovGPU = true
                 }
             )
@@ -497,7 +497,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     )
                     ElevatedButton(
                         onClick = {
-                            currentFileTarget = ADRENO_BOOST_PATH
+                            currentFileTarget = SoCUtils.ADRENO_BOOST_PATH
                             showAdrenoBoost = true
                         },
 			colors = ButtonDefaults.elevatedButtonColors(
@@ -535,7 +535,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             if (showAvailableFreqGPU) {
                 FreqDialog(
                     frequencies = availableFreqGPU,
-                    currentFreq = if (currentFileTarget == MIN_FREQ_GPU_PATH) minFreqGPU else maxFreqGPU,
+                    currentFreq = if (currentFileTarget == SoCUtils.MIN_FREQ_GPU_PATH) minFreqGPU else maxFreqGPU,
                     onDismiss = { showAvailableFreqGPU = false },
                     onSelected = { selectedFreq ->
                         viewModel.updateFreq(currentFileTarget, selectedFreq, "gpu")
