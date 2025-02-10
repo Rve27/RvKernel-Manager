@@ -16,8 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.BatteryViewModel
-import com.rve.rvkernelmanager.utils.*
-import com.rve.rvkernelmanager.utils.BatteryUtils
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)

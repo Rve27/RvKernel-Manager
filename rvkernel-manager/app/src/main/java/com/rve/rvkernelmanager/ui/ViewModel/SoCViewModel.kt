@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.Utils
+import com.rve.rvkernelmanager.utils.SoCUtils
 
 class SoCViewModel : ViewModel() {
 
