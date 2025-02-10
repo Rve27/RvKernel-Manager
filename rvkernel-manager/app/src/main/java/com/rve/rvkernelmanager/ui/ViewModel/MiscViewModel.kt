@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.utils.MiscUtils
 
 class MiscViewModel : ViewModel() {
@@ -52,12 +51,12 @@ class MiscViewModel : ViewModel() {
 
     private fun loadInitialData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentThermalSconfig = Utils.readFile(SoCUtils.THERMAL_SCONFIG_PATH)
+            val currentThermalSconfig = Utils.readFile(MiscUtils.THERMAL_SCONFIG_PATH)
             if (currentThermalSconfig != cachedThermalSconfig) {
                 _thermalSconfig.value = currentThermalSconfig
                 cachedThermalSconfig = currentThermalSconfig
             }
-            _hasThermalSconfig.value = Utils.testFile(SoCUtils.THERMAL_SCONFIG_PATH)
+            _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG_PATH)
 
             val swappinessValue = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
             _swappiness.value = swappinessValue
@@ -66,11 +65,11 @@ class MiscViewModel : ViewModel() {
 
     fun updateThermalSconfig(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, SoCUtils.THERMAL_SCONFIG_PATH)
+            Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG_PATH)
             val newValue = if (isChecked) "10" else "0"
-            Utils.writeFile(SoCUtils.THERMAL_SCONFIG_PATH, newValue)
-            Utils.setPermissions(444, SoCUtils.THERMAL_SCONFIG_PATH)
-            _thermalSconfig.value = Utils.readFile(SoCUtils.THERMAL_SCONFIG_PATH)
+            Utils.writeFile(MiscUtils.THERMAL_SCONFIG_PATH, newValue)
+            Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG_PATH)
+            _thermalSconfig.value = Utils.readFile(MiscUtils.THERMAL_SCONFIG_PATH)
             cachedThermalSconfig = _thermalSconfig.value
         }
     }

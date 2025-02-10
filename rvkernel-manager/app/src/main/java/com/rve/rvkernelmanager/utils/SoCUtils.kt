@@ -26,8 +26,6 @@ object SoCUtils {
     const val GOV_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
     const val AVAILABLE_GOV_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
     
-    const val THERMAL_SCONFIG_PATH = "/sys/class/thermal/thermal_message/sconfig"
-    
     const val MIN_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
     const val AVAILABLE_FREQ_GPU_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
