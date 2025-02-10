@@ -47,7 +47,6 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel()) {
             if (hasPrimeCluster) {
                 PrimeClusterCard(viewModel)
             }
-            MiscCard(viewModel)
             GPUCard(viewModel)
             Spacer(Modifier)
         }
@@ -406,49 +405,6 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             viewModel.updateGov(selectedGov, "prime")
         }
     )
-}
-
-@Composable
-fun MiscCard(viewModel: SoCViewModel) {
-    val thermalSconfig by viewModel.thermalSconfig.collectAsState()
-    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
-    val thermalSconfigStatus = thermalSconfig == "10"
-
-    ElevatedCard(
-        shape = CardDefaults.shape
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.misc_category),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(Modifier.height(4.dp))
-
-            if (hasThermalSconfig) {
-                Spacer(Modifier.height(4.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.unlock_cpu_freq),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = thermalSconfigStatus,
-                        onCheckedChange = { isChecked ->
-                            viewModel.updateThermalSconfig(isChecked)
-                        }
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Composable

@@ -5,30 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.rve.rvkernelmanager.ui.navigation.Route
-import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import com.rve.rvkernelmanager.ui.navigation.BottomNavigationActions
-import com.rve.rvkernelmanager.ui.screen.HomeScreen
-import com.rve.rvkernelmanager.ui.screen.SoCScreen
-import com.rve.rvkernelmanager.ui.screen.BatteryScreen
-import com.rve.rvkernelmanager.ui.screen.WIPScreen
+import com.rve.rvkernelmanager.ui.navigation.*
+import com.rve.rvkernelmanager.ui.screen.*
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
-import com.rve.rvkernelmanager.utils.NoRootDialog
-import com.rve.rvkernelmanager.utils.isRooted
+import com.rve.rvkernelmanager.utils.*
 import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
@@ -120,7 +106,7 @@ private fun RvKernelManagerNavHost(
 	    SoCScreen()
 	}
         composable<Route.Misc> {
-            WIPScreen()
+            MiscScreen()
         }
     }
 }

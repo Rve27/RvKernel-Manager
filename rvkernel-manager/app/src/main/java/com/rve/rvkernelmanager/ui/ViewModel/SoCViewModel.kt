@@ -78,9 +78,6 @@ class SoCViewModel : ViewModel() {
     private val _availableGovGPU = MutableStateFlow(listOf<String>())
     val availableGovGPU: StateFlow<List<String>> = _availableGovGPU
 
-    private val _thermalSconfig = MutableStateFlow("")
-    val thermalSconfig: StateFlow<String> = _thermalSconfig
-
     private val _hasBigCluster = MutableStateFlow(false)
     val hasBigCluster: StateFlow<Boolean> = _hasBigCluster
 
@@ -92,9 +89,6 @@ class SoCViewModel : ViewModel() {
 
     private val _hasGPUThrottling = MutableStateFlow(false)
     val hasGPUThrottling: StateFlow<Boolean> = _hasGPUThrottling
-
-    private val _hasThermalSconfig = MutableStateFlow(false)
-    val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
 
     private var cachedMinFreqCPU0: String? = null
     private var cachedMaxFreqCPU0: String? = null
@@ -121,8 +115,6 @@ class SoCViewModel : ViewModel() {
     private var cachedGpuThrottling: String? = null
     private var cachedAvailableFreqGPU: List<String>? = null
     private var cachedAvailableGovGPU: List<String>? = null
-
-    private var cachedThermalSconfig: String? = null
 
     private var pollingJob: Job? = null
 
@@ -308,14 +300,6 @@ class SoCViewModel : ViewModel() {
 
             _hasAdrenoBoost.value = testFile(ADRENO_BOOST_PATH)
             _hasGPUThrottling.value = testFile(GPU_THROTTLING_PATH)
-
-            val currentThermalSconfig = readFile(THERMAL_SCONFIG_PATH)
-            if (currentThermalSconfig != cachedThermalSconfig) {
-                _thermalSconfig.value = currentThermalSconfig
-                cachedThermalSconfig = currentThermalSconfig
-            }
-
-            _hasThermalSconfig.value = testFile(THERMAL_SCONFIG_PATH)
         }
     }
 
@@ -405,17 +389,6 @@ class SoCViewModel : ViewModel() {
             writeFile(GPU_THROTTLING_PATH, newValue)
             _gpuThrottling.value = readFile(GPU_THROTTLING_PATH)
             cachedGpuThrottling = _gpuThrottling.value
-        }
-    }
-
-    fun updateThermalSconfig(isChecked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            setPermissions(644, THERMAL_SCONFIG_PATH)
-            val newValue = if (isChecked) "10" else "0"
-            writeFile(THERMAL_SCONFIG_PATH, newValue)
-            setPermissions(444, THERMAL_SCONFIG_PATH)
-            _thermalSconfig.value = readFile(THERMAL_SCONFIG_PATH)
-            cachedThermalSconfig = _thermalSconfig.value
         }
     }
 }
