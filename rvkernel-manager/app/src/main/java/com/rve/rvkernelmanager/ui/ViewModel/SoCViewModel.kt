@@ -305,35 +305,34 @@ class SoCViewModel : ViewModel() {
 
     fun updateFreq(target: String, selectedFreq: String, cluster: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val path = when (cluster) {
-                "little" -> if (target == "min") MIN_FREQ_CPU0_PATH else MAX_FREQ_CPU0_PATH
-                "big" -> if (target == "min") MIN_FREQ_CPU4_PATH else MAX_FREQ_CPU4_PATH
-                "prime" -> if (target == "min") MIN_FREQ_CPU7_PATH else MAX_FREQ_CPU7_PATH
-                "gpu" -> if (target == "min") MIN_FREQ_GPU_PATH else MAX_FREQ_GPU_PATH
-                else -> return@launch
-            }
-            writeFreqCPU(path, selectedFreq)
-
             when (cluster) {
                 "little" -> {
+                    val path = if (target == "min") MIN_FREQ_CPU0_PATH else MAX_FREQ_CPU0_PATH
+                    writeFreqCPU(path, selectedFreq)
                     _minFreqCPU0.value = readFreqCPU(MIN_FREQ_CPU0_PATH)
                     _maxFreqCPU0.value = readFreqCPU(MAX_FREQ_CPU0_PATH)
                     cachedMinFreqCPU0 = _minFreqCPU0.value
                     cachedMaxFreqCPU0 = _maxFreqCPU0.value
                 }
                 "big" -> {
+                    val path = if (target == "min") MIN_FREQ_CPU4_PATH else MAX_FREQ_CPU4_PATH
+                    writeFreqCPU(path, selectedFreq)
                     _minFreqCPU4.value = readFreqCPU(MIN_FREQ_CPU4_PATH)
                     _maxFreqCPU4.value = readFreqCPU(MAX_FREQ_CPU4_PATH)
                     cachedMinFreqCPU4 = _minFreqCPU4.value
                     cachedMaxFreqCPU4 = _maxFreqCPU4.value
                 }
                 "prime" -> {
+                    val path = if (target == "min") MIN_FREQ_CPU7_PATH else MAX_FREQ_CPU7_PATH
+                    writeFreqCPU(path, selectedFreq)
                     _minFreqCPU7.value = readFreqCPU(MIN_FREQ_CPU7_PATH)
                     _maxFreqCPU7.value = readFreqCPU(MAX_FREQ_CPU7_PATH)
                     cachedMinFreqCPU7 = _minFreqCPU7.value
                     cachedMaxFreqCPU7 = _maxFreqCPU7.value
                 }
                 "gpu" -> {
+                    val path = if (target == "min") MIN_FREQ_GPU_PATH else MAX_FREQ_GPU_PATH
+                    writeFreqGPU(path, selectedFreq)  // Menggunakan writeFreqGPU untuk GPU
                     _minFreqGPU.value = readFile(MIN_FREQ_GPU_PATH)
                     _maxFreqGPU.value = readFile(MAX_FREQ_GPU_PATH)
                     cachedMinFreqGPU = _minFreqGPU.value
