@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.BatteryUtils
 
 class BatteryViewModel : ViewModel() {
@@ -64,16 +64,16 @@ class BatteryViewModel : ViewModel() {
 
     fun checkChargingFiles() {
         viewModelScope.launch {
-            _hasEnableCharging.value = testFile(BatteryUtils.ENABLE_CHARGING_PATH)
-            _hasFastCharging.value = testFile(BatteryUtils.FAST_CHARGING_PATH)
-            _isEnableChargingChecked.value = readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
-            _isFastChargingChecked.value = readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
+            _hasEnableCharging.value = Utils.testFile(BatteryUtils.ENABLE_CHARGING_PATH)
+            _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING_PATH)
+            _isEnableChargingChecked.value = Utils.readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
+            _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
         }
     }
 
     fun toggleEnableCharging(checked: Boolean) {
         viewModelScope.launch {
-            val success = writeFile(BatteryUtils.ENABLE_CHARGING_PATH, if (checked) "1" else "0")
+            val success = Utils.writeFile(BatteryUtils.ENABLE_CHARGING_PATH, if (checked) "1" else "0")
             if (success) {
                 _isEnableChargingChecked.value = checked
             }
@@ -82,7 +82,7 @@ class BatteryViewModel : ViewModel() {
 
     fun toggleFastCharging(checked: Boolean) {
         viewModelScope.launch {
-            val success = writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
+            val success = Utils.writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
             if (success) {
                 _isFastChargingChecked.value = checked
             }

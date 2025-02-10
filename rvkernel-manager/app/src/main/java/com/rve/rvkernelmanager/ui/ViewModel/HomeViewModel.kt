@@ -66,8 +66,8 @@ class HomeViewModel : ViewModel() {
     fun showFullKernelVersion() {
         _isFullKernelVersion.value = !_isFullKernelVersion.value
         _kernelVersion.value = if (_isFullKernelVersion.value) {
-            setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
-            readFile(Utils.FULL_KERNEL_VERSION_PATH)
+            Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
+            Utils.readFile(Utils.FULL_KERNEL_VERSION_PATH)
         } else {
             Utils.getKernelVersion()
         }

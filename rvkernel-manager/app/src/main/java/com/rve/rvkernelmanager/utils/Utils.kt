@@ -1,5 +1,6 @@
 package com.rve.rvkernelmanager.utils
 
+import java.io.File
 import android.system.Os
 import android.os.Build
 import android.content.Context
@@ -124,6 +125,49 @@ object Utils {
         } catch (e: Exception) {
             Log.e("getGPUModel", "Error reading GPU model: ${e.message}", e)
             "Unknown"
+        }
+    }
+
+        fun testFile(filePath: String): Boolean {
+        return if (File(filePath).exists()) {
+            true
+        } else {
+            Shell.cmd("test -f $filePath && echo true || echo false")
+                .exec()
+                .out[0] == "true"
+        }
+    }
+    
+    fun setPermissions(permission: Int, filePath: String) {
+        Shell.cmd("chmod $permission $filePath").exec()
+    }
+    
+    fun readFile(filePath: String): String {
+        return try {
+            val result = Shell.cmd("cat $filePath").exec()
+            if (result.isSuccess) {
+                result.out.joinToString("\n").trim()
+            } else {
+                Log.e("ReadFile", "Failed to read file at $filePath: ${result.err}")
+                ""
+            }
+        } catch (e: Exception) {
+            Log.e("ReadFile", "Error executing shell command for $filePath: ${e.message}", e)
+            ""
+        }
+    }
+    
+    fun writeFile(filePath: String, value: String): Boolean {
+        return try {
+            val command = "echo $value > $filePath"
+            val result = Shell.cmd(command).exec()
+            if (result.isSuccess) true else {
+                Log.e("WriteFile", "Failed to write file at $filePath: ${result.err}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("WriteFile", "Error executing shell command for $filePath: ${e.message}", e)
+            false
         }
     }
 }

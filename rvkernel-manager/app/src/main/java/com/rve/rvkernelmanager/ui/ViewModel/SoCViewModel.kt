@@ -152,7 +152,7 @@ class SoCViewModel : ViewModel() {
                 cachedMaxFreqCPU0 = currentMaxFreqCPU0
             }
 
-            val currentGovCPU0 = readFile(GOV_CPU0_PATH)
+            val currentGovCPU0 = Utils.readFile(GOV_CPU0_PATH)
             if (currentGovCPU0 != cachedGovCPU0) {
                 _govCPU0.value = currentGovCPU0
                 cachedGovCPU0 = currentGovCPU0
@@ -170,13 +170,13 @@ class SoCViewModel : ViewModel() {
                 cachedAvailableGovCPU0 = currentAvailableGovCPU0
             }
 
-            _hasBigCluster.value = testFile(AVAILABLE_FREQ_CPU4_PATH)
+            _hasBigCluster.value = Utils.testFile(AVAILABLE_FREQ_CPU4_PATH)
             if (_hasBigCluster.value) {
-                setPermissions(644, AVAILABLE_FREQ_CPU4_PATH)
-                setPermissions(644, MIN_FREQ_CPU4_PATH)
-                setPermissions(644, MAX_FREQ_CPU4_PATH)
-                setPermissions(644, AVAILABLE_GOV_CPU4_PATH)
-                setPermissions(644, GOV_CPU4_PATH)
+                Utils.setPermissions(644, AVAILABLE_FREQ_CPU4_PATH)
+                Utils.setPermissions(644, MIN_FREQ_CPU4_PATH)
+                Utils.setPermissions(644, MAX_FREQ_CPU4_PATH)
+                Utils.setPermissions(644, AVAILABLE_GOV_CPU4_PATH)
+                Utils.setPermissions(644, GOV_CPU4_PATH)
 
                 val currentMinFreqCPU4 = readFreqCPU(MIN_FREQ_CPU4_PATH)
                 if (currentMinFreqCPU4 != cachedMinFreqCPU4) {
@@ -190,7 +190,7 @@ class SoCViewModel : ViewModel() {
                     cachedMaxFreqCPU4 = currentMaxFreqCPU4
                 }
 
-                val currentGovCPU4 = readFile(GOV_CPU4_PATH)
+                val currentGovCPU4 = Utils.readFile(GOV_CPU4_PATH)
                 if (currentGovCPU4 != cachedGovCPU4) {
                     _govCPU4.value = currentGovCPU4
                     cachedGovCPU4 = currentGovCPU4
@@ -209,13 +209,13 @@ class SoCViewModel : ViewModel() {
                 }
             }
 
-            _hasPrimeCluster.value = testFile(AVAILABLE_FREQ_CPU7_PATH)
+            _hasPrimeCluster.value = Utils.testFile(AVAILABLE_FREQ_CPU7_PATH)
             if (_hasPrimeCluster.value) {
-                setPermissions(644, AVAILABLE_FREQ_CPU7_PATH)
-                setPermissions(644, MIN_FREQ_CPU7_PATH)
-                setPermissions(644, MAX_FREQ_CPU7_PATH)
-                setPermissions(644, AVAILABLE_GOV_CPU7_PATH)
-                setPermissions(644, GOV_CPU7_PATH)
+                Utils.setPermissions(644, AVAILABLE_FREQ_CPU7_PATH)
+                Utils.setPermissions(644, MIN_FREQ_CPU7_PATH)
+                Utils.setPermissions(644, MAX_FREQ_CPU7_PATH)
+                Utils.setPermissions(644, AVAILABLE_GOV_CPU7_PATH)
+                Utils.setPermissions(644, GOV_CPU7_PATH)
 
                 val currentMinFreqCPU7 = readFreqCPU(MIN_FREQ_CPU7_PATH)
                 if (currentMinFreqCPU7 != cachedMinFreqCPU7) {
@@ -229,7 +229,7 @@ class SoCViewModel : ViewModel() {
                     cachedMaxFreqCPU7 = currentMaxFreqCPU7
                 }
 
-                val currentGovCPU7 = readFile(GOV_CPU7_PATH)
+                val currentGovCPU7 = Utils.readFile(GOV_CPU7_PATH)
                 if (currentGovCPU7 != cachedGovCPU7) {
                     _govCPU7.value = currentGovCPU7
                     cachedGovCPU7 = currentGovCPU7
@@ -248,27 +248,27 @@ class SoCViewModel : ViewModel() {
                 }
             }
 
-            setPermissions(644, AVAILABLE_FREQ_GPU_PATH)
-            setPermissions(644, MIN_FREQ_GPU_PATH)
-            setPermissions(644, MAX_FREQ_GPU_PATH)
-            setPermissions(644, AVAILABLE_GOV_GPU_PATH)
-            setPermissions(644, GOV_GPU_PATH)
-            setPermissions(644, ADRENO_BOOST_PATH)
-            setPermissions(644, GPU_THROTTLING_PATH)
+            Utils.setPermissions(644, AVAILABLE_FREQ_GPU_PATH)
+            Utils.setPermissions(644, MIN_FREQ_GPU_PATH)
+            Utils.setPermissions(644, MAX_FREQ_GPU_PATH)
+            Utils.setPermissions(644, AVAILABLE_GOV_GPU_PATH)
+            Utils.setPermissions(644, GOV_GPU_PATH)
+            Utils.setPermissions(644, ADRENO_BOOST_PATH)
+            Utils.setPermissions(644, GPU_THROTTLING_PATH)
 
-            val currentMinFreqGPU = readFile(MIN_FREQ_GPU_PATH)
+            val currentMinFreqGPU = Utils.readFile(MIN_FREQ_GPU_PATH)
             if (currentMinFreqGPU != cachedMinFreqGPU) {
                 _minFreqGPU.value = currentMinFreqGPU
                 cachedMinFreqGPU = currentMinFreqGPU
             }
 
-            val currentMaxFreqGPU = readFile(MAX_FREQ_GPU_PATH)
+            val currentMaxFreqGPU = Utils.readFile(MAX_FREQ_GPU_PATH)
             if (currentMaxFreqGPU != cachedMaxFreqGPU) {
                 _maxFreqGPU.value = currentMaxFreqGPU
                 cachedMaxFreqGPU = currentMaxFreqGPU
             }
 
-            val currentGovGPU = readFile(GOV_GPU_PATH)
+            val currentGovGPU = Utils.readFile(GOV_GPU_PATH)
             if (currentGovGPU != cachedGovGPU) {
                 _govGPU.value = currentGovGPU
                 cachedGovGPU = currentGovGPU
@@ -286,20 +286,20 @@ class SoCViewModel : ViewModel() {
                 cachedAvailableGovGPU = currentAvailableGovGPU
             }
 
-            val currentAdrenoBoost = readFile(ADRENO_BOOST_PATH)
+            val currentAdrenoBoost = Utils.readFile(ADRENO_BOOST_PATH)
             if (currentAdrenoBoost != cachedAdrenoBoost) {
                 _adrenoBoost.value = currentAdrenoBoost
                 cachedAdrenoBoost = currentAdrenoBoost
             }
 
-            val currentGpuThrottling = readFile(GPU_THROTTLING_PATH)
+            val currentGpuThrottling = Utils.readFile(GPU_THROTTLING_PATH)
             if (currentGpuThrottling != cachedGpuThrottling) {
                 _gpuThrottling.value = currentGpuThrottling
                 cachedGpuThrottling = currentGpuThrottling
             }
 
-            _hasAdrenoBoost.value = testFile(ADRENO_BOOST_PATH)
-            _hasGPUThrottling.value = testFile(GPU_THROTTLING_PATH)
+            _hasAdrenoBoost.value = Utils.testFile(ADRENO_BOOST_PATH)
+            _hasGPUThrottling.value = Utils.testFile(GPU_THROTTLING_PATH)
         }
     }
 
@@ -333,8 +333,8 @@ class SoCViewModel : ViewModel() {
                 "gpu" -> {
                     val path = if (target == "min") MIN_FREQ_GPU_PATH else MAX_FREQ_GPU_PATH
                     writeFreqGPU(path, selectedFreq)  // Menggunakan writeFreqGPU untuk GPU
-                    _minFreqGPU.value = readFile(MIN_FREQ_GPU_PATH)
-                    _maxFreqGPU.value = readFile(MAX_FREQ_GPU_PATH)
+                    _minFreqGPU.value = Utils.readFile(MIN_FREQ_GPU_PATH)
+                    _maxFreqGPU.value = Utils.readFile(MAX_FREQ_GPU_PATH)
                     cachedMinFreqGPU = _minFreqGPU.value
                     cachedMaxFreqGPU = _maxFreqGPU.value
                 }
@@ -351,23 +351,23 @@ class SoCViewModel : ViewModel() {
                 "gpu" -> GOV_GPU_PATH
                 else -> return@launch
             }
-            writeFile(path, selectedGov)
+            Utils.writeFile(path, selectedGov)
 
             when (cluster) {
                 "little" -> {
-                    _govCPU0.value = readFile(GOV_CPU0_PATH)
+                    _govCPU0.value = Utils.readFile(GOV_CPU0_PATH)
                     cachedGovCPU0 = _govCPU0.value
                 }
                 "big" -> {
-                    _govCPU4.value = readFile(GOV_CPU4_PATH)
+                    _govCPU4.value = Utils.readFile(GOV_CPU4_PATH)
                     cachedGovCPU4 = _govCPU4.value
                 }
                 "prime" -> {
-                    _govCPU7.value = readFile(GOV_CPU7_PATH)
+                    _govCPU7.value = Utils.readFile(GOV_CPU7_PATH)
                     cachedGovCPU7 = _govCPU7.value
                 }
                 "gpu" -> {
-                    _govGPU.value = readFile(GOV_GPU_PATH)
+                    _govGPU.value = Utils.readFile(GOV_GPU_PATH)
                     cachedGovGPU = _govGPU.value
                 }
             }
@@ -376,8 +376,8 @@ class SoCViewModel : ViewModel() {
 
     fun updateAdrenoBoost(selectedBoost: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            writeFile(ADRENO_BOOST_PATH, selectedBoost)
-            _adrenoBoost.value = readFile(ADRENO_BOOST_PATH)
+            Utils.writeFile(ADRENO_BOOST_PATH, selectedBoost)
+            _adrenoBoost.value = Utils.readFile(ADRENO_BOOST_PATH)
             cachedAdrenoBoost = _adrenoBoost.value
         }
     }
@@ -385,8 +385,8 @@ class SoCViewModel : ViewModel() {
     fun updateGPUThrottling(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
-            writeFile(GPU_THROTTLING_PATH, newValue)
-            _gpuThrottling.value = readFile(GPU_THROTTLING_PATH)
+            Utils.writeFile(GPU_THROTTLING_PATH, newValue)
+            _gpuThrottling.value = Utils.readFile(GPU_THROTTLING_PATH)
             cachedGpuThrottling = _gpuThrottling.value
         }
     }

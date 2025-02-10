@@ -51,25 +51,25 @@ class MiscViewModel : ViewModel() {
 
     private fun loadInitialData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentThermalSconfig = readFile(THERMAL_SCONFIG_PATH)
+            val currentThermalSconfig = Utils.readFile(THERMAL_SCONFIG_PATH)
             if (currentThermalSconfig != cachedThermalSconfig) {
                 _thermalSconfig.value = currentThermalSconfig
                 cachedThermalSconfig = currentThermalSconfig
             }
-            _hasThermalSconfig.value = testFile(THERMAL_SCONFIG_PATH)
+            _hasThermalSconfig.value = Utils.testFile(THERMAL_SCONFIG_PATH)
 
-            val swappinessValue = readFile(MiscUtils.SWAPPINESS_PATH)
+            val swappinessValue = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
             _swappiness.value = swappinessValue
         }
     }
 
     fun updateThermalSconfig(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            setPermissions(644, THERMAL_SCONFIG_PATH)
+            Utils.setPermissions(644, THERMAL_SCONFIG_PATH)
             val newValue = if (isChecked) "10" else "0"
-            writeFile(THERMAL_SCONFIG_PATH, newValue)
-            setPermissions(444, THERMAL_SCONFIG_PATH)
-            _thermalSconfig.value = readFile(THERMAL_SCONFIG_PATH)
+            Utils.writeFile(THERMAL_SCONFIG_PATH, newValue)
+            Utils.setPermissions(444, THERMAL_SCONFIG_PATH)
+            _thermalSconfig.value = Utils.readFile(THERMAL_SCONFIG_PATH)
             cachedThermalSconfig = _thermalSconfig.value
         }
     }
@@ -84,8 +84,8 @@ class MiscViewModel : ViewModel() {
 
     fun updateSwappiness(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            setPermissions(644, MiscUtils.SWAPPINESS_PATH)
-            writeFile(MiscUtils.SWAPPINESS_PATH, newValue)
+            Utils.setPermissions(644, MiscUtils.SWAPPINESS_PATH)
+            Utils.writeFile(MiscUtils.SWAPPINESS_PATH, newValue)
             _swappiness.value = newValue
         }
     }
