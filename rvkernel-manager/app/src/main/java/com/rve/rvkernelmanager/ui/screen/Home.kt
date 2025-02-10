@@ -71,7 +71,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val rvosVersion by viewModel.rvosVersion.collectAsState()
     val somethingVersion by viewModel.somethingVersion.collectAsState()
     val kernelVersion by viewModel.kernelVersion.collectAsState()
-    val isCPUInfo by viewModel.isCPUInfo.collectAsState()
+    val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
     ElevatedCard(

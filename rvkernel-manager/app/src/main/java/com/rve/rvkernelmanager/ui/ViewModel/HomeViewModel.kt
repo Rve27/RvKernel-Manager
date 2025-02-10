@@ -35,8 +35,8 @@ class HomeViewModel : ViewModel() {
     private val _kernelVersion = MutableStateFlow("")
     val kernelVersion: StateFlow<String> = _kernelVersion
 
-    private val _isCPUInfo = MutableStateFlow(false)
-    val isCPUInfo: StateFlow<Boolean> = _isCPUInfo
+    private val _isExtendCPUInfo = MutableStateFlow(false)
+    val isExtendCPUInfo: StateFlow<Boolean> = _isExtendCPUInfo
 
     private val _isFullKernelVersion = MutableStateFlow(false)
     val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
@@ -45,7 +45,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
-            _cpu.value = Utils.getCPU()
+            _cpu.value = Utils.getCPUInfo()
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
             _rvosVersion.value = Utils.getRvOSVersion()
@@ -55,11 +55,11 @@ class HomeViewModel : ViewModel() {
     }
 
     fun showCPUInfo() {
-        _isCPUInfo.value = !_isCPUInfo.value
-        _cpu.value = if (_isCPUInfo.value) {
+        _isExtendCPUInfo.value = !_isExtendCPUInfo.value
+        _cpu.value = if (_isExtendCPUInfo.value) {
             Utils.getCPUInfo()
         } else {
-            Utils.getCPU()
+            Utils.getExtendCPUInfo()
         }
     }
 

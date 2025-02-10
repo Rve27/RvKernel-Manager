@@ -22,11 +22,22 @@ object Utils {
         return Build.VERSION.RELEASE
     }
     
-    fun getCPU(): String {
-        return Build.SOC_MODEL
+    fun getCPUInfo(): String {
+        return try {
+            val hardwareResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Hardware' | head -n 1").exec()
+    
+            if (hardwareResult.isSuccess) {
+                hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
+            } else {
+                "Unknown"
+            }
+        } catch (e: Exception) {
+            Log.e("getCPUInfo", "Exception during command execution", e)
+            "Unknown"
+        }
     }
     
-    fun getCPUInfo(): String {
+    fun getExtendCPUInfo(): String {
         return try {
             val hardwareResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Hardware' | head -n 1").exec()
             val coresResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'processor' | wc -l").exec()
@@ -47,7 +58,7 @@ object Utils {
     
             "$hardware\n$cores Cores ($arch)"
         } catch (e: Exception) {
-            Log.e("getCPUInfo", "Exception during command execution", e)
+            Log.e("getExtendCPUInfo", "Exception during command execution", e)
             "Exception during command execution"
         }
     }
