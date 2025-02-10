@@ -19,6 +19,12 @@ class MiscViewModel : ViewModel() {
     private val _hasThermalSconfig = MutableStateFlow(false)
     val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
 
+    private val _schedAutogroup = MutableStateFlow("")
+    val schedAutogroup: StateFlow<String> = _schedAutogroup
+
+    private val _hasSchedAutogroup = MutableStateFlow(false)
+    val hasSchedAutogroup: StateFlow<Boolean> = _hasSchedAutogroup
+
     private val _swappiness = MutableStateFlow("")
     val swappiness: StateFlow<String> = _swappiness
 
@@ -26,6 +32,7 @@ class MiscViewModel : ViewModel() {
     val showSwappinessDialog: StateFlow<Boolean> = _showSwappinessDialog
 
     private var cachedThermalSconfig: String? = null
+    private var cachedSchedAutogroup: String? = null
 
     private var pollingJob: Job? = null
 
@@ -58,6 +65,13 @@ class MiscViewModel : ViewModel() {
             }
             _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG_PATH)
 
+            val currentSchedAutogroup = Utils.readFile(MiscUtils.SCHED_AUTOGROUP_PATH)
+            if (currentSchedAutogroup != cachedSchedAutogroup) {
+                _schedAutogroup.value = currentSchedAutogroup
+                cachedSchedAutogroup = currentSchedAutogroup
+            }
+            _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP_PATH)
+
             val swappinessValue = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
             _swappiness.value = swappinessValue
         }
@@ -74,6 +88,15 @@ class MiscViewModel : ViewModel() {
         }
     }
 
+
+    fun updateSchedAutogroup(isChecked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newValue = if (isChecked) "1" else "0"
+            Utils.writeFile(MiscUtils.SCHED_AUTOGROUP_PATH, newValue)
+            _schedAutogroup.value = Utils.readFile(MiscUtils.SCHED_AUTOGROUP_PATH)
+            cachedSchedAutogroup = _schedAutogroup.value
+        }
+    }
     fun showSwappinessDialog() {
         _showSwappinessDialog.value = true
     }

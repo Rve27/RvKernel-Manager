@@ -23,6 +23,8 @@
     <!-- Misc -->
     <string name="misc_category">Misc</string>
     <string name="unlock_cpu_freq">Unlock CPU Frequency</string>
+    <string name="sched_autogroup">sched_autogroup_enabled</string>
+    <string name="swappiness">swappiness</string>
 
     <!-- Charging -->
     <string name="charging_title">Charging</string>
@@ -64,6 +66,4 @@
     <string name="batt_design_capacity">Design capacity</string>
     <string name="batt_max_capacity">Maximum capacity</string>
 
-    <!-- Misc -->
-    <string name="swappiness">swappiness</string>
 </resources>

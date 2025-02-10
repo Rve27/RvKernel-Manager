@@ -47,9 +47,14 @@ fun MiscScreen(viewModel: MiscViewModel = viewModel()) {
 fun MiscCard(viewModel: MiscViewModel) {
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
+    val thermalSconfigStatus = thermalSconfig == "10"
+
+    val schedAutogroup by viewModel.schedAutogroup.collectAsState()
+    val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
+    val schedAutogroupStatus = schedAutogroup == "1"
+
     val swappiness by viewModel.swappiness.collectAsState()
     val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
-    val thermalSconfigStatus = thermalSconfig == "10"
 
     Card(
         shape = CardDefaults.shape
@@ -66,7 +71,6 @@ fun MiscCard(viewModel: MiscViewModel) {
             Spacer(Modifier.height(4.dp))
 
             if (hasThermalSconfig) {
-                Spacer(Modifier.height(4.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -85,7 +89,25 @@ fun MiscCard(viewModel: MiscViewModel) {
                 }
             }
 
-            Spacer(Modifier.height(4.dp))
+            if (hasSchedAutogroup) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.sched_autogroup),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = schedAutogroupStatus,
+                        onCheckedChange = { isChecked ->
+                            viewModel.updateSchedAutogroup(isChecked)
+                        }
+                    )
+                }
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -119,7 +141,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                 }
             },
             confirmButton = {
-                Button(
+                TextButton(
                     onClick = {
                         viewModel.updateSwappiness(newSwappinessValue)
                         viewModel.hideSwappinessDialog()
