@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">RvKernel Manager</string>
     <string name="not_available">N/A</string>
+    <string name="change">Change</string>
 
     <!-- CPU -->
     <string name="cpu">CPU</string>
@@ -60,4 +61,7 @@
     <string name="batt_volt">Voltage</string>
     <string name="batt_design_capacity">Design capacity</string>
     <string name="batt_max_capacity">Maximum capacity</string>
+
+    <!-- Misc -->
+    <string name="swappiness">swappiness</string>
 </resources>

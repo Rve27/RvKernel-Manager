@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.MiscUtils
 
 class MiscViewModel : ViewModel() {
 
@@ -17,6 +18,12 @@ class MiscViewModel : ViewModel() {
 
     private val _hasThermalSconfig = MutableStateFlow(false)
     val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
+
+    private val _swappiness = MutableStateFlow("")
+    val swappiness: StateFlow<String> = _swappiness
+
+    private val _showSwappinessDialog = MutableStateFlow(false)
+    val showSwappinessDialog: StateFlow<Boolean> = _showSwappinessDialog
 
     private var cachedThermalSconfig: String? = null
 
@@ -49,8 +56,10 @@ class MiscViewModel : ViewModel() {
                 _thermalSconfig.value = currentThermalSconfig
                 cachedThermalSconfig = currentThermalSconfig
             }
-
             _hasThermalSconfig.value = testFile(THERMAL_SCONFIG_PATH)
+
+            val swappinessValue = readFile(MiscUtils.SWAPPINESS_PATH)
+            _swappiness.value = swappinessValue
         }
     }
 
@@ -62,6 +71,22 @@ class MiscViewModel : ViewModel() {
             setPermissions(444, THERMAL_SCONFIG_PATH)
             _thermalSconfig.value = readFile(THERMAL_SCONFIG_PATH)
             cachedThermalSconfig = _thermalSconfig.value
+        }
+    }
+
+    fun showSwappinessDialog() {
+        _showSwappinessDialog.value = true
+    }
+
+    fun hideSwappinessDialog() {
+        _showSwappinessDialog.value = false
+    }
+
+    fun updateSwappiness(newValue: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            setPermissions(644, MiscUtils.SWAPPINESS_PATH)
+            writeFile(MiscUtils.SWAPPINESS_PATH, newValue)
+            _swappiness.value = newValue
         }
     }
 }

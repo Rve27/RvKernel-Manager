@@ -47,6 +47,8 @@ fun MiscScreen(viewModel: MiscViewModel = viewModel()) {
 fun MiscCard(viewModel: MiscViewModel) {
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
+    val swappiness by viewModel.swappiness.collectAsState()
+    val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
     val thermalSconfigStatus = thermalSconfig == "10"
 
     ElevatedCard(
@@ -82,6 +84,50 @@ fun MiscCard(viewModel: MiscViewModel) {
                     )
                 }
             }
+
+            Spacer(Modifier.height(4.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.swappiness),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Button(
+                    onClick = { viewModel.showSwappinessDialog() }
+                ) {
+                    Text(text = swappiness)
+                }
+            }
         }
+    }
+
+    if (showSwappinessDialog) {
+        var newSwappinessValue by remember { mutableStateOf(swappiness) }
+        AlertDialog(
+            onDismissRequest = { viewModel.hideSwappinessDialog() },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = newSwappinessValue,
+                        onValueChange = { newSwappinessValue = it },
+                        label = { Text(stringResource(R.string.swappiness)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.updateSwappiness(newSwappinessValue)
+                        viewModel.hideSwappinessDialog()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.change))
+                }
+            }
+        )
     }
 }
