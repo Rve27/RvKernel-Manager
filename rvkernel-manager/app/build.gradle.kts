@@ -30,7 +30,7 @@ android {
     
     defaultConfig {
         applicationId = "com.rve.rvkernelmanager"
-        minSdk = 33
+        minSdk = 29
         targetSdk = 35
         versionCode = 10
         versionName = "Caroline-1.0"
