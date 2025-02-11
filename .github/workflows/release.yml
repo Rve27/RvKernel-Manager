@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - "Caroline*"
+      - "v*"
   workflow_dispatch:
 
 jobs:
@@ -24,3 +24,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: RvKernel-Manager/*.apk
+          token: ${{ secrets.MY_TOKEN }}
