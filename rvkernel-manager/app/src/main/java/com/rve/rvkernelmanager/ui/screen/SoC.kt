@@ -251,22 +251,24 @@ fun AdrenoBoostDialog(
 }
 
 @Composable
-fun SoCBaseCard(
-    title: String,
-    minFreq: String,
-    maxFreq: String,
-    gov: String,
-    availableFreq: List<String>,
-    availableGov: List<String>,
-    onFreqSelected: (String, String) -> Unit,
-    onGovSelected: (String) -> Unit
-) {
+fun LittleClusterCard(viewModel: SoCViewModel) {
+    val minFreqCPU0 by viewModel.minFreqCPU0.collectAsState()
+    val maxFreqCPU0 by viewModel.maxFreqCPU0.collectAsState()
+    val govCPU0 by viewModel.govCPU0.collectAsState()
+    val availableFreqCPU0 by viewModel.availableFreqCPU0.collectAsState()
+    val availableGovCPU0 by viewModel.availableGovCPU0.collectAsState()
+    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+
     var showFreqDialog by remember { mutableStateOf(false) }
     var showGovDialog by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
 
     Card(
-        shape = CardDefaults.shape
+        shape = CardDefaults.shape,
+	    modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
     ) {
         Column(
             modifier = Modifier
@@ -274,14 +276,16 @@ fun SoCBaseCard(
                 .padding(20.dp)
         ) {
             Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
+                text = if (hasBigCluster) stringResource(R.string.little_cluster) 
+                       else stringResource(R.string.cpu),
+                style = MaterialTheme.typography.titleLarge,
+		        modifier = Modifier.clickable { expanded = !expanded }
             )
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
                 label = stringResource(R.string.min_freq),
-                value = minFreq,
+                value = minFreqCPU0,
                 onClick = {
                     currentFileTarget = "min"
                     showFreqDialog = true
@@ -292,7 +296,7 @@ fun SoCBaseCard(
 
             FreqRow(
                 label = stringResource(R.string.max_freq),
-                value = maxFreq,
+                value = maxFreqCPU0,
                 onClick = {
                     currentFileTarget = "max"
                     showFreqDialog = true
@@ -302,7 +306,7 @@ fun SoCBaseCard(
             Spacer(Modifier.height(4.dp))
 
             GovRow(
-                value = gov,
+                value = govCPU0,
                 onClick = {
                     showGovDialog = true
                 }
@@ -310,11 +314,11 @@ fun SoCBaseCard(
 
             if (showFreqDialog) {
                 FreqDialog(
-                    frequencies = availableFreq,
-                    currentFreq = if (currentFileTarget == "min") minFreq else maxFreq,
+                    frequencies = availableFreqCPU0,
+                    currentFreq = if (currentFileTarget == "min") minFreqCPU0 else maxFreqCPU0,
                     onDismiss = { showFreqDialog = false },
                     onSelected = { selectedFreq ->
-                        onFreqSelected(currentFileTarget, selectedFreq)
+                        viewModel.updateFreq(currentFileTarget, selectedFreq, "little")
                         showFreqDialog = false
                     }
                 )
@@ -322,43 +326,17 @@ fun SoCBaseCard(
 
             if (showGovDialog) {
                 GovDialog(
-                    governors = availableGov,
-                    currentGov = gov,
+                    governors = availableGovCPU0,
+                    currentGov = govCPU0,
                     onDismiss = { showGovDialog = false },
                     onSelected = { selectedGov ->
-                        onGovSelected(selectedGov)
+                        viewModel.updateGov(selectedGov, "little")
                         showGovDialog = false
                     }
                 )
             }
         }
     }
-}
-
-@Composable
-fun LittleClusterCard(viewModel: SoCViewModel) {
-    val minFreqCPU0 by viewModel.minFreqCPU0.collectAsState()
-    val maxFreqCPU0 by viewModel.maxFreqCPU0.collectAsState()
-    val govCPU0 by viewModel.govCPU0.collectAsState()
-    val availableFreqCPU0 by viewModel.availableFreqCPU0.collectAsState()
-    val availableGovCPU0 by viewModel.availableGovCPU0.collectAsState()
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
-
-    SoCBaseCard(
-        title = if (hasBigCluster) stringResource(R.string.little_cluster) 
-                else stringResource(R.string.cpu),
-        minFreq = minFreqCPU0,
-        maxFreq = maxFreqCPU0,
-        gov = govCPU0,
-        availableFreq = availableFreqCPU0,
-        availableGov = availableGovCPU0,
-        onFreqSelected = { target, selectedFreq ->
-            viewModel.updateFreq(target, selectedFreq, "little")
-        },
-        onGovSelected = { selectedGov ->
-            viewModel.updateGov(selectedGov, "little")
-        }
-    )
 }
 
 @Composable
@@ -369,20 +347,83 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     val availableFreqCPU4 by viewModel.availableFreqCPU4.collectAsState()
     val availableGovCPU4 by viewModel.availableGovCPU4.collectAsState()
 
-    SoCBaseCard(
-        title = stringResource(R.string.big_cluster),
-        minFreq = minFreqCPU4,
-        maxFreq = maxFreqCPU4,
-        gov = govCPU4,
-        availableFreq = availableFreqCPU4,
-        availableGov = availableGovCPU4,
-        onFreqSelected = { target, selectedFreq ->
-            viewModel.updateFreq(target, selectedFreq, "big")
-        },
-        onGovSelected = { selectedGov ->
-            viewModel.updateGov(selectedGov, "big")
+    var showFreqDialog by remember { mutableStateOf(false) }
+    var showGovDialog by remember { mutableStateOf(false) }
+    var currentFileTarget by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+
+    Card(
+        shape = CardDefaults.shape,
+	    modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.big_cluster),
+                style = MaterialTheme.typography.titleLarge,
+		        modifier = Modifier.clickable { expanded = !expanded }
+            )
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.min_freq),
+                value = minFreqCPU4,
+                onClick = {
+                    currentFileTarget = "min"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.max_freq),
+                value = maxFreqCPU4,
+                onClick = {
+                    currentFileTarget = "max"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            GovRow(
+                value = govCPU4,
+                onClick = {
+                    showGovDialog = true
+                }
+            )
+
+            if (showFreqDialog) {
+                FreqDialog(
+                    frequencies = availableFreqCPU4,
+                    currentFreq = if (currentFileTarget == "min") minFreqCPU4 else maxFreqCPU4,
+                    onDismiss = { showFreqDialog = false },
+                    onSelected = { selectedFreq ->
+                        viewModel.updateFreq(currentFileTarget, selectedFreq, "big")
+                        showFreqDialog = false
+                    }
+                )
+            }
+
+            if (showGovDialog) {
+                GovDialog(
+                    governors = availableGovCPU4,
+                    currentGov = govCPU4,
+                    onDismiss = { showGovDialog = false },
+                    onSelected = { selectedGov ->
+                        viewModel.updateGov(selectedGov, "big")
+                        showGovDialog = false
+                    }
+                )
+            }
         }
-    )
+    }
 }
 
 @Composable
@@ -393,20 +434,83 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     val availableFreqCPU7 by viewModel.availableFreqCPU7.collectAsState()
     val availableGovCPU7 by viewModel.availableGovCPU7.collectAsState()
 
-    SoCBaseCard(
-        title = stringResource(R.string.prime_cluster),
-        minFreq = minFreqCPU7,
-        maxFreq = maxFreqCPU7,
-        gov = govCPU7,
-        availableFreq = availableFreqCPU7,
-        availableGov = availableGovCPU7,
-        onFreqSelected = { target, selectedFreq ->
-            viewModel.updateFreq(target, selectedFreq, "prime")
-        },
-        onGovSelected = { selectedGov ->
-            viewModel.updateGov(selectedGov, "prime")
+    var showFreqDialog by remember { mutableStateOf(false) }
+    var showGovDialog by remember { mutableStateOf(false) }
+    var currentFileTarget by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+
+    Card(
+        shape = CardDefaults.shape,
+	    modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.prime_cluster),
+                style = MaterialTheme.typography.titleLarge,
+		        modifier = Modifier.clickable { expanded = !expanded }
+            )
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.min_freq),
+                value = minFreqCPU7,
+                onClick = {
+                    currentFileTarget = "min"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.max_freq),
+                value = maxFreqCPU7,
+                onClick = {
+                    currentFileTarget = "max"
+                    showFreqDialog = true
+                }
+            )
+            
+            Spacer(Modifier.height(4.dp))
+
+            GovRow(
+                value = govCPU7,
+                onClick = {
+                    showGovDialog = true
+                }
+            )
+
+            if (showFreqDialog) {
+                FreqDialog(
+                    frequencies = availableFreqCPU7,
+                    currentFreq = if (currentFileTarget == "min") minFreqCPU7 else maxFreqCPU7,
+                    onDismiss = { showFreqDialog = false },
+                    onSelected = { selectedFreq ->
+                        viewModel.updateFreq(currentFileTarget, selectedFreq, "prime")
+                        showFreqDialog = false
+                    }
+                )
+            }
+
+            if (showGovDialog) {
+                GovDialog(
+                    governors = availableGovCPU7,
+                    currentGov = govCPU7,
+                    onDismiss = { showGovDialog = false },
+                    onSelected = { selectedGov ->
+                        viewModel.updateGov(selectedGov, "prime")
+                        showGovDialog = false
+                    }
+                )
+            }
         }
-    )
+    }
 }
 
 @Composable
