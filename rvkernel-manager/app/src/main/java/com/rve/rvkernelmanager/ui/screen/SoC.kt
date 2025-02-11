@@ -6,7 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -543,7 +543,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     Card(
         shape = CardDefaults.shape,
-	modifier = Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
     ) {
@@ -555,7 +555,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = stringResource(R.string.gpu),
                 style = MaterialTheme.typography.titleLarge,
-		modifier = Modifier.clickable { expanded = !expanded }
+                modifier = Modifier.clickable { expanded = !expanded }
             )
             Spacer(Modifier.height(4.dp))
 
@@ -587,26 +587,30 @@ fun GPUCard(viewModel: SoCViewModel) {
                 }
             )
 
-            if (hasAdrenoBoost) {
-                Spacer(Modifier.height(4.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.adreno_boost),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Button(
-                        onClick = {
-                            currentFileTarget = SoCUtils.ADRENO_BOOST_PATH
-                            showAdrenoBoost = true
-                        }
+            AnimatedVisibility(
+                visible = hasAdrenoBoost,
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top)
+            ) {
+                Column {
+                    Spacer(Modifier.height(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = adrenoBoostText
+                            text = stringResource(R.string.adreno_boost),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f)
                         )
+                        Button(
+                            onClick = {
+                                currentFileTarget = SoCUtils.ADRENO_BOOST_PATH
+                                showAdrenoBoost = true
+                            }
+                        ) {
+                            Text(text = adrenoBoostText)
+                        }
                     }
                 }
             }
