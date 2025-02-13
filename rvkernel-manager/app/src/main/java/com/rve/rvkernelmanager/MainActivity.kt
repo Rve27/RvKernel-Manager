@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.screen.*
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
@@ -91,6 +92,8 @@ private fun RvKernelManagerNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -99,15 +102,14 @@ private fun RvKernelManagerNavHost(
         composable<Route.Home> {
             HomeScreen()
         }
-	composable<Route.Battery> {
-	    BatteryScreen()
-	}
-	composable<Route.SoC> {
-	    SoCScreen()
-	}
+        composable<Route.Battery> {
+            BatteryScreen()
+        }
+        composable<Route.SoC> {
+            SoCScreen(lifecycleOwner = lifecycleOwner)
+        }
         composable<Route.Misc> {
             MiscScreen()
         }
     }
 }
-
