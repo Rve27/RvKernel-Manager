@@ -11,10 +11,6 @@ import com.rve.rvkernelmanager.R
 
 object RootUtils {
 
-    fun isRooted(): Boolean {
-        return java.lang.Boolean.TRUE == Shell.isAppGrantedRoot()
-    }
-    
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun NoRootDialog(onConfirm: () -> Unit) {
@@ -32,7 +28,6 @@ object RootUtils {
                         Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = stringResource(R.string.root_summary),
-		        color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         TextButton(
