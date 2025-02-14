@@ -13,6 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.BatteryViewModel
@@ -20,11 +24,33 @@ import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BatteryScreen(viewModel: BatteryViewModel = viewModel()) {
+fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val hasEnableCharging by viewModel.hasEnableCharging.collectAsState()
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.loadBatteryInfo(context)
+                    viewModel.registerBatteryListeners(context)
+                    viewModel.checkChargingFiles()
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    viewModel.unregisterBatteryListeners(context)
+                }
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadBatteryInfo(context)

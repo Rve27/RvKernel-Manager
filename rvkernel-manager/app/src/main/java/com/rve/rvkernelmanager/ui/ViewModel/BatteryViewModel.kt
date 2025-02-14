@@ -1,6 +1,7 @@
 package com.rve.rvkernelmanager.ui.ViewModel
 
 import android.content.Context
+import android.content.BroadcastReceiver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +41,10 @@ class BatteryViewModel : ViewModel() {
     private val _hasFastCharging = MutableStateFlow(false)
     val hasFastCharging: StateFlow<Boolean> = _hasFastCharging
 
+    private var tempReceiver: BroadcastReceiver? = null
+    private var voltageReceiver: BroadcastReceiver? = null
+    private var maxCapacityReceiver: BroadcastReceiver? = null
+
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch {
             _battTech.value = BatteryUtils.getBatteryTechnology(context)
@@ -50,15 +55,23 @@ class BatteryViewModel : ViewModel() {
 
     fun registerBatteryListeners(context: Context) {
         viewModelScope.launch {
-            val tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
+            tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
                 _battTemp.value = temp
             }
-            val voltageReceiver = BatteryUtils.registerBatteryVoltageListener(context) { voltage ->
+            voltageReceiver = BatteryUtils.registerBatteryVoltageListener(context) { voltage ->
                 _battVoltage.value = voltage
             }
-            val maxCapacityReceiver = BatteryUtils.registerBatteryCapacityListener(context) { maxCapacity ->
+            maxCapacityReceiver = BatteryUtils.registerBatteryCapacityListener(context) { maxCapacity ->
                 _battMaximumCapacity.value = maxCapacity
             }
+        }
+    }
+
+    fun unregisterBatteryListeners(context: Context) {
+        viewModelScope.launch {
+            tempReceiver?.let { context.unregisterReceiver(it) }
+            voltageReceiver?.let { context.unregisterReceiver(it) }
+            maxCapacityReceiver?.let { context.unregisterReceiver(it) }
         }
     }
 

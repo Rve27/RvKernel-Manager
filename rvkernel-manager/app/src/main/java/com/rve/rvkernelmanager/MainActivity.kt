@@ -103,7 +103,7 @@ private fun RvKernelManagerNavHost(
             HomeScreen()
         }
         composable<Route.Battery> {
-            BatteryScreen()
+            BatteryScreen(lifecycleOwner = lifecycleOwner)
         }
         composable<Route.SoC> {
             SoCScreen(lifecycleOwner = lifecycleOwner)
