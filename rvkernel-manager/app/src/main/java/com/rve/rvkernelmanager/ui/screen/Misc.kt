@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.MiscViewModel
+import com.rve.rvkernelmanager.utils.MiscUtils
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,7 +123,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.sched_autogroup),
+                        MiscUtils.SCHED_AUTOGROUP_PATH.substringAfterLast("/"),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -140,7 +141,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.swappiness),
+                    text = MiscUtils.SWAPPINESS_PATH.substringAfterLast("/"),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f)
                 )
