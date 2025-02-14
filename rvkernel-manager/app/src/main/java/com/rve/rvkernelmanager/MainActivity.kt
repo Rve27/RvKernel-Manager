@@ -100,7 +100,7 @@ private fun RvKernelManagerNavHost(
         startDestination = Route.Home,
     ) {
         composable<Route.Home> {
-            HomeScreen()
+            HomeScreen(lifecycleOwner = lifecycleOwner)
         }
         composable<Route.Battery> {
             BatteryScreen(lifecycleOwner = lifecycleOwner)
