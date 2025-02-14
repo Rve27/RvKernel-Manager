@@ -10,6 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.MiscViewModel
@@ -17,8 +21,31 @@ import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MiscScreen(viewModel: MiscViewModel = viewModel()) {
+fun MiscScreen(
+    viewModel: MiscViewModel = viewModel(),
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.startPolling()
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    viewModel.stopPolling()
+                }
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         topBar = {

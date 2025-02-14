@@ -109,7 +109,7 @@ private fun RvKernelManagerNavHost(
             SoCScreen(lifecycleOwner = lifecycleOwner)
         }
         composable<Route.Misc> {
-            MiscScreen()
+            MiscScreen(lifecycleOwner = lifecycleOwner)
         }
     }
 }

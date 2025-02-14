@@ -36,11 +36,6 @@ class MiscViewModel : ViewModel() {
 
     private var pollingJob: Job? = null
 
-    init {
-        loadInitialData()
-        startPolling()
-    }
-
     fun startPolling() {
         pollingJob?.cancel()
         pollingJob = viewModelScope.launch {
@@ -88,7 +83,6 @@ class MiscViewModel : ViewModel() {
         }
     }
 
-
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
@@ -97,6 +91,7 @@ class MiscViewModel : ViewModel() {
             cachedSchedAutogroup = _schedAutogroup.value
         }
     }
+
     fun showSwappinessDialog() {
         _showSwappinessDialog.value = true
     }
