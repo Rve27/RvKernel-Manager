@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.screen.*
@@ -20,54 +19,12 @@ import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
-
-        var isShellReady by mutableStateOf(false)
-        var showNoRootDialog by mutableStateOf(false)
-
-        Shell.getShell { shell ->
-            if (RootUtils.isRooted()) {
-                isShellReady = true
-            } else {
-                showNoRootDialog = true
-            }
-        }
 
         setContent {
             RvKernelManagerTheme {
-                when {
-                    showNoRootDialog -> {
-                        RootUtils.NoRootDialog { finish() }
-                    }
-                    isShellReady -> {
-                        RvKernelManagerTheme {
-                            val navController = rememberNavController()
-                            val navigationActions = remember(navController) {
-                                BottomNavigationActions(navController)
-                            }
-                            val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentDestination = navBackStackEntry?.destination
-        
-                            Scaffold(
-                                bottomBar = { 
-                                    BottomNavigationBar(
-                                        currentDestination = currentDestination,
-                                        navigateToTopLevelDestination = navigationActions::navigateTo
-                                    )
-                                },
-                                contentWindowInsets = WindowInsets(0, 0, 0, 0)
-                            ) { innerPadding ->
-                                RvKernelManagerNavHost(
-                                    modifier = Modifier.padding(innerPadding),
-                                    navController = navController
-                                )
-                            }
-                        }
-                    }
-                }
+                RootCheckHandler()
             }
         }
     }
@@ -78,12 +35,59 @@ class MainActivity : ComponentActivity() {
             if (Shell.getCachedShell() == null) {
                 Shell.setDefaultBuilder(
                     Shell.Builder.create()
-                        .setFlags(Shell.FLAG_MOUNT_MASTER)
-                        .setFlags(Shell.FLAG_REDIRECT_STDERR)
+                        .setFlags(Shell.FLAG_MOUNT_MASTER or Shell.FLAG_REDIRECT_STDERR)
                         .setTimeout(20)
                 )
             }
         }
+    }
+}
+
+@Composable
+fun RootCheckHandler() {
+    var isShellReady by remember { mutableStateOf(false) }
+    var showNoRootDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        Shell.getShell { shell ->
+            if (shell.isRoot) {
+                isShellReady = true
+            } else {
+                showNoRootDialog = true
+            }
+        }
+    }
+
+    when {
+        showNoRootDialog -> {
+            RootUtils.NoRootDialog { System.exit(0) }
+        }
+        isShellReady -> {
+            RvKernelManagerApp()
+        }
+    }
+}
+
+@Composable
+fun RvKernelManagerApp() {
+    val navController = rememberNavController()
+    val navigationActions = remember(navController) { BottomNavigationActions(navController) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    Scaffold(
+        bottomBar = { 
+            BottomNavigationBar(
+                currentDestination = currentDestination,
+                navigateToTopLevelDestination = navigationActions::navigateTo
+            )
+        },
+	contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { innerPadding ->
+        RvKernelManagerNavHost(
+            modifier = Modifier.padding(innerPadding),
+            navController = navController
+        )
     }
 }
 

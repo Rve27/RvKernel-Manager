@@ -9,7 +9,7 @@
         android:supportsRtl="true" 
 	android:windowSoftInputMode="adjustResize"
 	android:enableOnBackInvokedCallback="true"
-        android:theme="@style/RvTheme.Splash">
+        android:theme="@style/RvTheme">
         <activity 
 	    android:name=".MainActivity"
             android:exported="true">
