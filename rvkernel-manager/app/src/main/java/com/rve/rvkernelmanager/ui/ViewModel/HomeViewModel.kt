@@ -54,11 +54,13 @@ class HomeViewModel : ViewModel() {
     }
 
     fun showCPUInfo() {
-        _isExtendCPUInfo.value = !_isExtendCPUInfo.value
-        _cpu.value = if (_isExtendCPUInfo.value) {
-            Utils.getCPUInfo()
-        } else {
-            Utils.getExtendCPUInfo()
+        viewModelScope.launch {
+            _isExtendCPUInfo.value = !_isExtendCPUInfo.value
+            _cpu.value = if (_isExtendCPUInfo.value) {
+                Utils.getExtendCPUInfo()
+            } else {
+                Utils.getCPUInfo()
+            }
         }
     }
 
