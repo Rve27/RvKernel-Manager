@@ -163,7 +163,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     OutlinedTextField(
                         value = newSwappinessValue,
                         onValueChange = { newSwappinessValue = it },
-                        label = { Text(stringResource(R.string.swappiness)) },
+                        label = { Text(MiscUtils.SWAPPINESS_PATH.substringAfterLast("/")) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
