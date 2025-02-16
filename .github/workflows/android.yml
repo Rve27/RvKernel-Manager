@@ -46,10 +46,10 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build Release
-      run: ./gradlew clean assembleRelease
+      run: ./gradlew assembleRelease
 
     - name: Build Debug
-      run: ./gradlew clean assembleDebug
+      run: ./gradlew assembleDebug
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
