@@ -52,4 +52,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: RvKernel-Manager
-        path: rvkernel-manager/app/build/outputs/apk/release/*.apk
+        path: |
+          rvkernel-manager/app/build/outputs/apk/release/*.apk
+          rvkernel-manager/app/build/outputs/apk/debug/*.apk
