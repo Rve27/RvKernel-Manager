@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.BatteryUtils
 
@@ -47,9 +49,11 @@ class BatteryViewModel : ViewModel() {
 
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch {
-            _battTech.value = BatteryUtils.getBatteryTechnology(context)
-            _battHealth.value = BatteryUtils.getBatteryHealth(context)
-            _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
+            withContext(Dispatchers.IO) {
+                _battTech.value = BatteryUtils.getBatteryTechnology(context)
+                _battHealth.value = BatteryUtils.getBatteryHealth(context)
+                _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
+            }
         }
     }
 
@@ -77,27 +81,33 @@ class BatteryViewModel : ViewModel() {
 
     fun checkChargingFiles() {
         viewModelScope.launch {
-            _hasEnableCharging.value = Utils.testFile(BatteryUtils.ENABLE_CHARGING_PATH)
-            _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING_PATH)
-            _isEnableChargingChecked.value = Utils.readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
-            _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
+            withContext(Dispatchers.IO) {
+                _hasEnableCharging.value = Utils.testFile(BatteryUtils.ENABLE_CHARGING_PATH)
+                _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING_PATH)
+                _isEnableChargingChecked.value = Utils.readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
+                _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
+            }
         }
     }
 
     fun toggleEnableCharging(checked: Boolean) {
         viewModelScope.launch {
-            val success = Utils.writeFile(BatteryUtils.ENABLE_CHARGING_PATH, if (checked) "1" else "0")
-            if (success) {
-                _isEnableChargingChecked.value = checked
+            withContext(Dispatchers.IO) {
+                val success = Utils.writeFile(BatteryUtils.ENABLE_CHARGING_PATH, if (checked) "1" else "0")
+                if (success) {
+                    _isEnableChargingChecked.value = checked
+                }
             }
         }
     }
 
     fun toggleFastCharging(checked: Boolean) {
         viewModelScope.launch {
-            val success = Utils.writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
-            if (success) {
-                _isFastChargingChecked.value = checked
+            withContext(Dispatchers.IO) {
+                val success = Utils.writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
+                if (success) {
+                    _isFastChargingChecked.value = checked
+                }
             }
         }
     }

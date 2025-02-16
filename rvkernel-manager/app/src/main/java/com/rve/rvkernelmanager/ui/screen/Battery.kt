@@ -24,7 +24,10 @@ import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current) {
+fun BatteryScreen(
+    viewModel: BatteryViewModel = viewModel(),
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val hasEnableCharging by viewModel.hasEnableCharging.collectAsState()
@@ -96,85 +99,40 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     Card(
         shape = CardDefaults.shape
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(20.dp)
         ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.batt_info_title),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(Modifier.height(16.dp))
-                
-                Text(
-                    text = stringResource(R.string.batt_tech),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battTech,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-                
-                Text(
-                    text = stringResource(R.string.batt_health),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battHealth,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-                
-                Text(
-                    text = stringResource(R.string.batt_temp),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battTemp,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.batt_info_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.height(16.dp))
 
-                Text(
-                    text = stringResource(R.string.batt_volt),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battVoltage,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.batt_design_capacity),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battDesignCapacity,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.batt_max_capacity),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = battMaximumCapacity,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            InfoRow(label = stringResource(R.string.batt_tech), value = battTech)
+            InfoRow(label = stringResource(R.string.batt_health), value = battHealth)
+            InfoRow(label = stringResource(R.string.batt_temp), value = battTemp)
+            InfoRow(label = stringResource(R.string.batt_volt), value = battVoltage)
+            InfoRow(label = stringResource(R.string.batt_design_capacity), value = battDesignCapacity)
+            InfoRow(label = stringResource(R.string.batt_max_capacity), value = battMaximumCapacity)
         }
+    }
+}
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(Modifier.height(16.dp))
     }
 }
 
@@ -198,44 +156,43 @@ fun ChargingCard(viewModel: BatteryViewModel) {
             Spacer(Modifier.height(4.dp))
 
             if (hasEnableCharging) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.enable_charging),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        modifier = Modifier.semantics { contentDescription = "Enable Charging" },
-                        checked = isEnableChargingChecked,
-                        onCheckedChange = { checked ->
-                            viewModel.toggleEnableCharging(checked)
-                        }
-                    )
-                }
+                SwitchRow(
+                    label = stringResource(R.string.enable_charging),
+                    checked = isEnableChargingChecked,
+                    onCheckedChange = { viewModel.toggleEnableCharging(it) }
+                )
             }
 
             if (hasFastCharging) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.fast_charging),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        modifier = Modifier.semantics { contentDescription = "Fast Charging" },
-                        checked = isFastChargingChecked,
-                        onCheckedChange = { checked ->
-                            viewModel.toggleFastCharging(checked)
-                        }
-                    )
-                }
+                SwitchRow(
+                    label = stringResource(R.string.fast_charging),
+                    checked = isFastChargingChecked,
+                    onCheckedChange = { viewModel.toggleFastCharging(it) }
+                )
             }
         }
+    }
+}
+
+@Composable
+fun SwitchRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            modifier = Modifier.semantics { contentDescription = label },
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
