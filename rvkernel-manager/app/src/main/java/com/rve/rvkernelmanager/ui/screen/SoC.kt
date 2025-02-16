@@ -93,7 +93,7 @@ private fun FreqRow(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
-	)
+        )
         Button(
             onClick = onClick
         ) {
@@ -129,42 +129,41 @@ private fun GovRow(
 }
 
 @Composable
-private fun FreqDialog(
-    frequencies: List<String>,
-    currentFreq: String,
+private fun SelectionDialog(
+    title: String,
+    items: List<String>,
+    currentItem: String,
     onDismiss: () -> Unit,
     onSelected: (String) -> Unit,
+    isFreqDialog: Boolean = false
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         tonalElevation = 8.dp,
-        title = {
-            Text(
-                "Available frequencies"
-            )
-        },
+        title = { Text(title) },
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                if (frequencies.isEmpty()) {
+                if (items.isEmpty()) {
                     Text(
-                        text = "Failed to read available frequencies",
+                        text = "No items available",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
-                    frequencies.forEach { freq ->
+                    items.forEach { item ->
                         TextButton(
-                            onClick = { onSelected(freq) },
+                            onClick = { onSelected(item) },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = "$freq MHz",
+                                text = if (isFreqDialog) "$item MHz" else item,
                                 modifier = Modifier.fillMaxWidth(),
-                                color = if (freq == currentFreq) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                                color = if (item == currentItem) MaterialTheme.colorScheme.primary 
+                                       else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -180,381 +179,155 @@ private fun FreqDialog(
 }
 
 @Composable
-private fun GovDialog(
-    governors: List<String>,
-    currentGov: String,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit
+private fun ClusterCard(
+    title: String,
+    minFreq: String,
+    maxFreq: String,
+    gov: String,
+    availableFreq: List<String>,
+    availableGov: List<String>,
+    onUpdateFreq: (String, String) -> Unit,
+    onUpdateGov: (String) -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        tonalElevation = 8.dp,
-        title = {
+    var showFreqDialog by remember { mutableStateOf(false) }
+    var showGovDialog by remember { mutableStateOf(false) }
+    var currentFileTarget by remember { mutableStateOf("") }
+
+    Card(
+        shape = CardDefaults.shape,
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
             Text(
-                "Available governors"
+                text = title,
+                style = MaterialTheme.typography.titleLarge
             )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (governors.isEmpty()) {
-                    Text(
-                        text = "Failed to read available governors",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    governors.forEach { gov ->
-                        TextButton(
-                            onClick = { onSelected(gov) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = gov,
-                                modifier = Modifier.fillMaxWidth(),
-                                color = if (gov == currentGov) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.min_freq),
+                value = minFreq,
+                onClick = {
+                    currentFileTarget = "min"
+                    showFreqDialog = true
                 }
+            )
+            Spacer(Modifier.height(4.dp))
+
+            FreqRow(
+                label = stringResource(R.string.max_freq),
+                value = maxFreq,
+                onClick = {
+                    currentFileTarget = "max"
+                    showFreqDialog = true
+                }
+            )
+            Spacer(Modifier.height(4.dp))
+
+            GovRow(
+                value = gov,
+                onClick = { showGovDialog = true }
+            )
+
+            if (showFreqDialog) {
+                SelectionDialog(
+                    title = "Available Frequencies",
+                    items = availableFreq,
+                    currentItem = if (currentFileTarget == "min") minFreq else maxFreq,
+                    onDismiss = { showFreqDialog = false },
+                    onSelected = { selectedFreq ->
+                        onUpdateFreq(currentFileTarget, selectedFreq)
+                        showFreqDialog = false
+                    },
+		    isFreqDialog = true
+                )
             }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
+
+            if (showGovDialog) {
+                SelectionDialog(
+                    title = "Available Governors",
+                    items = availableGov,
+                    currentItem = gov,
+                    onDismiss = { showGovDialog = false },
+                    onSelected = { selectedGov ->
+                        onUpdateGov(selectedGov)
+                        showGovDialog = false
+                    },
+		    isFreqDialog = false
+                )
             }
         }
-    )
-}
-
-@Composable
-fun AdrenoBoostDialog(
-    currentBoost: String,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit
-) {
-    val boostOptions = listOf("0" to "Off", "1" to "Low", "2" to "Medium", "3" to "High")
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        tonalElevation = 8.dp,
-        title = {
-            Text(
-                text = stringResource(R.string.adreno_boost)
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                boostOptions.forEach { (value, label) ->
-                    TextButton(
-                        onClick = { onSelected(value) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = label,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = if (value == currentBoost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
+    }
 }
 
 @Composable
 fun LittleClusterCard(viewModel: SoCViewModel) {
-    val minFreqCPU0 by viewModel.minFreqCPU0.collectAsState()
-    val maxFreqCPU0 by viewModel.maxFreqCPU0.collectAsState()
-    val govCPU0 by viewModel.govCPU0.collectAsState()
-    val availableFreqCPU0 by viewModel.availableFreqCPU0.collectAsState()
-    val availableGovCPU0 by viewModel.availableGovCPU0.collectAsState()
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val cpu0State by viewModel.cpu0State.collectAsState()
 
-    var showFreqDialog by remember { mutableStateOf(false) }
-    var showGovDialog by remember { mutableStateOf(false) }
-    var currentFileTarget by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-
-    Card(
-        shape = CardDefaults.shape,
-	    modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = if (hasBigCluster) stringResource(R.string.little_cluster) 
-                       else stringResource(R.string.cpu),
-                style = MaterialTheme.typography.titleLarge,
-		        modifier = Modifier.clickable { expanded = !expanded }
-            )
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.min_freq),
-                value = minFreqCPU0,
-                onClick = {
-                    currentFileTarget = "min"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.max_freq),
-                value = maxFreqCPU0,
-                onClick = {
-                    currentFileTarget = "max"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            GovRow(
-                value = govCPU0,
-                onClick = {
-                    showGovDialog = true
-                }
-            )
-
-            if (showFreqDialog) {
-                FreqDialog(
-                    frequencies = availableFreqCPU0,
-                    currentFreq = if (currentFileTarget == "min") minFreqCPU0 else maxFreqCPU0,
-                    onDismiss = { showFreqDialog = false },
-                    onSelected = { selectedFreq ->
-                        viewModel.updateFreq(currentFileTarget, selectedFreq, "little")
-                        showFreqDialog = false
-                    }
-                )
-            }
-
-            if (showGovDialog) {
-                GovDialog(
-                    governors = availableGovCPU0,
-                    currentGov = govCPU0,
-                    onDismiss = { showGovDialog = false },
-                    onSelected = { selectedGov ->
-                        viewModel.updateGov(selectedGov, "little")
-                        showGovDialog = false
-                    }
-                )
-            }
-        }
-    }
+    ClusterCard(
+        title = if (viewModel.hasBigCluster.value) stringResource(R.string.little_cluster) 
+               else stringResource(R.string.cpu),
+        minFreq = cpu0State.minFreq,
+        maxFreq = cpu0State.maxFreq,
+        gov = cpu0State.gov,
+        availableFreq = cpu0State.availableFreq,
+        availableGov = cpu0State.availableGov,
+        onUpdateFreq = { target, freq -> viewModel.updateFreq(target, freq, "little") },
+        onUpdateGov = { gov -> viewModel.updateGov(gov, "little") }
+    )
 }
 
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel) {
-    val minFreqBigCluster by viewModel.minFreqBigCluster.collectAsState()
-    val maxFreqBigCluster by viewModel.maxFreqBigCluster.collectAsState()
-    val govBigCluster by viewModel.govBigCluster.collectAsState()
-    val availableFreqBigCluster by viewModel.availableFreqBigCluster.collectAsState()
-    val availableGovBigCluster by viewModel.availableGovBigCluster.collectAsState()
+    val bigClusterState by viewModel.bigClusterState.collectAsState()
 
-    var showFreqDialog by remember { mutableStateOf(false) }
-    var showGovDialog by remember { mutableStateOf(false) }
-    var currentFileTarget by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-
-    Card(
-        shape = CardDefaults.shape,
-	    modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.big_cluster),
-                style = MaterialTheme.typography.titleLarge,
-		        modifier = Modifier.clickable { expanded = !expanded }
-            )
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.min_freq),
-                value = minFreqBigCluster,
-                onClick = {
-                    currentFileTarget = "min"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.max_freq),
-                value = maxFreqBigCluster,
-                onClick = {
-                    currentFileTarget = "max"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            GovRow(
-                value = govBigCluster,
-                onClick = {
-                    showGovDialog = true
-                }
-            )
-
-            if (showFreqDialog) {
-                FreqDialog(
-                    frequencies = availableFreqBigCluster,
-                    currentFreq = if (currentFileTarget == "min") minFreqBigCluster else maxFreqBigCluster,
-                    onDismiss = { showFreqDialog = false },
-                    onSelected = { selectedFreq ->
-                        viewModel.updateFreq(currentFileTarget, selectedFreq, "big")
-                        showFreqDialog = false
-                    }
-                )
-            }
-
-            if (showGovDialog) {
-                GovDialog(
-                    governors = availableGovBigCluster,
-                    currentGov = govBigCluster,
-                    onDismiss = { showGovDialog = false },
-                    onSelected = { selectedGov ->
-                        viewModel.updateGov(selectedGov, "big")
-                        showGovDialog = false
-                    }
-                )
-            }
-        }
-    }
+    ClusterCard(
+        title = stringResource(R.string.big_cluster),
+        minFreq = bigClusterState.minFreq,
+        maxFreq = bigClusterState.maxFreq,
+        gov = bigClusterState.gov,
+        availableFreq = bigClusterState.availableFreq,
+        availableGov = bigClusterState.availableGov,
+        onUpdateFreq = { target, freq -> viewModel.updateFreq(target, freq, "big") },
+        onUpdateGov = { gov -> viewModel.updateGov(gov, "big") }
+    )
 }
 
 @Composable
 fun PrimeClusterCard(viewModel: SoCViewModel) {
-    val minFreqCPU7 by viewModel.minFreqCPU7.collectAsState()
-    val maxFreqCPU7 by viewModel.maxFreqCPU7.collectAsState()
-    val govCPU7 by viewModel.govCPU7.collectAsState()
-    val availableFreqCPU7 by viewModel.availableFreqCPU7.collectAsState()
-    val availableGovCPU7 by viewModel.availableGovCPU7.collectAsState()
+    val primeClusterState by viewModel.primeClusterState.collectAsState()
 
-    var showFreqDialog by remember { mutableStateOf(false) }
-    var showGovDialog by remember { mutableStateOf(false) }
-    var currentFileTarget by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
-
-    Card(
-        shape = CardDefaults.shape,
-	    modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.prime_cluster),
-                style = MaterialTheme.typography.titleLarge,
-		        modifier = Modifier.clickable { expanded = !expanded }
-            )
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.min_freq),
-                value = minFreqCPU7,
-                onClick = {
-                    currentFileTarget = "min"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            FreqRow(
-                label = stringResource(R.string.max_freq),
-                value = maxFreqCPU7,
-                onClick = {
-                    currentFileTarget = "max"
-                    showFreqDialog = true
-                }
-            )
-            
-            Spacer(Modifier.height(4.dp))
-
-            GovRow(
-                value = govCPU7,
-                onClick = {
-                    showGovDialog = true
-                }
-            )
-
-            if (showFreqDialog) {
-                FreqDialog(
-                    frequencies = availableFreqCPU7,
-                    currentFreq = if (currentFileTarget == "min") minFreqCPU7 else maxFreqCPU7,
-                    onDismiss = { showFreqDialog = false },
-                    onSelected = { selectedFreq ->
-                        viewModel.updateFreq(currentFileTarget, selectedFreq, "prime")
-                        showFreqDialog = false
-                    }
-                )
-            }
-
-            if (showGovDialog) {
-                GovDialog(
-                    governors = availableGovCPU7,
-                    currentGov = govCPU7,
-                    onDismiss = { showGovDialog = false },
-                    onSelected = { selectedGov ->
-                        viewModel.updateGov(selectedGov, "prime")
-                        showGovDialog = false
-                    }
-                )
-            }
-        }
-    }
+    ClusterCard(
+        title = stringResource(R.string.prime_cluster),
+        minFreq = primeClusterState.minFreq,
+        maxFreq = primeClusterState.maxFreq,
+        gov = primeClusterState.gov,
+        availableFreq = primeClusterState.availableFreq,
+        availableGov = primeClusterState.availableGov,
+        onUpdateFreq = { target, freq -> viewModel.updateFreq(target, freq, "prime") },
+        onUpdateGov = { gov -> viewModel.updateGov(gov, "prime") }
+    )
 }
 
 @Composable
 fun GPUCard(viewModel: SoCViewModel) {
-    val minFreqGPU by viewModel.minFreqGPU.collectAsState()
-    val maxFreqGPU by viewModel.maxFreqGPU.collectAsState()
-    val govGPU by viewModel.govGPU.collectAsState()
-    val adrenoBoost by viewModel.adrenoBoost.collectAsState()
-    val gpuThrottling by viewModel.gpuThrottling.collectAsState()
-    val availableFreqGPU by viewModel.availableFreqGPU.collectAsState()
-    val availableGovGPU by viewModel.availableGovGPU.collectAsState()
+    val gpuState by viewModel.gpuState.collectAsState()
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
 
-    var showAvailableFreqGPU by remember { mutableStateOf(false) }
-    var showAvailableGovGPU by remember { mutableStateOf(false) }
-    var showAdrenoBoost by remember { mutableStateOf(false) }
+    var showFreqDialog by remember { mutableStateOf(false) }
+    var showGovDialog by remember { mutableStateOf(false) }
+    var showAdrenoBoostDialog by remember { mutableStateOf(false) }
     var currentFileTarget by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
 
-    val adrenoBoostText = when (adrenoBoost) {
+    val adrenoBoostText = when (gpuState.adrenoBoost) {
         "0" -> "Off"
         "1" -> "Low"
         "2" -> "Medium"
@@ -562,8 +335,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         else -> "Unknown"
     }
 
-    val gpuThrottlingStatus = gpuThrottling == "1"
-    var expanded by remember { mutableStateOf(false) }
+    val gpuThrottlingStatus = gpuState.gpuThrottling == "1"
 
     Card(
         shape = CardDefaults.shape,
@@ -579,42 +351,39 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = stringResource(R.string.gpu),
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.clickable { expanded = !expanded }
+		modifier = Modifier.clickable { expanded = !expanded }
             )
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
                 label = stringResource(R.string.min_freq),
-                value = minFreqGPU,
+                value = gpuState.minFreq,
                 onClick = {
-                    currentFileTarget = SoCUtils.MIN_FREQ_GPU_PATH
-                    showAvailableFreqGPU = true
+                    currentFileTarget = "min"
+                    showFreqDialog = true
                 }
             )
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
                 label = stringResource(R.string.max_freq),
-                value = maxFreqGPU,
+                value = gpuState.maxFreq,
                 onClick = {
-                    currentFileTarget = SoCUtils.MAX_FREQ_GPU_PATH
-                    showAvailableFreqGPU = true
+                    currentFileTarget = "max"
+                    showFreqDialog = true
                 }
             )
             Spacer(Modifier.height(4.dp))
 
             GovRow(
-                value = govGPU,
-                onClick = {
-                    currentFileTarget = SoCUtils.GOV_GPU_PATH
-                    showAvailableGovGPU = true
-                }
+                value = gpuState.gov,
+                onClick = { showGovDialog = true }
             )
 
             AnimatedVisibility(
                 visible = hasAdrenoBoost,
-                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
-                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top)
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
             ) {
                 Column {
                     Spacer(Modifier.height(4.dp))
@@ -628,10 +397,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             modifier = Modifier.weight(1f)
                         )
                         Button(
-                            onClick = {
-                                currentFileTarget = SoCUtils.ADRENO_BOOST_PATH
-                                showAdrenoBoost = true
-                            }
+                            onClick = { showAdrenoBoostDialog = true }
                         ) {
                             Text(text = adrenoBoostText)
                         }
@@ -659,37 +425,43 @@ fun GPUCard(viewModel: SoCViewModel) {
                 }
             }
 
-            if (showAvailableFreqGPU) {
-                FreqDialog(
-                    frequencies = availableFreqGPU,
-                    currentFreq = if (currentFileTarget == SoCUtils.MIN_FREQ_GPU_PATH) minFreqGPU else maxFreqGPU,
-                    onDismiss = { showAvailableFreqGPU = false },
+            if (showFreqDialog) {
+                SelectionDialog(
+                    title = "Available Frequencies",
+                    items = gpuState.availableFreq,
+                    currentItem = if (currentFileTarget == "min") gpuState.minFreq else gpuState.maxFreq,
+                    onDismiss = { showFreqDialog = false },
                     onSelected = { selectedFreq ->
                         viewModel.updateFreq(currentFileTarget, selectedFreq, "gpu")
-                        showAvailableFreqGPU = false
-                    }
+                        showFreqDialog = false
+                    },
+		    isFreqDialog = true
                 )
             }
 
-            if (showAvailableGovGPU) {
-                GovDialog(
-                    governors = availableGovGPU,
-                    currentGov = govGPU,
-                    onDismiss = { showAvailableGovGPU = false },
+            if (showGovDialog) {
+                SelectionDialog(
+                    title = "Available Governors",
+                    items = gpuState.availableGov,
+                    currentItem = gpuState.gov,
+                    onDismiss = { showGovDialog = false },
                     onSelected = { selectedGov ->
                         viewModel.updateGov(selectedGov, "gpu")
-                        showAvailableGovGPU = false
-                    }
+                        showGovDialog = false
+                    },
+		    isFreqDialog = false
                 )
             }
 
-            if (showAdrenoBoost) {
-                AdrenoBoostDialog(
-                    currentBoost = adrenoBoost,
-                    onDismiss = { showAdrenoBoost = false },
+            if (showAdrenoBoostDialog) {
+                SelectionDialog(
+                    title = "Adreno Boost",
+                    items = listOf("0", "1", "2", "3"),
+                    currentItem = gpuState.adrenoBoost,
+                    onDismiss = { showAdrenoBoostDialog = false },
                     onSelected = { selectedBoost ->
                         viewModel.updateAdrenoBoost(selectedBoost)
-                        showAdrenoBoost = false
+                        showAdrenoBoostDialog = false
                     }
                 )
             }
