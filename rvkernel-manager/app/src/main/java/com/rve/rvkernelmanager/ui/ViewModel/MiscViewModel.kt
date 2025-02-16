@@ -2,10 +2,15 @@ package com.rve.rvkernelmanager.ui.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.channels.Channel
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
 
@@ -35,6 +40,28 @@ class MiscViewModel : ViewModel() {
     private var cachedThermalSconfig: String? = null
     private var cachedSchedAutogroup: String? = null
     private var cachedSwappiness: String? = null
+
+    private val refreshRequests = Channel<Unit>(1)
+    var isRefreshing by mutableStateOf(false)
+    private set
+
+    init {
+        viewModelScope.launch {
+            for (r in refreshRequests) {
+                isRefreshing = true
+                try {
+                    delay(1000)
+                } finally {
+                    isRefreshing = false
+                }
+            }
+        }
+    }
+
+    fun refresh() {
+        refreshRequests.trySend(Unit)
+        loadMiscData()
+    }
 
     fun loadMiscData() {
         viewModelScope.launch(Dispatchers.IO) {
