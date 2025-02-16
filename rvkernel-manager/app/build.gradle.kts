@@ -105,4 +105,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(libs.topjohnwu.libsu.core)
+    debugImplementation(libs.squareup.leakcanary)
 }
