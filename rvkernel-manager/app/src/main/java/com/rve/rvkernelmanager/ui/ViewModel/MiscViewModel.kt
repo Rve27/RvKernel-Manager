@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
 
@@ -28,30 +26,17 @@ class MiscViewModel : ViewModel() {
     private val _swappiness = MutableStateFlow("")
     val swappiness: StateFlow<String> = _swappiness
 
+    private val _hasSwappiness = MutableStateFlow(false)
+    val hasSwappiness: StateFlow<Boolean> = _hasSwappiness
+
     private val _showSwappinessDialog = MutableStateFlow(false)
     val showSwappinessDialog: StateFlow<Boolean> = _showSwappinessDialog
 
     private var cachedThermalSconfig: String? = null
     private var cachedSchedAutogroup: String? = null
+    private var cachedSwappiness: String? = null
 
-    private var pollingJob: Job? = null
-
-    fun startPolling() {
-        pollingJob?.cancel()
-        pollingJob = viewModelScope.launch {
-            while (true) {
-                loadInitialData()
-                delay(3000)
-            }
-        }
-    }
-
-    fun stopPolling() {
-        pollingJob?.cancel()
-        pollingJob = null
-    }
-
-    private fun loadInitialData() {
+    fun loadMiscData() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentThermalSconfig = Utils.readFile(MiscUtils.THERMAL_SCONFIG_PATH)
             if (currentThermalSconfig != cachedThermalSconfig) {
@@ -67,8 +52,12 @@ class MiscViewModel : ViewModel() {
             }
             _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP_PATH)
 
-            val swappinessValue = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
-            _swappiness.value = swappinessValue
+	    val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
+            if (currentSwappiness != cachedSwappiness) {
+                _swappiness.value = currentSwappiness
+                cachedSwappiness = currentSwappiness
+            }
+            _hasSwappiness.value = Utils.testFile(MiscUtils.SWAPPINESS_PATH)
         }
     }
 

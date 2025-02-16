@@ -32,10 +32,9 @@ fun MiscScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    viewModel.startPolling()
+                    viewModel.loadMiscData()
                 }
                 Lifecycle.Event.ON_PAUSE -> {
-                    viewModel.stopPolling()
                 }
                 else -> {}
             }
@@ -82,6 +81,7 @@ fun MiscCard(viewModel: MiscViewModel) {
     val schedAutogroupStatus = schedAutogroup == "1"
 
     val swappiness by viewModel.swappiness.collectAsState()
+    val hasSwappiness by viewModel.hasSwappiness.collectAsState()
     val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
 
     Card(
@@ -136,21 +136,23 @@ fun MiscCard(viewModel: MiscViewModel) {
                 }
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = MiscUtils.SWAPPINESS_PATH.substringAfterLast("/"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Button(
-                    onClick = { viewModel.showSwappinessDialog() }
+	    if (hasSwappiness) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = swappiness)
+                    Text(
+                        text = MiscUtils.SWAPPINESS_PATH.substringAfterLast("/"),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(
+                        onClick = { viewModel.showSwappinessDialog() }
+                    ) {
+                        Text(text = swappiness)
+                    }
                 }
-            }
+	    }
         }
     }
 
