@@ -18,6 +18,13 @@ object SoCUtils {
     const val AVAILABLE_BOOST_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies"
     const val GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
     const val AVAILABLE_GOV_CPU4_PATH = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_governors"
+
+    const val MIN_FREQ_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq"
+    const val MAX_FREQ_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_max_freq"
+    const val AVAILABLE_FREQ_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_frequencies"
+    const val AVAILABLE_BOOST_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_boost_frequencies"
+    const val GOV_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
+    const val AVAILABLE_GOV_CPU6_PATH = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_governors"
     
     const val MIN_FREQ_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
     const val MAX_FREQ_CPU7_PATH = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"

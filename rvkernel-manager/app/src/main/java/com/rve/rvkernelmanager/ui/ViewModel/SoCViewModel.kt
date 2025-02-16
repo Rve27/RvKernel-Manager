@@ -28,20 +28,20 @@ class SoCViewModel : ViewModel() {
     private val _availableGovCPU0 = MutableStateFlow(listOf<String>())
     val availableGovCPU0: StateFlow<List<String>> = _availableGovCPU0
 
-    private val _minFreqCPU4 = MutableStateFlow("")
-    val minFreqCPU4: StateFlow<String> = _minFreqCPU4
+    private val _minFreqBigCluster = MutableStateFlow("")
+    val minFreqBigCluster: StateFlow<String> = _minFreqBigCluster
 
-    private val _maxFreqCPU4 = MutableStateFlow("")
-    val maxFreqCPU4: StateFlow<String> = _maxFreqCPU4
+    private val _maxFreqBigCluster = MutableStateFlow("")
+    val maxFreqBigCluster: StateFlow<String> = _maxFreqBigCluster
 
-    private val _govCPU4 = MutableStateFlow("")
-    val govCPU4: StateFlow<String> = _govCPU4
+    private val _govBigCluster = MutableStateFlow("")
+    val govBigCluster: StateFlow<String> = _govBigCluster
 
-    private val _availableFreqCPU4 = MutableStateFlow(listOf<String>())
-    val availableFreqCPU4: StateFlow<List<String>> = _availableFreqCPU4
+    private val _availableFreqBigCluster = MutableStateFlow(listOf<String>())
+    val availableFreqBigCluster: StateFlow<List<String>> = _availableFreqBigCluster
 
-    private val _availableGovCPU4 = MutableStateFlow(listOf<String>())
-    val availableGovCPU4: StateFlow<List<String>> = _availableGovCPU4
+    private val _availableGovBigCluster = MutableStateFlow(listOf<String>())
+    val availableGovBigCluster: StateFlow<List<String>> = _availableGovBigCluster
 
     private val _minFreqCPU7 = MutableStateFlow("")
     val minFreqCPU7: StateFlow<String> = _minFreqCPU7
@@ -97,11 +97,11 @@ class SoCViewModel : ViewModel() {
     private var cachedAvailableFreqCPU0: List<String>? = null
     private var cachedAvailableGovCPU0: List<String>? = null
 
-    private var cachedMinFreqCPU4: String? = null
-    private var cachedMaxFreqCPU4: String? = null
-    private var cachedGovCPU4: String? = null
-    private var cachedAvailableFreqCPU4: List<String>? = null
-    private var cachedAvailableGovCPU4: List<String>? = null
+    private var cachedMinFreqBigCluster: String? = null
+    private var cachedMaxFreqBigCluster: String? = null
+    private var cachedGovBigCluster: String? = null
+    private var cachedAvailableFreqBigCluster: List<String>? = null
+    private var cachedAvailableGovBigCluster: List<String>? = null
 
     private var cachedMinFreqCPU7: String? = null
     private var cachedMaxFreqCPU7: String? = null
@@ -171,44 +171,85 @@ class SoCViewModel : ViewModel() {
                 cachedAvailableGovCPU0 = currentAvailableGovCPU0
             }
 
-            _hasBigCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4_PATH)
-            if (_hasBigCluster.value) {
-                Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU4_PATH)
-                Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU4_PATH)
-                Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU4_PATH)
-                Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU4_PATH)
-                Utils.setPermissions(644, SoCUtils.GOV_CPU4_PATH)
-
-                val currentMinFreqCPU4 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU4_PATH)
-                if (currentMinFreqCPU4 != cachedMinFreqCPU4) {
-                    _minFreqCPU4.value = currentMinFreqCPU4
-                    cachedMinFreqCPU4 = currentMinFreqCPU4
-                }
-
-                val currentMaxFreqCPU4 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU4_PATH)
-                if (currentMaxFreqCPU4 != cachedMaxFreqCPU4) {
-                    _maxFreqCPU4.value = currentMaxFreqCPU4
-                    cachedMaxFreqCPU4 = currentMaxFreqCPU4
-                }
-
-                val currentGovCPU4 = Utils.readFile(SoCUtils.GOV_CPU4_PATH)
-                if (currentGovCPU4 != cachedGovCPU4) {
-                    _govCPU4.value = currentGovCPU4
-                    cachedGovCPU4 = currentGovCPU4
-                }
-
-                val currentAvailableFreqCPU4 = SoCUtils.readAvailableFreqBoost(SoCUtils.AVAILABLE_FREQ_CPU4_PATH, SoCUtils.AVAILABLE_BOOST_CPU4_PATH)
-                if (currentAvailableFreqCPU4 != cachedAvailableFreqCPU4) {
-                    _availableFreqCPU4.value = currentAvailableFreqCPU4
-                    cachedAvailableFreqCPU4 = currentAvailableFreqCPU4
-                }
-
-                val currentAvailableGovCPU4 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU4_PATH)
-                if (currentAvailableGovCPU4 != cachedAvailableGovCPU4) {
-                    _availableGovCPU4.value = currentAvailableGovCPU4
-                    cachedAvailableGovCPU4 = currentAvailableGovCPU4
-                }
+            val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4_PATH)) {
+                SoCUtils.AVAILABLE_FREQ_CPU4_PATH
+            } else if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6_PATH)) {
+                SoCUtils.AVAILABLE_FREQ_CPU6_PATH
+            } else {
+                null
             }
+            _hasBigCluster.value = bigClusterPath != null
+            if (_hasBigCluster.value) {
+                val basePath = when (bigClusterPath) {
+                    SoCUtils.AVAILABLE_FREQ_CPU4_PATH -> "cpu4"
+                    SoCUtils.AVAILABLE_FREQ_CPU6_PATH -> "cpu6"
+                    else -> null
+                }
+    
+                if (basePath != null) {
+                    val minFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.MIN_FREQ_CPU4_PATH
+                        "cpu6" -> SoCUtils.MIN_FREQ_CPU6_PATH
+                        else -> null
+                    }
+                    val maxFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.MAX_FREQ_CPU4_PATH
+                        "cpu6" -> SoCUtils.MAX_FREQ_CPU6_PATH
+                        else -> null
+                    }
+                    val govPath = when (basePath) {
+                        "cpu4" -> SoCUtils.GOV_CPU4_PATH
+                        "cpu6" -> SoCUtils.GOV_CPU6_PATH
+                        else -> null
+                    }
+                    val (availableFreqPath, availableBoostPath) = when (basePath) {
+                        "cpu4" -> SoCUtils.AVAILABLE_FREQ_CPU4_PATH to SoCUtils.AVAILABLE_BOOST_CPU4_PATH
+                        "cpu6" -> SoCUtils.AVAILABLE_FREQ_CPU6_PATH to SoCUtils.AVAILABLE_BOOST_CPU6_PATH
+                        else -> null to null
+                    }
+                    val availableGovPath = when (basePath) {
+                        "cpu4" -> SoCUtils.AVAILABLE_GOV_CPU4_PATH
+                        "cpu6" -> SoCUtils.AVAILABLE_GOV_CPU6_PATH
+                        else -> null
+                    }
+    
+                    if (minFreqPath != null) Utils.setPermissions(644, minFreqPath)
+                    if (maxFreqPath != null) Utils.setPermissions(644, maxFreqPath)
+                    if (govPath != null) Utils.setPermissions(644, govPath)
+                    if (availableGovPath != null) Utils.setPermissions(644, availableGovPath)
+    
+                    val currentMinFreq = SoCUtils.readFreqCPU(minFreqPath!!)
+                    val currentMaxFreq = SoCUtils.readFreqCPU(maxFreqPath!!)
+                    val currentGov = Utils.readFile(govPath!!)
+                    val currentAvailableFreq = if (availableFreqPath != null && availableBoostPath != null) {
+                        SoCUtils.readAvailableFreqBoost(availableFreqPath, availableBoostPath)
+                    } else {
+                        emptyList()
+                    }
+                    val currentAvailableGov = SoCUtils.readAvailableGovCPU(availableGovPath!!)
+    
+                    if (currentMinFreq != cachedMinFreqBigCluster) {
+                        _minFreqBigCluster.value = currentMinFreq
+                        cachedMinFreqBigCluster = currentMinFreq
+                    }
+                    if (currentMaxFreq != cachedMaxFreqBigCluster) {
+                        _maxFreqBigCluster.value = currentMaxFreq
+                        cachedMaxFreqBigCluster = currentMaxFreq
+                    }
+                    if (currentGov != cachedGovBigCluster) {
+                        _govBigCluster.value = currentGov
+                        cachedGovBigCluster = currentGov
+                    }
+                    if (currentAvailableFreq != cachedAvailableFreqBigCluster) {
+                        _availableFreqBigCluster.value = currentAvailableFreq
+                        cachedAvailableFreqBigCluster = currentAvailableFreq
+                    }
+                    if (currentAvailableGov != cachedAvailableGovBigCluster) {
+                        _availableGovBigCluster.value = currentAvailableGov
+                        cachedAvailableGovBigCluster = currentAvailableGov
+                    }
+                }
+	    }
 
             _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7_PATH)
             if (_hasPrimeCluster.value) {
@@ -316,12 +357,30 @@ class SoCViewModel : ViewModel() {
                     cachedMaxFreqCPU0 = _maxFreqCPU0.value
                 }
                 "big" -> {
-                    val path = if (target == "min") SoCUtils.MIN_FREQ_CPU4_PATH else SoCUtils.MAX_FREQ_CPU4_PATH
-                    SoCUtils.writeFreqCPU(path, selectedFreq)
-                    _minFreqCPU4.value = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU4_PATH)
-                    _maxFreqCPU4.value = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU4_PATH)
-                    cachedMinFreqCPU4 = _minFreqCPU4.value
-                    cachedMaxFreqCPU4 = _maxFreqCPU4.value
+                    val minPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU4_PATH)) {
+                        SoCUtils.MIN_FREQ_CPU4_PATH
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU6_PATH)) {
+                        SoCUtils.MIN_FREQ_CPU6_PATH
+                    } else {
+                        null
+                    }
+                    val maxPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU4_PATH)) {
+                        SoCUtils.MAX_FREQ_CPU4_PATH
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU6_PATH)) {
+                        SoCUtils.MAX_FREQ_CPU6_PATH
+                    } else {
+                        null
+                    }
+    
+                    if (minPath != null && maxPath != null) {
+                        val path = if (target == "min") minPath else maxPath
+                        SoCUtils.writeFreqCPU(path, selectedFreq)
+    
+                        _minFreqBigCluster.value = SoCUtils.readFreqCPU(minPath)
+                        _maxFreqBigCluster.value = SoCUtils.readFreqCPU(maxPath)
+                        cachedMinFreqBigCluster = _minFreqBigCluster.value
+                        cachedMaxFreqBigCluster = _maxFreqBigCluster.value
+                    }
                 }
                 "prime" -> {
                     val path = if (target == "min") SoCUtils.MIN_FREQ_CPU7_PATH else SoCUtils.MAX_FREQ_CPU7_PATH
@@ -347,29 +406,40 @@ class SoCViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val path = when (cluster) {
                 "little" -> SoCUtils.GOV_CPU0_PATH
-                "big" -> SoCUtils.GOV_CPU4_PATH
+                "big" -> {
+                    if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU4_PATH)) {
+                        SoCUtils.GOV_CPU4_PATH
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU6_PATH)) {
+                        SoCUtils.GOV_CPU6_PATH
+                    } else {
+                        null
+                    }
+                }
                 "prime" -> SoCUtils.GOV_CPU7_PATH
                 "gpu" -> SoCUtils.GOV_GPU_PATH
-                else -> return@launch
+                else -> null
             }
-            Utils.writeFile(path, selectedGov)
-
-            when (cluster) {
-                "little" -> {
-                    _govCPU0.value = Utils.readFile(SoCUtils.GOV_CPU0_PATH)
-                    cachedGovCPU0 = _govCPU0.value
-                }
-                "big" -> {
-                    _govCPU4.value = Utils.readFile(SoCUtils.GOV_CPU4_PATH)
-                    cachedGovCPU4 = _govCPU4.value
-                }
-                "prime" -> {
-                    _govCPU7.value = Utils.readFile(SoCUtils.GOV_CPU7_PATH)
-                    cachedGovCPU7 = _govCPU7.value
-                }
-                "gpu" -> {
-                    _govGPU.value = Utils.readFile(SoCUtils.GOV_GPU_PATH)
-                    cachedGovGPU = _govGPU.value
+    
+            if (path != null) {
+                Utils.writeFile(path, selectedGov)
+    
+                when (cluster) {
+                    "little" -> {
+                        _govCPU0.value = Utils.readFile(SoCUtils.GOV_CPU0_PATH)
+                        cachedGovCPU0 = _govCPU0.value
+                    }
+                    "big" -> {
+                        _govBigCluster.value = Utils.readFile(path)
+                        cachedGovBigCluster = _govBigCluster.value
+                    }
+                    "prime" -> {
+                        _govCPU7.value = Utils.readFile(SoCUtils.GOV_CPU7_PATH)
+                        cachedGovCPU7 = _govCPU7.value
+                    }
+                    "gpu" -> {
+                        _govGPU.value = Utils.readFile(SoCUtils.GOV_GPU_PATH)
+                        cachedGovGPU = _govGPU.value
+                    }
                 }
             }
         }

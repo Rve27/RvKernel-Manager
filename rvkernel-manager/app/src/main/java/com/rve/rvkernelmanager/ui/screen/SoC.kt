@@ -365,11 +365,11 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel) {
-    val minFreqCPU4 by viewModel.minFreqCPU4.collectAsState()
-    val maxFreqCPU4 by viewModel.maxFreqCPU4.collectAsState()
-    val govCPU4 by viewModel.govCPU4.collectAsState()
-    val availableFreqCPU4 by viewModel.availableFreqCPU4.collectAsState()
-    val availableGovCPU4 by viewModel.availableGovCPU4.collectAsState()
+    val minFreqBigCluster by viewModel.minFreqBigCluster.collectAsState()
+    val maxFreqBigCluster by viewModel.maxFreqBigCluster.collectAsState()
+    val govBigCluster by viewModel.govBigCluster.collectAsState()
+    val availableFreqBigCluster by viewModel.availableFreqBigCluster.collectAsState()
+    val availableGovBigCluster by viewModel.availableGovBigCluster.collectAsState()
 
     var showFreqDialog by remember { mutableStateOf(false) }
     var showGovDialog by remember { mutableStateOf(false) }
@@ -396,7 +396,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
             FreqRow(
                 label = stringResource(R.string.min_freq),
-                value = minFreqCPU4,
+                value = minFreqBigCluster,
                 onClick = {
                     currentFileTarget = "min"
                     showFreqDialog = true
@@ -407,7 +407,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
             FreqRow(
                 label = stringResource(R.string.max_freq),
-                value = maxFreqCPU4,
+                value = maxFreqBigCluster,
                 onClick = {
                     currentFileTarget = "max"
                     showFreqDialog = true
@@ -417,7 +417,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             Spacer(Modifier.height(4.dp))
 
             GovRow(
-                value = govCPU4,
+                value = govBigCluster,
                 onClick = {
                     showGovDialog = true
                 }
@@ -425,8 +425,8 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
             if (showFreqDialog) {
                 FreqDialog(
-                    frequencies = availableFreqCPU4,
-                    currentFreq = if (currentFileTarget == "min") minFreqCPU4 else maxFreqCPU4,
+                    frequencies = availableFreqBigCluster,
+                    currentFreq = if (currentFileTarget == "min") minFreqBigCluster else maxFreqBigCluster,
                     onDismiss = { showFreqDialog = false },
                     onSelected = { selectedFreq ->
                         viewModel.updateFreq(currentFileTarget, selectedFreq, "big")
@@ -437,8 +437,8 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
             if (showGovDialog) {
                 GovDialog(
-                    governors = availableGovCPU4,
-                    currentGov = govCPU4,
+                    governors = availableGovBigCluster,
+                    currentGov = govBigCluster,
                     onDismiss = { showGovDialog = false },
                     onSelected = { selectedGov ->
                         viewModel.updateGov(selectedGov, "big")
