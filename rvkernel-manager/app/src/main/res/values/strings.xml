@@ -11,24 +11,25 @@
     <string name="little_cluster">Little Cluster</string>
     <string name="big_cluster">Big Cluster</string>
     <string name="prime_cluster">Prime Cluster</string>
+    <string name="available_freq">Available frequencies</string>
     <string name="min_freq">Minimum frequency</string>
     <string name="max_freq">Maximum frequency</string>
+    <string name="available_gov">Available governor</string>
     <string name="gov">Governor</string>
 
     <!-- GPU -->
     <string name="gpu">GPU</string>
-    <string name="adreno_boost">Adreno Boost</string>
-    <string name="gpu_throttling">GPU Throttling</string>
+    <string name="adreno_boost">Adreno boost</string>
+    <string name="gpu_throttling">GPU throttling</string>
 
     <!-- Misc -->
     <string name="misc_category">Misc</string>
-    <string name="unlock_cpu_freq">Unlock CPU Frequency</string>
+    <string name="unlock_cpu_freq">Unlock CPU frequency</string>
 
     <!-- Charging -->
     <string name="charging_title">Charging</string>
-    <string name="enable_charging">Enable Charging</string>
+    <string name="enable_charging">Enable charging</string>
     <string name="fast_charging">Fast charging</string>
-    <string name="thermal_charging">Thermal Charging</string>
 
     <!-- Top Bar -->
     <string name="repo_url">https://github.com/Rv-Project/RvKernel-Manager-Kotlin</string>

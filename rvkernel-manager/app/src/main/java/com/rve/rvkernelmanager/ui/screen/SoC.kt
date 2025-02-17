@@ -130,52 +130,63 @@ private fun GovRow(
 
 @Composable
 private fun SelectionDialog(
-    title: String,
-    items: List<String>,
-    currentItem: String,
-    onDismiss: () -> Unit,
-    onSelected: (String) -> Unit,
-    isFreqDialog: Boolean = false
+   title: String,
+   items: List<String>,
+   currentItem: String,
+   onDismiss: () -> Unit,
+   onSelected: (String) -> Unit,
+   isFreqDialog: Boolean = false,
+   isAdrenoBoostDialog: Boolean = false
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        tonalElevation = 8.dp,
-        title = { Text(title) },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                if (items.isEmpty()) {
-                    Text(
-                        text = "No items available",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                } else {
-                    items.forEach { item ->
-                        TextButton(
-                            onClick = { onSelected(item) },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = if (isFreqDialog) "$item MHz" else item,
-                                modifier = Modifier.fillMaxWidth(),
-                                color = if (item == currentItem) MaterialTheme.colorScheme.primary 
-                                       else MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
+   AlertDialog(
+       onDismissRequest = onDismiss,
+       tonalElevation = 8.dp,
+       title = { Text(title) },
+       text = {
+           Column(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .verticalScroll(rememberScrollState())
+           ) {
+               if (items.isEmpty()) {
+                   Text(
+                       text = "No items available",
+                       style = MaterialTheme.typography.bodyMedium,
+                       modifier = Modifier.fillMaxWidth()
+                   )
+               } else {
+                   items.forEach { item ->
+                       TextButton(
+                           onClick = { onSelected(item) },
+                           modifier = Modifier.fillMaxWidth()
+                       ) {
+                           Text(
+                               text = when {
+                                   isFreqDialog -> "$item MHz"
+                                   isAdrenoBoostDialog -> when (item) {
+                                       "0" -> "Off"
+                                       "1" -> "Low"
+                                       "2" -> "Medium"
+                                       "3" -> "High"
+                                       else -> item
+                                   }
+                                   else -> item
+                               },
+                               modifier = Modifier.fillMaxWidth(),
+                               color = if (item == currentItem) MaterialTheme.colorScheme.primary 
+                                      else MaterialTheme.colorScheme.onBackground
+                           )
+                       }
+                   }
+               }
+           }
+       },
+       confirmButton = {
+           TextButton(onClick = onDismiss) {
+               Text("Close")
+           }
+       }
+   )
 }
 
 @Composable
@@ -382,8 +393,8 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             AnimatedVisibility(
                 visible = hasAdrenoBoost,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically()
+                enter = fadeIn() + expandVertically(expandFrom = Alignment.Top),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Top)
             ) {
                 Column {
                     Spacer(Modifier.height(4.dp))
@@ -427,7 +438,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showFreqDialog) {
                 SelectionDialog(
-                    title = "Available Frequencies",
+                    title = stringResource(R.string.available_freq),
                     items = gpuState.availableFreq,
                     currentItem = if (currentFileTarget == "min") gpuState.minFreq else gpuState.maxFreq,
                     onDismiss = { showFreqDialog = false },
@@ -441,7 +452,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showGovDialog) {
                 SelectionDialog(
-                    title = "Available Governors",
+                    title = stringResource(R.string.available_gov),
                     items = gpuState.availableGov,
                     currentItem = gpuState.gov,
                     onDismiss = { showGovDialog = false },
@@ -455,14 +466,15 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showAdrenoBoostDialog) {
                 SelectionDialog(
-                    title = "Adreno Boost",
+                    title = stringResource(R.string.adreno_boost),
                     items = listOf("0", "1", "2", "3"),
                     currentItem = gpuState.adrenoBoost,
                     onDismiss = { showAdrenoBoostDialog = false },
                     onSelected = { selectedBoost ->
                         viewModel.updateAdrenoBoost(selectedBoost)
                         showAdrenoBoostDialog = false
-                    }
+                    },
+		    isAdrenoBoostDialog = true
                 )
             }
         }
