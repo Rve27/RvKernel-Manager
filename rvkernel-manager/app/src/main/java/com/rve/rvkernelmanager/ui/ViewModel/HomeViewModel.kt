@@ -40,37 +40,61 @@ class HomeViewModel : ViewModel() {
     private val _isFullKernelVersion = MutableStateFlow(false)
     val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
 
+    // Cache untuk CPU info
+    private var cachedCPUInfo: String? = null
+    private var cachedExtendedCPUInfo: String? = null
+
+    // Cache untuk kernel version
+    private var cachedKernelVersion: String? = null
+    private var cachedFullKernelVersion: String? = null
+
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch {
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
-            _cpu.value = Utils.getCPUInfo()
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
             _rvosVersion.value = Utils.getRvOSVersion()
             _somethingVersion.value = Utils.getSomethingOSVersion()
-            _kernelVersion.value = Utils.getKernelVersion()
+
+            // Gunakan cache untuk CPU info
+            if (cachedCPUInfo == null) {
+                cachedCPUInfo = Utils.getCPUInfo()
+            }
+            _cpu.value = cachedCPUInfo ?: ""
+
+            // Gunakan cache untuk kernel version
+            if (cachedKernelVersion == null) {
+                cachedKernelVersion = Utils.getKernelVersion()
+            }
+            _kernelVersion.value = cachedKernelVersion ?: ""
         }
     }
 
     fun showCPUInfo() {
-        viewModelScope.launch {
-            _isExtendCPUInfo.value = !_isExtendCPUInfo.value
-            _cpu.value = if (_isExtendCPUInfo.value) {
-                Utils.getExtendCPUInfo()
-            } else {
-                Utils.getCPUInfo()
+        _isExtendCPUInfo.value = !_isExtendCPUInfo.value
+
+        if (_isExtendCPUInfo.value) {
+            if (cachedExtendedCPUInfo == null) {
+                cachedExtendedCPUInfo = Utils.getExtendCPUInfo()
             }
+            _cpu.value = cachedExtendedCPUInfo ?: ""
+        } else {
+            _cpu.value = cachedCPUInfo ?: ""
         }
     }
 
     fun showFullKernelVersion() {
         _isFullKernelVersion.value = !_isFullKernelVersion.value
-        _kernelVersion.value = if (_isFullKernelVersion.value) {
-            Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
-            Utils.readFile(Utils.FULL_KERNEL_VERSION_PATH)
+
+        if (_isFullKernelVersion.value) {
+            if (cachedFullKernelVersion == null) {
+                Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
+                cachedFullKernelVersion = Utils.readFile(Utils.FULL_KERNEL_VERSION_PATH)
+            }
+            _kernelVersion.value = cachedFullKernelVersion ?: ""
         } else {
-            Utils.getKernelVersion()
+            _kernelVersion.value = cachedKernelVersion ?: ""
         }
     }
 }

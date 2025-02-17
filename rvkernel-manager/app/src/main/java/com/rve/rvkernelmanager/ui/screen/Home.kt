@@ -40,11 +40,7 @@ fun HomeScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    viewModel.loadDeviceInfo(context)
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                }
+                Lifecycle.Event.ON_RESUME -> viewModel.loadDeviceInfo(context)
                 else -> {}
             }
         }
@@ -57,11 +53,7 @@ fun HomeScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopBar(
-                scrollBehavior = scrollBehavior
-            )
-        },
+        topBar = { TopBar(scrollBehavior = scrollBehavior) },
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         Column(
@@ -94,109 +86,62 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
-    Card(
-        shape = CardDefaults.shape
-    ) {
-        Row(
+    Card(shape = CardDefaults.shape) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(20.dp)
         ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.device_codename),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = deviceCodename,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.ram_info),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = ramInfo,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.cpu),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = cpu,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .clickable { viewModel.showCPUInfo() }
-                        .animateContentSize()
-                )
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.gpu),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = gpuModel,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = stringResource(R.string.android_version),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = androidVersion,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(Modifier.height(16.dp))
-
-                rvosVersion?.let { version ->
-                    Text(
-                        text = stringResource(R.string.rvos_version),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = version,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(Modifier.height(16.dp))
-                }
-
-                somethingVersion?.let { version ->
-                    Text(
-                        text = stringResource(R.string.something_version),
-                        style = MaterialTheme.typography.titleSmall
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = version,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(Modifier.height(16.dp))
-                }
-
-                Text(
-                    text = stringResource(R.string.kernel_version),
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = kernelVersion,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .clickable { viewModel.showFullKernelVersion() }
-                        .animateContentSize()
-                )
+            InfoRow(label = stringResource(R.string.device_codename), value = deviceCodename)
+            InfoRow(label = stringResource(R.string.ram_info), value = ramInfo)
+            InfoRow(
+                label = stringResource(R.string.cpu),
+                value = cpu,
+                onClick = { viewModel.showCPUInfo() },
+                animateContent = true
+            )
+            InfoRow(label = stringResource(R.string.gpu), value = gpuModel)
+            InfoRow(label = stringResource(R.string.android_version), value = androidVersion)
+            rvosVersion?.let { version ->
+                InfoRow(label = stringResource(R.string.rvos_version), value = version)
             }
+            somethingVersion?.let { version ->
+                InfoRow(label = stringResource(R.string.something_version), value = version)
+            }
+            InfoRow(
+                label = stringResource(R.string.kernel_version),
+                value = kernelVersion,
+                onClick = { viewModel.showFullKernelVersion() },
+                animateContent = true,
+		spacer = false
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoRow(
+    label: String,
+    value: String,
+    onClick: (() -> Unit)? = null,
+    animateContent: Boolean = false,
+    spacer: Boolean = true
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier
+                .clickable(enabled = onClick != null) { onClick?.invoke() }
+                .then(if (animateContent) Modifier.animateContentSize() else Modifier)
+        )
+        if (spacer) {
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -236,32 +181,25 @@ fun DonateCard() {
         AlertDialog(
             onDismissRequest = { showDonateDialog = false },
             tonalElevation = 8.dp,
-            title = {
-                Text(
-                    text = stringResource(R.string.donate_title),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
+            title = { Text(text = stringResource(R.string.donate_title), style = MaterialTheme.typography.titleLarge) },
             text = {
                 Column {
-		    Spacer(Modifier.height(16.dp))
-
+                    Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(R.string.paypal),
                         style = MaterialTheme.typography.bodyMedium,
-			color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paypalUrl))
                             context.startActivity(intent)
                         }
                     )
                     Spacer(Modifier.height(16.dp))
-
                     Text(
                         text = stringResource(R.string.dana),
                         style = MaterialTheme.typography.bodyMedium,
-			color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { 
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable {
                             showDanaQR = true
                             showDonateDialog = false
                         }
@@ -281,12 +219,7 @@ fun DonateCard() {
             onDismissRequest = { showDanaQR = false },
             tonalElevation = 8.dp,
             properties = DialogProperties(dismissOnClickOutside = true),
-            title = {
-                Text(
-                    text = stringResource(R.string.dana),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
+            title = { Text(text = stringResource(R.string.dana), style = MaterialTheme.typography.titleLarge) },
             text = {
                 Image(
                     painter = painterResource(id = R.drawable.dana_qr),
@@ -308,9 +241,7 @@ fun DonateCard() {
 
 @Composable
 fun CopyrightCard() {
-    Card(
-	shape = CardDefaults.shape,
-    ) {
+    Card(shape = CardDefaults.shape) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -318,10 +249,7 @@ fun CopyrightCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(
-                    text = "Copyright",
-                    style = MaterialTheme.typography.titleSmall
-                )
+                Text(text = "Copyright", style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = "© 2024-2025 Rve. Licensed under the GNU General Public License v3.0.",
