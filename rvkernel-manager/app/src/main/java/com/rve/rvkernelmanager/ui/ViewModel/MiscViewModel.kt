@@ -2,9 +2,7 @@ package com.rve.rvkernelmanager.ui.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -43,7 +41,7 @@ class MiscViewModel : ViewModel() {
 
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
-    private set
+        private set
 
     init {
         viewModelScope.launch {
@@ -79,7 +77,7 @@ class MiscViewModel : ViewModel() {
             }
             _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP_PATH)
 
-	    val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
+            val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
             if (currentSwappiness != cachedSwappiness) {
                 _swappiness.value = currentSwappiness
                 cachedSwappiness = currentSwappiness
@@ -90,21 +88,25 @@ class MiscViewModel : ViewModel() {
 
     fun updateThermalSconfig(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG_PATH)
             val newValue = if (isChecked) "10" else "0"
-            Utils.writeFile(MiscUtils.THERMAL_SCONFIG_PATH, newValue)
-            Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG_PATH)
-            _thermalSconfig.value = Utils.readFile(MiscUtils.THERMAL_SCONFIG_PATH)
-            cachedThermalSconfig = _thermalSconfig.value
+            if (newValue != cachedThermalSconfig) {
+                Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG_PATH)
+                Utils.writeFile(MiscUtils.THERMAL_SCONFIG_PATH, newValue)
+                Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG_PATH)
+                _thermalSconfig.value = newValue
+                cachedThermalSconfig = newValue
+            }
         }
     }
 
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
-            Utils.writeFile(MiscUtils.SCHED_AUTOGROUP_PATH, newValue)
-            _schedAutogroup.value = Utils.readFile(MiscUtils.SCHED_AUTOGROUP_PATH)
-            cachedSchedAutogroup = _schedAutogroup.value
+            if (newValue != cachedSchedAutogroup) {
+                Utils.writeFile(MiscUtils.SCHED_AUTOGROUP_PATH, newValue)
+                _schedAutogroup.value = newValue
+                cachedSchedAutogroup = newValue
+            }
         }
     }
 

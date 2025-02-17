@@ -32,11 +32,7 @@ fun MiscScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    viewModel.loadMiscData()
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                }
+                Lifecycle.Event.ON_RESUME -> viewModel.loadMiscData()
                 else -> {}
             }
         }
@@ -58,8 +54,8 @@ fun MiscScreen(
     ) { innerPadding ->
         PullToRefreshBox(
             modifier = Modifier
-		.padding(innerPadding)
-		.nestedScroll(scrollBehavior.nestedScrollConnection),
+                .padding(innerPadding)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refresh() }
         ) {
@@ -81,19 +77,17 @@ fun MiscScreen(
 fun MiscCard(viewModel: MiscViewModel) {
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
-    val thermalSconfigStatus = thermalSconfig == "10"
+    val thermalSconfigStatus = remember(thermalSconfig) { thermalSconfig == "10" }
 
     val schedAutogroup by viewModel.schedAutogroup.collectAsState()
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
-    val schedAutogroupStatus = schedAutogroup == "1"
+    val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
 
     val swappiness by viewModel.swappiness.collectAsState()
     val hasSwappiness by viewModel.hasSwappiness.collectAsState()
     val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
 
-    Card(
-        shape = CardDefaults.shape
-    ) {
+    Card(shape = CardDefaults.shape) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -143,7 +137,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                 }
             }
 
-	    if (hasSwappiness) {
+            if (hasSwappiness) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -153,13 +147,11 @@ fun MiscCard(viewModel: MiscViewModel) {
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
-                    Button(
-                        onClick = { viewModel.showSwappinessDialog() }
-                    ) {
+                    Button(onClick = { viewModel.showSwappinessDialog() }) {
                         Text(text = swappiness)
                     }
                 }
-	    }
+            }
         }
     }
 
