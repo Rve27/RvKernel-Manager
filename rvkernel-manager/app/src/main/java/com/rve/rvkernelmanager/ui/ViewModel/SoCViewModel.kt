@@ -64,7 +64,6 @@ class SoCViewModel : ViewModel() {
     init {
         setPermissionsOnce()
         loadInitialData()
-        startPolling()
     }
 
     fun startPolling() {
