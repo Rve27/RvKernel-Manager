@@ -57,7 +57,7 @@ class SoCViewModel : ViewModel() {
     val hasGPUThrottling: StateFlow<Boolean> = _hasGPUThrottling
 
     private var lastReadTime: Long = 0
-    private val cacheDuration = 3000L
+    private val cacheDuration = 5000L
 
     private var pollingJob: Job? = null
 
@@ -71,7 +71,7 @@ class SoCViewModel : ViewModel() {
         pollingJob = viewModelScope.launch {
             while (true) {
                 loadInitialData()
-                delay(3000)
+                delay(5000)
             }
         }
     }
