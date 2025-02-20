@@ -2,6 +2,7 @@ package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -87,6 +89,10 @@ fun MiscCard(viewModel: MiscViewModel) {
     val hasSwappiness by viewModel.hasSwappiness.collectAsState()
     val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
 
+    val printk by viewModel.printk.collectAsState()
+    val hasPrintk by viewModel.hasPrintk.collectAsState()
+    val showPrintkDialog by viewModel.showPrintkDialog.collectAsState()
+
     Card(shape = CardDefaults.shape) {
         Column(
             modifier = Modifier
@@ -152,6 +158,22 @@ fun MiscCard(viewModel: MiscViewModel) {
                     }
                 }
             }
+
+	    if (hasPrintk) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = MiscUtils.PRINTK_PATH.substringAfterLast("/"),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(onClick = { viewModel.showPrintkDialog() }) {
+                        Text(text = printk)
+                    }
+                }
+            }
         }
     }
 
@@ -163,9 +185,12 @@ fun MiscCard(viewModel: MiscViewModel) {
                 Column {
                     OutlinedTextField(
                         value = newSwappinessValue,
-                        onValueChange = { newSwappinessValue = it },
+			onValueChange = { newSwappinessValue = it },
                         label = { Text(MiscUtils.SWAPPINESS_PATH.substringAfterLast("/")) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+			keyboardOptions = KeyboardOptions.Default.copy(
+			    keyboardType = KeyboardType.Number
+			)
                     )
                 }
             },
@@ -174,6 +199,36 @@ fun MiscCard(viewModel: MiscViewModel) {
                     onClick = {
                         viewModel.updateSwappiness(newSwappinessValue)
                         viewModel.hideSwappinessDialog()
+                    }
+                ) {
+                    Text(text = stringResource(R.string.change))
+                }
+            }
+        )
+    }
+
+    if (showPrintkDialog) {
+        var newPrintkValue by remember { mutableStateOf(printk) }
+        AlertDialog(
+            onDismissRequest = { viewModel.hidePrintkDialog() },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = newPrintkValue,
+			onValueChange = { newPrintkValue = it },
+                        label = { Text(MiscUtils.PRINTK_PATH.substringAfterLast("/")) },
+                        modifier = Modifier.fillMaxWidth(),
+			keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updatePrintk(newPrintkValue)
+                        viewModel.hidePrintkDialog()
                     }
                 ) {
                     Text(text = stringResource(R.string.change))
