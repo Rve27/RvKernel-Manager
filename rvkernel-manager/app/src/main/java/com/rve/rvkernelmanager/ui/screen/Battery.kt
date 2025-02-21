@@ -3,6 +3,9 @@ package com.rve.rvkernelmanager.ui.screen
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,20 +72,25 @@ fun BatteryScreen(
         },
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+	    state = rememberLazyListState()
         ) {
-            BatteryInfoCard(viewModel)
+	    item {
+                BatteryInfoCard(viewModel)
+	    }
             if (hasEnableCharging || hasFastCharging) {
-                ChargingCard(viewModel)
+		item {
+                    ChargingCard(viewModel)
+		}
             }
-            Spacer(Modifier)
+	    item {
+                Spacer(Modifier)
+	    }
         }
     }
 }
