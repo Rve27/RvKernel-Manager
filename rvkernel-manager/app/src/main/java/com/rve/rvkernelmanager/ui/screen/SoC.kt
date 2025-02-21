@@ -4,6 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.animation.*
@@ -57,24 +60,33 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
             WindowInsetsSides.Top + WindowInsetsSides.Horizontal
         )
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            state = rememberLazyListState()
         ) {
-            LittleClusterCard(viewModel)
+            item {
+                LittleClusterCard(viewModel)
+            }
             if (hasBigCluster) {
-                BigClusterCard(viewModel)
+                item {
+                    BigClusterCard(viewModel)
+                }
             }
             if (hasPrimeCluster) {
-                PrimeClusterCard(viewModel)
+                item {
+                    PrimeClusterCard(viewModel)
+                }
             }
-            GPUCard(viewModel)
-            Spacer(Modifier)
+            item {
+                GPUCard(viewModel)
+            }
+            item {
+                Spacer(Modifier)
+            }
         }
     }
 }
