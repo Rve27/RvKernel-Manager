@@ -8,6 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.animation.animateContentSize
@@ -56,19 +59,26 @@ fun HomeScreen(
         topBar = { TopBar(scrollBehavior = scrollBehavior) },
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+	    state = rememberLazyListState()
         ) {
-            DeviceInfoCard(viewModel)
-            DonateCard()
-            CopyrightCard()
-            Spacer(Modifier)
+	    item {
+                DeviceInfoCard(viewModel)
+	    }
+	    item {
+                DonateCard()
+	    }
+	    item {
+                CopyrightCard()
+	    }
+	    item {
+                Spacer(Modifier)
+	    }
         }
     }
 }
