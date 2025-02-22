@@ -142,63 +142,65 @@ private fun GovRow(
 
 @Composable
 private fun SelectionDialog(
-   title: String,
-   items: List<String>,
-   currentItem: String,
-   onDismiss: () -> Unit,
-   onSelected: (String) -> Unit,
-   isFreqDialog: Boolean = false,
-   isAdrenoBoostDialog: Boolean = false
+    title: String,
+    items: List<String>,
+    currentItem: String,
+    onDismiss: () -> Unit,
+    onSelected: (String) -> Unit,
+    isFreqDialog: Boolean = false,
+    isAdrenoBoostDialog: Boolean = false
 ) {
-   AlertDialog(
-       onDismissRequest = onDismiss,
-       tonalElevation = 8.dp,
-       title = { Text(title) },
-       text = {
-           Column(
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .verticalScroll(rememberScrollState())
-           ) {
-               if (items.isEmpty()) {
-                   Text(
-                       text = "No items available",
-                       style = MaterialTheme.typography.bodyMedium,
-                       modifier = Modifier.fillMaxWidth()
-                   )
-               } else {
-                   items.forEach { item ->
-                       TextButton(
-                           onClick = { onSelected(item) },
-                           modifier = Modifier.fillMaxWidth()
-                       ) {
-                           Text(
-                               text = when {
-                                   isFreqDialog -> "$item MHz"
-                                   isAdrenoBoostDialog -> when (item) {
-                                       "0" -> "Off"
-                                       "1" -> "Low"
-                                       "2" -> "Medium"
-                                       "3" -> "High"
-                                       else -> item
-                                   }
-                                   else -> item
-                               },
-                               modifier = Modifier.fillMaxWidth(),
-                               color = if (item == currentItem) MaterialTheme.colorScheme.primary 
-                                      else MaterialTheme.colorScheme.onBackground
-                           )
-                       }
-                   }
-               }
-           }
-       },
-       confirmButton = {
-           TextButton(onClick = onDismiss) {
-               Text("Close")
-           }
-       }
-   )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        tonalElevation = 8.dp,
+        title = { Text(title) },
+        text = {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 400.dp)
+            ) {
+                if (items.isEmpty()) {
+                    item {
+                        Text(
+                            text = "No items available",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                } else {
+                    items(items) { item ->
+                        TextButton(
+                            onClick = { onSelected(item) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = when {
+                                    isFreqDialog -> "$item MHz"
+                                    isAdrenoBoostDialog -> when (item) {
+                                        "0" -> "Off"
+                                        "1" -> "Low"
+                                        "2" -> "Medium"
+                                        "3" -> "High"
+                                        else -> item
+                                    }
+                                    else -> item
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = if (item == currentItem) MaterialTheme.colorScheme.primary
+                                       else MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
 }
 
 @Composable
@@ -343,6 +345,8 @@ fun GPUCard(viewModel: SoCViewModel) {
     val gpuState by viewModel.gpuState.collectAsState()
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
+    val gpuThrottlingStatus = gpuState.gpuThrottling == "1"
+    val sortedFreq = gpuState.availableFreq.sortedBy { it.toInt() }
 
     var showFreqDialog by remember { mutableStateOf(false) }
     var showGovDialog by remember { mutableStateOf(false) }
@@ -357,8 +361,6 @@ fun GPUCard(viewModel: SoCViewModel) {
         "3" -> "High"
         else -> "Unknown"
     }
-
-    val gpuThrottlingStatus = gpuState.gpuThrottling == "1"
 
     Card(
         shape = CardDefaults.shape,
@@ -451,7 +453,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             if (showFreqDialog) {
                 SelectionDialog(
                     title = stringResource(R.string.available_freq),
-                    items = gpuState.availableFreq,
+                    items = sortedFreq,
                     currentItem = if (currentFileTarget == "min") gpuState.minFreq else gpuState.maxFreq,
                     onDismiss = { showFreqDialog = false },
                     onSelected = { selectedFreq ->
