@@ -4,6 +4,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -61,15 +64,18 @@ fun MiscScreen(
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refresh() }
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+		state = rememberLazyListState()
             ) {
-                MiscCard(viewModel)
-                Spacer(Modifier)
+		item {
+                    MiscCard(viewModel)
+		}
+		item {
+                    Spacer(Modifier)
+		}
             }
         }
     }
