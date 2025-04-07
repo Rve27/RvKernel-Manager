@@ -32,7 +32,7 @@
     <string name="bypass_charging">Bypass Charging</string>
 
     <!-- Top Bar -->
-    <string name="repo_url">https://github.com/Rv-Project/RvKernel-Manager-Kotlin</string>
+    <string name="repo_url">https://github.com/Rve27/RvKernel-Manager</string>
     <string name="telegram_url">https://t.me/rvosuniverse</string>
 
     <!-- Device Info -->
