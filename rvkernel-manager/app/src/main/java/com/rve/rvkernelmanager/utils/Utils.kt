@@ -85,21 +85,7 @@ object Utils {
             ""
         }
     }
-    
-    fun getRvOSVersion(): String? {
-        val rvosVersion = getSystemProperty("ro.rvos.version")
-        val rvosBuildType = getSystemProperty("ro.rvos.build.type")
-        
-        return if (rvosVersion.isNotEmpty() || rvosBuildType.isNotEmpty()) {
-            "$rvosVersion${if (rvosBuildType.isNotEmpty()) " $rvosBuildType" else ""}"
-        } else null
-    }
-    
-    fun getSomethingOSVersion(): String? {
-        val somethingVersion = getSystemProperty("ro.somethingos.version")
-        return if (somethingVersion.isNotEmpty()) somethingVersion else null
-    }
-    
+
     fun getKernelVersion(): String {
         return try {
             Os.uname().release

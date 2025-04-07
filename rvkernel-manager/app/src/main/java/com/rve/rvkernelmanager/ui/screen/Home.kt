@@ -90,8 +90,6 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val cpu by viewModel.cpu.collectAsState()
     val gpuModel by viewModel.gpuModel.collectAsState()
     val androidVersion by viewModel.androidVersion.collectAsState()
-    val rvosVersion by viewModel.rvosVersion.collectAsState()
-    val somethingVersion by viewModel.somethingVersion.collectAsState()
     val kernelVersion by viewModel.kernelVersion.collectAsState()
     val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
@@ -112,12 +110,6 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             )
             InfoRow(label = stringResource(R.string.gpu), value = gpuModel)
             InfoRow(label = stringResource(R.string.android_version), value = androidVersion)
-            rvosVersion?.let { version ->
-                InfoRow(label = stringResource(R.string.rvos_version), value = version)
-            }
-            somethingVersion?.let { version ->
-                InfoRow(label = stringResource(R.string.something_version), value = version)
-            }
             InfoRow(
                 label = stringResource(R.string.kernel_version),
                 value = kernelVersion,

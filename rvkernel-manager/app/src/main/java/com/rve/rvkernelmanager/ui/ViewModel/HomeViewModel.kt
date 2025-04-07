@@ -25,12 +25,6 @@ class HomeViewModel : ViewModel() {
     private val _androidVersion = MutableStateFlow("")
     val androidVersion: StateFlow<String> = _androidVersion
 
-    private val _rvosVersion = MutableStateFlow<String?>(null)
-    val rvosVersion: StateFlow<String?> = _rvosVersion
-
-    private val _somethingVersion = MutableStateFlow<String?>(null)
-    val somethingVersion: StateFlow<String?> = _somethingVersion
-
     private val _kernelVersion = MutableStateFlow("")
     val kernelVersion: StateFlow<String> = _kernelVersion
 
@@ -40,11 +34,9 @@ class HomeViewModel : ViewModel() {
     private val _isFullKernelVersion = MutableStateFlow(false)
     val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
 
-    // Cache untuk CPU info
     private var cachedCPUInfo: String? = null
     private var cachedExtendedCPUInfo: String? = null
 
-    // Cache untuk kernel version
     private var cachedKernelVersion: String? = null
     private var cachedFullKernelVersion: String? = null
 
@@ -54,16 +46,12 @@ class HomeViewModel : ViewModel() {
             _ramInfo.value = Utils.getTotalRam(context)
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
-            _rvosVersion.value = Utils.getRvOSVersion()
-            _somethingVersion.value = Utils.getSomethingOSVersion()
 
-            // Gunakan cache untuk CPU info
             if (cachedCPUInfo == null) {
                 cachedCPUInfo = Utils.getCPUInfo()
             }
             _cpu.value = cachedCPUInfo ?: ""
 
-            // Gunakan cache untuk kernel version
             if (cachedKernelVersion == null) {
                 cachedKernelVersion = Utils.getKernelVersion()
             }
