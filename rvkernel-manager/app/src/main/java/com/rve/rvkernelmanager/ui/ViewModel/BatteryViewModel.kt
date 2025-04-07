@@ -37,11 +37,17 @@ class BatteryViewModel : ViewModel() {
     private val _isFastChargingChecked = MutableStateFlow(false)
     val isFastChargingChecked: StateFlow<Boolean> = _isFastChargingChecked
 
+    private val _isBypassChargingChecked = MutableStateFlow(false)
+    val isBypassChargingChecked: StateFlow<Boolean> = _isBypassChargingChecked
+
     private val _hasEnableCharging = MutableStateFlow(false)
     val hasEnableCharging: StateFlow<Boolean> = _hasEnableCharging
 
     private val _hasFastCharging = MutableStateFlow(false)
     val hasFastCharging: StateFlow<Boolean> = _hasFastCharging
+
+    private val _hasBypassCharging = MutableStateFlow(false)
+    val hasBypassCharging: StateFlow<Boolean> = _hasBypassCharging
 
     private var tempReceiver: BroadcastReceiver? = null
     private var voltageReceiver: BroadcastReceiver? = null
@@ -84,8 +90,10 @@ class BatteryViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 _hasEnableCharging.value = Utils.testFile(BatteryUtils.ENABLE_CHARGING_PATH)
                 _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING_PATH)
+		_hasBypassCharging.value = Utils.testFile(BatteryUtils.INPUT_SUSPEND)
                 _isEnableChargingChecked.value = Utils.readFile(BatteryUtils.ENABLE_CHARGING_PATH) == "1"
                 _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
+		_isBypassChargingChecked.value = Utils.readFile(BatteryUtils.INPUT_SUSPEND) == "1"
             }
         }
     }
@@ -107,6 +115,17 @@ class BatteryViewModel : ViewModel() {
                 val success = Utils.writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
                 if (success) {
                     _isFastChargingChecked.value = checked
+                }
+            }
+        }
+    }
+
+    fun toggleBypassCharging(checked: Boolean) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val success = Utils.writeFile(BatteryUtils.INPUT_SUSPEND, if (checked) "1" else "0")
+                if (success) {
+                    _isBypassChargingChecked.value = checked
                 }
             }
         }

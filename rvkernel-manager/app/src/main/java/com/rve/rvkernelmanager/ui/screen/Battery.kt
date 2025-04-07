@@ -150,6 +150,8 @@ fun ChargingCard(viewModel: BatteryViewModel) {
     val hasEnableCharging by viewModel.hasEnableCharging.collectAsState()
     val isFastChargingChecked by viewModel.isFastChargingChecked.collectAsState()
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
+    val isBypassChargingChecked by viewModel.isBypassChargingChecked.collectAsState()
+    val hasBypassCharging by viewModel.hasBypassCharging.collectAsState()
 
     Card(
         shape = CardDefaults.shape
@@ -176,6 +178,14 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                     label = stringResource(R.string.fast_charging),
                     checked = isFastChargingChecked,
                     onCheckedChange = { viewModel.toggleFastCharging(it) }
+                )
+            }
+
+	    if (hasBypassCharging) {
+                SwitchRow(
+                    label = stringResource(R.string.bypass_charging),
+                    checked = isBypassChargingChecked,
+                    onCheckedChange = { viewModel.toggleBypassCharging(it) }
                 )
             }
         }

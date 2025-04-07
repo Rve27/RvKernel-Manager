@@ -30,6 +30,7 @@
     <string name="charging_title">Charging</string>
     <string name="enable_charging">Enable charging</string>
     <string name="fast_charging">Fast charging</string>
+    <string name="bypass_charging">Bypass Charging</string>
 
     <!-- Top Bar -->
     <string name="repo_url">https://github.com/Rv-Project/RvKernel-Manager-Kotlin</string>
