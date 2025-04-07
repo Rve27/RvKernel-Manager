@@ -13,7 +13,6 @@ import com.rve.rvkernelmanager.R
 object BatteryUtils {
 
     const val FAST_CHARGING_PATH = "/sys/kernel/fast_charge/force_fast_charge"
-    const val ENABLE_CHARGING_PATH = "/sys/class/power_supply/battery/charging_enabled"
     const val BATTERY_DESIGN_CAPACITY_PATH = "/sys/class/power_supply/battery/charge_full_design"
     const val BATTERY_MAXIMUM_CAPACITY_PATH = "/sys/class/power_supply/battery/charge_full"
     const val INPUT_SUSPEND = "/sys/class/power_supply/battery/input_suspend"

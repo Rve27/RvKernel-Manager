@@ -33,8 +33,8 @@ fun BatteryScreen(
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val hasEnableCharging by viewModel.hasEnableCharging.collectAsState()
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
+    val hasBypassCharging by viewModel.hasBypassCharging.collectAsState()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -83,7 +83,7 @@ fun BatteryScreen(
 	    item {
                 BatteryInfoCard(viewModel)
 	    }
-            if (hasEnableCharging || hasFastCharging) {
+            if (hasFastCharging || hasBypassCharging) {
 		item {
                     ChargingCard(viewModel)
 		}
@@ -146,8 +146,6 @@ fun InfoRow(label: String, value: String) {
 
 @Composable
 fun ChargingCard(viewModel: BatteryViewModel) {
-    val isEnableChargingChecked by viewModel.isEnableChargingChecked.collectAsState()
-    val hasEnableCharging by viewModel.hasEnableCharging.collectAsState()
     val isFastChargingChecked by viewModel.isFastChargingChecked.collectAsState()
     val hasFastCharging by viewModel.hasFastCharging.collectAsState()
     val isBypassChargingChecked by viewModel.isBypassChargingChecked.collectAsState()
@@ -164,14 +162,6 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(4.dp))
-
-            if (hasEnableCharging) {
-                SwitchRow(
-                    label = stringResource(R.string.enable_charging),
-                    checked = isEnableChargingChecked,
-                    onCheckedChange = { viewModel.toggleEnableCharging(it) }
-                )
-            }
 
             if (hasFastCharging) {
                 SwitchRow(
