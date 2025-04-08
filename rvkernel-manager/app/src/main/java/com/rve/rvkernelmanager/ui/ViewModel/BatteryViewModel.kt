@@ -46,6 +46,7 @@ class BatteryViewModel : ViewModel() {
     private var tempReceiver: BroadcastReceiver? = null
     private var voltageReceiver: BroadcastReceiver? = null
     private var maxCapacityReceiver: BroadcastReceiver? = null
+    private var inputSuspendPath: String? = null
 
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch {
@@ -83,9 +84,19 @@ class BatteryViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING)
-		_hasBypassCharging.value = Utils.testFile(BatteryUtils.INPUT_SUSPEND)
+                
+                inputSuspendPath = when {
+                    Utils.testFile(BatteryUtils.INPUT_SUSPEND_1) -> BatteryUtils.INPUT_SUSPEND_1
+                    Utils.testFile(BatteryUtils.INPUT_SUSPEND_2) -> BatteryUtils.INPUT_SUSPEND_2
+                    else -> null
+                }
+                
+                _hasBypassCharging.value = inputSuspendPath != null
+                _isBypassChargingChecked.value = inputSuspendPath?.let { 
+                    Utils.readFile(it) == "1" 
+                } ?: false
+                
                 _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
-		_isBypassChargingChecked.value = Utils.readFile(BatteryUtils.INPUT_SUSPEND) == "1"
             }
         }
     }
@@ -104,9 +115,11 @@ class BatteryViewModel : ViewModel() {
     fun toggleBypassCharging(checked: Boolean) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val success = Utils.writeFile(BatteryUtils.INPUT_SUSPEND, if (checked) "1" else "0")
-                if (success) {
-                    _isBypassChargingChecked.value = checked
+                inputSuspendPath?.let { path ->
+                    val success = Utils.writeFile(path, if (checked) "1" else "0")
+                    if (success) {
+                        _isBypassChargingChecked.value = checked
+                    }
                 }
             }
         }
