@@ -82,9 +82,9 @@ class BatteryViewModel : ViewModel() {
     fun checkChargingFiles() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING_PATH)
+                _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING)
 		_hasBypassCharging.value = Utils.testFile(BatteryUtils.INPUT_SUSPEND)
-                _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING_PATH) == "1"
+                _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
 		_isBypassChargingChecked.value = Utils.readFile(BatteryUtils.INPUT_SUSPEND) == "1"
             }
         }
@@ -93,7 +93,7 @@ class BatteryViewModel : ViewModel() {
     fun toggleFastCharging(checked: Boolean) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val success = Utils.writeFile(BatteryUtils.FAST_CHARGING_PATH, if (checked) "1" else "0")
+                val success = Utils.writeFile(BatteryUtils.FAST_CHARGING, if (checked) "1" else "0")
                 if (success) {
                     _isFastChargingChecked.value = checked
                 }

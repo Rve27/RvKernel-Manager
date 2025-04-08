@@ -77,8 +77,8 @@ class HomeViewModel : ViewModel() {
 
         if (_isFullKernelVersion.value) {
             if (cachedFullKernelVersion == null) {
-                Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION_PATH)
-                cachedFullKernelVersion = Utils.readFile(Utils.FULL_KERNEL_VERSION_PATH)
+                Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION)
+                cachedFullKernelVersion = Utils.readFile(Utils.FULL_KERNEL_VERSION)
             }
             _kernelVersion.value = cachedFullKernelVersion ?: ""
         } else {

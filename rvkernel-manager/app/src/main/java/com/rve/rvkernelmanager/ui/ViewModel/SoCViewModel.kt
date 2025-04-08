@@ -83,26 +83,26 @@ class SoCViewModel : ViewModel() {
 
     private fun setPermissionsOnce() {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU0_PATH)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU0_PATH)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU0_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU0_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU0_PATH)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU4_PATH)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU4_PATH)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU4_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU4_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU4_PATH)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU7_PATH)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU7_PATH)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU7_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU7_PATH)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU7_PATH)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_GPU_PATH)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_GPU_PATH)
-            Utils.setPermissions(644, SoCUtils.GOV_GPU_PATH)
-            Utils.setPermissions(644, SoCUtils.ADRENO_BOOST_PATH)
-            Utils.setPermissions(644, SoCUtils.GPU_THROTTLING_PATH)
+            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU0)
+            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU0)
+            Utils.setPermissions(644, SoCUtils.GOV_CPU0)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU0)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU0)
+            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU4)
+            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU4)
+            Utils.setPermissions(644, SoCUtils.GOV_CPU4)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU4)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU4)
+            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU7)
+            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU7)
+            Utils.setPermissions(644, SoCUtils.GOV_CPU7)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU7)
+            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU7)
+            Utils.setPermissions(644, SoCUtils.MIN_FREQ_GPU)
+            Utils.setPermissions(644, SoCUtils.MAX_FREQ_GPU)
+            Utils.setPermissions(644, SoCUtils.GOV_GPU)
+            Utils.setPermissions(644, SoCUtils.ADRENO_BOOST)
+            Utils.setPermissions(644, SoCUtils.GPU_THROTTLING)
         }
     }
 
@@ -110,11 +110,11 @@ class SoCViewModel : ViewModel() {
         viewModelScope.launch {
             if (shouldReadFromFile()) {
                 withContext(Dispatchers.IO) {
-                    val currentMinFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0_PATH)
-                    val currentMaxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0_PATH)
-                    val currentGovCPU0 = Utils.readFile(SoCUtils.GOV_CPU0_PATH)
-                    val currentAvailableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0_PATH)
-                    val currentAvailableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0_PATH)
+                    val currentMinFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
+                    val currentMaxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
+                    val currentGovCPU0 = Utils.readFile(SoCUtils.GOV_CPU0)
+                    val currentAvailableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0)
+                    val currentAvailableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0)
 
                     _cpu0State.value = CPUState(
                         currentMinFreqCPU0,
@@ -124,10 +124,10 @@ class SoCViewModel : ViewModel() {
                         currentAvailableGovCPU0
                     )
 
-                    val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4_PATH)) {
-                        SoCUtils.AVAILABLE_FREQ_CPU4_PATH
-                    } else if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6_PATH)) {
-                        SoCUtils.AVAILABLE_FREQ_CPU6_PATH
+                    val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4)) {
+                        SoCUtils.AVAILABLE_FREQ_CPU4
+                    } else if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6)) {
+                        SoCUtils.AVAILABLE_FREQ_CPU6
                     } else {
                         null
                     }
@@ -135,40 +135,40 @@ class SoCViewModel : ViewModel() {
 
                     if (_hasBigCluster.value) {
                         val basePath = when (bigClusterPath) {
-                            SoCUtils.AVAILABLE_FREQ_CPU4_PATH -> "cpu4"
-                            SoCUtils.AVAILABLE_FREQ_CPU6_PATH -> "cpu6"
+                            SoCUtils.AVAILABLE_FREQ_CPU4 -> "cpu4"
+                            SoCUtils.AVAILABLE_FREQ_CPU6 -> "cpu6"
                             else -> null
                         }
 
                         if (basePath != null) {
                             val minFreqPath = when (basePath) {
-                                "cpu4" -> SoCUtils.MIN_FREQ_CPU4_PATH
-                                "cpu6" -> SoCUtils.MIN_FREQ_CPU6_PATH
+                                "cpu4" -> SoCUtils.MIN_FREQ_CPU4
+                                "cpu6" -> SoCUtils.MIN_FREQ_CPU6
                                 else -> null
                             }
                             val maxFreqPath = when (basePath) {
-                                "cpu4" -> SoCUtils.MAX_FREQ_CPU4_PATH
-                                "cpu6" -> SoCUtils.MAX_FREQ_CPU6_PATH
+                                "cpu4" -> SoCUtils.MAX_FREQ_CPU4
+                                "cpu6" -> SoCUtils.MAX_FREQ_CPU6
                                 else -> null
                             }
                             val govPath = when (basePath) {
-                                "cpu4" -> SoCUtils.GOV_CPU4_PATH
-                                "cpu6" -> SoCUtils.GOV_CPU6_PATH
+                                "cpu4" -> SoCUtils.GOV_CPU4
+                                "cpu6" -> SoCUtils.GOV_CPU6
                                 else -> null
                             }
                             val availableFreqPath = when (basePath) {
-                                "cpu4" -> SoCUtils.AVAILABLE_FREQ_CPU4_PATH
-                                "cpu6" -> SoCUtils.AVAILABLE_FREQ_CPU6_PATH
+                                "cpu4" -> SoCUtils.AVAILABLE_FREQ_CPU4
+                                "cpu6" -> SoCUtils.AVAILABLE_FREQ_CPU6
                                 else -> null
                             }
                             val availableBoostFreqPath = when (basePath) {
-                                "cpu4" -> SoCUtils.AVAILABLE_BOOST_CPU4_PATH
-                                "cpu6" -> SoCUtils.AVAILABLE_BOOST_CPU6_PATH
+                                "cpu4" -> SoCUtils.AVAILABLE_BOOST_CPU4
+                                "cpu6" -> SoCUtils.AVAILABLE_BOOST_CPU6
                                 else -> null
                             }
                             val availableGovPath = when (basePath) {
-                                "cpu4" -> SoCUtils.AVAILABLE_GOV_CPU4_PATH
-                                "cpu6" -> SoCUtils.AVAILABLE_GOV_CPU6_PATH
+                                "cpu4" -> SoCUtils.AVAILABLE_GOV_CPU4
+                                "cpu6" -> SoCUtils.AVAILABLE_GOV_CPU6
                                 else -> null
                             }
 
@@ -188,13 +188,13 @@ class SoCViewModel : ViewModel() {
                         }
                     }
 
-                    _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7_PATH)
+                    _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
                     if (_hasPrimeCluster.value) {
-                        val currentMinFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7_PATH)
-                        val currentMaxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7_PATH)
-                        val currentGovCPU7 = Utils.readFile(SoCUtils.GOV_CPU7_PATH)
-                        val currentAvailableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7_PATH)
-                        val currentAvailableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7_PATH)
+                        val currentMinFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7)
+                        val currentMaxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
+                        val currentGovCPU7 = Utils.readFile(SoCUtils.GOV_CPU7)
+                        val currentAvailableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7)
+                        val currentAvailableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7)
 
                         _primeClusterState.value = CPUState(
                             currentMinFreqCPU7,
@@ -205,13 +205,13 @@ class SoCViewModel : ViewModel() {
                         )
                     }
 
-                    val currentMinFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU_PATH)
-                    val currentMaxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU_PATH)
-                    val currentGovGPU = Utils.readFile(SoCUtils.GOV_GPU_PATH)
-                    val currentAdrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST_PATH)
-                    val currentGpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING_PATH)
-                    val currentAvailableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU_PATH)
-                    val currentAvailableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU_PATH)
+                    val currentMinFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU)
+                    val currentMaxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
+                    val currentGovGPU = Utils.readFile(SoCUtils.GOV_GPU)
+                    val currentAdrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
+                    val currentGpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
+                    val currentAvailableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU)
+                    val currentAvailableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
 
                     _gpuState.value = GPUState(
                         currentMinFreqGPU,
@@ -223,8 +223,8 @@ class SoCViewModel : ViewModel() {
                         currentAvailableGovGPU
                     )
 
-                    _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST_PATH)
-                    _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING_PATH)
+                    _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
+                    _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
 
                     lastReadTime = System.currentTimeMillis()
                 }
@@ -240,25 +240,25 @@ class SoCViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             when (cluster) {
                 "little" -> {
-                    val path = if (target == "min") SoCUtils.MIN_FREQ_CPU0_PATH else SoCUtils.MAX_FREQ_CPU0_PATH
+                    val path = if (target == "min") SoCUtils.MIN_FREQ_CPU0 else SoCUtils.MAX_FREQ_CPU0
                     SoCUtils.writeFreqCPU(path, selectedFreq)
                     _cpu0State.value = _cpu0State.value.copy(
-                        minFreq = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0_PATH),
-                        maxFreq = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0_PATH)
+                        minFreq = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0),
+                        maxFreq = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
                     )
                 }
                 "big" -> {
-                    val minPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU4_PATH)) {
-                        SoCUtils.MIN_FREQ_CPU4_PATH
-                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU6_PATH)) {
-                        SoCUtils.MIN_FREQ_CPU6_PATH
+                    val minPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU4)) {
+                        SoCUtils.MIN_FREQ_CPU4
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MIN_FREQ_CPU6)) {
+                        SoCUtils.MIN_FREQ_CPU6
                     } else {
                         null
                     }
-                    val maxPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU4_PATH)) {
-                        SoCUtils.MAX_FREQ_CPU4_PATH
-                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU6_PATH)) {
-                        SoCUtils.MAX_FREQ_CPU6_PATH
+                    val maxPath = if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU4)) {
+                        SoCUtils.MAX_FREQ_CPU4
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.MAX_FREQ_CPU6)) {
+                        SoCUtils.MAX_FREQ_CPU6
                     } else {
                         null
                     }
@@ -274,19 +274,19 @@ class SoCViewModel : ViewModel() {
                     }
                 }
                 "prime" -> {
-                    val path = if (target == "min") SoCUtils.MIN_FREQ_CPU7_PATH else SoCUtils.MAX_FREQ_CPU7_PATH
+                    val path = if (target == "min") SoCUtils.MIN_FREQ_CPU7 else SoCUtils.MAX_FREQ_CPU7
                     SoCUtils.writeFreqCPU(path, selectedFreq)
                     _primeClusterState.value = _primeClusterState.value.copy(
-                        minFreq = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7_PATH),
-                        maxFreq = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7_PATH)
+                        minFreq = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7),
+                        maxFreq = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
                     )
                 }
                 "gpu" -> {
-                    val path = if (target == "min") SoCUtils.MIN_FREQ_GPU_PATH else SoCUtils.MAX_FREQ_GPU_PATH
+                    val path = if (target == "min") SoCUtils.MIN_FREQ_GPU else SoCUtils.MAX_FREQ_GPU
                     SoCUtils.writeFreqGPU(path, selectedFreq)
                     _gpuState.value = _gpuState.value.copy(
-                        minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU_PATH),
-                        maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU_PATH)
+                        minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
+                        maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
                     )
                 }
             }
@@ -296,18 +296,18 @@ class SoCViewModel : ViewModel() {
     fun updateGov(selectedGov: String, cluster: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val path = when (cluster) {
-                "little" -> SoCUtils.GOV_CPU0_PATH
+                "little" -> SoCUtils.GOV_CPU0
                 "big" -> {
-                    if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU4_PATH)) {
-                        SoCUtils.GOV_CPU4_PATH
-                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU6_PATH)) {
-                        SoCUtils.GOV_CPU6_PATH
+                    if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU4)) {
+                        SoCUtils.GOV_CPU4
+                    } else if (_hasBigCluster.value == true && Utils.testFile(SoCUtils.GOV_CPU6)) {
+                        SoCUtils.GOV_CPU6
                     } else {
                         null
                     }
                 }
-                "prime" -> SoCUtils.GOV_CPU7_PATH
-                "gpu" -> SoCUtils.GOV_GPU_PATH
+                "prime" -> SoCUtils.GOV_CPU7
+                "gpu" -> SoCUtils.GOV_GPU
                 else -> null
             }
 
@@ -316,16 +316,16 @@ class SoCViewModel : ViewModel() {
 
                 when (cluster) {
                     "little" -> {
-                        _cpu0State.value = _cpu0State.value.copy(gov = Utils.readFile(SoCUtils.GOV_CPU0_PATH))
+                        _cpu0State.value = _cpu0State.value.copy(gov = Utils.readFile(SoCUtils.GOV_CPU0))
                     }
                     "big" -> {
                         _bigClusterState.value = _bigClusterState.value.copy(gov = Utils.readFile(path))
                     }
                     "prime" -> {
-                        _primeClusterState.value = _primeClusterState.value.copy(gov = Utils.readFile(SoCUtils.GOV_CPU7_PATH))
+                        _primeClusterState.value = _primeClusterState.value.copy(gov = Utils.readFile(SoCUtils.GOV_CPU7))
                     }
                     "gpu" -> {
-                        _gpuState.value = _gpuState.value.copy(gov = Utils.readFile(SoCUtils.GOV_GPU_PATH))
+                        _gpuState.value = _gpuState.value.copy(gov = Utils.readFile(SoCUtils.GOV_GPU))
                     }
                 }
             }
@@ -334,16 +334,16 @@ class SoCViewModel : ViewModel() {
 
     fun updateAdrenoBoost(selectedBoost: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(SoCUtils.ADRENO_BOOST_PATH, selectedBoost)
-            _gpuState.value = _gpuState.value.copy(adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST_PATH))
+            Utils.writeFile(SoCUtils.ADRENO_BOOST, selectedBoost)
+            _gpuState.value = _gpuState.value.copy(adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST))
         }
     }
 
     fun updateGPUThrottling(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
-            Utils.writeFile(SoCUtils.GPU_THROTTLING_PATH, newValue)
-            _gpuState.value = _gpuState.value.copy(gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING_PATH))
+            Utils.writeFile(SoCUtils.GPU_THROTTLING, newValue)
+            _gpuState.value = _gpuState.value.copy(gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING))
         }
     }
 }

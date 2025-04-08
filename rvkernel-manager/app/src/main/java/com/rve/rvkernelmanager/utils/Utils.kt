@@ -11,9 +11,9 @@ import com.topjohnwu.superuser.Shell
 
 object Utils {
 
-    const val FULL_KERNEL_VERSION_PATH = "/proc/version"
-    const val CPU_INFO_PATH = "/proc/cpuinfo"
-    const val GPU_MODEL_PATH = "/sys/class/kgsl/kgsl-3d0/gpu_model"
+    const val FULL_KERNEL_VERSION = "/proc/version"
+    const val CPU_INFO = "/proc/cpuinfo"
+    const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
     
     fun getDeviceCodename(): String {
         return Build.DEVICE
@@ -25,7 +25,7 @@ object Utils {
     
     fun getCPUInfo(): String {
         return try {
-            val hardwareResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Hardware' | head -n 1").exec()
+            val hardwareResult = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
     
             if (hardwareResult.isSuccess) {
                 hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
@@ -40,9 +40,9 @@ object Utils {
     
     fun getExtendCPUInfo(): String {
         return try {
-            val hardwareResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Hardware' | head -n 1").exec()
-            val coresResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'processor' | wc -l").exec()
-            val archResult = Shell.cmd("cat $CPU_INFO_PATH | grep 'Processor' | head -n 1").exec()
+            val hardwareResult = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
+            val coresResult = Shell.cmd("cat $CPU_INFO | grep 'processor' | wc -l").exec()
+            val archResult = Shell.cmd("cat $CPU_INFO | grep 'Processor' | head -n 1").exec()
     
             val hardware = if (hardwareResult.isSuccess) {
                 hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
@@ -97,7 +97,7 @@ object Utils {
     
     fun getGPUModel(): String {
         return try {
-            val result = Shell.cmd("cat $GPU_MODEL_PATH").exec()
+            val result = Shell.cmd("cat $GPU_MODEL").exec()
             if (result.isSuccess) {
                 val gpuModel = result.out.firstOrNull()?.trim() ?: "Unknown"
                 val formattedModel = gpuModel

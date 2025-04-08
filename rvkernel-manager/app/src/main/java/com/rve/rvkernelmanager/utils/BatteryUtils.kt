@@ -12,9 +12,9 @@ import com.rve.rvkernelmanager.R
 
 object BatteryUtils {
 
-    const val FAST_CHARGING_PATH = "/sys/kernel/fast_charge/force_fast_charge"
-    const val BATTERY_DESIGN_CAPACITY_PATH = "/sys/class/power_supply/battery/charge_full_design"
-    const val BATTERY_MAXIMUM_CAPACITY_PATH = "/sys/class/power_supply/battery/charge_full"
+    const val FAST_CHARGING = "/sys/kernel/fast_charge/force_fast_charge"
+    const val BATTERY_DESIGN_CAPACITY = "/sys/class/power_supply/battery/charge_full_design"
+    const val BATTERY_MAXIMUM_CAPACITY = "/sys/class/power_supply/battery/charge_full"
     const val INPUT_SUSPEND = "/sys/class/power_supply/battery/input_suspend"
     
     fun getBatteryTechnology(context: Context): String {
@@ -100,7 +100,7 @@ object BatteryUtils {
     
     fun getBatteryDesignCapacity(context: Context): String {
         return try {
-            val result = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY_PATH").exec()
+            val result = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
     
             if (result.isSuccess) {
                 val mAh = result.out.firstOrNull()?.trim()
@@ -116,10 +116,10 @@ object BatteryUtils {
     
     fun getBatteryMaximumCapacity(context: Context): String {
         return try {
-            val maxCapacityResult = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY_PATH").exec()
+            val maxCapacityResult = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY").exec()
             val maxCapacity = maxCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
     
-            val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY_PATH").exec()
+            val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
             val designCapacity = designCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
     
             val percentage = if (designCapacity > 0) {

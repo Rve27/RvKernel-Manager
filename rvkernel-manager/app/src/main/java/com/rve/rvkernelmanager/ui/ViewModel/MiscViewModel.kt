@@ -73,33 +73,33 @@ class MiscViewModel : ViewModel() {
 
     fun loadMiscData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentThermalSconfig = Utils.readFile(MiscUtils.THERMAL_SCONFIG_PATH)
+            val currentThermalSconfig = Utils.readFile(MiscUtils.THERMAL_SCONFIG)
             if (currentThermalSconfig != cachedThermalSconfig) {
                 _thermalSconfig.value = currentThermalSconfig
                 cachedThermalSconfig = currentThermalSconfig
             }
-            _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG_PATH)
+            _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG)
 
-            val currentSchedAutogroup = Utils.readFile(MiscUtils.SCHED_AUTOGROUP_PATH)
+            val currentSchedAutogroup = Utils.readFile(MiscUtils.SCHED_AUTOGROUP)
             if (currentSchedAutogroup != cachedSchedAutogroup) {
                 _schedAutogroup.value = currentSchedAutogroup
                 cachedSchedAutogroup = currentSchedAutogroup
             }
-            _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP_PATH)
+            _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP)
 
-            val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS_PATH)
+            val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS)
             if (currentSwappiness != cachedSwappiness) {
                 _swappiness.value = currentSwappiness
                 cachedSwappiness = currentSwappiness
             }
-            _hasSwappiness.value = Utils.testFile(MiscUtils.SWAPPINESS_PATH)
+            _hasSwappiness.value = Utils.testFile(MiscUtils.SWAPPINESS)
 
-	    val currentPrintk = Utils.readFile(MiscUtils.PRINTK_PATH)
+	    val currentPrintk = Utils.readFile(MiscUtils.PRINTK)
             if (currentPrintk != cachedPrintk) {
                 _printk.value = currentPrintk
                 cachedPrintk = currentPrintk
             }
-            _hasPrintk.value = Utils.testFile(MiscUtils.PRINTK_PATH)
+            _hasPrintk.value = Utils.testFile(MiscUtils.PRINTK)
         }
     }
 
@@ -107,9 +107,9 @@ class MiscViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "10" else "0"
             if (newValue != cachedThermalSconfig) {
-                Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG_PATH)
-                Utils.writeFile(MiscUtils.THERMAL_SCONFIG_PATH, newValue)
-                Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG_PATH)
+                Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG)
+                Utils.writeFile(MiscUtils.THERMAL_SCONFIG, newValue)
+                Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG)
                 _thermalSconfig.value = newValue
                 cachedThermalSconfig = newValue
             }
@@ -120,7 +120,7 @@ class MiscViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
             if (newValue != cachedSchedAutogroup) {
-                Utils.writeFile(MiscUtils.SCHED_AUTOGROUP_PATH, newValue)
+                Utils.writeFile(MiscUtils.SCHED_AUTOGROUP, newValue)
                 _schedAutogroup.value = newValue
                 cachedSchedAutogroup = newValue
             }
@@ -137,7 +137,7 @@ class MiscViewModel : ViewModel() {
 
     fun updateSwappiness(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(MiscUtils.SWAPPINESS_PATH, newValue)
+            Utils.writeFile(MiscUtils.SWAPPINESS, newValue)
             _swappiness.value = newValue
         }
     }
@@ -152,7 +152,7 @@ class MiscViewModel : ViewModel() {
 
     fun updatePrintk(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(MiscUtils.PRINTK_PATH, newValue)
+            Utils.writeFile(MiscUtils.PRINTK, newValue)
             _printk.value = newValue
         }
     }

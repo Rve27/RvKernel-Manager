@@ -135,7 +135,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        MiscUtils.SCHED_AUTOGROUP_PATH.substringAfterLast("/"),
+                        MiscUtils.SCHED_AUTOGROUP.substringAfterLast("/"),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -154,7 +154,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = MiscUtils.SWAPPINESS_PATH.substringAfterLast("/"),
+                        text = MiscUtils.SWAPPINESS.substringAfterLast("/"),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -170,7 +170,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = MiscUtils.PRINTK_PATH.substringAfterLast("/"),
+                        text = MiscUtils.PRINTK.substringAfterLast("/"),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -191,7 +191,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     OutlinedTextField(
                         value = newSwappinessValue,
 			onValueChange = { newSwappinessValue = it },
-                        label = { Text(MiscUtils.SWAPPINESS_PATH.substringAfterLast("/")) },
+                        label = { Text(MiscUtils.SWAPPINESS.substringAfterLast("/")) },
                         modifier = Modifier.fillMaxWidth(),
 			keyboardOptions = KeyboardOptions.Default.copy(
 			    keyboardType = KeyboardType.Number
@@ -221,7 +221,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     OutlinedTextField(
                         value = newPrintkValue,
 			onValueChange = { newPrintkValue = it },
-                        label = { Text(MiscUtils.PRINTK_PATH.substringAfterLast("/")) },
+                        label = { Text(MiscUtils.PRINTK.substringAfterLast("/")) },
                         modifier = Modifier.fillMaxWidth(),
 			keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number
