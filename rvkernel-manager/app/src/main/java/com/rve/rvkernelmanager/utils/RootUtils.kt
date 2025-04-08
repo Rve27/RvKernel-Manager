@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rve.rvkernelmanager.R
 
@@ -27,7 +26,7 @@ object RootUtils {
                 ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = stringResource(R.string.root_summary),
+                            text = "RvKernel Manager requires root access!",
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         TextButton(
@@ -37,7 +36,7 @@ object RootUtils {
                             },
                             modifier = Modifier.align(Alignment.End)
                         ) {
-                            Text(text = stringResource(R.string.exit))
+                            Text(text = "Exit")
                         }
                     }
                 }

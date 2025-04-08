@@ -29,8 +29,6 @@ fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     val context = LocalContext.current
-    val githubUrl = stringResource(id = R.string.repo_url)
-    val telegramUrl = stringResource(id = R.string.telegram_url)
 
     TopAppBar(
         title = {
@@ -42,7 +40,7 @@ fun TopBar(
         actions = {
             IconButton(
 		onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Rve27/RvKernel-Manager"))
                     context.startActivity(intent)
 	        },
 		modifier = Modifier
@@ -59,7 +57,7 @@ fun TopBar(
 
 	    IconButton(
 		onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/rvosuniverse"))
                     context.startActivity(intent)
                 },
 		modifier = Modifier

@@ -21,7 +21,7 @@ object BatteryUtils {
         val batteryIntent: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
             context.registerReceiver(null, ifilter)
         }
-        return batteryIntent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: context.getString(R.string.not_available)
+        return batteryIntent?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
     }
     
     fun getBatteryHealth(context: Context): String {
@@ -36,7 +36,7 @@ object BatteryUtils {
             BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
             BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Unspecified Failure"
             BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-            else -> context.getString(R.string.not_available)
+            else -> "N/A"
         }
     }
     
@@ -46,7 +46,7 @@ object BatteryUtils {
         return if (temp != -1) {
             "%.1f °C".format(temp / 10.0)
         } else {
-            context.getString(R.string.not_available)
+            "N/A"
         }
     }
     
@@ -60,7 +60,7 @@ object BatteryUtils {
                 val tempStr = if (temp != -1) {
                     "%.1f °C".format(temp / 10.0)
                 } else {
-                    context?.getString(R.string.not_available) ?: "N/A"
+                    "N/A"
                 }
                 callback(tempStr)
             }
@@ -75,7 +75,7 @@ object BatteryUtils {
         return if (voltage != -1) {
             "%.3f V".format(voltage / 1000.0)
         } else {
-            context.getString(R.string.not_available)
+            "N/A"
         }
     }
     
@@ -89,7 +89,7 @@ object BatteryUtils {
                 val voltageStr = if (voltage != -1) {
                     "%.3f V".format(voltage / 1000.0)
                 } else {
-                    context?.getString(R.string.not_available) ?: "N/A"
+                    "N/A"
                 }
                 callback(voltageStr)
             }
@@ -106,11 +106,11 @@ object BatteryUtils {
                 val mAh = result.out.firstOrNull()?.trim()
                 "${(mAh?.toIntOrNull() ?: 0) / 1000} mAh"
             } else {
-                context.getString(R.string.not_available)
+                "N/A"
             }
         } catch (e: Exception) {
             Log.e("BatteryUtils", "Error reading design capacity", e)
-            context.getString(R.string.not_available)
+            "N/A"
         }
     }
     
@@ -131,7 +131,7 @@ object BatteryUtils {
             "${maxCapacity / 1000} mAh ($percentage%)"
         } catch (e: Exception) {
             Log.e("BatteryUtils", "Error reading maximum capacity", e)
-            context.getString(R.string.not_available)
+            "N/A"
         }
     }
     

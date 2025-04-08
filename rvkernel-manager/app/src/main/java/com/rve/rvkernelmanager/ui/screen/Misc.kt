@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -106,10 +105,10 @@ fun MiscCard(viewModel: MiscViewModel) {
                 .padding(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.misc_category),
+                text = "Miscellaneous",
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(16.dp))
 
             if (hasThermalSconfig) {
                 Row(
@@ -117,7 +116,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.unlock_cpu_freq),
+                        text = "Unlock CPU frequency",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -207,7 +206,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                         viewModel.hideSwappinessDialog()
                     }
                 ) {
-                    Text(text = stringResource(R.string.change))
+                    Text(text = "Change")
                 }
             }
         )
@@ -237,7 +236,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                         viewModel.hidePrintkDialog()
                     }
                 ) {
-                    Text(text = stringResource(R.string.change))
+                    Text(text = "Change")
                 }
             }
         )

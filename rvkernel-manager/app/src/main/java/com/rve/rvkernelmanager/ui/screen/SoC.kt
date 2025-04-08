@@ -13,7 +13,6 @@ import androidx.compose.animation.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -126,7 +125,7 @@ private fun GovRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.gov),
+            text = "Governor",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
@@ -236,7 +235,7 @@ private fun ClusterCard(
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
-                label = stringResource(R.string.min_freq),
+                label = "Minimum frequency",
                 value = minFreq,
                 onClick = {
                     currentFileTarget = "min"
@@ -246,7 +245,7 @@ private fun ClusterCard(
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
-                label = stringResource(R.string.max_freq),
+                label = "Maximum frequency",
                 value = maxFreq,
                 onClick = {
                     currentFileTarget = "max"
@@ -296,8 +295,7 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
     val cpu0State by viewModel.cpu0State.collectAsState()
 
     ClusterCard(
-        title = if (viewModel.hasBigCluster.value) stringResource(R.string.little_cluster) 
-               else stringResource(R.string.cpu),
+        title = if (viewModel.hasBigCluster.value) "Little Cluster" else "CPU",
         minFreq = cpu0State.minFreq,
         maxFreq = cpu0State.maxFreq,
         gov = cpu0State.gov,
@@ -313,7 +311,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
     ClusterCard(
-        title = stringResource(R.string.big_cluster),
+        title = "Big Cluster",
         minFreq = bigClusterState.minFreq,
         maxFreq = bigClusterState.maxFreq,
         gov = bigClusterState.gov,
@@ -329,7 +327,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     val primeClusterState by viewModel.primeClusterState.collectAsState()
 
     ClusterCard(
-        title = stringResource(R.string.prime_cluster),
+        title = "Prime Cluster",
         minFreq = primeClusterState.minFreq,
         maxFreq = primeClusterState.maxFreq,
         gov = primeClusterState.gov,
@@ -374,14 +372,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                 .padding(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.gpu),
+                text = "GPU",
                 style = MaterialTheme.typography.titleLarge,
 		modifier = Modifier.clickable { expanded = !expanded }
             )
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
-                label = stringResource(R.string.min_freq),
+                label = "Minimum frequency",
                 value = gpuState.minFreq,
                 onClick = {
                     currentFileTarget = "min"
@@ -391,7 +389,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Spacer(Modifier.height(4.dp))
 
             FreqRow(
-                label = stringResource(R.string.max_freq),
+                label = "Maximum frequency",
                 value = gpuState.maxFreq,
                 onClick = {
                     currentFileTarget = "max"
@@ -417,7 +415,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = stringResource(R.string.adreno_boost),
+                            text = "Adreno boost",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
                         )
@@ -437,7 +435,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(R.string.gpu_throttling),
+                        text = "GPU throttling",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.weight(1f)
                     )
@@ -452,7 +450,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showFreqDialog) {
                 SelectionDialog(
-                    title = stringResource(R.string.available_freq),
+                    title = "Available frequencies",
                     items = sortedFreq,
                     currentItem = if (currentFileTarget == "min") gpuState.minFreq else gpuState.maxFreq,
                     onDismiss = { showFreqDialog = false },
@@ -466,7 +464,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showGovDialog) {
                 SelectionDialog(
-                    title = stringResource(R.string.available_gov),
+                    title = "Available governor",
                     items = gpuState.availableGov,
                     currentItem = gpuState.gov,
                     onDismiss = { showGovDialog = false },
@@ -480,7 +478,7 @@ fun GPUCard(viewModel: SoCViewModel) {
 
             if (showAdrenoBoostDialog) {
                 SelectionDialog(
-                    title = stringResource(R.string.adreno_boost),
+                    title = "Adreno boost",
                     items = listOf("0", "1", "2", "3"),
                     currentItem = gpuState.adrenoBoost,
                     onDismiss = { showAdrenoBoostDialog = false },

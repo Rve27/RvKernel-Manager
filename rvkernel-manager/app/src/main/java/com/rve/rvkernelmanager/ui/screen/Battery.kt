@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -113,17 +112,17 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 .padding(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.batt_info_title),
+                text = "Battery Information",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(16.dp))
 
-            InfoRow(label = stringResource(R.string.batt_tech), value = battTech)
-            InfoRow(label = stringResource(R.string.batt_health), value = battHealth)
-            InfoRow(label = stringResource(R.string.batt_temp), value = battTemp)
-            InfoRow(label = stringResource(R.string.batt_volt), value = battVoltage)
-            InfoRow(label = stringResource(R.string.batt_design_capacity), value = battDesignCapacity)
-            InfoRow(label = stringResource(R.string.batt_max_capacity), value = battMaximumCapacity)
+            InfoRow(label = "Technology", value = battTech)
+            InfoRow(label = "Health", value = battHealth)
+            InfoRow(label = "Temperature", value = battTemp)
+            InfoRow(label = "Voltage", value = battVoltage)
+            InfoRow(label = "Design capacity", value = battDesignCapacity)
+            InfoRow(label = "Maximum capacity", value = battMaximumCapacity)
         }
     }
 }
@@ -158,14 +157,15 @@ fun ChargingCard(viewModel: BatteryViewModel) {
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.charging_title),
+                text = "Charging",
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(16.dp))
 
             if (hasFastCharging) {
                 SwitchRow(
-                    label = stringResource(R.string.fast_charging),
+                    label = "Fast charging",
+		    summary = "Enable force fast charging",
                     checked = isFastChargingChecked,
                     onCheckedChange = { viewModel.toggleFastCharging(it) }
                 )
@@ -173,7 +173,8 @@ fun ChargingCard(viewModel: BatteryViewModel) {
 
 	    if (hasBypassCharging) {
                 SwitchRow(
-                    label = stringResource(R.string.bypass_charging),
+                    label = "Bypass charging",
+		    summary = "Make sure your kernel is support this feature!",
                     checked = isBypassChargingChecked,
                     onCheckedChange = { viewModel.toggleBypassCharging(it) }
                 )
@@ -185,6 +186,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
 @Composable
 fun SwitchRow(
     label: String,
+    summary: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
@@ -192,15 +194,23 @@ fun SwitchRow(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f)
-        )
-        Switch(
+	Column(
+	    modifier = Modifier.weight(1f)
+	) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge
+            )
+	    Text(
+	        text = summary,
+	        style = MaterialTheme.typography.bodySmall,
+	        modifier = Modifier.padding(top = 4.dp, end = 4.dp)
+	    )
+	}
+	Switch(
             modifier = Modifier.semantics { contentDescription = label },
             checked = checked,
             onCheckedChange = onCheckedChange
-        )
+	)
     }
 }

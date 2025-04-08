@@ -17,7 +17,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.DialogProperties
@@ -100,18 +99,18 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-            InfoRow(label = stringResource(R.string.device_codename), value = deviceCodename)
-            InfoRow(label = stringResource(R.string.ram_info), value = ramInfo)
+            InfoRow(label = "Device codename", value = deviceCodename)
+            InfoRow(label = "RAM", value = ramInfo)
             InfoRow(
-                label = stringResource(R.string.cpu),
+                label = "CPU",
                 value = cpu,
                 onClick = { viewModel.showCPUInfo() },
                 animateContent = true
             )
-            InfoRow(label = stringResource(R.string.gpu), value = gpuModel)
-            InfoRow(label = stringResource(R.string.android_version), value = androidVersion)
+            InfoRow(label = "GPU", value = gpuModel)
+            InfoRow(label = "Android version", value = androidVersion)
             InfoRow(
-                label = stringResource(R.string.kernel_version),
+                label = "Kernel version",
                 value = kernelVersion,
                 onClick = { viewModel.showFullKernelVersion() },
                 animateContent = true,
@@ -153,7 +152,6 @@ fun DonateCard() {
     var showDonateDialog by remember { mutableStateOf(false) }
     var showDanaQR by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val paypalUrl = stringResource(id = R.string.paypal_url)
 
     Card(
         shape = CardDefaults.shape,
@@ -167,12 +165,12 @@ fun DonateCard() {
         ) {
             Column {
                 Text(
-                    text = stringResource(R.string.donate_title),
+                    text = "Donate",
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.donate_summary),
+                    text = "Click this if you want to donate or buy me a coffee.",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -183,22 +181,28 @@ fun DonateCard() {
         AlertDialog(
             onDismissRequest = { showDonateDialog = false },
             tonalElevation = 8.dp,
-            title = { Text(text = stringResource(R.string.donate_title), style = MaterialTheme.typography.titleLarge) },
+            title = { 
+		Text(
+		    text = "Donate",
+		    style = MaterialTheme.typography.titleLarge
+		)
+	    },
+
             text = {
                 Column {
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        text = stringResource(R.string.paypal),
+                        text = "PayPal",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(paypalUrl))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://paypal.me/rve27"))
                             context.startActivity(intent)
                         }
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        text = stringResource(R.string.dana),
+                        text = "Dana",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable {
@@ -221,7 +225,13 @@ fun DonateCard() {
             onDismissRequest = { showDanaQR = false },
             tonalElevation = 8.dp,
             properties = DialogProperties(dismissOnClickOutside = true),
-            title = { Text(text = stringResource(R.string.dana), style = MaterialTheme.typography.titleLarge) },
+            title = {
+		Text(
+		    text = "Dana",
+		    style = MaterialTheme.typography.titleLarge
+		)
+	    },
+
             text = {
                 Image(
                     painter = painterResource(id = R.drawable.dana_qr),

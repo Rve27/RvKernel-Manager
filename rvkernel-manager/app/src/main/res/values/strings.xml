@@ -1,66 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RvKernel Manager</string>
-    <string name="root_summary">RvKernel Manager requires root access!</string>
-    <string name="not_available">N/A</string>
-    <string name="exit">Exit</string>
-    <string name="change">Change</string>
-
-    <!-- CPU -->
-    <string name="cpu">CPU</string>
-    <string name="little_cluster">Little Cluster</string>
-    <string name="big_cluster">Big Cluster</string>
-    <string name="prime_cluster">Prime Cluster</string>
-    <string name="available_freq">Available frequencies</string>
-    <string name="min_freq">Minimum frequency</string>
-    <string name="max_freq">Maximum frequency</string>
-    <string name="available_gov">Available governor</string>
-    <string name="gov">Governor</string>
-
-    <!-- GPU -->
-    <string name="gpu">GPU</string>
-    <string name="adreno_boost">Adreno boost</string>
-    <string name="gpu_throttling">GPU throttling</string>
-
-    <!-- Misc -->
-    <string name="misc_category">Misc</string>
-    <string name="unlock_cpu_freq">Unlock CPU frequency</string>
-
-    <!-- Charging -->
-    <string name="charging_title">Charging</string>
-    <string name="fast_charging">Fast charging</string>
-    <string name="bypass_charging">Bypass Charging</string>
-
-    <!-- Top Bar -->
-    <string name="repo_url">https://github.com/Rve27/RvKernel-Manager</string>
-    <string name="telegram_url">https://t.me/rvosuniverse</string>
-
-    <!-- Device Info -->
-    <string name="device_codename">Device codename</string>
-    <string name="ram_info">RAM</string>
-    <string name="android_version">Android version</string>
-    <string name="kernel_version">Kernel version</string>
-
-    <!-- Donate -->
-    <string name="donate_title">Donate</string>
-    <string name="donate_summary">Click this if you want to donate or buy me a coffee.</string>
-    <string name="dana">Dana (Indonesia only)</string>
-    <string name="paypal">PayPal</string>
-    <string name="paypal_url">https://paypal.me/rve27</string>
 
     <!-- Bottom Navigation -->
     <string name="tab_home">Home</string>
     <string name="tab_soc">SoC</string>
     <string name="tab_battery">Battery</string>
     <string name="tab_misc">Misc</string>
-
-    <!-- Battery Info -->
-    <string name="batt_info_title">Battery Information</string>
-    <string name="batt_tech">Technology</string>
-    <string name="batt_health">Health</string>
-    <string name="batt_temp">Temperature</string>
-    <string name="batt_volt">Voltage</string>
-    <string name="batt_design_capacity">Design capacity</string>
-    <string name="batt_max_capacity">Maximum capacity</string>
-
 </resources>
