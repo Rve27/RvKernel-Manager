@@ -1,11 +1,11 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.0"
 kotlin = "2.1.20"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.8.1"
 appcompat = "1.7.0"
 activity-compose = "1.10.1"
-compose-bom = "2025.04.00"
+compose-bom = "2025.04.01"
 androidx-navigation = "2.8.9"
 material3 = "1.3.2"
 compose = "1.7.8"
