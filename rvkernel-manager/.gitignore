@@ -83,4 +83,4 @@ lint/tmp/
 # lint/reports/
 
 .kotlin/
-keystore.properties
+signing.properties
