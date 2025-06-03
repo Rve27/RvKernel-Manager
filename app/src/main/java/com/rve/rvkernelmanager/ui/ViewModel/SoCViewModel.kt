@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.SoCUtils
@@ -345,5 +346,10 @@ class SoCViewModel : ViewModel() {
             Utils.writeFile(SoCUtils.GPU_THROTTLING, newValue)
             _gpuState.value = _gpuState.value.copy(gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING))
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }

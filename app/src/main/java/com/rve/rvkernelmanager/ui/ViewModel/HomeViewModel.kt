@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import com.rve.rvkernelmanager.utils.Utils
 
 class HomeViewModel : ViewModel() {
@@ -84,5 +85,10 @@ class HomeViewModel : ViewModel() {
         } else {
             _kernelVersion.value = cachedKernelVersion ?: ""
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }

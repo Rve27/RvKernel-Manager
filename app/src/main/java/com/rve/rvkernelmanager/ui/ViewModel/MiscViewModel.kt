@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.channels.Channel
@@ -155,5 +156,10 @@ class MiscViewModel : ViewModel() {
             Utils.writeFile(MiscUtils.PRINTK, newValue)
             _printk.value = newValue
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }

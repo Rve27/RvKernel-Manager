@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import com.rve.rvkernelmanager.utils.Utils
@@ -123,5 +124,10 @@ class BatteryViewModel : ViewModel() {
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.cancel()
     }
 }
