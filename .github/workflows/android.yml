@@ -1,20 +1,10 @@
 name: Android CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    path:
-      - 'rvkernel-manager/**'
-  workflow_call:
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./rvkernel-manager
 
     steps:
     - uses: actions/checkout@v4
@@ -43,6 +33,6 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: RvKernel-Manager
+        name: RvKernel-Manager-Debug
         path: |
-          rvkernel-manager/app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/debug/app-debug.apk

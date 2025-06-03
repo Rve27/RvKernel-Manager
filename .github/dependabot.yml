@@ -10,10 +10,10 @@ updates:
           - "*"
 
   - package-ecosystem: "gradle"
-    directory: "rvkernel-manager"
+    directory: "/"
     schedule:
       interval: "daily"
     groups:
-      maven:
+      actions:
         patterns:
           - "*"
