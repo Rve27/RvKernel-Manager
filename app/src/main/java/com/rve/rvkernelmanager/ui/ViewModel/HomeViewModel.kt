@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.Dispatchers
 import com.rve.rvkernelmanager.utils.Utils
 
 class HomeViewModel : ViewModel() {
@@ -42,7 +43,7 @@ class HomeViewModel : ViewModel() {
     private var cachedFullKernelVersion: String? = null
 
     fun loadDeviceInfo(context: Context) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
             _gpuModel.value = Utils.getGPUModel()

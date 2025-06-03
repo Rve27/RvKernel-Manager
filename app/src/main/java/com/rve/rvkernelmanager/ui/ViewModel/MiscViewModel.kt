@@ -55,7 +55,7 @@ class MiscViewModel : ViewModel() {
         private set
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             for (r in refreshRequests) {
                 isRefreshing = true
                 try {

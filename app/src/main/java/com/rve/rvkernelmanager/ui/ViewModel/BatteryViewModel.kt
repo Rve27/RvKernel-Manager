@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.BatteryUtils
@@ -50,17 +49,15 @@ class BatteryViewModel : ViewModel() {
     private var inputSuspendPath: String? = null
 
     fun loadBatteryInfo(context: Context) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _battTech.value = BatteryUtils.getBatteryTechnology(context)
-                _battHealth.value = BatteryUtils.getBatteryHealth(context)
-                _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            _battTech.value = BatteryUtils.getBatteryTechnology(context)
+            _battHealth.value = BatteryUtils.getBatteryHealth(context)
+            _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
         }
     }
 
     fun registerBatteryListeners(context: Context) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
                 _battTemp.value = temp
             }
@@ -74,7 +71,7 @@ class BatteryViewModel : ViewModel() {
     }
 
     fun unregisterBatteryListeners(context: Context) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             tempReceiver?.let { context.unregisterReceiver(it) }
             voltageReceiver?.let { context.unregisterReceiver(it) }
             maxCapacityReceiver?.let { context.unregisterReceiver(it) }
@@ -82,45 +79,39 @@ class BatteryViewModel : ViewModel() {
     }
 
     fun checkChargingFiles() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING)
-                
-                inputSuspendPath = when {
-                    Utils.testFile(BatteryUtils.INPUT_SUSPEND_1) -> BatteryUtils.INPUT_SUSPEND_1
-                    Utils.testFile(BatteryUtils.INPUT_SUSPEND_2) -> BatteryUtils.INPUT_SUSPEND_2
-                    else -> null
-                }
-                
-                _hasBypassCharging.value = inputSuspendPath != null
-                _isBypassChargingChecked.value = inputSuspendPath?.let { 
-                    Utils.readFile(it) == "1" 
-                } ?: false
-                
-                _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
+        viewModelScope.launch(Dispatchers.IO) {
+            _hasFastCharging.value = Utils.testFile(BatteryUtils.FAST_CHARGING)
+
+            inputSuspendPath = when {
+                Utils.testFile(BatteryUtils.INPUT_SUSPEND_1) -> BatteryUtils.INPUT_SUSPEND_1
+                Utils.testFile(BatteryUtils.INPUT_SUSPEND_2) -> BatteryUtils.INPUT_SUSPEND_2
+                else -> null
             }
+
+            _hasBypassCharging.value = inputSuspendPath != null
+            _isBypassChargingChecked.value = inputSuspendPath?.let {
+                Utils.readFile(it) == "1"
+            } ?: false
+
+            _isFastChargingChecked.value = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
         }
     }
 
     fun toggleFastCharging(checked: Boolean) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val success = Utils.writeFile(BatteryUtils.FAST_CHARGING, if (checked) "1" else "0")
-                if (success) {
-                    _isFastChargingChecked.value = checked
-                }
+        viewModelScope.launch(Dispatchers.IO) {
+            val success = Utils.writeFile(BatteryUtils.FAST_CHARGING, if (checked) "1" else "0")
+            if (success) {
+                _isFastChargingChecked.value = checked
             }
         }
     }
 
     fun toggleBypassCharging(checked: Boolean) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                inputSuspendPath?.let { path ->
-                    val success = Utils.writeFile(path, if (checked) "1" else "0")
-                    if (success) {
-                        _isBypassChargingChecked.value = checked
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            inputSuspendPath?.let { path ->
+                val success = Utils.writeFile(path, if (checked) "1" else "0")
+                if (success) {
+                    _isBypassChargingChecked.value = checked
                 }
             }
         }
