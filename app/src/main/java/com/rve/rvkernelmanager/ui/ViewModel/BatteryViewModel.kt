@@ -49,6 +49,12 @@ class BatteryViewModel : ViewModel() {
     private var maxCapacityReceiver: BroadcastReceiver? = null
     private var inputSuspendPath: String? = null
 
+    fun initializeBatteryInfo(context: Context) {
+        loadBatteryInfo(context)
+        registerBatteryListeners(context)
+        checkChargingFiles()
+    }
+
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _battTech.value = BatteryUtils.getBatteryTechnology(context)

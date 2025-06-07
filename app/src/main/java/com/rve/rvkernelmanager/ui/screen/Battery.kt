@@ -38,14 +38,8 @@ fun BatteryScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    viewModel.loadBatteryInfo(context)
-                    viewModel.registerBatteryListeners(context)
-                    viewModel.checkChargingFiles()
-                }
-                Lifecycle.Event.ON_PAUSE -> {
-                    viewModel.unregisterBatteryListeners(context)
-                }
+                Lifecycle.Event.ON_RESUME -> viewModel.initializeBatteryInfo(context)
+                Lifecycle.Event.ON_PAUSE -> viewModel.unregisterBatteryListeners(context)
                 else -> {}
             }
         }
