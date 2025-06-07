@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.BatteryUtils
 
@@ -57,9 +58,15 @@ class BatteryViewModel : ViewModel() {
 
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            _battTech.value = BatteryUtils.getBatteryTechnology(context)
-            _battHealth.value = BatteryUtils.getBatteryHealth(context)
-            _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
+            try {
+                _battTech.value = BatteryUtils.getBatteryTechnology(context)
+                _battHealth.value = BatteryUtils.getBatteryHealth(context)
+                _battDesignCapacity.value = BatteryUtils.getBatteryDesignCapacity(context)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("BatteryVM", "Error loading battery info", e)
+            }
         }
     }
 
