@@ -102,40 +102,44 @@ object BatteryUtils {
     fun getBatteryDesignCapacity(context: Context): String {
         return try {
             val result = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
-    
-            if (result.isSuccess) {
+
+            if (result.isSuccess && result.out.isNotEmpty()) {
                 val mAh = result.out.firstOrNull()?.trim()
                 "${(mAh?.toIntOrNull() ?: 0) / 1000} mAh"
             } else {
+                Log.w("BatteryUtils", "Failed to read design capacity: ${result.err}")
                 "N/A"
             }
         } catch (e: Exception) {
             Log.e("BatteryUtils", "Error reading design capacity", e)
-            "N/A"
+            "N/A (Error: ${e.message})"
         }
     }
-    
+
     fun getBatteryMaximumCapacity(context: Context): String {
         return try {
-            val maxCapacityResult = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY").exec()
-            val maxCapacity = maxCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
-    
-            val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
-            val designCapacity = designCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
-    
-            val percentage = if (designCapacity > 0) {
-                ((maxCapacity.toDouble() / designCapacity) * 100).roundToInt()
+            val result = Shell.cmd(
+                "cat $BATTERY_MAXIMUM_CAPACITY $BATTERY_DESIGN_CAPACITY"
+            ).exec()
+
+            if (result.isSuccess && result.out.size >= 2) {
+                val maxCapacity = result.out[0].trim().toIntOrNull() ?: 0
+                val designCapacity = result.out[1].trim().toIntOrNull() ?: 0
+
+                val percentage = if (designCapacity > 0) {
+                    ((maxCapacity.toDouble() / designCapacity) * 100).roundToInt()
+                } else 0
+
+                "${maxCapacity / 1000} mAh ($percentage%)"
             } else {
-                0
+                "N/A"
             }
-    
-            "${maxCapacity / 1000} mAh ($percentage%)"
         } catch (e: Exception) {
             Log.e("BatteryUtils", "Error reading maximum capacity", e)
             "N/A"
         }
     }
-    
+
     fun registerBatteryCapacityListener(
         context: Context,
         callback: (String) -> Unit
