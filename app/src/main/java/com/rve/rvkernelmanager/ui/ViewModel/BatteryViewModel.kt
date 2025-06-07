@@ -1,5 +1,6 @@
 package com.rve.rvkernelmanager.ui.ViewModel
 
+import android.util.Log
 import android.content.Context
 import android.content.BroadcastReceiver
 import androidx.lifecycle.ViewModel
@@ -72,9 +73,22 @@ class BatteryViewModel : ViewModel() {
 
     fun unregisterBatteryListeners(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            tempReceiver?.let { context.unregisterReceiver(it) }
-            voltageReceiver?.let { context.unregisterReceiver(it) }
-            maxCapacityReceiver?.let { context.unregisterReceiver(it) }
+            try {
+                tempReceiver?.let {
+                    context.unregisterReceiver(it)
+                    tempReceiver = null
+                }
+                voltageReceiver?.let {
+                    context.unregisterReceiver(it)
+                    voltageReceiver = null
+                }
+                maxCapacityReceiver?.let {
+                    context.unregisterReceiver(it)
+                    maxCapacityReceiver = null
+                }
+            } catch (e: Exception) {
+                Log.e("BatteryVM", "Error unregistering receivers", e)
+            }
         }
     }
 
