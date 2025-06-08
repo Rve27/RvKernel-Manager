@@ -51,12 +51,6 @@ fun BatteryScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadBatteryInfo(context)
-        viewModel.registerBatteryListeners(context)
-        viewModel.checkChargingFiles()
-    }
-
     Scaffold(
         topBar = {
             TopBar(
