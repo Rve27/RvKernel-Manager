@@ -32,8 +32,7 @@ fun BatteryScreen(
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val hasFastCharging by viewModel.hasFastCharging.collectAsState()
-    val hasBypassCharging by viewModel.hasBypassCharging.collectAsState()
+    val chargingState by viewModel.chargingState.collectAsState()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -70,7 +69,7 @@ fun BatteryScreen(
 	    item {
                 BatteryInfoCard(viewModel)
 	    }
-            if (hasFastCharging || hasBypassCharging) {
+            if (chargingState.hasFastCharging || chargingState.hasBypassCharging) {
 		item {
                     ChargingCard(viewModel)
 		}
@@ -84,6 +83,8 @@ fun BatteryScreen(
 
 @Composable
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
+    val batteryInfo by viewModel.batteryInfo.collectAsState()
+
     Card(
         shape = CardDefaults.shape,
         modifier = Modifier.fillMaxWidth()
@@ -99,12 +100,12 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
             HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
-            InfoRow(label = "Technology", value = viewModel.battTech.collectAsState().value)
-            InfoRow(label = "Health", value = viewModel.battHealth.collectAsState().value)
-            InfoRow(label = "Temperature", value = viewModel.battTemp.collectAsState().value)
-            InfoRow(label = "Voltage", value = viewModel.battVoltage.collectAsState().value)
-            InfoRow(label = "Design capacity", value = viewModel.battDesignCapacity.collectAsState().value)
-            InfoRow(label = "Maximum capacity", value = viewModel.battMaximumCapacity.collectAsState().value, withSpacer = false)
+            InfoRow(label = "Technology", value = batteryInfo.tech)
+            InfoRow(label = "Health", value = batteryInfo.health)
+            InfoRow(label = "Temperature", value = batteryInfo.temp)
+            InfoRow(label = "Voltage", value = batteryInfo.voltage)
+            InfoRow(label = "Design capacity", value = batteryInfo.designCapacity)
+            InfoRow(label = "Maximum capacity", value = batteryInfo.maximumCapacity, withSpacer = false)
         }
     }
 }
@@ -128,10 +129,7 @@ private fun InfoRow(label: String, value: String, withSpacer: Boolean = true) {
 
 @Composable
 fun ChargingCard(viewModel: BatteryViewModel) {
-    val isFastChargingChecked by viewModel.isFastChargingChecked.collectAsState()
-    val hasFastCharging by viewModel.hasFastCharging.collectAsState()
-    val isBypassChargingChecked by viewModel.isBypassChargingChecked.collectAsState()
-    val hasBypassCharging by viewModel.hasBypassCharging.collectAsState()
+    val chargingState by viewModel.chargingState.collectAsState()
 
     Card(
         shape = CardDefaults.shape,
@@ -147,20 +145,20 @@ fun ChargingCard(viewModel: BatteryViewModel) {
             )
             HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
-            if (hasFastCharging) {
+            if (chargingState.hasFastCharging) {
                 SwitchRow(
                     label = "Fast charging",
-		    summary = "Enable force fast charging",
-                    checked = isFastChargingChecked,
+                    summary = "Enable force fast charging",
+                    checked = chargingState.isFastChargingChecked,
                     onCheckedChange = { viewModel.toggleFastCharging(it) }
                 )
             }
 
-	    if (hasBypassCharging) {
+            if (chargingState.hasBypassCharging) {
                 SwitchRow(
                     label = "Bypass charging",
-		    summary = "Make sure your kernel is support this feature!",
-                    checked = isBypassChargingChecked,
+                    summary = "Make sure your kernel supports this feature!",
+                    checked = chargingState.isBypassChargingChecked,
                     onCheckedChange = { viewModel.toggleBypassCharging(it) }
                 )
             }
