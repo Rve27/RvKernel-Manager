@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -21,6 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -67,16 +71,16 @@ fun HomeScreen(
 	    state = rememberLazyListState()
         ) {
 	    item {
-                DeviceInfoCard(viewModel)
+                    DeviceInfoCard(viewModel)
 	    }
 	    item {
-                DonateCard()
+                    DonateCard()
 	    }
 	    item {
-                CopyrightCard()
+                    CopyrightCard()
 	    }
 	    item {
-                Spacer(Modifier)
+                    Spacer(Modifier)
 	    }
         }
     }
@@ -93,56 +97,112 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
-    Card(shape = CardDefaults.shape) {
+    Card {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-            InfoRow(label = "Device codename", value = deviceCodename)
-            InfoRow(label = "RAM", value = ramInfo)
-            InfoRow(
-                label = "CPU",
-                value = cpu,
+            Text(
+                text = "Device Information",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+            CustomItem(
+                title = "Codename",
+                body = deviceCodename,
+                icon = painterResource(R.drawable.ic_smartphone)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            CustomItem(
+                title = "RAM",
+                body = ramInfo,
+                icon = painterResource(R.drawable.ic_ram)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            CustomItem(
+                title = "CPU",
+                body = cpu,
+                icon = painterResource(R.drawable.ic_cpu),
                 onClick = { viewModel.showCPUInfo() },
                 animateContent = true
             )
-            InfoRow(label = "GPU", value = gpuModel)
-            InfoRow(label = "Android version", value = androidVersion)
-            InfoRow(
-                label = "Kernel version",
-                value = kernelVersion,
+            Spacer(Modifier.height(16.dp))
+
+            CustomItem(
+                title = "GPU",
+                body = gpuModel,
+                icon = painterResource(R.drawable.ic_video_card)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            CustomItem(
+                title = "Android version",
+                body = androidVersion,
+                icon = painterResource(R.drawable.ic_android)
+            )
+            Spacer(Modifier.height(16.dp))
+
+            CustomItem(
+                title = "Kernel version",
+                body = kernelVersion,
+                icon = painterResource(R.drawable.ic_linux),
                 onClick = { viewModel.showFullKernelVersion() },
-                animateContent = true,
-		spacer = false
+                animateContent = true
             )
         }
     }
 }
 
 @Composable
-fun InfoRow(
-    label: String,
-    value: String,
+private fun CustomItem(
+    title: String? = null,
+    body: String? = null,
     onClick: (() -> Unit)? = null,
     animateContent: Boolean = false,
-    spacer: Boolean = true
+    titleLarge: Boolean = false,
+    icon: Any? = null
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleSmall
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .clickable(enabled = onClick != null) { onClick?.invoke() }
-                .then(if (animateContent) Modifier.animateContentSize() else Modifier)
-        )
-        if (spacer) {
-            Spacer(Modifier.height(16.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (icon != null) {
+            when (icon) {
+                is ImageVector -> Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+                is Painter -> Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+            }
+        }
+        Column {
+            if (title != null) {
+                Text(
+                    text = title,
+                    style = if (titleLarge) {
+                        MaterialTheme.typography.titleLarge
+                    } else {
+                        MaterialTheme.typography.titleMedium
+                    }
+                )
+            }
+            if (body != null) {
+                Text(
+                    text = body,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .clickable(enabled = onClick != null) { onClick?.invoke() }
+                        .then(if (animateContent) Modifier.animateContentSize() else Modifier)
+                        .padding(top = 4.dp)
+                )
+            }
         }
     }
 }
@@ -154,7 +214,6 @@ fun DonateCard() {
     val context = LocalContext.current
 
     Card(
-        shape = CardDefaults.shape,
         modifier = Modifier.clickable { showDonateDialog = true }
     ) {
         Row(
@@ -166,12 +225,15 @@ fun DonateCard() {
             Column {
                 Text(
                     text = "Donate",
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleLarge
                 )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "Click this if you want to donate or buy me a coffee.",
-                    style = MaterialTheme.typography.bodyMedium
+
+                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+                CustomItem(
+                    body = "Click this donate card if you want to donate or buy me a coffee.",
+                    icon = painterResource(R.drawable.ic_donate),
+                    onClick = { showDonateDialog = true }
                 )
             }
         }
@@ -253,7 +315,7 @@ fun DonateCard() {
 
 @Composable
 fun CopyrightCard() {
-    Card(shape = CardDefaults.shape) {
+    Card {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -261,14 +323,24 @@ fun CopyrightCard() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(text = "Copyright", style = MaterialTheme.typography.titleSmall)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = "© 2024-2025 Rve. Licensed under the GNU General Public License v3.0.",
-                    style = MaterialTheme.typography.bodyMedium
+                CustomItem(
+                    title = "License",
+                    titleLarge = true,
+                    icon = painterResource(R.drawable.ic_license)
                 )
+
+                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
                 Text(
-                    text = "Developed by Rve.",
+                    text = """
+                        Copyright (C) 2025 Rve
+
+                        This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+                        This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+                        You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+                    """.trimIndent(),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

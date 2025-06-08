@@ -224,15 +224,14 @@ private fun ClusterCard(
             .animateContentSize()
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(4.dp))
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
             FreqRow(
                 label = "Minimum frequency",
@@ -367,16 +366,16 @@ fun GPUCard(viewModel: SoCViewModel) {
             .animateContentSize()
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = "GPU",
                 style = MaterialTheme.typography.titleLarge,
-		modifier = Modifier.clickable { expanded = !expanded }
+		modifier = Modifier
+                    .clickable { expanded = !expanded }
             )
-            Spacer(Modifier.height(4.dp))
+            
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
             FreqRow(
                 label = "Minimum frequency",

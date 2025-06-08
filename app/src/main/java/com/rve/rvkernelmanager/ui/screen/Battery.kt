@@ -15,6 +15,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -85,44 +88,98 @@ fun BatteryScreen(
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
-    Card(
-        shape = CardDefaults.shape,
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Card {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
         ) {
             Text(
                 text = "Battery Information",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                style = MaterialTheme.typography.titleLarge
             )
 
-            HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
-            InfoRow(label = "Technology", value = batteryInfo.tech)
-            InfoRow(label = "Health", value = batteryInfo.health)
-            InfoRow(label = "Temperature", value = batteryInfo.temp)
-            InfoRow(label = "Voltage", value = batteryInfo.voltage)
-            InfoRow(label = "Design capacity", value = batteryInfo.designCapacity)
-            InfoRow(label = "Maximum capacity", value = batteryInfo.maximumCapacity, withSpacer = false)
+            InfoRow(
+                label = "Technology",
+                value = batteryInfo.tech,
+                icon = painterResource(R.drawable.ic_technology),
+            )
+            Spacer(Modifier.height(16.dp))
+
+            InfoRow(
+                label = "Health",
+                value = batteryInfo.health,
+                icon = painterResource(R.drawable.ic_health),
+            )
+            Spacer(Modifier.height(16.dp))
+
+            InfoRow(
+                label = "Temperature",
+                value = batteryInfo.temp,
+                icon = painterResource(R.drawable.ic_temperature),
+            )
+            Spacer(Modifier.height(16.dp))
+
+            InfoRow(
+                label = "Voltage",
+                value = batteryInfo.voltage,
+                icon = painterResource(R.drawable.ic_lightning),
+            )
+            Spacer(Modifier.height(16.dp))
+
+            ElevatedCard(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                ) {
+                    InfoRow(label = "Design capacity", value = batteryInfo.designCapacity)
+                    Spacer(Modifier.height(16.dp))
+                    InfoRow(label = "Maximum capacity", value = batteryInfo.maximumCapacity)
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun InfoRow(label: String, value: String, withSpacer: Boolean = true) {
-    Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        if (withSpacer) {
-            Spacer(Modifier.height(16.dp))
+private fun InfoRow(
+    label: String,
+    value: String,
+    icon: Any? = null
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        if (icon != null) {
+            when (icon) {
+                is ImageVector -> Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+                is Painter -> Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 20.dp)
+                )
+            }
+        }
+        Column {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -140,10 +197,10 @@ fun ChargingCard(viewModel: BatteryViewModel) {
         ) {
             Text(
                 text = "Charging",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                style = MaterialTheme.typography.titleLarge
             )
-            HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
             if (chargingState.hasFastCharging) {
                 SwitchRow(
@@ -182,7 +239,7 @@ fun SwitchRow(
 	) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
 	    Text(
 	        text = summary,

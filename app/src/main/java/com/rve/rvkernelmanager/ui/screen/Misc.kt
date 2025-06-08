@@ -98,17 +98,19 @@ fun MiscCard(viewModel: MiscViewModel) {
     val hasPrintk by viewModel.hasPrintk.collectAsState()
     val showPrintkDialog by viewModel.showPrintkDialog.collectAsState()
 
-    Card(shape = CardDefaults.shape) {
+    Card(
+        shape = CardDefaults.shape,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = "Miscellaneous",
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(16.dp))
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
             if (hasThermalSconfig) {
                 Row(
