@@ -84,50 +84,45 @@ fun BatteryScreen(
 
 @Composable
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
-    val battTech by viewModel.battTech.collectAsState()
-    val battHealth by viewModel.battHealth.collectAsState()
-    val battTemp by viewModel.battTemp.collectAsState()
-    val battVoltage by viewModel.battVoltage.collectAsState()
-    val battDesignCapacity by viewModel.battDesignCapacity.collectAsState()
-    val battMaximumCapacity by viewModel.battMaximumCapacity.collectAsState()
-
     Card(
-        shape = CardDefaults.shape
+        shape = CardDefaults.shape,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = "Battery Information",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            Spacer(Modifier.height(16.dp))
 
-            InfoRow(label = "Technology", value = battTech)
-            InfoRow(label = "Health", value = battHealth)
-            InfoRow(label = "Temperature", value = battTemp)
-            InfoRow(label = "Voltage", value = battVoltage)
-            InfoRow(label = "Design capacity", value = battDesignCapacity)
-            InfoRow(label = "Maximum capacity", value = battMaximumCapacity)
+            HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
+
+            InfoRow(label = "Technology", value = viewModel.battTech.collectAsState().value)
+            InfoRow(label = "Health", value = viewModel.battHealth.collectAsState().value)
+            InfoRow(label = "Temperature", value = viewModel.battTemp.collectAsState().value)
+            InfoRow(label = "Voltage", value = viewModel.battVoltage.collectAsState().value)
+            InfoRow(label = "Design capacity", value = viewModel.battDesignCapacity.collectAsState().value)
+            InfoRow(label = "Maximum capacity", value = viewModel.battMaximumCapacity.collectAsState().value, withSpacer = false)
         }
     }
 }
 
 @Composable
-fun InfoRow(label: String, value: String) {
+private fun InfoRow(label: String, value: String, withSpacer: Boolean = true) {
     Column {
         Text(
             text = label,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleMedium
         )
-        Spacer(Modifier.height(4.dp))
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium
         )
-        Spacer(Modifier.height(16.dp))
+        if (withSpacer) {
+            Spacer(Modifier.height(16.dp))
+        }
     }
 }
 
@@ -139,16 +134,18 @@ fun ChargingCard(viewModel: BatteryViewModel) {
     val hasBypassCharging by viewModel.hasBypassCharging.collectAsState()
 
     Card(
-        shape = CardDefaults.shape
+        shape = CardDefaults.shape,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = "Charging",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(modifier = Modifier.padding(bottom = 8.dp))
 
             if (hasFastCharging) {
                 SwitchRow(
@@ -187,7 +184,7 @@ fun SwitchRow(
 	) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.titleSmall
             )
 	    Text(
 	        text = summary,
