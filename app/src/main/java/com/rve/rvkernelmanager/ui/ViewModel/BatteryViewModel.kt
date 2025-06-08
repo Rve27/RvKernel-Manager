@@ -71,7 +71,7 @@ class BatteryViewModel : ViewModel() {
     }
 
     fun registerBatteryListeners(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
                 _battTemp.value = temp
             }
@@ -85,7 +85,7 @@ class BatteryViewModel : ViewModel() {
     }
 
     fun unregisterBatteryListeners(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 tempReceiver?.let {
                     context.unregisterReceiver(it)
