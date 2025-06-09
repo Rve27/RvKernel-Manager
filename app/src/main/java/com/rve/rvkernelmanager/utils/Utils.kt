@@ -199,13 +199,15 @@ object Utils {
                             MaterialTheme.typography.titleLarge
                         } else {
                             MaterialTheme.typography.titleMedium
-                        }
+                        },
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 if (body != null) {
                     Text(
                         text = body,
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .clickable(enabled = onClick != null) { onClick?.invoke() }
                             .then(if (animateContent) Modifier.animateContentSize() else Modifier)
