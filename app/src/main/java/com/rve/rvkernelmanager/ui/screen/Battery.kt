@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.BatteryViewModel
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.utils.Utils.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,30 +102,30 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
             HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
-            InfoRow(
-                label = "Technology",
-                value = batteryInfo.tech,
+            CustomItem(
+                title = "Technology",
+                body = batteryInfo.tech,
                 icon = painterResource(R.drawable.ic_technology),
             )
             Spacer(Modifier.height(16.dp))
 
-            InfoRow(
-                label = "Health",
-                value = batteryInfo.health,
+            CustomItem(
+                title = "Health",
+                body = batteryInfo.health,
                 icon = painterResource(R.drawable.ic_health),
             )
             Spacer(Modifier.height(16.dp))
 
-            InfoRow(
-                label = "Temperature",
-                value = batteryInfo.temp,
+            CustomItem(
+                title = "Temperature",
+                body = batteryInfo.temp,
                 icon = painterResource(R.drawable.ic_temperature),
             )
             Spacer(Modifier.height(16.dp))
 
-            InfoRow(
-                label = "Voltage",
-                value = batteryInfo.voltage,
+            CustomItem(
+                title = "Voltage",
+                body = batteryInfo.voltage,
                 icon = painterResource(R.drawable.ic_lightning),
             )
             Spacer(Modifier.height(16.dp))
@@ -139,47 +140,18 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         .fillMaxWidth()
                         .padding(20.dp)
                 ) {
-                    InfoRow(label = "Design capacity", value = batteryInfo.designCapacity)
+                    CustomItem(
+                        title = "Design capacity",
+                        body = batteryInfo.designCapacity
+                    )
                     Spacer(Modifier.height(16.dp))
-                    InfoRow(label = "Maximum capacity", value = batteryInfo.maximumCapacity)
+
+                    CustomItem(
+                        title = "Maximum capacity",
+                        body = batteryInfo.maximumCapacity
+                    )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun InfoRow(
-    label: String,
-    value: String,
-    icon: Any? = null
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        if (icon != null) {
-            when (icon) {
-                is ImageVector -> Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
-                )
-                is Painter -> Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
-                )
-            }
-        }
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
         }
     }
 }
