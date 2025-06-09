@@ -20,7 +20,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.ui.ViewModel.SoCViewModel
+import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)

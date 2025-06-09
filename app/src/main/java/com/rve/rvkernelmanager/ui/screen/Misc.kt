@@ -21,7 +21,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.ui.ViewModel.MiscViewModel
+import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.MiscUtils
 import com.rve.rvkernelmanager.R
 

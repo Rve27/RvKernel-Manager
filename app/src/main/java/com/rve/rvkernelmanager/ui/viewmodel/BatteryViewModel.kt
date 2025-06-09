@@ -1,4 +1,4 @@
-package com.rve.rvkernelmanager.ui.ViewModel
+package com.rve.rvkernelmanager.ui.viewmodel
 
 import android.util.Log
 import android.content.Context

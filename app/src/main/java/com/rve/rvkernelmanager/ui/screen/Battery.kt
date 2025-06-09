@@ -24,7 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.ui.ViewModel.BatteryViewModel
+import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.Utils.CustomItem
 

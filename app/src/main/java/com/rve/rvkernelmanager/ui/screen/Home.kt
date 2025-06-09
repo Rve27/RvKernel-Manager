@@ -30,7 +30,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.TopBar
-import com.rve.rvkernelmanager.ui.ViewModel.HomeViewModel
+import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
 import com.rve.rvkernelmanager.utils.Utils.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
