@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -33,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.ViewModel.HomeViewModel
+import com.rve.rvkernelmanager.utils.Utils.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,55 +153,6 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
                 onClick = { viewModel.showFullKernelVersion() },
                 animateContent = true
             )
-        }
-    }
-}
-
-@Composable
-private fun CustomItem(
-    title: String? = null,
-    body: String? = null,
-    onClick: (() -> Unit)? = null,
-    animateContent: Boolean = false,
-    titleLarge: Boolean = false,
-    icon: Any? = null
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        if (icon != null) {
-            when (icon) {
-                is ImageVector -> Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
-                )
-                is Painter -> Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
-                )
-            }
-        }
-        Column {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = if (titleLarge) {
-                        MaterialTheme.typography.titleLarge
-                    } else {
-                        MaterialTheme.typography.titleMedium
-                    }
-                )
-            }
-            if (body != null) {
-                Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .clickable(enabled = onClick != null) { onClick?.invoke() }
-                        .then(if (animateContent) Modifier.animateContentSize() else Modifier)
-                        .padding(top = 4.dp)
-                )
-            }
         }
     }
 }

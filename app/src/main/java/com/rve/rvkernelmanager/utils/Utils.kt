@@ -6,6 +6,16 @@ import android.os.Build
 import android.content.Context
 import android.app.ActivityManager
 import android.util.Log
+import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.animation.animateContentSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import kotlin.math.ceil
 import com.topjohnwu.superuser.Shell
 
@@ -154,6 +164,55 @@ object Utils {
         } catch (e: Exception) {
             Log.e("WriteFile", "Error executing shell command for $filePath: ${e.message}", e)
             false
+        }
+    }
+
+    @Composable
+    fun CustomItem(
+        title: String? = null,
+        body: String? = null,
+        onClick: (() -> Unit)? = null,
+        animateContent: Boolean = false,
+        titleLarge: Boolean = false,
+        icon: Any? = null
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (icon != null) {
+                when (icon) {
+                    is ImageVector -> Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 20.dp)
+                    )
+                    is Painter -> Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 20.dp)
+                    )
+                }
+            }
+            Column {
+                if (title != null) {
+                    Text(
+                        text = title,
+                        style = if (titleLarge) {
+                            MaterialTheme.typography.titleLarge
+                        } else {
+                            MaterialTheme.typography.titleMedium
+                        }
+                    )
+                }
+                if (body != null) {
+                    Text(
+                        text = body,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .clickable(enabled = onClick != null) { onClick?.invoke() }
+                            .then(if (animateContent) Modifier.animateContentSize() else Modifier)
+                            .padding(top = 4.dp)
+                    )
+                }
+            }
         }
     }
 }
