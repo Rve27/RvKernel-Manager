@@ -56,9 +56,6 @@ class SoCViewModel : ViewModel() {
     private val _hasGPUThrottling = MutableStateFlow(false)
     val hasGPUThrottling: StateFlow<Boolean> = _hasGPUThrottling
 
-    private var lastReadTime: Long = 0
-    private val cacheDuration = 5000L
-
     private var pollingJob: Job? = null
 
     init {
@@ -108,130 +105,122 @@ class SoCViewModel : ViewModel() {
 
     private fun loadInitialData() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (shouldReadFromFile()) {
-                val currentMinFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
-                val currentMaxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
-                val currentGovCPU0 = Utils.readFile(SoCUtils.GOV_CPU0)
-                val currentAvailableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0)
-                val currentAvailableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0)
+            val currentMinFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
+            val currentMaxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
+            val currentGovCPU0 = Utils.readFile(SoCUtils.GOV_CPU0)
+            val currentAvailableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0)
+            val currentAvailableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0)
 
-                _cpu0State.value = CPUState(
-                    currentMinFreqCPU0,
-                    currentMaxFreqCPU0,
-                    currentGovCPU0,
-                    currentAvailableFreqCPU0,
-                    currentAvailableGovCPU0
-                )
+            _cpu0State.value = CPUState(
+                currentMinFreqCPU0,
+                currentMaxFreqCPU0,
+                currentGovCPU0,
+                currentAvailableFreqCPU0,
+                currentAvailableGovCPU0
+            )
 
-                val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4)) {
-                    SoCUtils.AVAILABLE_FREQ_CPU4
-                } else if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6)) {
-                    SoCUtils.AVAILABLE_FREQ_CPU6
-                } else {
-                    null
+            val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4)) {
+                SoCUtils.AVAILABLE_FREQ_CPU4
+            } else if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6)) {
+                SoCUtils.AVAILABLE_FREQ_CPU6
+            } else {
+                null
+            }
+            _hasBigCluster.value = bigClusterPath != null
+
+            if (_hasBigCluster.value) {
+                val basePath = when (bigClusterPath) {
+                    SoCUtils.AVAILABLE_FREQ_CPU4 -> "cpu4"
+                    SoCUtils.AVAILABLE_FREQ_CPU6 -> "cpu6"
+                    else -> null
                 }
-                _hasBigCluster.value = bigClusterPath != null
 
-                if (_hasBigCluster.value) {
-                    val basePath = when (bigClusterPath) {
-                        SoCUtils.AVAILABLE_FREQ_CPU4 -> "cpu4"
-                        SoCUtils.AVAILABLE_FREQ_CPU6 -> "cpu6"
+                if (basePath != null) {
+                    val minFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.MIN_FREQ_CPU4
+                        "cpu6" -> SoCUtils.MIN_FREQ_CPU6
+                        else -> null
+                    }
+                    val maxFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.MAX_FREQ_CPU4
+                        "cpu6" -> SoCUtils.MAX_FREQ_CPU6
+                        else -> null
+                    }
+                    val govPath = when (basePath) {
+                        "cpu4" -> SoCUtils.GOV_CPU4
+                        "cpu6" -> SoCUtils.GOV_CPU6
+                        else -> null
+                    }
+                    val availableFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.AVAILABLE_FREQ_CPU4
+                        "cpu6" -> SoCUtils.AVAILABLE_FREQ_CPU6
+                        else -> null
+                    }
+                    val availableBoostFreqPath = when (basePath) {
+                        "cpu4" -> SoCUtils.AVAILABLE_BOOST_CPU4
+                        "cpu6" -> SoCUtils.AVAILABLE_BOOST_CPU6
+                        else -> null
+                    }
+                    val availableGovPath = when (basePath) {
+                        "cpu4" -> SoCUtils.AVAILABLE_GOV_CPU4
+                        "cpu6" -> SoCUtils.AVAILABLE_GOV_CPU6
                         else -> null
                     }
 
-                    if (basePath != null) {
-                        val minFreqPath = when (basePath) {
-                            "cpu4" -> SoCUtils.MIN_FREQ_CPU4
-                            "cpu6" -> SoCUtils.MIN_FREQ_CPU6
-                            else -> null
-                        }
-                        val maxFreqPath = when (basePath) {
-                            "cpu4" -> SoCUtils.MAX_FREQ_CPU4
-                            "cpu6" -> SoCUtils.MAX_FREQ_CPU6
-                            else -> null
-                        }
-                        val govPath = when (basePath) {
-                            "cpu4" -> SoCUtils.GOV_CPU4
-                            "cpu6" -> SoCUtils.GOV_CPU6
-                            else -> null
-                        }
-                        val availableFreqPath = when (basePath) {
-                            "cpu4" -> SoCUtils.AVAILABLE_FREQ_CPU4
-                            "cpu6" -> SoCUtils.AVAILABLE_FREQ_CPU6
-                            else -> null
-                        }
-                        val availableBoostFreqPath = when (basePath) {
-                            "cpu4" -> SoCUtils.AVAILABLE_BOOST_CPU4
-                            "cpu6" -> SoCUtils.AVAILABLE_BOOST_CPU6
-                            else -> null
-                        }
-                        val availableGovPath = when (basePath) {
-                            "cpu4" -> SoCUtils.AVAILABLE_GOV_CPU4
-                            "cpu6" -> SoCUtils.AVAILABLE_GOV_CPU6
-                            else -> null
-                        }
+                    val currentMinFreq = SoCUtils.readFreqCPU(minFreqPath!!)
+                    val currentMaxFreq = SoCUtils.readFreqCPU(maxFreqPath!!)
+                    val currentGov = Utils.readFile(govPath!!)
+                    val currentAvailableFreq = SoCUtils.readAvailableFreqBoost(availableFreqPath!!, availableBoostFreqPath!!)
+                    val currentAvailableGov = SoCUtils.readAvailableGovCPU(availableGovPath!!)
 
-                        val currentMinFreq = SoCUtils.readFreqCPU(minFreqPath!!)
-                        val currentMaxFreq = SoCUtils.readFreqCPU(maxFreqPath!!)
-                        val currentGov = Utils.readFile(govPath!!)
-                        val currentAvailableFreq = SoCUtils.readAvailableFreqBoost(availableFreqPath!!, availableBoostFreqPath!!)
-                        val currentAvailableGov = SoCUtils.readAvailableGovCPU(availableGovPath!!)
-
-                        _bigClusterState.value = CPUState(
-                            currentMinFreq,
-                            currentMaxFreq,
-                            currentGov,
-                            currentAvailableFreq,
-                            currentAvailableGov
-                        )
-                    }
-                }
-
-                _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
-                if (_hasPrimeCluster.value) {
-                    val currentMinFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7)
-                    val currentMaxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
-                    val currentGovCPU7 = Utils.readFile(SoCUtils.GOV_CPU7)
-                    val currentAvailableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7)
-                    val currentAvailableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7)
-
-                    _primeClusterState.value = CPUState(
-                        currentMinFreqCPU7,
-                        currentMaxFreqCPU7,
-                        currentGovCPU7,
-                        currentAvailableFreqCPU7,
-                        currentAvailableGovCPU7
+                    _bigClusterState.value = CPUState(
+                        currentMinFreq,
+                        currentMaxFreq,
+                        currentGov,
+                        currentAvailableFreq,
+                        currentAvailableGov
                     )
                 }
-
-                val currentMinFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU)
-                val currentMaxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
-                val currentGovGPU = Utils.readFile(SoCUtils.GOV_GPU)
-                val currentAdrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
-                val currentGpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
-                val currentAvailableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU)
-                val currentAvailableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
-
-                _gpuState.value = GPUState(
-                    currentMinFreqGPU,
-                    currentMaxFreqGPU,
-                    currentGovGPU,
-                    currentAdrenoBoost,
-                    currentGpuThrottling,
-                    currentAvailableFreqGPU,
-                    currentAvailableGovGPU
-                )
-
-                _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
-                _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
-
-                lastReadTime = System.currentTimeMillis()
             }
-        }
-    }
 
-    private fun shouldReadFromFile(): Boolean {
-        return System.currentTimeMillis() - lastReadTime > cacheDuration
+            _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
+            if (_hasPrimeCluster.value) {
+                val currentMinFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7)
+                val currentMaxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
+                val currentGovCPU7 = Utils.readFile(SoCUtils.GOV_CPU7)
+                val currentAvailableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7)
+                val currentAvailableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7)
+
+                _primeClusterState.value = CPUState(
+                    currentMinFreqCPU7,
+                    currentMaxFreqCPU7,
+                    currentGovCPU7,
+                    currentAvailableFreqCPU7,
+                    currentAvailableGovCPU7
+                )
+            }
+
+            val currentMinFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU)
+            val currentMaxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
+            val currentGovGPU = Utils.readFile(SoCUtils.GOV_GPU)
+            val currentAdrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
+            val currentGpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
+            val currentAvailableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU)
+            val currentAvailableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
+
+            _gpuState.value = GPUState(
+                currentMinFreqGPU,
+                currentMaxFreqGPU,
+                currentGovGPU,
+                currentAdrenoBoost,
+                currentGpuThrottling,
+                currentAvailableFreqGPU,
+                currentAvailableGovGPU
+            )
+
+            _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
+            _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
+        }
     }
 
     fun updateFreq(target: String, selectedFreq: String, cluster: String) {
