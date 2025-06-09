@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.animation.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -22,6 +23,7 @@ import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.utils.Utils.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +69,9 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
             verticalArrangement = Arrangement.spacedBy(16.dp),
             state = rememberLazyListState()
         ) {
+	    item {
+                MonitorCard(viewModel)
+            }
             item {
                 LittleClusterCard(viewModel)
             }
@@ -85,6 +90,137 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
             }
             item {
                 Spacer(Modifier)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MonitorCard(viewModel: SoCViewModel) {
+    val cpu0State by viewModel.cpu0State.collectAsState()
+    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val bigClusterState by viewModel.bigClusterState.collectAsState()
+    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
+    val primeClusterState by viewModel.primeClusterState.collectAsState()
+    val gpuState by viewModel.gpuState.collectAsState()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            CustomItem(
+                title = "Monitor",
+                titleLarge = true,
+		icon = painterResource(R.drawable.ic_monitor)
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+	    Card(
+		elevation = CardDefaults.cardElevation(
+		    defaultElevation = 8.dp
+		)
+	    ) {
+		Column(
+		   modifier = Modifier.padding(20.dp)
+		) {
+		    CustomItem(
+			title = "CPU",
+			titleLarge = true,
+			icon = painterResource(R.drawable.ic_cpu)
+		    )
+
+		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (hasBigCluster) "Little cluster" else "Current freq",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+		        )
+                        Text(
+                            text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                            style = MaterialTheme.typography.bodyMedium
+		        )
+                    }
+
+                    if (hasBigCluster) {
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Big cluster",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+			    )
+                            Text(
+                                text = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
+                                style = MaterialTheme.typography.bodyMedium
+			    )
+                        }
+                    }
+
+                    if (hasPrimeCluster) {
+                        Spacer(Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Prime cluster",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+			    )
+                            Text(
+                                text = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
+                                style = MaterialTheme.typography.bodyMedium
+			    )
+                        }
+                    }
+                }
+            }
+	    Spacer(Modifier.height(20.dp))
+
+	    Card(
+		elevation = CardDefaults.cardElevation(
+		    defaultElevation = 8.dp
+		)
+	    ) {
+		Column(
+		   modifier = Modifier.padding(20.dp)
+		) {
+		    CustomItem(
+			title = "GPU",
+			titleLarge = true,
+			icon = painterResource(R.drawable.ic_video_card)
+		    )
+
+		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Current freq",
+			    style = MaterialTheme.typography.bodyMedium,
+			    modifier = Modifier.weight(1f)
+		        )
+                        Text(
+                            text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
+			    style = MaterialTheme.typography.bodyMedium
+		        )
+                    }
+                }
             }
         }
     }

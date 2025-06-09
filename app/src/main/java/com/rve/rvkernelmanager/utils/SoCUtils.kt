@@ -8,12 +8,14 @@ object SoCUtils {
 
     const val MIN_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
     const val MAX_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq"
+    const val CURRENT_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies"
     const val GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
     const val AVAILABLE_GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
     
     const val MIN_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
     const val MAX_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
+    const val CURRENT_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies"
     const val GOV_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
@@ -21,6 +23,7 @@ object SoCUtils {
 
     const val MIN_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq"
     const val MAX_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_max_freq"
+    const val CURRENT_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_boost_frequencies"
     const val GOV_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
@@ -28,6 +31,7 @@ object SoCUtils {
     
     const val MIN_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
     const val MAX_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
+    const val CURRENT_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_boost_frequencies"
     const val GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
@@ -35,6 +39,7 @@ object SoCUtils {
     
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
+    const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/cur_freq"
     const val AVAILABLE_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
     const val GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
     const val AVAILABLE_GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
@@ -87,8 +92,8 @@ object SoCUtils {
         val regularFreq = readAvailableFreqCPU(freqPath)
         val boostFreq = readAvailableFreqCPU(boostPath)
         return (regularFreq + boostFreq)
-    	.distinct()
-    	.sortedBy { it.toIntOrNull() ?: 0 }
+	.distinct()
+	.sortedBy { it.toIntOrNull() ?: 0 }
     }
     
     fun readAvailableGovCPU(filePath: String): List<String> {
@@ -103,7 +108,7 @@ object SoCUtils {
             }
         } catch (e: Exception) {
             Log.e("readAvailableGov", "Error reading file $filePath: ${e.message}", e)
-    	emptyList()
+	emptyList()
         }
     }
     
@@ -151,6 +156,24 @@ object SoCUtils {
         } catch (e: Exception) {
             Log.e("readAvailableGovGPU", "Error reading file $filePath: ${e.message}", e)
             emptyList()
+        }
+    }
+
+    fun readFreqGPU(filePath: String): String {
+        return try {
+            val result = Shell.cmd("cat $filePath").exec()
+            if (result.isSuccess) {
+                result.out.firstOrNull()
+                    ?.trim()
+                    ?.let { (it.toLong() / 1000000).toString() }
+                    ?: ""
+            } else {
+                Log.e("readCurrentGPUFreq", "Command execution failed: ${result.err}")
+                ""
+            }
+        } catch (e: Exception) {
+            Log.e("readCurrentGPUFreq", "Error reading file $filePath: ${e.message}", e)
+            ""
         }
     }
 }
