@@ -130,9 +130,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             )
             Spacer(Modifier.height(16.dp))
 
-            ElevatedCard(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+            Card(
+		elevation = CardDefaults.cardElevation(
+		    defaultElevation = 8.dp
                 )
             ) {
                 Column(
