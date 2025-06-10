@@ -72,7 +72,7 @@ class SoCViewModel : ViewModel() {
         pollingJob = viewModelScope.launch(Dispatchers.IO) {
             while (true) {
                 loadInitialData()
-                delay(1000)
+                delay(3000)
             }
         }
     }
