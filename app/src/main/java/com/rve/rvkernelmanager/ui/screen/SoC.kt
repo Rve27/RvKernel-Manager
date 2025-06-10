@@ -105,9 +105,7 @@ private fun MonitorCard(viewModel: SoCViewModel) {
     val gpuState by viewModel.gpuState.collectAsState()
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier.padding(20.dp)
