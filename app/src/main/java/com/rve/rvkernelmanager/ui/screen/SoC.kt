@@ -98,6 +98,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
 @Composable
 private fun MonitorCard(viewModel: SoCViewModel) {
     val cpu0State by viewModel.cpu0State.collectAsState()
+    val cpuUsage by viewModel.cpuUsage.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
     val bigClusterState by viewModel.bigClusterState.collectAsState()
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
@@ -133,6 +134,22 @@ private fun MonitorCard(viewModel: SoCViewModel) {
 		    )
 
 		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "CPU Usage",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+		    Spacer(Modifier.height(8.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

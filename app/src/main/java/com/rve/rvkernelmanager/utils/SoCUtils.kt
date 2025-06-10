@@ -3,6 +3,7 @@ package com.rve.rvkernelmanager.utils
 import java.io.File
 import android.util.Log
 import com.topjohnwu.superuser.Shell
+import com.rve.rvkernelmanager.utils.Utils
 
 object SoCUtils {
 
@@ -45,6 +46,9 @@ object SoCUtils {
     const val AVAILABLE_GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
     const val ADRENO_BOOST = "/sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost"
     const val GPU_THROTTLING = "/sys/class/kgsl/kgsl-3d0/throttling"
+
+    private var sPrevTotal: Long = -1
+    private var sPrevIdle: Long = -1
     
     fun readFreqCPU(filePath: String): String {
         return try {
@@ -174,6 +178,45 @@ object SoCUtils {
         } catch (e: Exception) {
             Log.e("readCurrentGPUFreq", "Error reading file $filePath: ${e.message}", e)
             ""
+        }
+    }
+
+    fun getCpuUsage(): String {
+	val stat = Utils.readFile("/proc/stat") ?: return "N/A"
+	val cleanStat = stat.trim()
+
+	if (!cleanStat.startsWith("cpu")) return "N/A"
+
+	val parts = cleanStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
+	if (parts.size < 8) return "N/A"
+
+        try {
+            val user = parts[1].toLong()
+            val nice = parts[2].toLong()
+            val system = parts[3].toLong()
+            val idle = parts[4].toLong()
+            val iowait = parts[5].toLong()
+            val irq = parts[6].toLong()
+            val softirq = parts[7].toLong()
+            val steal = if (parts.size > 8) parts[8].toLong() else 0
+
+            val total = user + nice + system + idle + iowait + irq + softirq + steal
+
+            if (sPrevTotal != -1L && total > sPrevTotal) {
+                val diffTotal = total - sPrevTotal
+                val diffIdle = idle - sPrevIdle
+                val usage = 100 * (diffTotal - diffIdle) / diffTotal
+                sPrevTotal = total
+                sPrevIdle = idle
+                return usage.toString()
+            } else {
+                sPrevTotal = total
+                sPrevIdle = idle
+                return "N/A"
+            }
+        } catch (e: NumberFormatException) {
+	    Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
+            return "N/A"
         }
     }
 }

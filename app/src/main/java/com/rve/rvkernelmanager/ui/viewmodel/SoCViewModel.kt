@@ -37,6 +37,9 @@ class SoCViewModel : ViewModel() {
     private val _cpu0State = MutableStateFlow(CPUState("", "", "", "", emptyList(), emptyList()))
     val cpu0State: StateFlow<CPUState> = _cpu0State
 
+    private val _cpuUsage = MutableStateFlow("")
+    val cpuUsage: StateFlow<String> = _cpuUsage
+
     private val _bigClusterState = MutableStateFlow(CPUState("", "", "", "", emptyList(), emptyList()))
     val bigClusterState: StateFlow<CPUState> = _bigClusterState
 
@@ -122,6 +125,8 @@ class SoCViewModel : ViewModel() {
                 currentAvailableFreqCPU0,
                 currentAvailableGovCPU0
             )
+
+	    _cpuUsage.value = SoCUtils.getCpuUsage()
 
             val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4)) {
                 SoCUtils.AVAILABLE_FREQ_CPU4
