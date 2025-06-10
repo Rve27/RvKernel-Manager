@@ -64,7 +64,6 @@ class SoCViewModel : ViewModel() {
     private var pollingJob: Job? = null
 
     init {
-        setPermissionsOnce()
         loadInitialData()
     }
 
@@ -81,31 +80,6 @@ class SoCViewModel : ViewModel() {
     fun stopPolling() {
         pollingJob?.cancel()
         pollingJob = null
-    }
-
-    private fun setPermissionsOnce() {
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU0)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU0)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU0)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU0)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU0)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU4)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU4)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU4)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU4)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU4)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_CPU7)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_CPU7)
-            Utils.setPermissions(644, SoCUtils.GOV_CPU7)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_FREQ_CPU7)
-            Utils.setPermissions(644, SoCUtils.AVAILABLE_GOV_CPU7)
-            Utils.setPermissions(644, SoCUtils.MIN_FREQ_GPU)
-            Utils.setPermissions(644, SoCUtils.MAX_FREQ_GPU)
-            Utils.setPermissions(644, SoCUtils.GOV_GPU)
-            Utils.setPermissions(644, SoCUtils.ADRENO_BOOST)
-            Utils.setPermissions(644, SoCUtils.GPU_THROTTLING)
-        }
     }
 
     private fun loadInitialData() {
