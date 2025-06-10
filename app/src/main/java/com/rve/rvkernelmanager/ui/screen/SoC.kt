@@ -70,7 +70,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
             state = rememberLazyListState()
         ) {
 	    item {
-                MonitorCard(viewModel)
+                SoCMonitorCard(viewModel)
             }
             item {
                 LittleClusterCard(viewModel)
@@ -96,7 +96,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
 }
 
 @Composable
-private fun MonitorCard(viewModel: SoCViewModel) {
+private fun SoCMonitorCard(viewModel: SoCViewModel) {
     val cpu0State by viewModel.cpu0State.collectAsState()
     val cpuUsage by viewModel.cpuUsage.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
@@ -112,7 +112,7 @@ private fun MonitorCard(viewModel: SoCViewModel) {
             modifier = Modifier.padding(20.dp)
         ) {
             CustomItem(
-                title = "Monitor",
+                title = "SoC Monitor",
                 titleLarge = true,
 		icon = painterResource(R.drawable.ic_monitor)
             )
