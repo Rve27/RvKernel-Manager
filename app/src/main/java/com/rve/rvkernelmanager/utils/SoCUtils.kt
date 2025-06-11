@@ -222,4 +222,16 @@ object SoCUtils {
             return "N/A"
         }
     }
+
+    fun getGpuUsage(): String {
+        val usage = Utils.readFile("/sys/class/kgsl/kgsl-3d0/gpu_busy_percentage")
+        if (usage.isEmpty()) return "N/A"
+        val cleanedUsage = usage.replace("%", "").trim()
+        return try {
+            val value = cleanedUsage.toInt()
+            value.toString()
+        } catch (e: NumberFormatException) {
+            "N/A"
+        }
+    }
 }

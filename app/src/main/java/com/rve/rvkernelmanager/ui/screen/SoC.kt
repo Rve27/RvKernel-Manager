@@ -106,6 +106,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
     val primeClusterState by viewModel.primeClusterState.collectAsState()
     val gpuState by viewModel.gpuState.collectAsState()
     val gpuTemp by viewModel.gpuTemp.collectAsState()
+    val gpuUsage by viewModel.gpuUsage.collectAsState()
 
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -142,22 +143,6 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Temperature",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
                             text = "Usage",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
@@ -168,6 +153,22 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                         )
                     }
 		    Spacer(Modifier.height(8.dp))
+
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Temperature",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -244,12 +245,28 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
+                            text = "Usage",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+		    Spacer(Modifier.height(8.dp))
+
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
                             text = "Temperature",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = if (cpuTemp == "N/A") "N/A" else "$gpuTemp°C",
+                            text = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
