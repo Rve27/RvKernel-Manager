@@ -7,6 +7,8 @@ import com.rve.rvkernelmanager.utils.Utils
 
 object SoCUtils {
 
+    const val CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp"
+
     const val MIN_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
     const val MAX_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq"
     const val CURRENT_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq"
@@ -216,19 +218,6 @@ object SoCUtils {
             }
         } catch (e: NumberFormatException) {
 	    Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
-            return "N/A"
-        }
-    }
-
-    fun getCpuTemp(): String {
-        val temp = Utils.readFile("/sys/class/thermal/thermal_zone0/temp")
-        if (temp == null) return "N/A"
-        val trimmedTemp = temp.trim()
-        try {
-            val raw = trimmedTemp.toFloat()
-            val c = raw / 1000f
-            return "%.1f".format(c)
-        } catch (e: NumberFormatException) {
             return "N/A"
         }
     }

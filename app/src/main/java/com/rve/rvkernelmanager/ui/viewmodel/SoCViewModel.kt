@@ -104,7 +104,7 @@ class SoCViewModel : ViewModel() {
             )
 
 	    _cpuUsage.value = SoCUtils.getCpuUsage()
-	    _cpuTemp.value = SoCUtils.getCpuTemp()
+	    _cpuTemp.value = Utils.getTemp(SoCUtils.CPU_TEMP)
 
             val bigClusterPath = if (Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4)) {
                 SoCUtils.AVAILABLE_FREQ_CPU4

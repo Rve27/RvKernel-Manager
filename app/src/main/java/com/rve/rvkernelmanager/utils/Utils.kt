@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlin.math.ceil
 import com.topjohnwu.superuser.Shell
+import com.rve.rvkernelmanager.utils.SoCUtils
 
 object Utils {
 
@@ -215,6 +216,19 @@ object Utils {
                     )
                 }
             }
+        }
+    }
+
+    fun getTemp(filePath: String): String {
+        val temp = Utils.readFile(filePath)
+        val trimmedTemp = temp.trim()
+        if (trimmedTemp.isEmpty()) return "N/A"
+        try {
+            val raw = trimmedTemp.toFloat()
+            val c = raw / 1000f
+            return "%.1f".format(c)
+        } catch (e: NumberFormatException) {
+            return "N/A"
         }
     }
 }
