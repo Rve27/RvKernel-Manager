@@ -183,11 +183,11 @@ object SoCUtils {
 
     fun getCpuUsage(): String {
 	val stat = Utils.readFile("/proc/stat") ?: return "N/A"
-	val cleanStat = stat.trim()
+	val trimmedStat = stat.trim()
 
-	if (!cleanStat.startsWith("cpu")) return "N/A"
+	if (!trimmedStat.startsWith("cpu")) return "N/A"
 
-	val parts = cleanStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
+	val parts = trimmedStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
 	if (parts.size < 8) return "N/A"
 
         try {
@@ -216,6 +216,19 @@ object SoCUtils {
             }
         } catch (e: NumberFormatException) {
 	    Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
+            return "N/A"
+        }
+    }
+
+    fun getCpuTemp(): String {
+        val temp = Utils.readFile("/sys/class/thermal/thermal_zone0/temp")
+        if (temp == null) return "N/A"
+        val trimmedTemp = temp.trim()
+        try {
+            val raw = trimmedTemp.toFloat()
+            val c = raw / 1000f
+            return "%.1f".format(c)
+        } catch (e: NumberFormatException) {
             return "N/A"
         }
     }

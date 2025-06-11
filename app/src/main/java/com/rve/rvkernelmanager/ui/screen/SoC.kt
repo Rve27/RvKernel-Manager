@@ -99,6 +99,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
 private fun SoCMonitorCard(viewModel: SoCViewModel) {
     val cpu0State by viewModel.cpu0State.collectAsState()
     val cpuUsage by viewModel.cpuUsage.collectAsState()
+    val cpuTemp by viewModel.cpuTemp.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
     val bigClusterState by viewModel.bigClusterState.collectAsState()
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
@@ -140,7 +141,23 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "CPU Usage",
+                            text = "Temperature",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Usage",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
                         )
