@@ -48,6 +48,7 @@ object SoCUtils {
     const val AVAILABLE_GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
     const val ADRENO_BOOST = "/sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost"
     const val GPU_THROTTLING = "/sys/class/kgsl/kgsl-3d0/throttling"
+    const val GPU_TEMP = "/sys/class/kgsl/kgsl-3d0/temp"
 
     private var sPrevTotal: Long = -1
     private var sPrevIdle: Long = -1

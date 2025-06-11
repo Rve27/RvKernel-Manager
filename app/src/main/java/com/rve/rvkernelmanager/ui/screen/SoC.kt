@@ -105,6 +105,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
     val primeClusterState by viewModel.primeClusterState.collectAsState()
     val gpuState by viewModel.gpuState.collectAsState()
+    val gpuTemp by viewModel.gpuTemp.collectAsState()
 
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -237,6 +238,22 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
 		    )
 
 		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Temperature",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = if (cpuTemp == "N/A") "N/A" else "$gpuTemp°C",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

@@ -52,6 +52,9 @@ class SoCViewModel : ViewModel() {
     private val _gpuState = MutableStateFlow(GPUState("", "", "", "", "", "", emptyList(), emptyList()))
     val gpuState: StateFlow<GPUState> = _gpuState
 
+    private val _gpuTemp = MutableStateFlow("")
+    val gpuTemp: StateFlow<String> = _gpuTemp
+
     private val _hasBigCluster = MutableStateFlow(false)
     val hasBigCluster: StateFlow<Boolean> = _hasBigCluster
 
@@ -216,6 +219,7 @@ class SoCViewModel : ViewModel() {
                 currentAvailableGovGPU
             )
 
+	    _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
             _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
             _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
         }
