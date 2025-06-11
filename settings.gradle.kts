@@ -15,6 +15,4 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "RvKernel Manager"
-
 include(":app")
