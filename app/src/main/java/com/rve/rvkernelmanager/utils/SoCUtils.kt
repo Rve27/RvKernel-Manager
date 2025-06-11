@@ -40,7 +40,7 @@ object SoCUtils {
     
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
-    const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/cur_freq"
+    const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpuclk"
     const val AVAILABLE_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
     const val GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
     const val AVAILABLE_GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
