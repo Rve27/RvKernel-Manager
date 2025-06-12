@@ -71,6 +71,9 @@ fun BatteryScreen(
 	    state = rememberLazyListState()
         ) {
 	    item {
+		BatteryMonitorCard(viewModel)
+	    }
+	    item {
                 BatteryInfoCard(viewModel)
 	    }
             if (chargingState.hasFastCharging || chargingState.hasBypassCharging) {
@@ -82,6 +85,52 @@ fun BatteryScreen(
                 Spacer(Modifier)
 	    }
         }
+    }
+}
+
+@Composable
+fun BatteryMonitorCard(viewModel: BatteryViewModel) {
+    val batteryInfo by viewModel.batteryInfo.collectAsState()
+
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            CustomItem(
+                title = "Battery Monitor",
+                titleLarge = true,
+		icon = painterResource(R.drawable.ic_monitor)
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+
+	    Card(
+		elevation = CardDefaults.cardElevation(
+		    defaultElevation = 8.dp
+		)
+	    ) {
+		Column(
+		   modifier = Modifier.padding(20.dp)
+		) {
+		    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Level",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = batteryInfo.level,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+		}
+	    }
+	}
     }
 }
 
@@ -101,13 +150,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             )
 
             HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-
-	    CustomItem(
-                title = "Level",
-                body = batteryInfo.level,
-                icon = painterResource(R.drawable.ic_battery_full),
-            )
-            Spacer(Modifier.height(16.dp))
 
             CustomItem(
                 title = "Technology",
