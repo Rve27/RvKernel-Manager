@@ -50,7 +50,36 @@ object BatteryUtils {
             "N/A"
         }
     }
-    
+
+    fun getBatteryLevel(context: Context): String {
+        val batteryIntent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val level = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        return if (level != -1) {
+            "$level%"
+        } else {
+            "N/A"
+        }
+    }
+
+    fun registerBatteryLevelListener(
+        context: Context,
+        callback: (String) -> Unit
+    ): BroadcastReceiver {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+                val levelStr = if (level != -1) {
+                    "$level%"
+                } else {
+                    "N/A"
+                }
+                callback(levelStr)
+            }
+        }
+        context.registerReceiver(receiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        return receiver
+    }
+
     fun registerBatteryTemperatureListener(
         context: Context,
         callback: (String) -> Unit

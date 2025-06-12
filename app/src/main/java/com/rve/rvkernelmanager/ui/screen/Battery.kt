@@ -102,6 +102,13 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
             HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
+	    CustomItem(
+                title = "Level",
+                body = batteryInfo.level,
+                icon = painterResource(R.drawable.ic_battery_full),
+            )
+            Spacer(Modifier.height(16.dp))
+
             CustomItem(
                 title = "Technology",
                 body = batteryInfo.tech,

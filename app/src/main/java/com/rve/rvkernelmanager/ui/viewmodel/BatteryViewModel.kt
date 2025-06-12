@@ -16,6 +16,7 @@ import com.rve.rvkernelmanager.utils.BatteryUtils
 
 class BatteryViewModel : ViewModel() {
     data class BatteryInfo(
+	val level: String = "",
         val tech: String = "",
         val health: String = "",
         val temp: String = "",
@@ -38,6 +39,7 @@ class BatteryViewModel : ViewModel() {
     private val _chargingState = MutableStateFlow(ChargingState())
     val chargingState: StateFlow<ChargingState> = _chargingState
 
+    private var levelReceiver: BroadcastReceiver? = null
     private var tempReceiver: BroadcastReceiver? = null
     private var voltageReceiver: BroadcastReceiver? = null
     private var maxCapacityReceiver: BroadcastReceiver? = null
@@ -52,11 +54,13 @@ class BatteryViewModel : ViewModel() {
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+		val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
                 val designCapacity = BatteryUtils.getBatteryDesignCapacity(context)
 
                 _batteryInfo.value = _batteryInfo.value.copy(
+		    level = level,
                     tech = tech,
                     health = health,
                     designCapacity = designCapacity
@@ -69,6 +73,9 @@ class BatteryViewModel : ViewModel() {
 
     fun registerBatteryListeners(context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
+	    levelReceiver = BatteryUtils.registerBatteryLevelListener(context) { level ->
+		_batteryInfo.value = _batteryInfo.value.copy(level = level)
+	    }
             tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
                 _batteryInfo.value = _batteryInfo.value.copy(temp = temp)
             }
@@ -84,6 +91,10 @@ class BatteryViewModel : ViewModel() {
     fun unregisterBatteryListeners(context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
             try {
+		levelReceiver?.let {
+                    context.unregisterReceiver(it)
+                    levelReceiver = null
+                }
                 tempReceiver?.let {
                     context.unregisterReceiver(it)
                     tempReceiver = null
