@@ -128,6 +128,22 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
+		    Spacer(Modifier.height(8.dp))
+
+		    Row(
+			modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+		    ) {
+			Text(
+			    text = "Temperature",
+			    style = MaterialTheme.typography.bodyMedium,
+			    modifier = Modifier.weight(1f)
+			)
+			Text(
+			    text = batteryInfo.temp,
+			    style = MaterialTheme.typography.bodyMedium
+			)
+		    }
 		}
 	    }
 	}
@@ -162,13 +178,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 title = "Health",
                 body = batteryInfo.health,
                 icon = painterResource(R.drawable.ic_health),
-            )
-            Spacer(Modifier.height(16.dp))
-
-            CustomItem(
-                title = "Temperature",
-                body = batteryInfo.temp,
-                icon = painterResource(R.drawable.ic_temperature),
             )
             Spacer(Modifier.height(16.dp))
 
