@@ -23,7 +23,7 @@ import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.utils.Utils.CustomItem
+import com.rve.rvkernelmanager.ui.component.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

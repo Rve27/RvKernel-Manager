@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.utils.Utils.CustomItem
+import com.rve.rvkernelmanager.ui.component.CustomItem
 import com.rve.rvkernelmanager.ui.component.SwitchItem
 
 @OptIn(ExperimentalMaterial3Api::class)
