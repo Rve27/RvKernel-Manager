@@ -37,11 +37,9 @@ fun SwitchItem(
 	    containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         headlineContent = {
-            Row {
-                Text(
-                    text = title
-                )
-            }
+            Text(
+                text = title
+            )
         },
         trailingContent = {
             Switch(
