@@ -27,6 +27,7 @@ import com.rve.rvkernelmanager.ui.TopBar
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.Utils.CustomItem
+import com.rve.rvkernelmanager.ui.component.SwitchItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -223,64 +224,31 @@ fun ChargingCard(viewModel: BatteryViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = "Charging",
                 style = MaterialTheme.typography.titleLarge
             )
-
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-
-            if (chargingState.hasFastCharging) {
-                SwitchRow(
-                    label = "Fast charging",
-                    summary = "Enable force fast charging",
-                    checked = chargingState.isFastChargingChecked,
-                    onCheckedChange = { viewModel.toggleFastCharging(it) }
-                )
-            }
-
-            if (chargingState.hasBypassCharging) {
-                SwitchRow(
-                    label = "Bypass charging",
-                    summary = "Make sure your kernel supports this feature!",
-                    checked = chargingState.isBypassChargingChecked,
-                    onCheckedChange = { viewModel.toggleBypassCharging(it) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SwitchRow(
-    label: String,
-    summary: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-	Column(
-	    modifier = Modifier.weight(1f)
-	) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium
-            )
-	    Text(
-	        text = summary,
-	        style = MaterialTheme.typography.bodySmall,
-	        modifier = Modifier.padding(top = 4.dp, end = 4.dp)
-	    )
 	}
-	Switch(
-            modifier = Modifier.semantics { contentDescription = label },
-            checked = checked,
-            onCheckedChange = onCheckedChange
-	)
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+        if (chargingState.hasFastCharging) {
+            SwitchItem(
+                title = "Fast charging",
+                summary = "Enable force fast charging",
+                checked = chargingState.isFastChargingChecked,
+                onCheckedChange = { viewModel.toggleFastCharging(it) }
+            )
+        }
+
+        if (chargingState.hasBypassCharging) {
+            SwitchItem(
+                title = "Bypass charging",
+                summary = "Make sure your kernel supports this feature!",
+                checked = chargingState.isBypassChargingChecked,
+                onCheckedChange = { viewModel.toggleBypassCharging(it) }
+            )
+        }
     }
 }
