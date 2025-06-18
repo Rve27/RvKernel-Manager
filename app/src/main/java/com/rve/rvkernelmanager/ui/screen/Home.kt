@@ -182,6 +182,7 @@ fun DonateCard() {
 
                 CustomItem(
                     body = "Click this donate card if you want to donate or buy me a coffee.",
+		    useAlpha = false,
                     icon = painterResource(R.drawable.ic_donate),
                     onClick = { showDonateDialog = true }
                 )
