@@ -75,6 +75,7 @@ fun CustomItem(
     onClick: (() -> Unit)? = null,
     animateContent: Boolean = false,
     titleLarge: Boolean = false,
+    useAlpha: Boolean = true,
     icon: Any? = null
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -105,14 +106,23 @@ fun CustomItem(
                 )
             }
             if (body != null) {
+		var modifier = Modifier
+		    .clickable(enabled = onClick != null) { onClick?.invoke() }
+
+		if (animateContent) {
+		    modifier = modifier.animateContentSize()
+		}
+
+		modifier = modifier.padding(top = 4.dp)
+
+		if (useAlpha) {
+		    modifier = modifier.alpha(0.7f)
+		}
+
                 Text(
                     text = body,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .clickable(enabled = onClick != null) { onClick?.invoke() }
-                        .then(if (animateContent) Modifier.animateContentSize() else Modifier)
-                        .padding(top = 4.dp)
-			.alpha(0.7f)
+                    modifier = modifier
                 )
             }
         }
