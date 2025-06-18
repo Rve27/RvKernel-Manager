@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,7 +25,7 @@ fun SwitchItem(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
-    ListItem(
+    Row(
         modifier = Modifier
             .toggleable(
                 value = checked,
@@ -32,39 +33,39 @@ fun SwitchItem(
                 role = Role.Switch,
                 indication = LocalIndication.current,
                 onValueChange = onCheckedChange
-            ),
-	colors = ListItemDefaults.colors(
-	    containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        headlineContent = {
-            Text(
-                text = title
             )
-        },
-        trailingContent = {
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                interactionSource = interactionSource,
-		thumbContent = {
-	            if (checked) {
-			Icon(
-	                    imageVector = Icons.Filled.Check,
-	                    contentDescription = null,
-	                    modifier = Modifier.size(SwitchDefaults.IconSize),
-	                )
-		    }
+	    .padding(16.dp)
+    ) {
+	Column(
+	    modifier = Modifier.weight(1f)
+	) {
+	    Text(
+		text = title,
+		style = MaterialTheme.typography.titleMedium
+	    )
+	    if (summary != null) {
+		Text(
+		    text = summary,
+		    style = MaterialTheme.typography.bodyMedium,
+		    modifier = Modifier.alpha(0.7f)
+	        )
+	    }
+	}
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            interactionSource = interactionSource,
+	    thumbContent = {
+	        if (checked) {
+		    Icon(
+	                imageVector = Icons.Filled.Check,
+	                contentDescription = null,
+	                modifier = Modifier.size(SwitchDefaults.IconSize),
+	            )
 		}
-            )
-        },
-        supportingContent = {
-            if (summary != null) {
-                Text(
-                    text = summary
-                )
-            }
-        }
-    )
+	    }
+        )
+    }
 }
 
 @Composable
