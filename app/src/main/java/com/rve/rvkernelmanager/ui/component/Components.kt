@@ -108,11 +108,11 @@ fun CustomItem(
                 Text(
                     text = body,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .clickable(enabled = onClick != null) { onClick?.invoke() }
                         .then(if (animateContent) Modifier.animateContentSize() else Modifier)
                         .padding(top = 4.dp)
+			.alpha(0.7f)
                 )
             }
         }
