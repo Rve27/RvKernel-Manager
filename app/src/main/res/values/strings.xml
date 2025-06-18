@@ -3,8 +3,8 @@
     <string name="app_name">RvKernel Manager</string>
 
     <!-- Bottom Navigation -->
-    <string name="tab_home">Home</string>
-    <string name="tab_soc">SoC</string>
-    <string name="tab_battery">Battery</string>
-    <string name="tab_misc">Misc</string>
+    <string name="home">Home</string>
+    <string name="soc">SoC</string>
+    <string name="battery">Battery</string>
+    <string name="misc">Misc</string>
 </resources>

@@ -71,49 +71,31 @@ fun RootCheckHandler() {
 @Composable
 fun RvKernelManagerApp() {
     val navController = rememberNavController()
-    val navigationActions = remember(navController) { BottomNavigationActions(navController) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     Scaffold(
         bottomBar = { 
-            BottomNavigationBar(
-                currentDestination = currentDestination,
-                navigateToTopLevelDestination = navigationActions::navigateTo
-            )
+            BottomNavigationBar(navController)
         },
-	contentWindowInsets = WindowInsets(0, 0, 0, 0)
+	contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
-        RvKernelManagerNavHost(
-            modifier = Modifier.padding(innerPadding),
-            navController = navController
-        )
-    }
-}
-
-@Composable
-private fun RvKernelManagerNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier,
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = Route.Home,
-    ) {
-        composable<Route.Home> {
-            HomeScreen(lifecycleOwner = lifecycleOwner)
-        }
-        composable<Route.Battery> {
-            BatteryScreen(lifecycleOwner = lifecycleOwner)
-        }
-        composable<Route.SoC> {
-            SoCScreen(lifecycleOwner = lifecycleOwner)
-        }
-        composable<Route.Misc> {
-            MiscScreen(lifecycleOwner = lifecycleOwner)
-        }
+	NavHost(
+	    navController = navController,
+	    startDestination = "home",
+	    modifier = Modifier.padding(innerPadding)
+	) {
+	    composable("home") {
+		HomeScreen(lifecycleOwner = lifecycleOwner)
+	    }
+	    composable("soc") {
+		SoCScreen(lifecycleOwner = lifecycleOwner)
+	    }
+	    composable("battery") {
+		BatteryScreen(lifecycleOwner = lifecycleOwner)
+	    }
+	    composable("misc") {
+		MiscScreen(lifecycleOwner = lifecycleOwner)
+	    }
+	}
     }
 }
