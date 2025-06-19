@@ -29,7 +29,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.TopBar
+import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
 import com.rve.rvkernelmanager.ui.component.CustomItem
 
@@ -58,7 +58,9 @@ fun HomeScreen(
     }
 
     Scaffold(
-        topBar = { TopBar(scrollBehavior = scrollBehavior) },
+        topBar = {
+	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         LazyColumn(
@@ -70,6 +72,7 @@ fun HomeScreen(
 	    state = rememberLazyListState()
         ) {
 	    item {
+		    Spacer(Modifier.height(16.dp))
                     DeviceInfoCard(viewModel)
 	    }
 	    item {
@@ -100,7 +103,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             Text(
                 text = "Device Information",
@@ -169,7 +172,7 @@ fun DonateCard() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
@@ -270,7 +273,7 @@ fun CopyrightCard() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {

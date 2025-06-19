@@ -23,7 +23,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.TopBar
+import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomItem
@@ -57,10 +57,8 @@ fun BatteryScreen(
 
     Scaffold(
         topBar = {
-            TopBar(
-                scrollBehavior = scrollBehavior
-            )
-        },
+	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         LazyColumn(
@@ -72,6 +70,7 @@ fun BatteryScreen(
 	    state = rememberLazyListState()
         ) {
 	    item {
+		Spacer(Modifier.height(16.dp))
 		BatteryMonitorCard(viewModel)
 	    }
 	    item {
@@ -97,7 +96,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             CustomItem(
                 title = "Battery Monitor",
@@ -113,7 +112,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 		)
 	    ) {
 		Column(
-		   modifier = Modifier.padding(20.dp)
+		   modifier = Modifier.padding(16.dp)
 		) {
 		    Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -159,7 +158,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             Text(
                 text = "Battery Information",
@@ -197,7 +196,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(16.dp)
                 ) {
                     CustomItem(
                         title = "Design capacity",

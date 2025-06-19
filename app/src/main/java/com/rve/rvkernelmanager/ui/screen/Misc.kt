@@ -20,7 +20,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.TopBar
+import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.MiscUtils
 import com.rve.rvkernelmanager.R
@@ -50,11 +50,9 @@ fun MiscScreen(
 
     Scaffold(
         topBar = {
-            TopBar(scrollBehavior = scrollBehavior)
-        },
-        contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-        )
+	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         PullToRefreshBox(
             modifier = Modifier
@@ -70,6 +68,7 @@ fun MiscScreen(
 		state = rememberLazyListState()
             ) {
 		item {
+		    Spacer(Modifier.height(16.dp))
                     MiscCard(viewModel)
 		}
 		item {
@@ -103,7 +102,7 @@ fun MiscCard(viewModel: MiscViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = "Miscellaneous",

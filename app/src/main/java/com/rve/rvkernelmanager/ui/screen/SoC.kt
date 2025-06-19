@@ -20,7 +20,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.utils.SoCUtils
-import com.rve.rvkernelmanager.ui.TopBar
+import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomItem
@@ -55,11 +55,9 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
 
     Scaffold(
         topBar = {
-            TopBar(scrollBehavior = scrollBehavior)
-        },
-        contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-        )
+	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -70,6 +68,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
             state = rememberLazyListState()
         ) {
 	    item {
+		Spacer(Modifier.height(16.dp))
                 SoCMonitorCard(viewModel)
             }
             item {
@@ -112,7 +111,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             CustomItem(
                 title = "SoC Monitor",
@@ -128,7 +127,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
 		)
 	    ) {
 		Column(
-		   modifier = Modifier.padding(20.dp)
+		   modifier = Modifier.padding(16.dp)
 		) {
 		    CustomItem(
 			title = "CPU",
@@ -222,7 +221,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                     }
                 }
             }
-	    Spacer(Modifier.height(20.dp))
+	    Spacer(Modifier.height(16.dp))
 
 	    Card(
 		elevation = CardDefaults.cardElevation(
@@ -230,7 +229,7 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
 		)
 	    ) {
 		Column(
-		   modifier = Modifier.padding(20.dp)
+		   modifier = Modifier.padding(16.dp)
 		) {
 		    CustomItem(
 			title = "GPU",
@@ -426,7 +425,7 @@ private fun ClusterCard(
             .animateContentSize()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = title,
@@ -568,7 +567,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             .animateContentSize()
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = "GPU",
