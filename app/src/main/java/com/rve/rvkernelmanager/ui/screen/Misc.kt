@@ -283,16 +283,31 @@ fun MiscCard(viewModel: MiscViewModel) {
 
 	if (hasPrintk) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+		modifier = Modifier
+		    .clickable(
+			onClick = { viewModel.showPrintkDialog() }
+		    )
+		    .padding(16.dp)
             ) {
-                Text(
-                    text = MiscUtils.PRINTK.substringAfterLast("/"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Button(onClick = { viewModel.showPrintkDialog() }) {
-                    Text(text = printk)
+		Column(
+		    modifier = Modifier.weight(1f)
+		) {
+                    Text(
+                        text = "printk",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+		    Text(
+			text = "Controls kernel message logging level",
+			style = MaterialTheme.typography.bodySmall,
+			modifier = Modifier.alpha(0.7f)
+		    )
+		}
+                Button(
+		    onClick = { viewModel.showPrintkDialog() }
+		) {
+                    Text(
+			text = printk
+		    )
                 }
             }
         }
