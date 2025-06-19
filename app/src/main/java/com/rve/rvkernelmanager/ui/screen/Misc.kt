@@ -1,20 +1,17 @@
 package com.rve.rvkernelmanager.ui.screen
 
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -22,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
+import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
 import com.rve.rvkernelmanager.R
 
@@ -85,9 +83,10 @@ fun MiscScreen(
 
 @Composable
 fun MiscCard(viewModel: MiscViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
-    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
-    val thermalSconfigStatus = remember(thermalSconfig) { thermalSconfig == "10" }
+    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()    
 
     val schedAutogroup by viewModel.schedAutogroup.collectAsState()
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
@@ -112,76 +111,173 @@ fun MiscCard(viewModel: MiscViewModel) {
                 text = "Miscellaneous",
                 style = MaterialTheme.typography.titleLarge
             )
+	}
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-
-            if (hasThermalSconfig) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+        if (hasThermalSconfig) {
+            Row(
+                modifier = Modifier
+		    .clickable(
+			onClick = { expanded = true }
+		    )
+		    .padding(16.dp)
+            ) {
+		Column(
+		    modifier = Modifier.weight(1f)
+		) {
                     Text(
-                        text = "Unlock CPU frequency",
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
+                        text = "Thermal profiles",
+                        style = MaterialTheme.typography.titleSmall
                     )
-                    Switch(
-                        checked = thermalSconfigStatus,
-                        onCheckedChange = { isChecked ->
-                            viewModel.updateThermalSconfig(isChecked)
-                        }
-                    )
-                }
+		    Text(
+		        text = "Adjust thermal profiles for optimum performance",
+		        style = MaterialTheme.typography.bodySmall,
+			modifier = Modifier.alpha(0.7f)
+		    )
+		}
+		Box {
+	            Button(
+			onClick = {
+			    expanded = true
+			}
+		    ) {
+			Text(
+			    text = remember(thermalSconfig) {
+				when (thermalSconfig) {
+				    "0" -> "Default"
+				    "10" -> "Benchmark"
+				    "11" -> "Browser"
+				    "12" -> "Camera"
+				    "8" -> "Dialer"
+				    "13" -> "Gaming"
+				    "14" -> "Streaming"
+				    else -> thermalSconfig
+				}
+			    }
+			)
+		    }
+		    DropdownMenu(
+		        expanded = expanded,
+		        onDismissRequest = {
+		            expanded = false
+	                },
+			offset = DpOffset((5).dp, 0.dp)
+	            ) {
+			DropdownMenuItem(
+			    text = {
+				Text("Default")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("0")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Benchmark")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("10")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Browser")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("11")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Camera")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("12")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Dialer")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("8")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Gaming")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("13")
+				expanded = false
+			    }
+			)
+			DropdownMenuItem(
+			    text = {
+				Text("Streaming")
+			    },
+			    onClick = {
+				viewModel.updateThermalSconfig("14")
+				expanded = false
+			    }
+			)
+		    }
+		}
             }
+        }
 
-            if (hasSchedAutogroup) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        MiscUtils.SCHED_AUTOGROUP.substringAfterLast("/"),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = schedAutogroupStatus,
-                        onCheckedChange = { isChecked ->
-                            viewModel.updateSchedAutogroup(isChecked)
-                        }
-                    )
-                }
-            }
-
-            if (hasSwappiness) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = MiscUtils.SWAPPINESS.substringAfterLast("/"),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Button(onClick = { viewModel.showSwappinessDialog() }) {
-                        Text(text = swappiness)
+        if (hasSchedAutogroup) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    MiscUtils.SCHED_AUTOGROUP.substringAfterLast("/"),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = schedAutogroupStatus,
+                    onCheckedChange = { isChecked ->
+                        viewModel.updateSchedAutogroup(isChecked)
                     }
+                )
+            }
+        }
+
+        if (hasSwappiness) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = MiscUtils.SWAPPINESS.substringAfterLast("/"),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Button(onClick = { viewModel.showSwappinessDialog() }) {
+                    Text(text = swappiness)
                 }
             }
+        }
 
-	    if (hasPrintk) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = MiscUtils.PRINTK.substringAfterLast("/"),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Button(onClick = { viewModel.showPrintkDialog() }) {
-                        Text(text = printk)
-                    }
+	if (hasPrintk) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = MiscUtils.PRINTK.substringAfterLast("/"),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Button(onClick = { viewModel.showPrintkDialog() }) {
+                    Text(text = printk)
                 }
             }
         }

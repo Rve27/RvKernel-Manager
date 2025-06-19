@@ -104,16 +104,12 @@ class MiscViewModel : ViewModel() {
         }
     }
 
-    fun updateThermalSconfig(isChecked: Boolean) {
+    fun updateThermalSconfig(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newValue = if (isChecked) "10" else "0"
-            if (newValue != cachedThermalSconfig) {
-                Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG)
-                Utils.writeFile(MiscUtils.THERMAL_SCONFIG, newValue)
-                Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG)
-                _thermalSconfig.value = newValue
-                cachedThermalSconfig = newValue
-            }
+            Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG)
+            Utils.writeFile(MiscUtils.THERMAL_SCONFIG, value)
+            Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG)
+            _thermalSconfig.value = value
         }
     }
 
