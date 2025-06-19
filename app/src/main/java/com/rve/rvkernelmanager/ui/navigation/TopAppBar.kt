@@ -45,6 +45,7 @@ fun PinnedTopAppBar(
 		    onClick = {
 			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Rve27/RvKernel-Manager"))
 			context.startActivity(intent)
+			expanded = false
 		    },
 		    leadingIcon = {
 			Icon(
@@ -60,6 +61,7 @@ fun PinnedTopAppBar(
 		    onClick = {
 			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/rvosuniverse"))
 			context.startActivity(intent)
+			expanded = false
 		    },
 		    leadingIcon = {
 			Icon(
@@ -72,7 +74,9 @@ fun PinnedTopAppBar(
 		    text = {
 			Text("Settings")
 		    },
-		    onClick = { /* do nothing */ },
+		    onClick = {
+			expanded = false
+		    },
 		    leadingIcon = {
 			Icon(
 			    Icons.Filled.Settings,
