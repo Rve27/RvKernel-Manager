@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
@@ -37,7 +36,7 @@ import com.rve.rvkernelmanager.ui.component.CustomItem
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    lifecycleOwner: LifecycleOwner
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current

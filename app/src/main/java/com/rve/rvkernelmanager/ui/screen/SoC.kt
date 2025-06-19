@@ -27,8 +27,10 @@ import com.rve.rvkernelmanager.ui.component.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOwner) {
-
+fun SoCScreen(
+    viewModel: SoCViewModel = viewModel(),
+    lifecycleOwner: LifecycleOwner
+) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
