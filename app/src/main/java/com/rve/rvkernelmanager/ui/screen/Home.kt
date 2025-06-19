@@ -27,8 +27,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
 import com.rve.rvkernelmanager.ui.component.CustomItem
 
@@ -36,10 +37,11 @@ import com.rve.rvkernelmanager.ui.component.CustomItem
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val context = LocalContext.current
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -60,6 +62,9 @@ fun HomeScreen(
         topBar = {
 	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
 	},
+	bottomBar = {
+            BottomNavigationBar(navController)
+        },
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->
         LazyColumn(

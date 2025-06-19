@@ -19,7 +19,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
+import androidx.navigation.NavController
+import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.MiscUtils
 import com.rve.rvkernelmanager.R
@@ -28,7 +29,8 @@ import com.rve.rvkernelmanager.R
 @Composable
 fun MiscScreen(
     viewModel: MiscViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -50,6 +52,9 @@ fun MiscScreen(
     Scaffold(
         topBar = {
 	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
+	bottomBar = {
+	    BottomNavigationBar(navController = navController)
 	},
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->

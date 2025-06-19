@@ -22,7 +22,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
+import androidx.navigation.NavController
+import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomItem
@@ -32,7 +33,8 @@ import com.rve.rvkernelmanager.ui.component.SwitchItem
 @Composable
 fun BatteryScreen(
     viewModel: BatteryViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -57,6 +59,9 @@ fun BatteryScreen(
     Scaffold(
         topBar = {
 	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
+	},
+	bottomBar = {
+	    BottomNavigationBar(navController = navController)
 	},
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
     ) { innerPadding ->

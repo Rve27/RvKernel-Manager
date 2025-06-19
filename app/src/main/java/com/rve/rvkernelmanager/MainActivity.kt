@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Scaffold
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.navigation.*
@@ -74,28 +73,36 @@ fun RvKernelManagerApp() {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     Scaffold(
-        bottomBar = { 
-            BottomNavigationBar(navController)
-        },
 	contentWindowInsets = WindowInsets(0)
-    ) { innerPadding ->
+    ) {
 	NavHost(
-	    navController = navController,
-	    startDestination = "home",
-	    modifier = Modifier.padding(innerPadding)
+            navController = navController,
+            startDestination = "home",
 	) {
-	    composable("home") {
-		HomeScreen(lifecycleOwner = lifecycleOwner)
-	    }
-	    composable("soc") {
-		SoCScreen(lifecycleOwner = lifecycleOwner)
-	    }
-	    composable("battery") {
-		BatteryScreen(lifecycleOwner = lifecycleOwner)
-	    }
-	    composable("misc") {
-		MiscScreen(lifecycleOwner = lifecycleOwner)
-	    }
+            composable("home") {
+                HomeScreen(
+		    lifecycleOwner = lifecycleOwner,
+		    navController = navController
+	        )
+            }
+            composable("soc") {
+                SoCScreen(
+		    lifecycleOwner = lifecycleOwner,
+		    navController = navController
+	        )
+            }
+            composable("battery") {
+                BatteryScreen(
+		    lifecycleOwner = lifecycleOwner,
+		    navController = navController
+		)
+            }
+            composable("misc") {
+                MiscScreen(
+		    lifecycleOwner = lifecycleOwner,
+		    navController = navController
+		)
+            }
 	}
     }
 }

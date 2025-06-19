@@ -19,8 +19,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.rve.rvkernelmanager.utils.SoCUtils
-import com.rve.rvkernelmanager.ui.navigation.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomItem
@@ -29,7 +30,8 @@ import com.rve.rvkernelmanager.ui.component.CustomItem
 @Composable
 fun SoCScreen(
     viewModel: SoCViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -59,7 +61,10 @@ fun SoCScreen(
         topBar = {
 	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
 	},
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+	bottomBar = {
+	    BottomNavigationBar(navController = navController)
+	},
+	contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
