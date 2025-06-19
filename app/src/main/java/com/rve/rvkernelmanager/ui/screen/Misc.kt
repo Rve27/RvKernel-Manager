@@ -252,16 +252,31 @@ fun MiscCard(viewModel: MiscViewModel) {
 
         if (hasSwappiness) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+		modifier = Modifier
+		    .clickable(
+			onClick = { viewModel.showSwappinessDialog() }
+		    )
+		    .padding(16.dp)
             ) {
-                Text(
-                    text = MiscUtils.SWAPPINESS.substringAfterLast("/"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Button(onClick = { viewModel.showSwappinessDialog() }) {
-                    Text(text = swappiness)
+		Column(
+		    modifier = Modifier.weight(1f)
+		) {
+                    Text(
+                        text = "Swappiness",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+		    Text(
+			text = "Controls how aggressively the system uses swap memory",
+			style = MaterialTheme.typography.bodySmall,
+			modifier = Modifier.alpha(0.7f)
+		    )
+		}
+                Button(
+		    onClick = { viewModel.showSwappinessDialog() }
+		) {
+                    Text(
+			text = "$swappiness%"
+		    )
                 }
             }
         }
@@ -292,7 +307,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     OutlinedTextField(
                         value = newSwappinessValue,
 			onValueChange = { newSwappinessValue = it },
-                        label = { Text(MiscUtils.SWAPPINESS.substringAfterLast("/")) },
+                        label = { Text("Swappiness") },
                         modifier = Modifier.fillMaxWidth(),
 			keyboardOptions = KeyboardOptions.Default.copy(
 			    keyboardType = KeyboardType.Number
