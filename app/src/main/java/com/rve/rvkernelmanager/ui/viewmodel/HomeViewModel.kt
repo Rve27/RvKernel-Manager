@@ -36,28 +36,14 @@ class HomeViewModel : ViewModel() {
     private val _isFullKernelVersion = MutableStateFlow(false)
     val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
 
-    private var cachedCPUInfo: String? = null
-    private var cachedExtendedCPUInfo: String? = null
-
-    private var cachedKernelVersion: String? = null
-    private var cachedFullKernelVersion: String? = null
-
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
-
-            if (cachedCPUInfo == null) {
-                cachedCPUInfo = Utils.getCPUInfo()
-            }
-            _cpu.value = cachedCPUInfo ?: ""
-
-            if (cachedKernelVersion == null) {
-                cachedKernelVersion = Utils.getKernelVersion()
-            }
-            _kernelVersion.value = cachedKernelVersion ?: ""
+            _cpu.value = Utils.getCPUInfo()
+            _kernelVersion.value = Utils.getKernelVersion()
         }
     }
 
@@ -65,12 +51,9 @@ class HomeViewModel : ViewModel() {
         _isExtendCPUInfo.value = !_isExtendCPUInfo.value
 
         if (_isExtendCPUInfo.value) {
-            if (cachedExtendedCPUInfo == null) {
-                cachedExtendedCPUInfo = Utils.getExtendCPUInfo()
-            }
-            _cpu.value = cachedExtendedCPUInfo ?: ""
+            _cpu.value = Utils.getExtendCPUInfo()
         } else {
-            _cpu.value = cachedCPUInfo ?: ""
+            _cpu.value = Utils.getCPUInfo()
         }
     }
 
@@ -78,13 +61,10 @@ class HomeViewModel : ViewModel() {
         _isFullKernelVersion.value = !_isFullKernelVersion.value
 
         if (_isFullKernelVersion.value) {
-            if (cachedFullKernelVersion == null) {
-                Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION)
-                cachedFullKernelVersion = Utils.readFile(Utils.FULL_KERNEL_VERSION)
-            }
-            _kernelVersion.value = cachedFullKernelVersion ?: ""
+            Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION)
+            _kernelVersion.value = Utils.readFile(Utils.FULL_KERNEL_VERSION)
         } else {
-            _kernelVersion.value = cachedKernelVersion ?: ""
+            _kernelVersion.value = Utils.getKernelVersion()
         }
     }
 
