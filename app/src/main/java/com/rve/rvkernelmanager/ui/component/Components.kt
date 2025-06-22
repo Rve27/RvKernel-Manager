@@ -19,7 +19,9 @@ import androidx.compose.animation.animateContentSize
 @Composable
 fun SwitchItem(
     title: String,
+    titleSmall: Boolean = false,
     summary: String? = null,
+    bodySmall: Boolean = false,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -41,12 +43,20 @@ fun SwitchItem(
 	) {
 	    Text(
 		text = title,
-		style = MaterialTheme.typography.titleMedium
+		style = if (titleSmall) {
+		    MaterialTheme.typography.titleSmall
+		} else {
+		    MaterialTheme.typography.titleMedium
+		}
 	    )
 	    if (summary != null) {
 		Text(
 		    text = summary,
-		    style = MaterialTheme.typography.bodyMedium,
+		    style = if (bodySmall) {
+			MaterialTheme.typography.bodySmall
+		    } else {
+			MaterialTheme.typography.bodyMedium
+		    },
 		    modifier = Modifier.alpha(0.7f)
 	        )
 	    }
