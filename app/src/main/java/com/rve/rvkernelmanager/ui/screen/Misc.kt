@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
+import com.rve.rvkernelmanager.ui.component.SwitchItem
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
@@ -232,22 +233,16 @@ fun MiscCard(viewModel: MiscViewModel) {
         }
 
         if (hasSchedAutogroup) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    MiscUtils.SCHED_AUTOGROUP.substringAfterLast("/"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = schedAutogroupStatus,
-                    onCheckedChange = { isChecked ->
-                        viewModel.updateSchedAutogroup(isChecked)
-                    }
-                )
-            }
+	    SwitchItem(
+		titleSmall = true,
+		title = "Sched auto group",
+		bodySmall = true,
+		summary = "Automatically groups related tasks for better CPU scheduling",
+		checked = schedAutogroupStatus,
+		onCheckedChange = { isChecked ->
+		    viewModel.updateSchedAutogroup(isChecked)
+		}
+	    )
         }
 
         if (hasSwappiness) {
