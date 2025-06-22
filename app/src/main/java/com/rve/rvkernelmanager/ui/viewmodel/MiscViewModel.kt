@@ -45,11 +45,6 @@ class MiscViewModel : ViewModel() {
     private val _showPrintkDialog = MutableStateFlow(false)
     val showPrintkDialog: StateFlow<Boolean> = _showPrintkDialog
 
-    private var cachedThermalSconfig: String? = null
-    private var cachedSchedAutogroup: String? = null
-    private var cachedSwappiness: String? = null
-    private var cachedPrintk: String? = null
-
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
         private set
@@ -74,32 +69,16 @@ class MiscViewModel : ViewModel() {
 
     fun loadMiscData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentThermalSconfig = Utils.readFile(MiscUtils.THERMAL_SCONFIG)
-            if (currentThermalSconfig != cachedThermalSconfig) {
-                _thermalSconfig.value = currentThermalSconfig
-                cachedThermalSconfig = currentThermalSconfig
-            }
+            _thermalSconfig.value = Utils.readFile(MiscUtils.THERMAL_SCONFIG)
             _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG)
 
-            val currentSchedAutogroup = Utils.readFile(MiscUtils.SCHED_AUTOGROUP)
-            if (currentSchedAutogroup != cachedSchedAutogroup) {
-                _schedAutogroup.value = currentSchedAutogroup
-                cachedSchedAutogroup = currentSchedAutogroup
-            }
+            _schedAutogroup.value = Utils.readFile(MiscUtils.SCHED_AUTOGROUP)
             _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP)
 
-            val currentSwappiness = Utils.readFile(MiscUtils.SWAPPINESS)
-            if (currentSwappiness != cachedSwappiness) {
-                _swappiness.value = currentSwappiness
-                cachedSwappiness = currentSwappiness
-            }
+            _swappiness.value = Utils.readFile(MiscUtils.SWAPPINESS)
             _hasSwappiness.value = Utils.testFile(MiscUtils.SWAPPINESS)
 
-	    val currentPrintk = Utils.readFile(MiscUtils.PRINTK)
-            if (currentPrintk != cachedPrintk) {
-                _printk.value = currentPrintk
-                cachedPrintk = currentPrintk
-            }
+            _printk.value = Utils.readFile(MiscUtils.PRINTK)
             _hasPrintk.value = Utils.testFile(MiscUtils.PRINTK)
         }
     }
@@ -116,11 +95,8 @@ class MiscViewModel : ViewModel() {
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
-            if (newValue != cachedSchedAutogroup) {
-                Utils.writeFile(MiscUtils.SCHED_AUTOGROUP, newValue)
-                _schedAutogroup.value = newValue
-                cachedSchedAutogroup = newValue
-            }
+            Utils.writeFile(MiscUtils.SCHED_AUTOGROUP, newValue)
+            _schedAutogroup.value = newValue
         }
     }
 
