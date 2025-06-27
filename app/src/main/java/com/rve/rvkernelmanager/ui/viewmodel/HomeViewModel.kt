@@ -12,59 +12,32 @@ import com.rve.rvkernelmanager.utils.Utils
 
 class HomeViewModel : ViewModel() {
 
-    private val _deviceCodename = MutableStateFlow("")
-    val deviceCodename: StateFlow<String> = _deviceCodename
+    private val _device = MutableStateFlow("")
+    val device: StateFlow<String> = _device
 
-    private val _ramInfo = MutableStateFlow("")
-    val ramInfo: StateFlow<String> = _ramInfo
+    private val _ram = MutableStateFlow("")
+    val ram: StateFlow<String> = _ram
 
     private val _cpu = MutableStateFlow("")
     val cpu: StateFlow<String> = _cpu
 
-    private val _gpuModel = MutableStateFlow("")
-    val gpuModel: StateFlow<String> = _gpuModel
+    private val _gpu = MutableStateFlow("")
+    val gpu: StateFlow<String> = _gpu
 
-    private val _androidVersion = MutableStateFlow("")
-    val androidVersion: StateFlow<String> = _androidVersion
+    private val _android = MutableStateFlow("")
+    val android: StateFlow<String> = _android
 
-    private val _kernelVersion = MutableStateFlow("")
-    val kernelVersion: StateFlow<String> = _kernelVersion
-
-    private val _isExtendCPUInfo = MutableStateFlow(false)
-    val isExtendCPUInfo: StateFlow<Boolean> = _isExtendCPUInfo
-
-    private val _isFullKernelVersion = MutableStateFlow(false)
-    val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
+    private val _kernel = MutableStateFlow("")
+    val kernel: StateFlow<String> = _kernel
 
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            _deviceCodename.value = Utils.getDeviceCodename()
-            _ramInfo.value = Utils.getTotalRam(context)
-            _gpuModel.value = Utils.getGPUModel()
-            _androidVersion.value = Utils.getAndroidVersion()
+            _device.value = Utils.getDeviceCodename()
+            _ram.value = Utils.getTotalRam(context)
+            _gpu.value = Utils.getGPUModel()
+            _android.value = Utils.getAndroidVersion()
             _cpu.value = Utils.getCPUInfo()
-            _kernelVersion.value = Utils.getKernelVersion()
-        }
-    }
-
-    fun showCPUInfo() {
-        _isExtendCPUInfo.value = !_isExtendCPUInfo.value
-
-        if (_isExtendCPUInfo.value) {
-            _cpu.value = Utils.getExtendCPUInfo()
-        } else {
-            _cpu.value = Utils.getCPUInfo()
-        }
-    }
-
-    fun showFullKernelVersion() {
-        _isFullKernelVersion.value = !_isFullKernelVersion.value
-
-        if (_isFullKernelVersion.value) {
-            Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION)
-            _kernelVersion.value = Utils.readFile(Utils.FULL_KERNEL_VERSION)
-        } else {
-            _kernelVersion.value = Utils.getKernelVersion()
+            _kernel.value = Utils.getKernelVersion()
         }
     }
 

@@ -13,10 +13,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.animation.animateContentSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.DialogProperties
@@ -31,7 +31,6 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
-import com.rve.rvkernelmanager.ui.component.CustomItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,73 +93,173 @@ fun HomeScreen(
 
 @Composable
 fun DeviceInfoCard(viewModel: HomeViewModel) {
-    val deviceCodename by viewModel.deviceCodename.collectAsState()
-    val ramInfo by viewModel.ramInfo.collectAsState()
+    val device by viewModel.device.collectAsState()
+    val ram by viewModel.ram.collectAsState()
     val cpu by viewModel.cpu.collectAsState()
-    val gpuModel by viewModel.gpuModel.collectAsState()
-    val androidVersion by viewModel.androidVersion.collectAsState()
-    val kernelVersion by viewModel.kernelVersion.collectAsState()
-    val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
-    val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
+    val gpu by viewModel.gpu.collectAsState()
+    val android by viewModel.android.collectAsState()
+    val kernel by viewModel.kernel.collectAsState()
 
-    Card {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Device Information",
-                style = MaterialTheme.typography.titleLarge
+    Card(
+	modifier = Modifier.fillMaxWidth()
+    ) {
+        ListItem(
+	    headlineContent = {
+                Text(
+                    text = "Device Information",
+                    style = MaterialTheme.typography.titleLarge
+                )
+	    },
+	    colors = ListItemDefaults.colors(
+		CardDefaults.cardColors().containerColor
+	    )
+	)
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+	ListItem(
+	    headlineContent = {
+		Text(
+		    text = "Device",
+		    style = MaterialTheme.typography.titleMedium
+		)
+	    },
+	    supportingContent = {
+		Text(
+		    text = device,
+		    style = MaterialTheme.typography.bodyMedium
+		)
+	    },
+	    leadingContent = {
+	        Icon(
+		    painterResource(R.drawable.ic_smartphone),
+		    contentDescription = null
+		)
+	    },
+	    colors = ListItemDefaults.colors(
+		CardDefaults.cardColors().containerColor
+	    )
+	)
+
+	ListItem(
+	    headlineContent = {
+		Text(
+		    text = "RAM",
+		    style = MaterialTheme.typography.titleMedium
+		)
+	    },
+	    supportingContent = {
+		Text(
+		    text = ram,
+		    style = MaterialTheme.typography.bodyMedium
+		)
+	    },
+	    leadingContent = {
+	        Icon(
+		    painter = painterResource(R.drawable.ic_ram),
+		    contentDescription = null
+		)
+	    },
+	    colors = ListItemDefaults.colors(
+		CardDefaults.cardColors().containerColor
+	    )
+	)
+
+	ListItem(
+	    headlineContent = {
+		Text(
+		    text = "CPU",
+                    style = MaterialTheme.typography.titleMedium
+                )
+	    },
+	    supportingContent = {
+                Text(
+                    text = cpu,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+	    leadingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_cpu),
+                    contentDescription = null
+                )
+            },
+            colors = ListItemDefaults.colors(
+                CardDefaults.cardColors().containerColor
             )
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
 
-            CustomItem(
-                title = "Codename",
-                body = deviceCodename,
-                icon = painterResource(R.drawable.ic_smartphone)
+	ListItem(
+	    headlineContent = {
+		Text(
+		    text = "GPU",
+		    style = MaterialTheme.typography.titleMedium
+		)
+	    },
+	    supportingContent = {
+		Text(
+		    text = gpu,
+		    style = MaterialTheme.typography.bodyMedium
+		)
+	    },
+	    leadingContent = {
+		Icon(
+		    painter = painterResource(R.drawable.ic_video_card),
+		    contentDescription = null
+		)
+	    },
+	    colors = ListItemDefaults.colors(
+                CardDefaults.cardColors().containerColor
             )
-            Spacer(Modifier.height(16.dp))
+	)
 
-            CustomItem(
-                title = "RAM",
-                body = ramInfo,
-                icon = painterResource(R.drawable.ic_ram)
+	ListItem(
+            headlineContent = {
+                Text(
+                    text = "Android version",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = android,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_android),
+                    contentDescription = null
+                )
+            },
+            colors = ListItemDefaults.colors(
+                CardDefaults.cardColors().containerColor
             )
-            Spacer(Modifier.height(16.dp))
+        )
 
-            CustomItem(
-                title = "CPU",
-                body = cpu,
-                icon = painterResource(R.drawable.ic_cpu),
-                onClick = { viewModel.showCPUInfo() },
-                animateContent = true
+	ListItem(
+            headlineContent = {
+                Text(
+                    text = "Kernel version",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            },
+            supportingContent = {
+                Text(
+                    text = kernel,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            leadingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_linux),
+                    contentDescription = null
+                )
+            },
+            colors = ListItemDefaults.colors(
+                CardDefaults.cardColors().containerColor
             )
-            Spacer(Modifier.height(16.dp))
-
-            CustomItem(
-                title = "GPU",
-                body = gpuModel,
-                icon = painterResource(R.drawable.ic_video_card)
-            )
-            Spacer(Modifier.height(16.dp))
-
-            CustomItem(
-                title = "Android version",
-                body = androidVersion,
-                icon = painterResource(R.drawable.ic_android)
-            )
-            Spacer(Modifier.height(16.dp))
-
-            CustomItem(
-                title = "Kernel version",
-                body = kernelVersion,
-                icon = painterResource(R.drawable.ic_linux),
-                onClick = { viewModel.showFullKernelVersion() },
-                animateContent = true
-            )
-        }
+        )
     }
 }
 
@@ -171,29 +270,34 @@ fun DonateCard() {
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.clickable { showDonateDialog = true }
+	modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Donate",
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-
-                CustomItem(
-                    body = "Click this donate card if you want to donate or buy me a coffee.",
-		    useAlpha = false,
-                    icon = painterResource(R.drawable.ic_donate),
-                    onClick = { showDonateDialog = true }
-                )
-            }
+		.clickable(
+		    onClick = { showDonateDialog = true }
+		)
+		.padding(16.dp),
+	    verticalAlignment = Alignment.CenterVertically
+	) {
+	    Icon(
+                painter = painterResource(R.drawable.ic_donate),
+                contentDescription = null,
+		tint = MaterialTheme.colorScheme.onSurfaceVariant,
+		modifier = Modifier.padding(end = 16.dp)
+            )
+	    Column {
+		Text(
+		    text = "Donate",
+                    style = MaterialTheme.typography.titleMedium,
+		    color = MaterialTheme.colorScheme.onSurface
+		)
+		Text(
+		    text = "Click this donate card if you want to donate or buy me a coffee.",
+		    style = MaterialTheme.typography.bodyMedium,
+		    color = MaterialTheme.colorScheme.onSurfaceVariant
+		)
+	    }
         }
     }
 
@@ -273,34 +377,43 @@ fun DonateCard() {
 
 @Composable
 fun CopyrightCard() {
-    Card {
+    Card(
+	modifier = Modifier.fillMaxWidth()
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                CustomItem(
-                    title = "License",
-                    titleLarge = true,
-                    icon = painterResource(R.drawable.ic_license)
-                )
+	    Icon(
+		painter = painterResource(R.drawable.ic_license),
+		contentDescription = null,
+		tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(end = 16.dp)
+	    )
+	    Text(
+		text = "License",
+		style = MaterialTheme.typography.titleMedium,
+		color = MaterialTheme.colorScheme.onSurface
+	    )
+	}
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        Column(
+	    modifier = Modifier.padding(16.dp)
+	) {
+	    Text(
+                text = """
+                    Copyright (C) 2025 Rve
 
-                CustomItem(
-                    body = """
-                        Copyright (C) 2025 Rve
+                    This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-                        This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+                    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-                        This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-                        You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-                    """.trimIndent()
-                )
-            }
+                    You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+                """.trimIndent(),
+		style = MaterialTheme.typography.bodyMedium,
+		color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
