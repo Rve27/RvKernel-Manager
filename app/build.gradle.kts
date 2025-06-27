@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -74,10 +75,6 @@ android {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
 
-    kotlinOptions {
-        jvmTarget = "21"
-    }
-
     packaging {
         jniLibs {
             useLegacyPackaging = true
@@ -88,6 +85,12 @@ android {
 	}
 
         resources.excludes += "DebugProbesKt.bin"
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 
