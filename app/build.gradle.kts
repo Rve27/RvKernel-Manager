@@ -103,7 +103,23 @@ android {
 	    useLegacyPackaging = true
 	}
 
-        resources.excludes += "DebugProbesKt.bin"
+        resources {
+            excludes += setOf(
+                "DebugProbesKt.bin",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1",
+                "META-INF/*.kotlin_module",
+                "**/attach_hotspot_windows.dll"
+            )
+        }
     }
 }
 
