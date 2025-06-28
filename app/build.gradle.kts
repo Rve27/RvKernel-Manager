@@ -47,10 +47,6 @@ android {
         vectorDrawables { 
             useSupportLibrary = true
         }
-
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-        }
     }
     
     compileOptions {
@@ -66,6 +62,27 @@ android {
 	    isCrunchPngs = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    splits {
+        abi {
+            isEnable = true
+	    isUniversalApk = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a")
+        }
+    }
+
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
         }
     }
 
