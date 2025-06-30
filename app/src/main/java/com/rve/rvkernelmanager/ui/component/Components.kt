@@ -79,62 +79,64 @@ fun SwitchItem(
 }
 
 @Composable
-fun CustomItem(
+fun CustomListItem(
+    icon: Any? = null,
     title: String? = null,
-    body: String? = null,
-    onClick: (() -> Unit)? = null,
-    animateContent: Boolean = false,
+    titleSmall: Boolean = false,
     titleLarge: Boolean = false,
-    useAlpha: Boolean = true,
-    icon: Any? = null
+    summary: String? = null,
+    bodySmall: Boolean = false,
+    bodyLarge: Boolean = false,
+    onClick: (() -> Unit)? = null,
+    animateContentSize: Boolean = false
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        if (icon != null) {
+    Row(
+	modifier = Modifier
+	    .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+	    .padding(16.dp)
+	    .fillMaxWidth(),
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	if (icon != null) {
             when (icon) {
                 is ImageVector -> Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
                 )
                 is Painter -> Icon(
                     painter = icon,
                     contentDescription = null,
-                    modifier = Modifier.padding(end = 20.dp)
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
                 )
             }
         }
-        Column {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = if (titleLarge) {
-                        MaterialTheme.typography.titleLarge
-                    } else {
-                        MaterialTheme.typography.titleMedium
-                    },
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            if (body != null) {
-		var modifier = Modifier
-		    .clickable(enabled = onClick != null) { onClick?.invoke() }
-
-		if (animateContent) {
-		    modifier = modifier.animateContentSize()
-		}
-
-		modifier = modifier.padding(top = 4.dp)
-
-		if (useAlpha) {
-		    modifier = modifier.alpha(0.7f)
-		}
-
-                Text(
-                    text = body,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = modifier
-                )
-            }
-        }
+	Column {
+	    if (title != null) {
+		Text(
+		    text = title,
+		    style = when {
+			titleSmall -> MaterialTheme.typography.titleSmall
+			titleLarge -> MaterialTheme.typography.titleLarge
+			else -> MaterialTheme.typography.titleMedium
+		    },
+		    color = MaterialTheme.colorScheme.onSurface
+		)
+	    }
+	    if (summary != null) {
+		Text(
+		    text = summary,
+		    style = when {
+			bodySmall -> MaterialTheme.typography.bodySmall
+			bodyLarge -> MaterialTheme.typography.bodyLarge
+			else -> MaterialTheme.typography.bodyMedium
+		    },
+		    color = MaterialTheme.colorScheme.onSurfaceVariant,
+		    modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier
+		)
+	    }
+	}
     }
 }
