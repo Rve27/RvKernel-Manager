@@ -31,7 +31,7 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
-import com.rve.rvkernelmanager.ui.component.CustomItem
+import com.rve.rvkernelmanager.ui.component.CustomListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,63 +104,52 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
 
     Card {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Device Information",
-                style = MaterialTheme.typography.titleLarge
-            )
+        CustomListItem(
+            title = "Device Information",
+	    titleLarge = true
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-            CustomItem(
-                title = "Codename",
-                body = deviceCodename,
-                icon = painterResource(R.drawable.ic_smartphone)
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "Codename",
+            summary = deviceCodename,
+	    icon = painterResource(R.drawable.ic_smartphone)
+        )
 
-            CustomItem(
-                title = "RAM",
-                body = ramInfo,
-                icon = painterResource(R.drawable.ic_ram)
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "RAM",
+            summary = ramInfo,
+	    icon = painterResource(R.drawable.ic_ram)
+        )
 
-            CustomItem(
-                title = "CPU",
-                body = cpu,
-                icon = painterResource(R.drawable.ic_cpu),
-                onClick = { viewModel.showCPUInfo() },
-                animateContent = true
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "CPU",
+            summary = cpu,
+            icon = painterResource(R.drawable.ic_cpu),
+            onClick = { viewModel.showCPUInfo() },
+	    animateContentSize = true
+        )
 
-            CustomItem(
-                title = "GPU",
-                body = gpuModel,
-                icon = painterResource(R.drawable.ic_video_card)
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "GPU",
+            summary = gpuModel,
+            icon = painterResource(R.drawable.ic_video_card)
+        )
 
-            CustomItem(
-                title = "Android version",
-                body = androidVersion,
-                icon = painterResource(R.drawable.ic_android)
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "Android version",
+            summary = androidVersion,
+            icon = painterResource(R.drawable.ic_android)
+        )
 
-            CustomItem(
-                title = "Kernel version",
-                body = kernelVersion,
-                icon = painterResource(R.drawable.ic_linux),
-                onClick = { viewModel.showFullKernelVersion() },
-                animateContent = true
-            )
-        }
+        CustomListItem(
+            title = "Kernel version",
+            summary = kernelVersion,
+            icon = painterResource(R.drawable.ic_linux),
+            onClick = { viewModel.showFullKernelVersion() },
+	    animateContentSize = true
+        )
     }
 }
 
@@ -173,28 +162,17 @@ fun DonateCard() {
     Card(
         modifier = Modifier.clickable { showDonateDialog = true }
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Donate",
-                    style = MaterialTheme.typography.titleLarge
-                )
+	CustomListItem(
+	    title = "Donate",
+	    titleLarge = true
+	)
 
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-                CustomItem(
-                    body = "Click this donate card if you want to donate or buy me a coffee.",
-		    useAlpha = false,
-                    icon = painterResource(R.drawable.ic_donate),
-                    onClick = { showDonateDialog = true }
-                )
-            }
-        }
+        CustomListItem(
+             summary = "Click this donate card if you want to donate or buy me a coffee.",
+             icon = painterResource(R.drawable.ic_donate)
+        )
     }
 
     if (showDonateDialog) {
@@ -274,33 +252,24 @@ fun DonateCard() {
 @Composable
 fun CopyrightCard() {
     Card {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                CustomItem(
-                    title = "License",
-                    titleLarge = true,
-                    icon = painterResource(R.drawable.ic_license)
-                )
+        CustomListItem(
+            title = "License",
+	    titleLarge = true,
+            icon = painterResource(R.drawable.ic_license)
+        )
 
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-                CustomItem(
-                    body = """
-                        Copyright (C) 2025 Rve
+        CustomListItem(
+            summary = """
+                Copyright (C) 2025 Rve
 
-                        This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+                This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-                        This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+                This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-                        You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-                    """.trimIndent()
-                )
-            }
-        }
+                You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+            """.trimIndent()
+        )
     }
 }
