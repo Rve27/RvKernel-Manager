@@ -9,8 +9,8 @@ plugins {
 
 android {
     namespace = "com.rve.rvkernelmanager"
-    compileSdk = 35
-    buildToolsVersion = "35.0.1"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
     ndkVersion = "28.1.13356709"
 
     signingConfigs {
@@ -39,7 +39,7 @@ android {
     defaultConfig {
         applicationId = "com.rve.rvkernelmanager"
         minSdk = 31
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 2
         versionName = "1.2-beta"
         
