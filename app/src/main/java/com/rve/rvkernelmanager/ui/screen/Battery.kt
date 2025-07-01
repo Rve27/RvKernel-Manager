@@ -27,6 +27,7 @@ import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomListItem
+import com.rve.rvkernelmanager.ui.component.MonitorListItem
 import com.rve.rvkernelmanager.ui.component.SwitchItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,36 +114,16 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 	    Column(
 		modifier = Modifier.padding(16.dp)
 	    ) {
-		Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Level",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = batteryInfo.level,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-		Spacer(Modifier.height(8.dp))
+		MonitorListItem(
+                    title = "Level",
+                    summary = batteryInfo.level
+		)
 
-		Row(
-		    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-	        ) {
-		    Text(
-			text = "Temperature",
-			style = MaterialTheme.typography.bodyMedium,
-			modifier = Modifier.weight(1f)
-		    )
-		    Text(
-			text = batteryInfo.temp,
-			style = MaterialTheme.typography.bodyMedium
-		    )
-		}
+		Spacer(Modifier.height(8.dp))
+		MonitorListItem(
+		    title = "Temperature",
+		    summary = batteryInfo.temp
+		)
 	    }
 	}
     }
