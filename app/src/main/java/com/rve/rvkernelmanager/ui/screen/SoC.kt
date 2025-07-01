@@ -25,6 +25,7 @@ import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomListItem
+import com.rve.rvkernelmanager.ui.component.MonitorListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,85 +140,39 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
 
 		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-		Row(
-		    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Usage",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
+		Column(
+		    modifier = Modifier.padding(16.dp)
+		) {
+		    MonitorListItem(
+                        title = "Usage",
+                        summary = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%"
                     )
-                    Text(
-                        text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-		Spacer(Modifier.height(8.dp))
 
-		Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Temperature",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
+		    Spacer(Modifier.height(8.dp))
+		    MonitorListItem(
+                        title = "Temperature",
+                        summary = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C"
                     )
-                    Text(
-                        text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (hasBigCluster) "Little cluster" else "Current freq",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
-		    )
-                    Text(
-                        text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
-                        style = MaterialTheme.typography.bodyMedium
-	            )
-                }
-
-                if (hasBigCluster) {
                     Spacer(Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Big cluster",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-			)
-                        Text(
-                            text = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
-                            style = MaterialTheme.typography.bodyMedium
+		    MonitorListItem(
+                        title = if (hasBigCluster) "Little cluster" else "Current freq",
+                        summary = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz"
+	            )
+
+                    if (hasBigCluster) {
+                        Spacer(Modifier.height(8.dp))
+			MonitorListItem(
+                            title = "Big cluster",
+                            summary = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz"
 		        )
                     }
-                }
 
-                if (hasPrimeCluster) {
-                    Spacer(Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Prime cluster",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-			)
-                        Text(
-                            text = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
-                            style = MaterialTheme.typography.bodyMedium
+                    if (hasPrimeCluster) {
+                        Spacer(Modifier.height(8.dp))
+			MonitorListItem(
+                            title = "Prime cluster",
+                            summary = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz"
 			)
                     }
                 }
@@ -240,49 +195,22 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
 	        Column(
 	            modifier = Modifier.padding(16.dp)
 	        ) {
-	            Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Usage",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+		    MonitorListItem(
+                        title = "Usage",
+                        summary = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%"
+                    )
+
 	            Spacer(Modifier.height(8.dp))
+		    MonitorListItem(
+                        title = "Temperature",
+                        summary = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C"
+                    )
 
-	            Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Temperature",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
                     Spacer(Modifier.height(8.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Current freq",
-		            style = MaterialTheme.typography.bodyMedium,
-		            modifier = Modifier.weight(1f)
-		        )
-                        Text(
-                            text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
-		            style = MaterialTheme.typography.bodyMedium
-		        )
-                    }
+		    MonitorListItem(
+                        title = "Current freq",
+                        summary = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz"
+                    )
                 }
             }
         }
