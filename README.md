@@ -2,7 +2,7 @@
 
 [![Android CI status](https://github.com/Rve27/RvKernel-Manager/workflows/Android%20CI/badge.svg)](https://github.com/Rve27/RvKernel-Manager/actions) [![GitHub release](https://img.shields.io/github/v/release/Rve27/RvKernel-Manager)](https://github.com/Rve27/RvKernel-Manager/releases) [![License](https://img.shields.io/github/license/Rve27/RvKernel-Manager?color=blue)](LICENSE)
 
-An open source Material Design kernel manager, for Android 10+.
+An open source Material Design kernel manager, for Android 12+.
 
 ## Telegram
 - [Channel](https://t.me/rveproject)
