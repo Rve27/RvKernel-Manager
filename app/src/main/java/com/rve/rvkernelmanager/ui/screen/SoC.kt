@@ -24,7 +24,7 @@ import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.component.CustomItem
+import com.rve.rvkernelmanager.ui.component.CustomListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,140 +114,133 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
     val gpuTemp by viewModel.gpuTemp.collectAsState()
     val gpuUsage by viewModel.gpuUsage.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            CustomItem(
-                title = "SoC Monitor",
-                titleLarge = true,
-		icon = painterResource(R.drawable.ic_monitor)
-            )
+    Card {
+        CustomListItem(
+            title = "SoC Monitor",
+            titleLarge = true,
+	    icon = painterResource(R.drawable.ic_monitor)
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
+	Column(
+	    modifier = Modifier.padding(16.dp)
+	) {
 	    Card(
 		elevation = CardDefaults.cardElevation(
 		    defaultElevation = 8.dp
 		)
 	    ) {
-		Column(
-		   modifier = Modifier.padding(16.dp)
-		) {
-		    CustomItem(
-			title = "CPU",
-			titleLarge = true,
-			icon = painterResource(R.drawable.ic_cpu)
+		CustomListItem(
+		    title = "CPU",
+		    titleLarge = true,
+		    icon = painterResource(R.drawable.ic_cpu)
+		)
+
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+		Row(
+		    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Usage",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+		Spacer(Modifier.height(8.dp))
+
+		Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Temperature",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (hasBigCluster) "Little cluster" else "Current freq",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
 		    )
+                    Text(
+                        text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                        style = MaterialTheme.typography.bodyMedium
+	            )
+                }
 
-		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Usage",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-		    Spacer(Modifier.height(8.dp))
-
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Temperature",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                if (hasBigCluster) {
                     Spacer(Modifier.height(8.dp))
-
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = if (hasBigCluster) "Little cluster" else "Current freq",
+                            text = "Big cluster",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.weight(1f)
-		        )
+			)
                         Text(
-                            text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                            text = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
                             style = MaterialTheme.typography.bodyMedium
 		        )
                     }
+                }
 
-                    if (hasBigCluster) {
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Big cluster",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-			    )
-                            Text(
-                                text = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
-                                style = MaterialTheme.typography.bodyMedium
-			    )
-                        }
-                    }
-
-                    if (hasPrimeCluster) {
-                        Spacer(Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Prime cluster",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.weight(1f)
-			    )
-                            Text(
-                                text = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
-                                style = MaterialTheme.typography.bodyMedium
-			    )
-                        }
+                if (hasPrimeCluster) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Prime cluster",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f)
+			)
+                        Text(
+                            text = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
+                            style = MaterialTheme.typography.bodyMedium
+			)
                     }
                 }
             }
-	    Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-	    Card(
-		elevation = CardDefaults.cardElevation(
-		    defaultElevation = 8.dp
-		)
-	    ) {
-		Column(
-		   modifier = Modifier.padding(16.dp)
-		) {
-		    CustomItem(
-			title = "GPU",
-			titleLarge = true,
-			icon = painterResource(R.drawable.ic_video_card)
-		    )
+            Card(
+	        elevation = CardDefaults.cardElevation(
+	            defaultElevation = 8.dp
+	        )
+            ) {
+	        CustomListItem(
+	            title = "GPU",
+	            titleLarge = true,
+	            icon = painterResource(R.drawable.ic_video_card)
+	        )
 
-		    HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+	        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
+	        Column(
+	            modifier = Modifier.padding(16.dp)
+	        ) {
+	            Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -260,10 +253,9 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
-		    Spacer(Modifier.height(8.dp))
+	            Spacer(Modifier.height(8.dp))
 
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
+	            Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -279,17 +271,16 @@ private fun SoCMonitorCard(viewModel: SoCViewModel) {
                     Spacer(Modifier.height(8.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = "Current freq",
-			    style = MaterialTheme.typography.bodyMedium,
-			    modifier = Modifier.weight(1f)
+		            style = MaterialTheme.typography.bodyMedium,
+		            modifier = Modifier.weight(1f)
 		        )
                         Text(
                             text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
-			    style = MaterialTheme.typography.bodyMedium
+		            style = MaterialTheme.typography.bodyMedium
 		        )
                     }
                 }
