@@ -26,7 +26,7 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.component.CustomItem
+import com.rve.rvkernelmanager.ui.component.CustomListItem
 import com.rve.rvkernelmanager.ui.component.SwitchItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,58 +96,52 @@ fun BatteryScreen(
 fun BatteryMonitorCard(viewModel: BatteryViewModel) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            CustomItem(
-                title = "Battery Monitor",
-                titleLarge = true,
-		icon = painterResource(R.drawable.ic_monitor)
-            )
+    Card {
+        CustomListItem(
+            title = "Battery Monitor",
+            titleLarge = true,
+	    icon = painterResource(R.drawable.ic_monitor)
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	    Card(
-		elevation = CardDefaults.cardElevation(
-		    defaultElevation = 8.dp
-		)
+	Card(
+	    elevation = CardDefaults.cardElevation(
+		defaultElevation = 8.dp
+	    )
+	) {
+	    Column(
+		modifier = Modifier.padding(16.dp)
 	    ) {
-		Column(
-		   modifier = Modifier.padding(16.dp)
-		) {
-		    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Level",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = batteryInfo.level,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-		    Spacer(Modifier.height(8.dp))
+		Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Level",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = batteryInfo.level,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+		Spacer(Modifier.height(8.dp))
 
-		    Row(
-			modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-		    ) {
-			Text(
-			    text = "Temperature",
-			    style = MaterialTheme.typography.bodyMedium,
-			    modifier = Modifier.weight(1f)
-			)
-			Text(
-			    text = batteryInfo.temp,
-			    style = MaterialTheme.typography.bodyMedium
-			)
-		    }
+		Row(
+		    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+	        ) {
+		    Text(
+			text = "Temperature",
+			style = MaterialTheme.typography.bodyMedium,
+			modifier = Modifier.weight(1f)
+		    )
+		    Text(
+			text = batteryInfo.temp,
+			style = MaterialTheme.typography.bodyMedium
+		    )
 		}
 	    }
 	}
@@ -159,60 +153,48 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
     Card {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Battery Information",
-                style = MaterialTheme.typography.titleLarge
-            )
+        CustomListItem(
+            title = "Battery Information",
+	    titleLarge = true
+        )
 
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-            CustomItem(
-                title = "Technology",
-                body = batteryInfo.tech,
-                icon = painterResource(R.drawable.ic_technology),
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "Technology",
+            summary = batteryInfo.tech,
+            icon = painterResource(R.drawable.ic_technology),
+        )
 
-            CustomItem(
-                title = "Health",
-                body = batteryInfo.health,
-                icon = painterResource(R.drawable.ic_health),
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "Health",
+            summary = batteryInfo.health,
+            icon = painterResource(R.drawable.ic_health),
+        )
 
-            CustomItem(
-                title = "Voltage",
-                body = batteryInfo.voltage,
-                icon = painterResource(R.drawable.ic_lightning),
-            )
-            Spacer(Modifier.height(16.dp))
+        CustomListItem(
+            title = "Voltage",
+            summary = batteryInfo.voltage,
+            icon = painterResource(R.drawable.ic_lightning),
+        )
 
+	Column(
+	    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+	) {
             Card(
 		elevation = CardDefaults.cardElevation(
 		    defaultElevation = 8.dp
                 )
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    CustomItem(
-                        title = "Design capacity",
-                        body = batteryInfo.designCapacity
-                    )
-                    Spacer(Modifier.height(16.dp))
+                CustomListItem(
+                    title = "Design capacity",
+                    summary = batteryInfo.designCapacity
+                )
 
-                    CustomItem(
-                        title = "Maximum capacity",
-                        body = batteryInfo.maximumCapacity
-                    )
-                }
+                CustomListItem(
+                    title = "Maximum capacity",
+                    summary = batteryInfo.maximumCapacity
+                )
             }
         }
     }
@@ -222,18 +204,12 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 fun ChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsState()
 
-    Card(
-        shape = CardDefaults.shape,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Charging",
-                style = MaterialTheme.typography.titleLarge
-            )
-	}
+    Card {
+        CustomListItem(
+            title = "Charging",
+            titleLarge = true
+        )
+
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         if (chargingState.hasFastCharging) {
