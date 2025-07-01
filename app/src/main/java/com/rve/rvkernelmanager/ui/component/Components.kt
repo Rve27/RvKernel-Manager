@@ -140,3 +140,25 @@ fun CustomListItem(
 	}
     }
 }
+
+@Composable
+fun MonitorListItem(
+    title: String,
+    summary: String,
+) {
+    Row(
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	Text(
+	    text = title,
+	    style = MaterialTheme.typography.bodyMedium,
+	    color = MaterialTheme.colorScheme.onSurface,
+	    modifier = Modifier.weight(1f)
+	)
+	Text(
+	    text = summary,
+	    style = MaterialTheme.typography.bodyMedium,
+	    color = MaterialTheme.colorScheme.onSurfaceVariant
+	)
+    }
+}
