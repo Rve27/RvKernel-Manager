@@ -121,6 +121,12 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
 		Spacer(Modifier.height(8.dp))
 		MonitorListItem(
+		    title = "Voltage",
+		    summary = batteryInfo.voltage
+		)
+
+		Spacer(Modifier.height(8.dp))
+		MonitorListItem(
 		    title = "Temperature",
 		    summary = batteryInfo.temp
 		)
@@ -151,12 +157,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             title = "Health",
             summary = batteryInfo.health,
             icon = painterResource(R.drawable.ic_health),
-        )
-
-        CustomListItem(
-            title = "Voltage",
-            summary = batteryInfo.voltage,
-            icon = painterResource(R.drawable.ic_lightning),
         )
 
 	Column(
