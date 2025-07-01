@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.component.SwitchItem
+import com.rve.rvkernelmanager.ui.component.CustomListItem
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
@@ -101,18 +102,11 @@ fun MiscCard(viewModel: MiscViewModel) {
     val hasPrintk by viewModel.hasPrintk.collectAsState()
     val showPrintkDialog by viewModel.showPrintkDialog.collectAsState()
 
-    Card(
-        shape = CardDefaults.shape,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Miscellaneous",
-                style = MaterialTheme.typography.titleLarge
-            )
-	}
+    Card {
+	CustomListItem(
+	    title = "Miscellaneous",
+	    titleLarge = true
+	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         if (hasThermalSconfig) {
