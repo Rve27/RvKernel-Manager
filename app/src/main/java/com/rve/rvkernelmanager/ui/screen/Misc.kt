@@ -18,7 +18,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.component.SwitchItem
+import com.rve.rvkernelmanager.ui.component.SwitchListItem
 import com.rve.rvkernelmanager.ui.component.CustomListItem
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.Utils
@@ -227,7 +227,7 @@ fun MiscCard(viewModel: MiscViewModel) {
         }
 
         if (hasSchedAutogroup) {
-	    SwitchItem(
+	    SwitchListItem(
 		titleSmall = true,
 		title = "Sched auto group",
 		bodySmall = true,
