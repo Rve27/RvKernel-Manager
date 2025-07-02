@@ -17,11 +17,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.animation.animateContentSize
 
 @Composable
-fun SwitchItem(
+fun SwitchListItem(
     title: String,
     titleSmall: Boolean = false,
+    titleLarge: Boolean = false,
     summary: String? = null,
     bodySmall: Boolean = false,
+    bodyLarge: Boolean = false,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -36,45 +38,51 @@ fun SwitchItem(
                 indication = LocalIndication.current,
                 onValueChange = onCheckedChange
             )
-	    .padding(16.dp)
+	    .padding(16.dp),
+	verticalAlignment = Alignment.CenterVertically
     ) {
 	Column(
 	    modifier = Modifier.weight(1f)
 	) {
 	    Text(
 		text = title,
-		style = if (titleSmall) {
-		    MaterialTheme.typography.titleSmall
-		} else {
-		    MaterialTheme.typography.titleMedium
-		}
+		style = when {
+		    titleSmall -> MaterialTheme.typography.titleSmall
+		    titleLarge -> MaterialTheme.typography.titleLarge
+		    else -> MaterialTheme.typography.titleMedium
+		},
+		color = MaterialTheme.colorScheme.onSurface
 	    )
 	    if (summary != null) {
 		Text(
 		    text = summary,
-		    style = if (bodySmall) {
-			MaterialTheme.typography.bodySmall
-		    } else {
-			MaterialTheme.typography.bodyMedium
+		    style = when {
+			bodySmall -> MaterialTheme.typography.bodySmall
+			bodyLarge -> MaterialTheme.typography.bodyLarge
+		        else -> MaterialTheme.typography.bodyMedium
 		    },
-		    modifier = Modifier.alpha(0.7f)
+		    color = MaterialTheme.colorScheme.onSurfaceVariant
 	        )
 	    }
 	}
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            interactionSource = interactionSource,
-	    thumbContent = {
-	        if (checked) {
-		    Icon(
-	                imageVector = Icons.Filled.Check,
-	                contentDescription = null,
-	                modifier = Modifier.size(SwitchDefaults.IconSize),
-	            )
-		}
-	    }
-        )
+	Column(
+	    modifier = Modifier.padding(start = 16.dp)
+	) {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                interactionSource = interactionSource,
+	        thumbContent = {
+	            if (checked) {
+		        Icon(
+	                    imageVector = Icons.Filled.Check,
+	                    contentDescription = null,
+	                    modifier = Modifier.size(SwitchDefaults.IconSize),
+	                )
+		    }
+	        }
+            )
+	}
     }
 }
 
