@@ -28,7 +28,7 @@ import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.CustomListItem
 import com.rve.rvkernelmanager.ui.component.MonitorListItem
-import com.rve.rvkernelmanager.ui.component.SwitchItem
+import com.rve.rvkernelmanager.ui.component.SwitchListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -194,7 +194,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         if (chargingState.hasFastCharging) {
-            SwitchItem(
+            SwitchListItem(
                 title = "Fast charging",
                 summary = "Enable force fast charging",
                 checked = chargingState.isFastChargingChecked,
@@ -203,7 +203,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
         }
 
         if (chargingState.hasBypassCharging) {
-            SwitchItem(
+            SwitchListItem(
                 title = "Bypass charging",
                 summary = "Make sure your kernel supports this feature!",
                 checked = chargingState.isBypassChargingChecked,
