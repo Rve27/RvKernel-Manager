@@ -4,10 +4,13 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.res.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -19,7 +22,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.component.SwitchListItem
+import com.rve.rvkernelmanager.ui.component.ButtonListItem
 import com.rve.rvkernelmanager.ui.component.CustomListItem
+import com.rve.rvkernelmanager.ui.component.DialogTextButton
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
@@ -85,7 +90,7 @@ fun MiscScreen(
 
 @Composable
 fun MiscCard(viewModel: MiscViewModel) {
-    var expanded by remember { mutableStateOf(false) }
+    var openTPD by remember { mutableStateOf(false) }
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()    
@@ -110,119 +115,102 @@ fun MiscCard(viewModel: MiscViewModel) {
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         if (hasThermalSconfig) {
-            Row(
-                modifier = Modifier
-		    .clickable(
-			onClick = { expanded = true }
-		    )
-		    .padding(16.dp)
-            ) {
-		Column(
-		    modifier = Modifier.weight(1f)
-		) {
-                    Text(
-                        text = "Thermal profiles",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-		    Text(
-		        text = "Adjust thermal profiles for optimum performance",
-		        style = MaterialTheme.typography.bodySmall,
-			modifier = Modifier.alpha(0.7f)
-		    )
-		}
-		Box {
-	            Button(
-			onClick = {
-			    expanded = true
-			}
-		    ) {
+            ButtonListItem(
+                title = "Thermal profiles",
+		summary = "Adjust thermal profiles for optimum performance",
+		value = remember(thermalSconfig) {
+		    when (thermalSconfig) {
+			"0" -> "Default"
+			"10" -> "Benchmark"
+			"11" -> "Browser"
+			"12" -> "Camera"
+			"8" -> "Dialer"
+			"13" -> "Gaming"
+			"14" -> "Streaming"
+			else -> thermalSconfig
+		    }
+		},
+		onClick = { openTPD = true }
+	    )
+
+	    if (openTPD) {
+		AlertDialog(
+		    onDismissRequest = { openTPD = false },
+		    title = {
 			Text(
-			    text = remember(thermalSconfig) {
-				when (thermalSconfig) {
-				    "0" -> "Default"
-				    "10" -> "Benchmark"
-				    "11" -> "Browser"
-				    "12" -> "Camera"
-				    "8" -> "Dialer"
-				    "13" -> "Gaming"
-				    "14" -> "Streaming"
-				    else -> thermalSconfig
+			    text = "Thermal profiles"
+			)
+		    },
+		    text = {
+			Column(
+			    modifier = Modifier.fillMaxWidth()
+			) {
+			    DialogTextButton(
+				icon = painterResource(R.drawable.ic_mode_cool),
+				text = "Default",
+				onClick = {
+				    viewModel.updateThermalSconfig("0")
+				    openTPD = false
 				}
-			    }
-			)
+			    )
+			    DialogTextButton(
+				icon = Icons.Default.Speed,
+				text = "Benchmark",
+				onClick = {
+				    viewModel.updateThermalSconfig("10")
+				    openTPD = false
+				}
+			    )
+			    DialogTextButton(
+				icon = Icons.Default.Language,
+				text = "Browser",
+				onClick = {
+				    viewModel.updateThermalSconfig("11")
+				    openTPD = false
+				}
+			    )
+			    DialogTextButton(
+                                icon = Icons.Default.PhotoCamera,
+                                text = "Camera",
+                                onClick = {
+                                    viewModel.updateThermalSconfig("12")
+                                    openTPD = false
+                                }
+                            )
+			    DialogTextButton(
+                                icon = Icons.Default.Call,
+                                text = "Dialer",
+                                onClick = {
+                                    viewModel.updateThermalSconfig("8")
+                                    openTPD = false
+                                }
+                            )
+			    DialogTextButton(
+                                icon = Icons.Default.SportsEsports,
+                                text = "Gaming",
+                                onClick = {
+                                    viewModel.updateThermalSconfig("13")
+                                    openTPD = false
+                                }
+                            )
+			    DialogTextButton(
+                                icon = Icons.Default.Videocam,
+                                text = "Streaming",
+                                onClick = {
+                                    viewModel.updateThermalSconfig("14")
+                                    openTPD = false
+                                }
+                            )
+			}
+		    },
+		    confirmButton = {
+			TextButton(
+			    onClick = { openTPD = false }
+			) {
+			    Text("Close")
+			}
 		    }
-		    DropdownMenu(
-		        expanded = expanded,
-		        onDismissRequest = {
-		            expanded = false
-	                },
-			offset = DpOffset((5).dp, 0.dp)
-	            ) {
-			DropdownMenuItem(
-			    text = {
-				Text("Default")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("0")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Benchmark")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("10")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Browser")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("11")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Camera")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("12")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Dialer")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("8")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Gaming")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("13")
-				expanded = false
-			    }
-			)
-			DropdownMenuItem(
-			    text = {
-				Text("Streaming")
-			    },
-			    onClick = {
-				viewModel.updateThermalSconfig("14")
-				expanded = false
-			    }
-			)
-		    }
-		}
+		)
             }
         }
 
@@ -240,65 +228,21 @@ fun MiscCard(viewModel: MiscViewModel) {
         }
 
         if (hasSwappiness) {
-            Row(
-		modifier = Modifier
-		    .clickable(
-			onClick = { viewModel.showSwappinessDialog() }
-		    )
-		    .padding(16.dp)
-            ) {
-		Column(
-		    modifier = Modifier.weight(1f)
-		) {
-                    Text(
-                        text = "Swappiness",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-		    Text(
-			text = "Controls how aggressively the system uses swap memory",
-			style = MaterialTheme.typography.bodySmall,
-			modifier = Modifier.alpha(0.7f)
-		    )
-		}
-                Button(
-		    onClick = { viewModel.showSwappinessDialog() }
-		) {
-                    Text(
-			text = "$swappiness%"
-		    )
-                }
-            }
-        }
+	    ButtonListItem(
+		title = "Swappiness",
+		summary = "Controls how aggressively the system uses swap memory",
+		value = "$swappiness%",
+		onClick = { viewModel.showSwappinessDialog() }
+	    )
+	}
 
 	if (hasPrintk) {
-            Row(
-		modifier = Modifier
-		    .clickable(
-			onClick = { viewModel.showPrintkDialog() }
-		    )
-		    .padding(16.dp)
-            ) {
-		Column(
-		    modifier = Modifier.weight(1f)
-		) {
-                    Text(
-                        text = "printk",
-                        style = MaterialTheme.typography.titleSmall
-                    )
-		    Text(
-			text = "Controls kernel message logging level",
-			style = MaterialTheme.typography.bodySmall,
-			modifier = Modifier.alpha(0.7f)
-		    )
-		}
-                Button(
-		    onClick = { viewModel.showPrintkDialog() }
-		) {
-                    Text(
-			text = printk
-		    )
-                }
-            }
+            ButtonListItem(
+                title = "printk",
+		summary = "Controls kernel message logging level",
+		value = printk,
+		onClick = { viewModel.showPrintkDialog() }
+            )
         }
     }
 
