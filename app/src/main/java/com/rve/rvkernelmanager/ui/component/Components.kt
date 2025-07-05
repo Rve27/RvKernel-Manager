@@ -10,8 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.animation.animateContentSize
@@ -82,6 +82,73 @@ fun SwitchListItem(
 		    }
 	        }
             )
+	}
+    }
+}
+
+@Composable
+fun ButtonListItem(
+    isFreq: Boolean = false,
+    title: String,
+    titleSmall: Boolean = false,
+    titleLarge: Boolean = false,
+    summary: String? = null,
+    bodySmall: Boolean = false,
+    bodyLarge: Boolean = false,
+    value: String,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        modifier = Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                role = Role.Button,
+                indication = LocalIndication.current,
+                onClick = onClick
+            )
+	    .padding(16.dp),
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	Column(
+	    modifier = Modifier.weight(1f)
+	) {
+	    Text(
+		text = title,
+		style = when {
+		    titleSmall -> MaterialTheme.typography.titleSmall
+		    titleLarge -> MaterialTheme.typography.titleLarge
+		    else -> MaterialTheme.typography.titleMedium
+		},
+		color = MaterialTheme.colorScheme.onSurface
+	    )
+	    if (summary != null) {
+		Text(
+		    text = summary,
+		    style = when {
+			bodySmall -> MaterialTheme.typography.bodySmall
+			bodyLarge -> MaterialTheme.typography.bodyLarge
+		        else -> MaterialTheme.typography.bodyMedium
+		    },
+		    color = MaterialTheme.colorScheme.onSurfaceVariant
+	        )
+	    }
+	}
+	Column(
+	    modifier = Modifier.padding(start = 16.dp)
+	) {
+            Button(
+		onClick = onClick,
+                interactionSource = interactionSource,
+	    ) {
+		Text(
+		    text = when {
+			isFreq -> if (value.isEmpty()) "N/A" else "$value MHz"
+			else -> if (value.trim().isEmpty()) "N/A" else value
+		    }
+		)
+	    }
 	}
     }
 }
