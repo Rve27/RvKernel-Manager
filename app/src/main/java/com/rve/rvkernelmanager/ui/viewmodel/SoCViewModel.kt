@@ -34,28 +34,28 @@ class SoCViewModel : ViewModel() {
         val availableGov: List<String>
     )
 
-    private val _cpu0State = MutableStateFlow(CPUState("", "", "", "", emptyList(), emptyList()))
+    private val _cpu0State = MutableStateFlow(CPUState("N/A", "N/A", "N/A", "N/A", emptyList(), emptyList()))
     val cpu0State: StateFlow<CPUState> = _cpu0State
 
-    private val _cpuUsage = MutableStateFlow("")
+    private val _cpuUsage = MutableStateFlow("N/A")
     val cpuUsage: StateFlow<String> = _cpuUsage
 
-    private val _cpuTemp = MutableStateFlow("")
+    private val _cpuTemp = MutableStateFlow("N/A")
     val cpuTemp: StateFlow<String> = _cpuTemp
 
-    private val _bigClusterState = MutableStateFlow(CPUState("", "", "", "", emptyList(), emptyList()))
+    private val _bigClusterState = MutableStateFlow(CPUState("N/A", "N/A", "N/A", "N/A", emptyList(), emptyList()))
     val bigClusterState: StateFlow<CPUState> = _bigClusterState
 
-    private val _primeClusterState = MutableStateFlow(CPUState("", "", "", "", emptyList(), emptyList()))
+    private val _primeClusterState = MutableStateFlow(CPUState("N/A", "N/A", "N/A", "N/A", emptyList(), emptyList()))
     val primeClusterState: StateFlow<CPUState> = _primeClusterState
 
-    private val _gpuState = MutableStateFlow(GPUState("", "", "", "", "", "", emptyList(), emptyList()))
+    private val _gpuState = MutableStateFlow(GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", emptyList(), emptyList()))
     val gpuState: StateFlow<GPUState> = _gpuState
 
-    private val _gpuTemp = MutableStateFlow("")
+    private val _gpuTemp = MutableStateFlow("N/A")
     val gpuTemp: StateFlow<String> = _gpuTemp
 
-    private val _gpuUsage = MutableStateFlow("")
+    private val _gpuUsage = MutableStateFlow("N/A")
     val gpuUsage: StateFlow<String> = _gpuUsage
 
     private val _hasBigCluster = MutableStateFlow(false)
@@ -93,20 +93,20 @@ class SoCViewModel : ViewModel() {
 
     private fun loadInitialData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentMinFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
-            val currentMaxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
+            val minFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
+            val maxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)
 	    val currentFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.CURRENT_FREQ_CPU0)
-            val currentGovCPU0 = Utils.readFile(SoCUtils.GOV_CPU0)
-            val currentAvailableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0)
-            val currentAvailableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0)
+            val govCPU0 = Utils.readFile(SoCUtils.GOV_CPU0)
+            val availableFreqCPU0 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU0)
+            val availableGovCPU0 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU0)
 
             _cpu0State.value = CPUState(
-                currentMinFreqCPU0,
-                currentMaxFreqCPU0,
+                minFreqCPU0,
+                maxFreqCPU0,
 		currentFreqCPU0,
-                currentGovCPU0,
-                currentAvailableFreqCPU0,
-                currentAvailableGovCPU0
+                govCPU0,
+                availableFreqCPU0,
+                availableGovCPU0
             )
 
 	    _cpuUsage.value = SoCUtils.getCpuUsage()
@@ -165,61 +165,61 @@ class SoCViewModel : ViewModel() {
                         else -> null
                     }
 
-                    val currentMinFreq = SoCUtils.readFreqCPU(minFreqPath!!)
-                    val currentMaxFreq = SoCUtils.readFreqCPU(maxFreqPath!!)
+                    val minFreq = SoCUtils.readFreqCPU(minFreqPath!!)
+                    val maxFreq = SoCUtils.readFreqCPU(maxFreqPath!!)
 		    val currentFreq = SoCUtils.readFreqCPU(currentFreqPath!!)
-                    val currentGov = Utils.readFile(govPath!!)
-                    val currentAvailableFreq = SoCUtils.readAvailableFreqBoost(availableFreqPath!!, availableBoostFreqPath!!)
-                    val currentAvailableGov = SoCUtils.readAvailableGovCPU(availableGovPath!!)
+                    val gov = Utils.readFile(govPath!!)
+                    val availableFreq = SoCUtils.readAvailableFreqBoost(availableFreqPath!!, availableBoostFreqPath!!)
+                    val availableGov = SoCUtils.readAvailableGovCPU(availableGovPath!!)
 
                     _bigClusterState.value = CPUState(
-                        currentMinFreq,
-                        currentMaxFreq,
+                        minFreq,
+                        maxFreq,
 			currentFreq,
-                        currentGov,
-                        currentAvailableFreq,
-                        currentAvailableGov
+                        gov,
+                        availableFreq,
+                        availableGov
                     )
                 }
             }
 
             _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
             if (_hasPrimeCluster.value) {
-                val currentMinFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7)
-                val currentMaxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
+                val minFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU7)
+                val maxFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU7)
 		val currentFreqCPU7 = SoCUtils.readFreqCPU(SoCUtils.CURRENT_FREQ_CPU7)
-                val currentGovCPU7 = Utils.readFile(SoCUtils.GOV_CPU7)
-                val currentAvailableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7)
-                val currentAvailableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7)
+                val govCPU7 = Utils.readFile(SoCUtils.GOV_CPU7)
+                val availableFreqCPU7 = SoCUtils.readAvailableFreqCPU(SoCUtils.AVAILABLE_FREQ_CPU7)
+                val availableGovCPU7 = SoCUtils.readAvailableGovCPU(SoCUtils.AVAILABLE_GOV_CPU7)
 
                 _primeClusterState.value = CPUState(
-                    currentMinFreqCPU7,
-                    currentMaxFreqCPU7,
+                    minFreqCPU7,
+                    maxFreqCPU7,
 		    currentFreqCPU7,
-                    currentGovCPU7,
-                    currentAvailableFreqCPU7,
-                    currentAvailableGovCPU7
+                    govCPU7,
+                    availableFreqCPU7,
+                    availableGovCPU7
                 )
             }
 
-            val currentMinFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU)
-            val currentMaxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
+            val minFreqGPU = Utils.readFile(SoCUtils.MIN_FREQ_GPU)
+            val maxFreqGPU = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
 	    val currentFreqGPU = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU)
-            val currentGovGPU = Utils.readFile(SoCUtils.GOV_GPU)
-            val currentAdrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
-            val currentGpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
-            val currentAvailableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU)
-            val currentAvailableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
+            val govGPU = Utils.readFile(SoCUtils.GOV_GPU)
+            val adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
+            val gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
+            val availableFreqGPU = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU)
+            val availableGovGPU = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
 
             _gpuState.value = GPUState(
-                currentMinFreqGPU,
-                currentMaxFreqGPU,
+                minFreqGPU,
+                maxFreqGPU,
 		currentFreqGPU,
-                currentGovGPU,
-                currentAdrenoBoost,
-                currentGpuThrottling,
-                currentAvailableFreqGPU,
-                currentAvailableGovGPU
+                govGPU,
+                adrenoBoost,
+                gpuThrottling,
+                availableFreqGPU,
+                availableGovGPU
             )
 
 	    _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
@@ -325,9 +325,9 @@ class SoCViewModel : ViewModel() {
         }
     }
 
-    fun updateAdrenoBoost(selectedBoost: String) {
+    fun updateAdrenoBoost(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(SoCUtils.ADRENO_BOOST, selectedBoost)
+            Utils.writeFile(SoCUtils.ADRENO_BOOST, value)
             _gpuState.value = _gpuState.value.copy(adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST))
         }
     }
