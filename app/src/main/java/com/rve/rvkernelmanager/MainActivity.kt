@@ -7,7 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.Scaffold
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.material3.*
 import androidx.navigation.compose.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.navigation.*
@@ -67,41 +68,34 @@ fun RootCheckHandler() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RvKernelManagerApp() {
     val navController = rememberNavController()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
-	contentWindowInsets = WindowInsets(0)
-    ) {
+	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+	bottomBar = { BottomNavigationBar(navController) },
+	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
 	NavHost(
             navController = navController,
             startDestination = "home",
+	    modifier = Modifier.padding(innerPadding)
 	) {
             composable("home") {
-                HomeScreen(
-		    lifecycleOwner = lifecycleOwner,
-		    navController = navController
-	        )
+                HomeScreen(lifecycleOwner = lifecycleOwner)
             }
             composable("soc") {
-                SoCScreen(
-		    lifecycleOwner = lifecycleOwner,
-		    navController = navController
-	        )
+                SoCScreen(lifecycleOwner = lifecycleOwner)
             }
             composable("battery") {
-                BatteryScreen(
-		    lifecycleOwner = lifecycleOwner,
-		    navController = navController
-		)
+                BatteryScreen(lifecycleOwner = lifecycleOwner)
             }
             composable("misc") {
-                MiscScreen(
-		    lifecycleOwner = lifecycleOwner,
-		    navController = navController
-		)
+                MiscScreen(lifecycleOwner = lifecycleOwner)
             }
 	}
     }

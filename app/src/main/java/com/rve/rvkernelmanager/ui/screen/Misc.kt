@@ -13,29 +13,20 @@ import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.component.SwitchListItem
-import com.rve.rvkernelmanager.ui.component.ButtonListItem
-import com.rve.rvkernelmanager.ui.component.CustomListItem
-import com.rve.rvkernelmanager.ui.component.DialogTextButton
+import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
-import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.utils.MiscUtils
+import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiscScreen(
     viewModel: MiscViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner,
-    navController: NavController
+    lifecycleOwner: LifecycleOwner
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -54,25 +45,13 @@ fun MiscScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-	    PinnedTopAppBar(scrollBehavior = scrollBehavior)
-	},
-	bottomBar = {
-	    BottomNavigationBar(navController = navController)
-	},
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
-    ) { innerPadding ->
+    Scaffold {
         PullToRefreshBox(
-            modifier = Modifier
-                .padding(innerPadding)
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refresh() }
         ) {
             LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
 		state = rememberLazyListState()
             ) {

@@ -86,7 +86,6 @@ fun PinnedTopAppBar(
 		)
 	    }
 	},
-	windowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
 	scrollBehavior = scrollBehavior
     )
 }
