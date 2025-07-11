@@ -1,7 +1,9 @@
 package com.rve.rvkernelmanager.ui.navigation
 
 import android.net.Uri
+import android.app.Activity
 import android.content.Intent
+
 import androidx.compose.ui.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalContext
@@ -14,6 +16,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.*
+
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.activity.SettingsActivity
 
@@ -96,10 +99,12 @@ fun PinnedTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
+    val context = LocalContext.current
+
     TopAppBar(
 	title = { Text("Settings", maxLines = 1, overflow = TextOverflow.Ellipsis) },
 	navigationIcon = {
-            IconButton(onClick = { /* doSomething() */ }) {
+            IconButton(onClick = { (context as? Activity)?.finish() }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         },
