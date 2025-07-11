@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.*
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.activity.SettingsActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +76,7 @@ fun PinnedTopAppBar(
 			Text("Settings")
 		    },
 		    onClick = {
+			context.startActivity(Intent(context, SettingsActivity::class.java))
 			expanded = false
 		    },
 		    leadingIcon = {

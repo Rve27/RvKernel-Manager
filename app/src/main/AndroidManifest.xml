@@ -19,5 +19,8 @@
                     android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+	<activity
+	    android:name=".ui.activity.SettingsActivity"
+	    android:exported="false" />
     </application>
 </manifest>
