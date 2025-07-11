@@ -1,4 +1,4 @@
-package com.rve.rvkernelmanager
+package com.rve.rvkernelmanager.ui.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

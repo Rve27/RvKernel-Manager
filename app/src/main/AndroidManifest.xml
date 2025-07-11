@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android">
     <application 
@@ -11,7 +10,7 @@
 	android:enableOnBackInvokedCallback="true"
         android:theme="@style/RvTheme">
         <activity 
-	    android:name=".MainActivity"
+	    android:name=".ui.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action 
