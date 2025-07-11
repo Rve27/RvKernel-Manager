@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.*
 import com.rve.rvkernelmanager.R
@@ -88,6 +89,20 @@ fun PinnedTopAppBar(
 		)
 	    }
 	},
+	scrollBehavior = scrollBehavior
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
+    TopAppBar(
+	title = { Text("Settings", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+	navigationIcon = {
+            IconButton(onClick = { /* doSomething() */ }) {
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
 	scrollBehavior = scrollBehavior
     )
 }
