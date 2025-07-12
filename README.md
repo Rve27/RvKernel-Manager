@@ -6,26 +6,37 @@
 
 **Take full control of your device's kernel. Tune performance, battery life, and more!**
 
-Unlock the true potential of your Android device with RvKernel Manager, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides a clean interface to tweak and monitor a wide range of kernel parameters without needing to use a terminal. Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.
+Unlock the true potential of your Android device with RvKernel Manager, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides a clean interface to tweak and monitor a wide range of kernel parameters without needing to use a terminal.
+
+Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.
 
 ## Features
 
 - **Real-Time Dashboard**
+
   Monitor critical system information at a glance, including CPU & GPU frequencies, core temperatures.
 
 - **Advanced CPU Control**
+
   Easily adjust CPU governors, set minimum/maximum frequencies for each core cluster (e.g., big.LITTLE).
 
 - **GPU Tuning**
+
   Take command of your graphics performance. Change the GPU governor, control the maximum clock speed, and other parameters to optimize for gaming or save power.
 
 - **More Features**
+
   Other features will be added soon in future updates!
 
-## Notes
+## Screenshots
 
-⚠️ **Important Notes:**
-- This application requires a **ROOTED** device and is intended for users who understand the risks of modifying kernel settings
+<p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="32%" />
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07.png" width="32%" /></p>
+
+## Requirements
+
+- **ROOTED** device
+- Android 12+
 - For now only suitable with Snapdragon devices
 
 ## Telegram
