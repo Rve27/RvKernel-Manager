@@ -27,10 +27,7 @@ class BatteryViewModel : ViewModel() {
 
     data class ChargingState(
         val hasFastCharging: Boolean = false,
-        val hasBypassCharging: Boolean = false,
         val isFastChargingChecked: Boolean = false,
-        val isBypassChargingChecked: Boolean = false,
-        val inputSuspendPath: String? = null
     )
 
     private val _batteryInfo = MutableStateFlow(BatteryInfo())
@@ -117,25 +114,11 @@ class BatteryViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val hasFastCharging = Utils.testFile(BatteryUtils.FAST_CHARGING)
 
-            val inputSuspendPath = when {
-                Utils.testFile(BatteryUtils.INPUT_SUSPEND_1) -> BatteryUtils.INPUT_SUSPEND_1
-                Utils.testFile(BatteryUtils.INPUT_SUSPEND_2) -> BatteryUtils.INPUT_SUSPEND_2
-                else -> null
-            }
-
-            val hasBypassCharging = inputSuspendPath != null
-            val isBypassChargingChecked = inputSuspendPath?.let {
-                Utils.readFile(it) == "1"
-            } ?: false
-
             val isFastChargingChecked = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
 
             _chargingState.value = ChargingState(
                 hasFastCharging = hasFastCharging,
-                hasBypassCharging = hasBypassCharging,
-                isFastChargingChecked = isFastChargingChecked,
-                isBypassChargingChecked = isBypassChargingChecked,
-                inputSuspendPath = inputSuspendPath
+                isFastChargingChecked = isFastChargingChecked
             )
         }
     }
@@ -147,19 +130,6 @@ class BatteryViewModel : ViewModel() {
             if (success) {
                 _chargingState.value = _chargingState.value.copy(
                     isFastChargingChecked = checked
-                )
-            }
-        }
-    }
-
-    fun toggleBypassCharging(checked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val path = _chargingState.value.inputSuspendPath ?: return@launch
-            val success = Utils.writeFile(path, if (checked) "1" else "0")
-
-            if (success) {
-                _chargingState.value = _chargingState.value.copy(
-                    isBypassChargingChecked = checked
                 )
             }
         }

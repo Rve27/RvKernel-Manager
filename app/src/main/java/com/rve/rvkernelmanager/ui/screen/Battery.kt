@@ -56,7 +56,7 @@ fun BatteryScreen(
 	    item {
                 BatteryInfoCard(viewModel)
 	    }
-            if (chargingState.hasFastCharging || chargingState.hasBypassCharging) {
+            if (chargingState.hasFastCharging) {
 		item {
                     ChargingCard(viewModel)
 		}
@@ -174,15 +174,6 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                 summary = "Enable force fast charging",
                 checked = chargingState.isFastChargingChecked,
                 onCheckedChange = { viewModel.toggleFastCharging(it) }
-            )
-        }
-
-        if (chargingState.hasBypassCharging) {
-            SwitchListItem(
-                title = "Bypass charging",
-                summary = "Make sure your kernel supports this feature!",
-                checked = chargingState.isBypassChargingChecked,
-                onCheckedChange = { viewModel.toggleBypassCharging(it) }
             )
         }
     }
