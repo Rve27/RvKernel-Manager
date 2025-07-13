@@ -1,18 +1,17 @@
 package com.rve.rvkernelmanager.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.cancel
-import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.utils.SoCUtils
+import android.app.Application
 
-class SoCViewModel : ViewModel() {
+import androidx.lifecycle.*
+
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.preference.SoCPreference
+
+class SoCViewModel(application: Application) : AndroidViewModel(application) {
+    private val socPreference = SoCPreference.getInstance(application)
 
     data class CPUState(
         val minFreq: String,
@@ -79,9 +78,11 @@ class SoCViewModel : ViewModel() {
     fun startPolling() {
         pollingJob?.cancel()
         pollingJob = viewModelScope.launch(Dispatchers.IO) {
-            while (true) {
-                loadInitialData()
-                delay(3000)
+            socPreference.pollingInterval.collect { interval ->
+                while (true) {
+                    loadInitialData()
+                    delay(interval)
+                }
             }
         }
     }
