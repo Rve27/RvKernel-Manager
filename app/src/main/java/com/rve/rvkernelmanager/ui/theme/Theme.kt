@@ -2,11 +2,12 @@ package com.rve.rvkernelmanager.ui.theme
 
 import android.app.Activity
 
+import androidx.core.view.WindowCompat
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.*
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -269,6 +270,14 @@ fun RvKernelManagerTheme(
         }
         darkTheme -> darkScheme
         else -> lightScheme
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
     }
 
     MaterialTheme(
