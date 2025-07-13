@@ -48,8 +48,7 @@ fun PinnedTopAppBar(
 			Text("Source code")
 		    },
 		    onClick = {
-			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Rve27/RvKernel-Manager"))
-			context.startActivity(intent)
+			context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Rve27/RvKernel-Manager")))
 			expanded = false
 		    },
 		    leadingIcon = {
@@ -64,8 +63,7 @@ fun PinnedTopAppBar(
 			Text("Telegram group")
 		    },
 		    onClick = {
-			val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/rvosuniverse"))
-			context.startActivity(intent)
+			context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/rve_enterprises")))
 			expanded = false
 		    },
 		    leadingIcon = {
