@@ -2,8 +2,8 @@ package com.rve.rvkernelmanager.ui.screen
 
 import android.content.*
 import android.net.Uri
+
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -11,8 +11,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
@@ -130,12 +129,10 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
 @Composable
 fun DonateCard() {
-    var showDonateDialog by remember { mutableStateOf(false) }
-    var showDanaQR by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.clickable { showDonateDialog = true }
+        modifier = Modifier.clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://paypal.me/rve27"))) }
     ) {
 	CustomListItem(
 	    title = "Donate",
@@ -147,79 +144,6 @@ fun DonateCard() {
         CustomListItem(
              summary = "Click this donate card if you want to donate or buy me a coffee.",
              icon = painterResource(R.drawable.ic_donate)
-        )
-    }
-
-    if (showDonateDialog) {
-        AlertDialog(
-            onDismissRequest = { showDonateDialog = false },
-            tonalElevation = 8.dp,
-            title = { 
-		Text(
-		    text = "Donate",
-		    style = MaterialTheme.typography.titleLarge
-		)
-	    },
-
-            text = {
-                Column {
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = "PayPal",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://paypal.me/rve27"))
-                            context.startActivity(intent)
-                        }
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = "Dana",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable {
-                            showDanaQR = true
-                            showDonateDialog = false
-                        }
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDonateDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
-
-    if (showDanaQR) {
-        AlertDialog(
-            onDismissRequest = { showDanaQR = false },
-            tonalElevation = 8.dp,
-            properties = DialogProperties(dismissOnClickOutside = true),
-            title = {
-		Text(
-		    text = "Dana",
-		    style = MaterialTheme.typography.titleLarge
-		)
-	    },
-
-            text = {
-                Image(
-                    painter = painterResource(id = R.drawable.dana_qr),
-                    contentDescription = "Dana QR Code",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    contentScale = ContentScale.Fit
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = { showDanaQR = false }) {
-                    Text("Close")
-                }
-            }
         )
     }
 }
