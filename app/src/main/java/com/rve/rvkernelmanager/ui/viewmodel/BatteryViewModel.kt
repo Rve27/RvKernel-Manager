@@ -1,18 +1,14 @@
 package com.rve.rvkernelmanager.ui.viewmodel
 
 import android.util.Log
-import android.content.Context
-import android.content.BroadcastReceiver
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.CancellationException
-import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.utils.BatteryUtils
+import android.content.*
+
+import androidx.lifecycle.*
+
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+import com.rve.rvkernelmanager.utils.*
 
 class BatteryViewModel : ViewModel() {
     data class BatteryInfo(
@@ -36,14 +32,20 @@ class BatteryViewModel : ViewModel() {
     private val _chargingState = MutableStateFlow(ChargingState())
     val chargingState: StateFlow<ChargingState> = _chargingState
 
+    private val _thermalSconfig = MutableStateFlow("")
+    val thermalSconfig: StateFlow<String> = _thermalSconfig
+
+    private val _hasThermalSconfig = MutableStateFlow(false)
+    val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
+
     private var levelReceiver: BroadcastReceiver? = null
     private var tempReceiver: BroadcastReceiver? = null
     private var voltageReceiver: BroadcastReceiver? = null
     private var maxCapacityReceiver: BroadcastReceiver? = null
-    private var inputSuspendPath: String? = null
 
     fun initializeBatteryInfo(context: Context) {
         loadBatteryInfo(context)
+	loadThermalSconfig()
         registerBatteryListeners(context)
         checkChargingFiles()
     }
@@ -66,6 +68,13 @@ class BatteryViewModel : ViewModel() {
                 Log.e("BatteryVM", "Error loading battery info", e)
             }
         }
+    }
+
+    fun loadThermalSconfig() {
+	viewModelScope.launch(Dispatchers.IO) {
+            _thermalSconfig.value = Utils.readFile(BatteryUtils.THERMAL_SCONFIG)
+            _hasThermalSconfig.value = Utils.testFile(BatteryUtils.THERMAL_SCONFIG)
+	}
     }
 
     fun registerBatteryListeners(context: Context) {
@@ -132,6 +141,15 @@ class BatteryViewModel : ViewModel() {
                     isFastChargingChecked = checked
                 )
             }
+        }
+    }
+
+    fun updateThermalSconfig(value: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Utils.setPermissions(644, BatteryUtils.THERMAL_SCONFIG)
+            Utils.writeFile(BatteryUtils.THERMAL_SCONFIG, value)
+	    Utils.setPermissions(444, BatteryUtils.THERMAL_SCONFIG)
+            _thermalSconfig.value = value
         }
     }
 

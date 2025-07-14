@@ -14,13 +14,6 @@ import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.utils.MiscUtils
 
 class MiscViewModel : ViewModel() {
-
-    private val _thermalSconfig = MutableStateFlow("")
-    val thermalSconfig: StateFlow<String> = _thermalSconfig
-
-    private val _hasThermalSconfig = MutableStateFlow(false)
-    val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
-
     private val _schedAutogroup = MutableStateFlow("")
     val schedAutogroup: StateFlow<String> = _schedAutogroup
 
@@ -69,9 +62,6 @@ class MiscViewModel : ViewModel() {
 
     fun loadMiscData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _thermalSconfig.value = Utils.readFile(MiscUtils.THERMAL_SCONFIG)
-            _hasThermalSconfig.value = Utils.testFile(MiscUtils.THERMAL_SCONFIG)
-
             _schedAutogroup.value = Utils.readFile(MiscUtils.SCHED_AUTOGROUP)
             _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP)
 
@@ -80,15 +70,6 @@ class MiscViewModel : ViewModel() {
 
             _printk.value = Utils.readFile(MiscUtils.PRINTK)
             _hasPrintk.value = Utils.testFile(MiscUtils.PRINTK)
-        }
-    }
-
-    fun updateThermalSconfig(value: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, MiscUtils.THERMAL_SCONFIG)
-            Utils.writeFile(MiscUtils.THERMAL_SCONFIG, value)
-            Utils.setPermissions(444, MiscUtils.THERMAL_SCONFIG)
-            _thermalSconfig.value = value
         }
     }
 

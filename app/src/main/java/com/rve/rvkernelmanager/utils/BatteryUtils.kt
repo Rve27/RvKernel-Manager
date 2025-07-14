@@ -15,6 +15,8 @@ object BatteryUtils {
     const val FAST_CHARGING = "/sys/kernel/fast_charge/force_fast_charge"
     const val BATTERY_DESIGN_CAPACITY = "/sys/class/power_supply/battery/charge_full_design"
     const val BATTERY_MAXIMUM_CAPACITY = "/sys/class/power_supply/battery/charge_full"
+
+    const val THERMAL_SCONFIG = "/sys/class/thermal/thermal_message/sconfig"
     
     fun getBatteryTechnology(context: Context): String {
         val batteryIntent: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->

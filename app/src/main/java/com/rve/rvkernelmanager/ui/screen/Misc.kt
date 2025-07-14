@@ -69,11 +69,6 @@ fun MiscScreen(
 
 @Composable
 fun MiscCard(viewModel: MiscViewModel) {
-    var openTPD by remember { mutableStateOf(false) }
-
-    val thermalSconfig by viewModel.thermalSconfig.collectAsState()
-    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()    
-
     val schedAutogroup by viewModel.schedAutogroup.collectAsState()
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
     val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
@@ -92,106 +87,6 @@ fun MiscCard(viewModel: MiscViewModel) {
 	    titleLarge = true
 	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-        if (hasThermalSconfig) {
-            ButtonListItem(
-                title = "Thermal profiles",
-		summary = "Adjust thermal profiles for optimum performance",
-		value = remember(thermalSconfig) {
-		    when (thermalSconfig) {
-			"0" -> "Default"
-			"10" -> "Benchmark"
-			"11" -> "Browser"
-			"12" -> "Camera"
-			"8" -> "Dialer"
-			"13" -> "Gaming"
-			"14" -> "Streaming"
-			else -> thermalSconfig
-		    }
-		},
-		onClick = { openTPD = true }
-	    )
-
-	    if (openTPD) {
-		AlertDialog(
-		    onDismissRequest = { openTPD = false },
-		    title = {
-			Text(
-			    text = "Thermal profiles"
-			)
-		    },
-		    text = {
-			Column(
-			    modifier = Modifier.fillMaxWidth()
-			) {
-			    DialogTextButton(
-				icon = painterResource(R.drawable.ic_mode_cool),
-				text = "Default",
-				onClick = {
-				    viewModel.updateThermalSconfig("0")
-				    openTPD = false
-				}
-			    )
-			    DialogTextButton(
-				icon = Icons.Default.Speed,
-				text = "Benchmark",
-				onClick = {
-				    viewModel.updateThermalSconfig("10")
-				    openTPD = false
-				}
-			    )
-			    DialogTextButton(
-				icon = Icons.Default.Language,
-				text = "Browser",
-				onClick = {
-				    viewModel.updateThermalSconfig("11")
-				    openTPD = false
-				}
-			    )
-			    DialogTextButton(
-                                icon = Icons.Default.PhotoCamera,
-                                text = "Camera",
-                                onClick = {
-                                    viewModel.updateThermalSconfig("12")
-                                    openTPD = false
-                                }
-                            )
-			    DialogTextButton(
-                                icon = Icons.Default.Call,
-                                text = "Dialer",
-                                onClick = {
-                                    viewModel.updateThermalSconfig("8")
-                                    openTPD = false
-                                }
-                            )
-			    DialogTextButton(
-                                icon = Icons.Default.SportsEsports,
-                                text = "Gaming",
-                                onClick = {
-                                    viewModel.updateThermalSconfig("13")
-                                    openTPD = false
-                                }
-                            )
-			    DialogTextButton(
-                                icon = Icons.Default.Videocam,
-                                text = "Streaming",
-                                onClick = {
-                                    viewModel.updateThermalSconfig("14")
-                                    openTPD = false
-                                }
-                            )
-			}
-		    },
-		    confirmButton = {
-			TextButton(
-			    onClick = { openTPD = false }
-			) {
-			    Text("Close")
-			}
-		    }
-		)
-            }
-        }
 
         if (hasSchedAutogroup) {
 	    SwitchListItem(

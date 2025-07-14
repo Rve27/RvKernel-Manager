@@ -4,6 +4,8 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.semantics.*
@@ -12,9 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+
+import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
-import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,6 +30,7 @@ fun BatteryScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val chargingState by viewModel.chargingState.collectAsState()
+    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -55,6 +60,11 @@ fun BatteryScreen(
 	    }
 	    item {
                 BatteryInfoCard(viewModel)
+	    }
+	    if (hasThermalSconfig) {
+		item {
+		    ThermalProfilesCard(viewModel)
+		}
 	    }
             if (chargingState.hasFastCharging) {
 		item {
@@ -152,6 +162,114 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                     summary = batteryInfo.maximumCapacity
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ThermalProfilesCard(viewModel: BatteryViewModel) {
+    // TPD = Thermal Profiles Dialog
+    var openTPD by remember { mutableStateOf(false) }
+
+    val thermalSconfig by viewModel.thermalSconfig.collectAsState()
+
+    Card {
+	ButtonListItem(
+	    title = "Thermal profiles",
+	    summary = "Adjust thermal profiles for optimum performance",
+	    value = remember(thermalSconfig) {
+		when (thermalSconfig) {
+		    "0" -> "Default"
+		    "10" -> "Benchmark"
+		    "11" -> "Browser"
+		    "12" -> "Camera"
+		    "8" -> "Dialer"
+		    "13" -> "Gaming"
+		    "14" -> "Streaming"
+		    else -> "Unknown"
+		}
+	    },
+	    onClick = { openTPD = true }
+	)
+
+	if (openTPD) {
+	    AlertDialog(
+		onDismissRequest = { openTPD = false },
+		title = {
+		    Text(
+			text = "Thermal profiles"
+		    )
+		},
+		text = {
+		    Column(
+			modifier = Modifier.fillMaxWidth()
+		    ) {
+			DialogTextButton(
+			    icon = painterResource(R.drawable.ic_mode_cool),
+			    text = "Default",
+			    onClick = {
+				viewModel.updateThermalSconfig("0")
+				openTPD = false
+			    }
+			)
+			DialogTextButton(
+			    icon = Icons.Default.Speed,
+			    text = "Benchmark",
+			    onClick = {
+				viewModel.updateThermalSconfig("10")
+				openTPD = false
+			    }
+			)
+			DialogTextButton(
+			    icon = Icons.Default.Language,
+			    text = "Browser",
+			    onClick = {
+				viewModel.updateThermalSconfig("11")
+				openTPD = false
+			    }
+			)
+			DialogTextButton(
+                            icon = Icons.Default.PhotoCamera,
+                            text = "Camera",
+                            onClick = {
+                                viewModel.updateThermalSconfig("12")
+                                openTPD = false
+                            }
+                        )
+			DialogTextButton(
+                            icon = Icons.Default.Call,
+                            text = "Dialer",
+                            onClick = {
+                                viewModel.updateThermalSconfig("8")
+                                openTPD = false
+                            }
+                        )
+			DialogTextButton(
+                            icon = Icons.Default.SportsEsports,
+                            text = "Gaming",
+                            onClick = {
+                                viewModel.updateThermalSconfig("13")
+                                openTPD = false
+                            }
+                        )
+			DialogTextButton(
+                            icon = Icons.Default.Videocam,
+                            text = "Streaming",
+                            onClick = {
+                                viewModel.updateThermalSconfig("14")
+                                openTPD = false
+                            }
+                        )
+		    }
+		},
+		confirmButton = {
+		    TextButton(
+			onClick = { openTPD = false }
+		    ) {
+			Text("Close")
+		    }
+		}
+	    )
         }
     }
 }
