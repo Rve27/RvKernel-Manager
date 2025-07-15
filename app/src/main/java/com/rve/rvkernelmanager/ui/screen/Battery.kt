@@ -12,8 +12,10 @@ import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.*
@@ -25,7 +27,8 @@ import com.rve.rvkernelmanager.ui.component.*
 @Composable
 fun BatteryScreen(
     viewModel: BatteryViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -48,9 +51,13 @@ fun BatteryScreen(
         }
     }
 
-    Scaffold {
+    Scaffold(
+	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+	bottomBar = { BottomNavigationBar(navController) },
+	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
 	    state = rememberLazyListState()
         ) {

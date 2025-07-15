@@ -14,19 +14,23 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
-import com.rve.rvkernelmanager.utils.*
+import androidx.navigation.NavController
+
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.ui.component.*
+import com.rve.rvkernelmanager.ui.navigation.*
+import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiscScreen(
     viewModel: MiscViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
+    navController: NavController
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -45,13 +49,17 @@ fun MiscScreen(
         }
     }
 
-    Scaffold {
+    Scaffold(
+	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+	bottomBar = { BottomNavigationBar(navController) },
+	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refresh() }
         ) {
             LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
 		state = rememberLazyListState()
             ) {

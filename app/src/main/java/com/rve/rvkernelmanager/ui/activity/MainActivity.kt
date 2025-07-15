@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.material3.*
 import androidx.navigation.compose.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -73,29 +72,23 @@ fun RootCheckHandler() {
 fun RvKernelManagerApp() {
     val navController = rememberNavController()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    Scaffold(
-	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
-	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-    ) { innerPadding ->
+    Scaffold {
 	NavHost(
             navController = navController,
             startDestination = "home",
-	    modifier = Modifier.padding(innerPadding)
 	) {
             composable("home") {
-                HomeScreen(lifecycleOwner = lifecycleOwner)
+                HomeScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
             composable("soc") {
-                SoCScreen(lifecycleOwner = lifecycleOwner)
+                SoCScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
             composable("battery") {
-                BatteryScreen(lifecycleOwner = lifecycleOwner)
+                BatteryScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
             composable("misc") {
-                MiscScreen(lifecycleOwner = lifecycleOwner)
+                MiscScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
 	}
     }
