@@ -80,12 +80,13 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val deviceCodename by viewModel.deviceCodename.collectAsState()
     val ramInfo by viewModel.ramInfo.collectAsState()
     val cpu by viewModel.cpu.collectAsState()
+    val extendCpu by viewModel.extendCpu.collectAsState()
     val gpuModel by viewModel.gpuModel.collectAsState()
     val androidVersion by viewModel.androidVersion.collectAsState()
     val kernelVersion by viewModel.kernelVersion.collectAsState()
     val fullKernelVersion by viewModel.fullKernelVersion.collectAsState()
-    val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
 
+    var isExtendCpuInfo by rememberSaveable { mutableStateOf(false) }
     var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
     Card {
@@ -110,9 +111,9 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "CPU",
-            summary = cpu,
+            summary = if (isExtendCpuInfo) extendCpu else cpu,
             icon = painterResource(R.drawable.ic_cpu),
-            onClick = { viewModel.showCPUInfo() },
+            onClick = { isExtendCpuInfo = !isExtendCpuInfo },
 	    animateContentSize = true
         )
 

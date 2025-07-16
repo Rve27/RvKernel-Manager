@@ -21,6 +21,9 @@ class HomeViewModel : ViewModel() {
     private val _cpu = MutableStateFlow("")
     val cpu: StateFlow<String> = _cpu
 
+    private val _extendCpu = MutableStateFlow("")
+    val extendCpu: StateFlow<String> = _extendCpu
+
     private val _gpuModel = MutableStateFlow("")
     val gpuModel: StateFlow<String> = _gpuModel
 
@@ -43,18 +46,9 @@ class HomeViewModel : ViewModel() {
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
             _cpu.value = Utils.getCPUInfo()
+	    _extendCpu.value = Utils.getExtendCPUInfo()
             _kernelVersion.value = Utils.getKernelVersion()
 	    _fullKernelVersion.value = Utils.getFullKernelVersion()
-        }
-    }
-
-    fun showCPUInfo() {
-        _isExtendCPUInfo.value = !_isExtendCPUInfo.value
-
-        if (_isExtendCPUInfo.value) {
-            _cpu.value = Utils.getExtendCPUInfo()
-        } else {
-            _cpu.value = Utils.getCPUInfo()
         }
     }
 
