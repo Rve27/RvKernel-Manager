@@ -27,7 +27,11 @@ object Utils {
     fun getAndroidVersion(): String {
         return Build.VERSION.RELEASE
     }
-    
+
+    fun getSdkVersion(): String {
+	return Build.VERSION.SDK_INT.toString()
+    }
+
     fun getCPUInfo(): String {
         return try {
             val hardwareResult = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()

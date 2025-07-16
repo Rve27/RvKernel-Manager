@@ -32,6 +32,9 @@ class HomeViewModel : ViewModel() {
     private val _androidVersion = MutableStateFlow("N/A")
     val androidVersion: StateFlow<String> = _androidVersion
 
+    private val _sdkVersion = MutableStateFlow("N/A")
+    val sdkVersion: StateFlow<String> = _sdkVersion
+
     private val _kernelVersion = MutableStateFlow("N/A")
     val kernelVersion: StateFlow<String> = _kernelVersion
 
@@ -45,6 +48,7 @@ class HomeViewModel : ViewModel() {
             _ramInfo.value = Utils.getTotalRam(context)
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
+	    _sdkVersion.value = Utils.getSdkVersion()
             _cpu.value = Utils.getCPUInfo()
 	    _extendCpu.value = Utils.getExtendCPUInfo()
             _kernelVersion.value = Utils.getKernelVersion()

@@ -84,6 +84,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val extendCpu by viewModel.extendCpu.collectAsState()
     val gpuModel by viewModel.gpuModel.collectAsState()
     val androidVersion by viewModel.androidVersion.collectAsState()
+    val sdkVersion by viewModel.sdkVersion.collectAsState()
     val kernelVersion by viewModel.kernelVersion.collectAsState()
     val fullKernelVersion by viewModel.fullKernelVersion.collectAsState()
 
@@ -126,7 +127,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "Android version",
-            summary = androidVersion,
+            summary = "$androidVersion ($sdkVersion)",
             icon = painterResource(R.drawable.ic_android)
         )
 
