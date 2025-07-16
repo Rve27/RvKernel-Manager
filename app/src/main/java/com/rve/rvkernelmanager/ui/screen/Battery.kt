@@ -98,31 +98,21 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	Card(
-	    elevation = CardDefaults.cardElevation(
-		defaultElevation = 8.dp
+	Column(modifier = Modifier.padding(16.dp)) {
+	    MonitorListItem(
+                title = "Level",
+                summary = batteryInfo.level
 	    )
-	) {
-	    Column(
-		modifier = Modifier.padding(16.dp)
-	    ) {
-		MonitorListItem(
-                    title = "Level",
-                    summary = batteryInfo.level
-		)
-
-		Spacer(Modifier.height(8.dp))
-		MonitorListItem(
-		    title = "Voltage",
-		    summary = batteryInfo.voltage
-		)
-
-		Spacer(Modifier.height(8.dp))
-		MonitorListItem(
-		    title = "Temperature",
-		    summary = batteryInfo.temp
-		)
-	    }
+	    Spacer(Modifier.height(8.dp))
+	    MonitorListItem(
+		title = "Voltage",
+		summary = batteryInfo.voltage
+	    )
+	    Spacer(Modifier.height(8.dp))
+	    MonitorListItem(
+		title = "Temperature",
+		summary = batteryInfo.temp
+	    )
 	}
     }
 }
