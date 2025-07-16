@@ -77,6 +77,7 @@ fun HomeScreen(
 
 @Composable
 fun DeviceInfoCard(viewModel: HomeViewModel) {
+    val deviceName by viewModel.deviceName.collectAsState()
     val deviceCodename by viewModel.deviceCodename.collectAsState()
     val ramInfo by viewModel.ramInfo.collectAsState()
     val cpu by viewModel.cpu.collectAsState()
@@ -99,7 +100,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "Codename",
-            summary = deviceCodename,
+            summary = "$deviceName ($deviceCodename)",
 	    icon = painterResource(R.drawable.ic_smartphone)
         )
 

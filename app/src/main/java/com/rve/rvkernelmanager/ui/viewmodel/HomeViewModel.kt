@@ -11,36 +11,36 @@ import kotlinx.coroutines.Dispatchers
 import com.rve.rvkernelmanager.utils.Utils
 
 class HomeViewModel : ViewModel() {
+    private val _deviceName = MutableStateFlow("N/A")
+    val deviceName: StateFlow<String> = _deviceName
 
-    private val _deviceCodename = MutableStateFlow("")
+    private val _deviceCodename = MutableStateFlow("N/A")
     val deviceCodename: StateFlow<String> = _deviceCodename
 
-    private val _ramInfo = MutableStateFlow("")
+    private val _ramInfo = MutableStateFlow("N/A")
     val ramInfo: StateFlow<String> = _ramInfo
 
-    private val _cpu = MutableStateFlow("")
+    private val _cpu = MutableStateFlow("N/A")
     val cpu: StateFlow<String> = _cpu
 
-    private val _extendCpu = MutableStateFlow("")
+    private val _extendCpu = MutableStateFlow("N/A")
     val extendCpu: StateFlow<String> = _extendCpu
 
-    private val _gpuModel = MutableStateFlow("")
+    private val _gpuModel = MutableStateFlow("N/A")
     val gpuModel: StateFlow<String> = _gpuModel
 
-    private val _androidVersion = MutableStateFlow("")
+    private val _androidVersion = MutableStateFlow("N/A")
     val androidVersion: StateFlow<String> = _androidVersion
 
-    private val _kernelVersion = MutableStateFlow("")
+    private val _kernelVersion = MutableStateFlow("N/A")
     val kernelVersion: StateFlow<String> = _kernelVersion
 
-    private val _fullKernelVersion = MutableStateFlow("")
+    private val _fullKernelVersion = MutableStateFlow("N/A")
     val fullKernelVersion: StateFlow<String> = _fullKernelVersion
-
-    private val _isExtendCPUInfo = MutableStateFlow(false)
-    val isExtendCPUInfo: StateFlow<Boolean> = _isExtendCPUInfo
 
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
+	    _deviceName.value = Utils.getDeviceName()
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
             _gpuModel.value = Utils.getGPUModel()

@@ -15,7 +15,11 @@ object Utils {
     const val FULL_KERNEL_VERSION = "/proc/version"
     const val CPU_INFO = "/proc/cpuinfo"
     const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
-    
+
+    fun getDeviceName(): String {
+	return Build.MODEL
+    }
+
     fun getDeviceCodename(): String {
         return Build.DEVICE
     }
