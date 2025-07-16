@@ -80,6 +80,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val deviceName by viewModel.deviceName.collectAsState()
     val deviceCodename by viewModel.deviceCodename.collectAsState()
     val ramInfo by viewModel.ramInfo.collectAsState()
+    val zram by viewModel.zram.collectAsState()
     val cpu by viewModel.cpu.collectAsState()
     val extendCpu by viewModel.extendCpu.collectAsState()
     val gpuModel by viewModel.gpuModel.collectAsState()
@@ -107,7 +108,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "RAM",
-            summary = ramInfo,
+            summary = "$ramInfo + $zram (ZRAM)",
 	    icon = painterResource(R.drawable.ic_ram)
         )
 

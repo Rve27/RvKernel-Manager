@@ -83,7 +83,47 @@ object Utils {
     
         return "$totalRam GB"
     }
-    
+
+    fun getZramSize(): String {
+        return try {
+            val result = Shell.cmd("cat /proc/swaps | grep zram").exec()
+            if (result.isSuccess && result.out.isNotEmpty()) {
+                var totalZramKB = 0L
+                result.out.forEach { line ->
+                    val parts = line.trim().split("\\s+".toRegex())
+                    if (parts.size >= 3) {
+                        totalZramKB += parts[2].toLongOrNull() ?: 0L
+                    }
+                }
+
+                if (totalZramKB > 0) {
+                    val totalZramGB = totalZramKB / (1024.0 * 1024.0)
+                    val zramGB = ceil(totalZramGB).toInt()
+                    "$zramGB GB"
+                } else {
+                    "N/A"
+                }
+            } else {
+                val diskSizeResult = Shell.cmd("cat /sys/block/zram0/disksize 2>/dev/null").exec()
+                if (diskSizeResult.isSuccess && diskSizeResult.out.isNotEmpty()) {
+                    val diskSizeBytes = diskSizeResult.out.firstOrNull()?.trim()?.toLongOrNull() ?: 0L
+                    if (diskSizeBytes > 0) {
+                        val diskSizeGB = diskSizeBytes / (1024.0 * 1024.0 * 1024.0)
+                        val zramGB = ceil(diskSizeGB).toInt()
+                        "$zramGB GB"
+                    } else {
+                        "N/A"
+                    }
+                } else {
+                    "N/A"
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("getZramSize", "Error reading ZRAM size: ${e.message}", e)
+            "N/A"
+        }
+    }
+
     fun getSystemProperty(key: String): String {
         return try {
             val systemPropertiesClass = Class.forName("android.os.SystemProperties")

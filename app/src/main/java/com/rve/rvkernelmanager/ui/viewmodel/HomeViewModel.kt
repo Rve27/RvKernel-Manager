@@ -20,6 +20,9 @@ class HomeViewModel : ViewModel() {
     private val _ramInfo = MutableStateFlow("N/A")
     val ramInfo: StateFlow<String> = _ramInfo
 
+    private val _zram = MutableStateFlow("N/A")
+    val zram: StateFlow<String> = _zram
+
     private val _cpu = MutableStateFlow("N/A")
     val cpu: StateFlow<String> = _cpu
 
@@ -46,6 +49,7 @@ class HomeViewModel : ViewModel() {
 	    _deviceName.value = Utils.getDeviceName()
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
+	    _zram.value = Utils.getZramSize()
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
 	    _sdkVersion.value = Utils.getSdkVersion()
