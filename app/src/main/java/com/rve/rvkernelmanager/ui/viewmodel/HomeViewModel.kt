@@ -30,11 +30,11 @@ class HomeViewModel : ViewModel() {
     private val _kernelVersion = MutableStateFlow("")
     val kernelVersion: StateFlow<String> = _kernelVersion
 
+    private val _fullKernelVersion = MutableStateFlow("")
+    val fullKernelVersion: StateFlow<String> = _fullKernelVersion
+
     private val _isExtendCPUInfo = MutableStateFlow(false)
     val isExtendCPUInfo: StateFlow<Boolean> = _isExtendCPUInfo
-
-    private val _isFullKernelVersion = MutableStateFlow(false)
-    val isFullKernelVersion: StateFlow<Boolean> = _isFullKernelVersion
 
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -44,6 +44,7 @@ class HomeViewModel : ViewModel() {
             _androidVersion.value = Utils.getAndroidVersion()
             _cpu.value = Utils.getCPUInfo()
             _kernelVersion.value = Utils.getKernelVersion()
+	    _fullKernelVersion.value = Utils.getFullKernelVersion()
         }
     }
 
@@ -54,17 +55,6 @@ class HomeViewModel : ViewModel() {
             _cpu.value = Utils.getExtendCPUInfo()
         } else {
             _cpu.value = Utils.getCPUInfo()
-        }
-    }
-
-    fun showFullKernelVersion() {
-        _isFullKernelVersion.value = !_isFullKernelVersion.value
-
-        if (_isFullKernelVersion.value) {
-            Utils.setPermissions(644, Utils.FULL_KERNEL_VERSION)
-            _kernelVersion.value = Utils.readFile(Utils.FULL_KERNEL_VERSION)
-        } else {
-            _kernelVersion.value = Utils.getKernelVersion()
         }
     }
 

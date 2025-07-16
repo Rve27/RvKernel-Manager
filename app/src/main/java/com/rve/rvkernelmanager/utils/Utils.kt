@@ -95,7 +95,12 @@ object Utils {
             "Unable to get kernel version"
         }
     }
-    
+
+    fun getFullKernelVersion(): String {
+	setPermissions(644, FULL_KERNEL_VERSION)
+	return readFile(FULL_KERNEL_VERSION)
+    }
+
     fun getGPUModel(): String {
         return try {
             val result = Shell.cmd("cat $GPU_MODEL").exec()

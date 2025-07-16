@@ -4,6 +4,7 @@ import android.content.*
 import android.net.Uri
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -82,8 +83,10 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     val gpuModel by viewModel.gpuModel.collectAsState()
     val androidVersion by viewModel.androidVersion.collectAsState()
     val kernelVersion by viewModel.kernelVersion.collectAsState()
+    val fullKernelVersion by viewModel.fullKernelVersion.collectAsState()
     val isCPUInfo by viewModel.isExtendCPUInfo.collectAsState()
-    val isFullKernelVersion by viewModel.isFullKernelVersion.collectAsState()
+
+    var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
     Card {
         CustomListItem(
@@ -127,9 +130,9 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "Kernel version",
-            summary = kernelVersion,
+            summary = if (isFullKernelVersion) fullKernelVersion else kernelVersion,
             icon = painterResource(R.drawable.ic_linux),
-            onClick = { viewModel.showFullKernelVersion() },
+            onClick = { isFullKernelVersion = !isFullKernelVersion },
 	    animateContentSize = true
         )
     }
