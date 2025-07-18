@@ -1,13 +1,22 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
 package com.rve.rvkernelmanager.utils
 
 import java.io.File
+
 import android.system.Os
 import android.os.Build
 import android.content.Context
 import android.app.ActivityManager
 import android.util.Log
-import kotlin.math.ceil
+
+import kotlin.math.*
+
 import com.topjohnwu.superuser.Shell
+
 import com.rve.rvkernelmanager.utils.SoCUtils
 
 object Utils {
@@ -16,132 +25,57 @@ object Utils {
     const val CPU_INFO = "/proc/cpuinfo"
     const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
 
-    fun getDeviceName(): String {
-	return Build.MODEL
-    }
+    fun getDeviceName() = Build.MODEL
+    fun getDeviceCodename() = Build.DEVICE
+    fun getAndroidVersion() = Build.VERSION.RELEASE
+    fun getSdkVersion() = Build.VERSION.SDK_INT.toString()
 
-    fun getDeviceCodename(): String {
-        return Build.DEVICE
-    }
-    
-    fun getAndroidVersion(): String {
-        return Build.VERSION.RELEASE
-    }
-
-    fun getSdkVersion(): String {
-	return Build.VERSION.SDK_INT.toString()
-    }
-
-    fun getCPUInfo(): String {
-        return try {
-            val hardwareResult = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
-    
-            if (hardwareResult.isSuccess) {
-                hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
-            } else {
-                "Unknown"
-            }
-        } catch (e: Exception) {
-            Log.e("getCPUInfo", "Exception during command execution", e)
-            "Unknown"
-        }
-    }
+    fun getCPUInfo(): String = shellReadLine("cat $CPU_INFO | grep 'Hardware' | head -n 1")
+        ?.replace("Hardware\t: ", "")?.trim().orUnknown()
     
     fun getExtendCPUInfo(): String {
-        return try {
-            val hardwareResult = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
-            val coresResult = Shell.cmd("cat $CPU_INFO | grep 'processor' | wc -l").exec()
-            val archResult = Shell.cmd("cat $CPU_INFO | grep 'Processor' | head -n 1").exec()
-    
-            val hardware = if (hardwareResult.isSuccess) {
-                hardwareResult.out.firstOrNull()?.replace("Hardware\t: ", "")?.trim() ?: "Unknown"
-            } else "Unknown"
-    
-            val cores = if (coresResult.isSuccess) {
-                coresResult.out.firstOrNull()?.trim() ?: "0"
-            } else "0"
-    
-            val arch = if (archResult.isSuccess) {
-                val processor = archResult.out.firstOrNull()?.trim() ?: ""
-                if (processor.contains("AArch64")) "AArch64" else "Unknown"
-            } else "Unknown"
-    
-            "$hardware\n$cores Cores ($arch)"
-        } catch (e: Exception) {
-            Log.e("getExtendCPUInfo", "Exception during command execution", e)
-            "Exception during command execution"
-        }
+        val hardware = getCPUInfo()
+        val cores = shellReadLine("cat $CPU_INFO | grep 'processor' | wc -l") ?: "0"
+        val archLine = shellReadLine("cat $CPU_INFO | grep 'Processor' | head -n 1")
+        val arch = if (archLine?.contains("AArch64") == true) "AArch64" else "Unknown"
+        return "$hardware\n$cores Cores ($arch)"
     }
     
     fun getTotalRam(context: Context): String {
-        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val memoryInfo = ActivityManager.MemoryInfo()
-        activityManager.getMemoryInfo(memoryInfo)
-    
-        val totalMem = memoryInfo.totalMem / (1024.0 * 1024 * 1024)
-        val totalRam = ceil(totalMem).toInt()
-    
-        return "$totalRam GB"
+        val memoryInfo = ActivityManager.MemoryInfo().apply {
+            (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(this)
+        }
+        return "${ceil(memoryInfo.totalMem / 1e9).toInt()} GB"
     }
 
-    fun getZramSize(): String {
-        return try {
-            val result = Shell.cmd("cat /proc/swaps | grep zram").exec()
-            if (result.isSuccess && result.out.isNotEmpty()) {
-                var totalZramKB = 0L
-                result.out.forEach { line ->
-                    val parts = line.trim().split("\\s+".toRegex())
-                    if (parts.size >= 3) {
-                        totalZramKB += parts[2].toLongOrNull() ?: 0L
-                    }
-                }
-
-                if (totalZramKB > 0) {
-                    val totalZramGB = totalZramKB / (1024.0 * 1024.0)
-                    val zramGB = ceil(totalZramGB).toInt()
-                    "$zramGB GB"
-                } else {
-                    "N/A"
-                }
-            } else {
-                val diskSizeResult = Shell.cmd("cat /sys/block/zram0/disksize 2>/dev/null").exec()
-                if (diskSizeResult.isSuccess && diskSizeResult.out.isNotEmpty()) {
-                    val diskSizeBytes = diskSizeResult.out.firstOrNull()?.trim()?.toLongOrNull() ?: 0L
-                    if (diskSizeBytes > 0) {
-                        val diskSizeGB = diskSizeBytes / (1024.0 * 1024.0 * 1024.0)
-                        val zramGB = ceil(diskSizeGB).toInt()
-                        "$zramGB GB"
-                    } else {
-                        "N/A"
-                    }
-                } else {
-                    "N/A"
-                }
+    fun getZramSize(): String = runCatching {
+        val zramLines = shellReadLines("cat /proc/swaps | grep zram")
+        if (!zramLines.isNullOrEmpty()) {
+            val totalKB = zramLines.sumOf {
+                it.trim().split("\\s+".toRegex()).getOrNull(2)?.toLongOrNull() ?: 0
             }
-        } catch (e: Exception) {
-            Log.e("getZramSize", "Error reading ZRAM size: ${e.message}", e)
-            "N/A"
+            return if (totalKB > 0) "${floor(totalKB / 1e6).toInt()} GB" else "N/A"
         }
+
+        val diskBytes = shellReadLine("cat /sys/block/zram0/disksize")?.toLongOrNull()
+        return if (diskBytes != null && diskBytes > 0)
+            "${floor(diskBytes / 1e9).toInt()} GB" else "N/A"
+    }.getOrElse {
+        Log.e("getZramSize", "Exception: ${it.message}", it)
+        "N/A"
     }
 
-    fun getSystemProperty(key: String): String {
-        return try {
-            val systemPropertiesClass = Class.forName("android.os.SystemProperties")
-            val getMethod = systemPropertiesClass.getMethod("get", String::class.java)
-            getMethod.invoke(null, key) as String
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ""
-        }
-    }
+    fun getSystemProperty(key: String): String = runCatching {
+        val clazz = Class.forName("android.os.SystemProperties")
+        val method = clazz.getMethod("get", String::class.java)
+        method.invoke(null, key) as? String
+    }.getOrNull().orEmpty()
 
-    fun getKernelVersion(): String {
-        return try {
-            Os.uname().release
-        } catch (e: Exception) {
-            e.printStackTrace()
-            "Unable to get kernel version"
-        }
+    fun getKernelVersion(): String = runCatching {
+        Os.uname().release
+    }.getOrElse {
+        Log.e("getKernelVersion", "Error: ${it.message}", it)
+        "Unable to get kernel version"
     }
 
     fun getFullKernelVersion(): String {
@@ -149,78 +83,37 @@ object Utils {
 	return readFile(FULL_KERNEL_VERSION)
     }
 
-    fun getGPUModel(): String {
-        return try {
-            val result = Shell.cmd("cat $GPU_MODEL").exec()
-            if (result.isSuccess) {
-                val gpuModel = result.out.firstOrNull()?.trim() ?: "Unknown"
-                val formattedModel = gpuModel
-                    .replace("Adreno", "Adreno (TM) ")
-                    .replace(Regex("v\\d+"), "")
-                formattedModel
-            } else {
-                Log.e("getGPUModel", "Command execution failed: ${result.err}")
-                "Unknown"
-            }
-        } catch (e: Exception) {
-            Log.e("getGPUModel", "Error reading GPU model: ${e.message}", e)
-            "Unknown"
-        }
+    fun getGPUModel(): String = shellReadLine("cat $GPU_MODEL")?.let { raw ->
+        raw.replace("Adreno", "Adreno (TM) ").replace(Regex("v\\d+"), "").trim()
+    }.orUnknown()
+
+    fun getTemp(filePath: String): String {
+        val value = readFile(filePath).trim()
+        return value.toFloatOrNull()?.div(1000)?.let { "%.1f".format(it) } ?: "N/A"
     }
 
-        fun testFile(filePath: String): Boolean {
-        return if (File(filePath).exists()) {
-            true
-        } else {
-            Shell.cmd("test -f $filePath && echo true || echo false")
-                .exec()
-                .out[0] == "true"
-        }
-    }
-    
+    fun testFile(filePath: String): Boolean =
+        File(filePath).exists() || shellReadLine("test -f $filePath && echo true || echo false") == "true"
+
     fun setPermissions(permission: Int, filePath: String) {
         Shell.cmd("chmod $permission $filePath").exec()
     }
-    
-    fun readFile(filePath: String): String {
-        return try {
-            val result = Shell.cmd("cat $filePath").exec()
-            if (result.isSuccess) {
-                result.out.joinToString("\n").trim()
-            } else {
-                Log.e("ReadFile", "Failed to read file at $filePath: ${result.err}")
-                ""
-            }
-        } catch (e: Exception) {
-            Log.e("ReadFile", "Error executing shell command for $filePath: ${e.message}", e)
-            ""
-        }
-    }
-    
-    fun writeFile(filePath: String, value: String): Boolean {
-        return try {
-            val command = "echo $value > $filePath"
-            val result = Shell.cmd(command).exec()
-            if (result.isSuccess) true else {
-                Log.e("WriteFile", "Failed to write file at $filePath: ${result.err}")
-                false
-            }
-        } catch (e: Exception) {
-            Log.e("WriteFile", "Error executing shell command for $filePath: ${e.message}", e)
-            false
-        }
+
+    fun readFile(filePath: String): String =
+        shellReadLines("cat $filePath")?.joinToString("\n")?.trim().orEmpty()
+
+    fun writeFile(filePath: String, value: String): Boolean = runCatching {
+        Shell.cmd("echo $value > $filePath").exec().isSuccess
+    }.getOrElse {
+        Log.e("writeFile", "Error writing to $filePath: ${it.message}", it)
+        false
     }
 
-    fun getTemp(filePath: String): String {
-        val temp = Utils.readFile(filePath)
-        val trimmedTemp = temp.trim()
-        if (trimmedTemp.isEmpty()) return "N/A"
-        try {
-            val raw = trimmedTemp.toFloat()
-            val c = raw / 1000f
-            return "%.1f".format(c)
-        } catch (e: NumberFormatException) {
-            return "N/A"
-        }
-    }
+    private fun shellReadLine(command: String): String? =
+        Shell.cmd(command).exec().takeIf { it.isSuccess }?.out?.firstOrNull()
+
+    private fun shellReadLines(command: String): List<String>? =
+        Shell.cmd(command).exec().takeIf { it.isSuccess }?.out
+
+    private fun String?.orUnknown() = this?.takeIf { it.isNotBlank() } ?: "Unknown"
 }

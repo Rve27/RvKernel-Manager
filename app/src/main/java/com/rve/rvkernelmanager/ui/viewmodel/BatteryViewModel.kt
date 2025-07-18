@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
 package com.rve.rvkernelmanager.ui.viewmodel
 
 import android.util.Log
@@ -56,7 +61,7 @@ class BatteryViewModel : ViewModel() {
 		val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
-                val designCapacity = BatteryUtils.getBatteryDesignCapacity(context)
+                val designCapacity = BatteryUtils.getBatteryDesignCapacity()
 
                 _batteryInfo.value = _batteryInfo.value.copy(
 		    level = level,
