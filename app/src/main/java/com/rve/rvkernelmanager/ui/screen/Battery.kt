@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.*
@@ -23,7 +30,6 @@ import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.ui.component.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BatteryScreen(
     viewModel: BatteryViewModel = viewModel(),
@@ -261,7 +267,8 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openTPD = false }
+			onClick = { openTPD = false },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }

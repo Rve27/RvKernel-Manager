@@ -26,17 +26,11 @@ class MiscViewModel : ViewModel() {
     private val _hasSwappiness = MutableStateFlow(false)
     val hasSwappiness: StateFlow<Boolean> = _hasSwappiness
 
-    private val _showSwappinessDialog = MutableStateFlow(false)
-    val showSwappinessDialog: StateFlow<Boolean> = _showSwappinessDialog
-
     private val _printk = MutableStateFlow("")
     val printk: StateFlow<String> = _printk
 
     private val _hasPrintk = MutableStateFlow(false)
     val hasPrintk: StateFlow<Boolean> = _hasPrintk
-
-    private val _showPrintkDialog = MutableStateFlow(false)
-    val showPrintkDialog: StateFlow<Boolean> = _showPrintkDialog
 
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
@@ -81,27 +75,11 @@ class MiscViewModel : ViewModel() {
         }
     }
 
-    fun showSwappinessDialog() {
-        _showSwappinessDialog.value = true
-    }
-
-    fun hideSwappinessDialog() {
-        _showSwappinessDialog.value = false
-    }
-
     fun updateSwappiness(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(MiscUtils.SWAPPINESS, newValue)
             _swappiness.value = newValue
         }
-    }
-
-    fun showPrintkDialog() {
-        _showPrintkDialog.value = true
-    }
-
-    fun hidePrintkDialog() {
-        _showPrintkDialog.value = false
     }
 
     fun updatePrintk(newValue: String) {

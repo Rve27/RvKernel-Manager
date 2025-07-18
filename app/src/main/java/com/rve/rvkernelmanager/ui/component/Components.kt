@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package com.rve.rvkernelmanager.ui.component
 
 import androidx.compose.foundation.*
@@ -141,6 +148,7 @@ fun ButtonListItem(
             Button(
 		onClick = onClick,
                 interactionSource = interactionSource,
+		shapes = ButtonDefaults.shapes()
 	    ) {
 		Text(
 		    text = when {
@@ -246,7 +254,8 @@ fun DialogTextButton(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+	shapes = ButtonDefaults.shapes()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

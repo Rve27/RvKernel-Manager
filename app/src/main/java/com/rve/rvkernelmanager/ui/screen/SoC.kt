@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.runtime.*
@@ -19,7 +26,6 @@ import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SoCScreen(
     viewModel: SoCViewModel = viewModel(),
@@ -267,7 +273,8 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { targetFreqCPU0 = null }
+			onClick = { targetFreqCPU0 = null },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -298,7 +305,8 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openAFG = true }
+			onClick = { openAFG = true },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -372,7 +380,8 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { targetBigFreq = null }
+			onClick = { targetBigFreq = null },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -403,7 +412,8 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openAFG = true }
+			onClick = { openAFG = true },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -478,7 +488,8 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { targetPrimeFreq = null }
+			onClick = { targetPrimeFreq = null },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -509,7 +520,8 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openACG = true }
+			onClick = { openACG = true },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -617,7 +629,8 @@ fun GPUCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { targetGpuFreq = null }
+			onClick = { targetGpuFreq = null },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -648,7 +661,8 @@ fun GPUCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openAGG = false }
+			onClick = { openAGG = false },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }
@@ -694,7 +708,8 @@ fun GPUCard(viewModel: SoCViewModel) {
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openABD = false }
+			onClick = { openABD = false },
+			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
 		    }

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.*
@@ -7,7 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.*
@@ -15,6 +22,7 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.animation.core.*
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -25,7 +33,6 @@ import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiscScreen(
     viewModel: MiscViewModel = viewModel(),
@@ -33,6 +40,30 @@ fun MiscScreen(
     navController: NavController
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    val pullToRefreshState = remember {
+	object : PullToRefreshState {
+            private val anim = Animatable(0f, Float.VectorConverter)
+
+            override val distanceFraction
+                get() = anim.value
+
+            override val isAnimating: Boolean
+                get() = anim.isRunning
+
+            override suspend fun animateToThreshold() {
+                anim.animateTo(1f, spring(dampingRatio = Spring.DampingRatioHighBouncy))
+            }
+
+            override suspend fun animateToHidden() {
+                anim.animateTo(0f)
+            }
+
+            override suspend fun snapTo(targetValue: Float) {
+                anim.snapTo(targetValue)
+            }
+        }
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -55,18 +86,26 @@ fun MiscScreen(
 	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { innerPadding ->
         PullToRefreshBox(
+	    modifier = Modifier.padding(innerPadding),
             isRefreshing = viewModel.isRefreshing,
-            onRefresh = { viewModel.refresh() }
+            onRefresh = { viewModel.refresh() },
+	    state = pullToRefreshState,
+	    indicator = {
+                PullToRefreshDefaults.LoadingIndicator(
+		    state = pullToRefreshState,
+                    isRefreshing = viewModel.isRefreshing,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            }
         ) {
             LazyColumn(
-                modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-		state = rememberLazyListState()
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 		item {
 		    Spacer(Modifier.height(16.dp))
                     MiscCard(viewModel)
-		}
+	        }
 		item {
                     Spacer(Modifier)
 		}
@@ -83,11 +122,13 @@ fun MiscCard(viewModel: MiscViewModel) {
 
     val swappiness by viewModel.swappiness.collectAsState()
     val hasSwappiness by viewModel.hasSwappiness.collectAsState()
-    val showSwappinessDialog by viewModel.showSwappinessDialog.collectAsState()
+    // SD = Swappiness Dialog
+    var openSD by remember { mutableStateOf(false) }
 
     val printk by viewModel.printk.collectAsState()
     val hasPrintk by viewModel.hasPrintk.collectAsState()
-    val showPrintkDialog by viewModel.showPrintkDialog.collectAsState()
+    // PD = Printk Dialog
+    var openPD by remember { mutableStateOf(false) }
 
     Card {
 	CustomListItem(
@@ -114,7 +155,7 @@ fun MiscCard(viewModel: MiscViewModel) {
 		title = "Swappiness",
 		summary = "Controls how aggressively the system uses swap memory",
 		value = "$swappiness%",
-		onClick = { viewModel.showSwappinessDialog() }
+		onClick = { openSD = true }
 	    )
 	}
 
@@ -123,15 +164,15 @@ fun MiscCard(viewModel: MiscViewModel) {
                 title = "printk",
 		summary = "Controls kernel message logging level",
 		value = printk,
-		onClick = { viewModel.showPrintkDialog() }
+		onClick = { openPD = true }
             )
         }
     }
 
-    if (showSwappinessDialog) {
+    if (openSD) {
         var newSwappinessValue by remember { mutableStateOf(swappiness) }
         AlertDialog(
-            onDismissRequest = { viewModel.hideSwappinessDialog() },
+            onDismissRequest = { openSD = false },
             text = {
                 Column {
                     OutlinedTextField(
@@ -149,8 +190,9 @@ fun MiscCard(viewModel: MiscViewModel) {
                 TextButton(
                     onClick = {
                         viewModel.updateSwappiness(newSwappinessValue)
-                        viewModel.hideSwappinessDialog()
-                    }
+                        openSD = false
+                    },
+		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(text = "Change")
                 }
@@ -158,10 +200,10 @@ fun MiscCard(viewModel: MiscViewModel) {
         )
     }
 
-    if (showPrintkDialog) {
+    if (openPD) {
         var newPrintkValue by remember { mutableStateOf(printk) }
         AlertDialog(
-            onDismissRequest = { viewModel.hidePrintkDialog() },
+            onDismissRequest = { openPD = false },
             text = {
                 Column {
                     OutlinedTextField(
@@ -179,8 +221,9 @@ fun MiscCard(viewModel: MiscViewModel) {
                 TextButton(
                     onClick = {
                         viewModel.updatePrintk(newPrintkValue)
-                        viewModel.hidePrintkDialog()
-                    }
+                        openPD = false
+                    },
+		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(text = "Change")
                 }

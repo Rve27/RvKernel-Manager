@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.lazy.*
@@ -19,7 +26,6 @@ import com.rve.rvkernelmanager.ui.navigation.SettingsTopAppBar
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 import com.rve.rvkernelmanager.ui.viewmodel.SettingsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel()
@@ -84,7 +90,8 @@ fun SettingsScreen(
 	    },
 	    confirmButton = {
 		TextButton(
-		    onClick = { openThemeDialog = false }
+		    onClick = { openThemeDialog = false },
+		    shapes = ButtonDefaults.shapes()
 		) {
 		    Text("Close")
 		}
@@ -121,14 +128,16 @@ fun SettingsScreen(
                             viewModel.setPollingInterval(intervalSeconds * 1000)
                             openPollingDialog = false
                         }
-                    }
+                    },
+		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text("Apply")
                 }
             },
             dismissButton = {
                 TextButton(
-                    onClick = { openPollingDialog = false }
+                    onClick = { openPollingDialog = false },
+		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text("Cancel")
                 }
