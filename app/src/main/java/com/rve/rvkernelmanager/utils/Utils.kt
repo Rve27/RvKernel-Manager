@@ -7,7 +7,6 @@ package com.rve.rvkernelmanager.utils
 
 import java.io.File
 
-import android.system.Os
 import android.os.Build
 import android.content.Context
 import android.app.ActivityManager
@@ -17,11 +16,8 @@ import kotlin.math.*
 
 import com.topjohnwu.superuser.Shell
 
-import com.rve.rvkernelmanager.utils.SoCUtils
-
 object Utils {
 
-    const val FULL_KERNEL_VERSION = "/proc/version"
     const val CPU_INFO = "/proc/cpuinfo"
     const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
 
@@ -70,18 +66,6 @@ object Utils {
         val method = clazz.getMethod("get", String::class.java)
         method.invoke(null, key) as? String
     }.getOrNull().orEmpty()
-
-    fun getKernelVersion(): String = runCatching {
-        Os.uname().release
-    }.getOrElse {
-        Log.e("getKernelVersion", "Error: ${it.message}", it)
-        "Unable to get kernel version"
-    }
-
-    fun getFullKernelVersion(): String {
-	setPermissions(644, FULL_KERNEL_VERSION)
-	return readFile(FULL_KERNEL_VERSION)
-    }
 
     fun getGPUModel(): String = shellReadLine("cat $GPU_MODEL")?.let { raw ->
         raw.replace("Adreno", "Adreno (TM) ").replace(Regex("v\\d+"), "").trim()

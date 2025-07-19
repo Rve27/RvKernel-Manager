@@ -1,15 +1,20 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
 package com.rve.rvkernelmanager.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+
 import com.rve.rvkernelmanager.R
 
 @Composable
@@ -21,7 +26,7 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Home,
         BottomNavItem.SoC,
         BottomNavItem.Battery,
-        BottomNavItem.Misc
+        BottomNavItem.KernelParameter
     )
 
     NavigationBar {
@@ -76,9 +81,9 @@ sealed class BottomNavItem(
         unselectedIcon = Icons.Outlined.Battery0Bar
     )
 
-    object Misc : BottomNavItem(
-        route = "misc",
-        title = R.string.misc,
+    object KernelParameter : BottomNavItem(
+        route = "kernel",
+        title = R.string.kernel_parameter,
         selectedIcon = Icons.Filled.Storage,
         unselectedIcon = Icons.Outlined.Storage
     )

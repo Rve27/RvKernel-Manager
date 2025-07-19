@@ -31,11 +31,11 @@ import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.viewmodel.MiscViewModel
+import com.rve.rvkernelmanager.ui.viewmodel.KernelParameterViewModel
 
 @Composable
-fun MiscScreen(
-    viewModel: MiscViewModel = viewModel(),
+fun KernelParameterScreen(
+    viewModel: KernelParameterViewModel = viewModel(),
     lifecycleOwner: LifecycleOwner,
     navController: NavController
 ) {
@@ -68,7 +68,7 @@ fun MiscScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.loadMiscData()
+                Lifecycle.Event.ON_RESUME -> viewModel.loadKernelParameter()
                 else -> {}
             }
         }
@@ -104,7 +104,7 @@ fun MiscScreen(
             ) {
 		item {
 		    Spacer(Modifier.height(16.dp))
-                    MiscCard(viewModel)
+                    KernelParameterCard(viewModel)
 	        }
 		item {
                     Spacer(Modifier)
@@ -115,7 +115,7 @@ fun MiscScreen(
 }
 
 @Composable
-fun MiscCard(viewModel: MiscViewModel) {
+fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val schedAutogroup by viewModel.schedAutogroup.collectAsState()
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
     val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
@@ -132,7 +132,7 @@ fun MiscCard(viewModel: MiscViewModel) {
 
     Card {
 	CustomListItem(
-	    title = "Miscellaneous",
+	    title = "Kernel Parameter",
 	    titleLarge = true
 	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -209,7 +209,7 @@ fun MiscCard(viewModel: MiscViewModel) {
                     OutlinedTextField(
                         value = newPrintkValue,
 			onValueChange = { newPrintkValue = it },
-                        label = { Text(MiscUtils.PRINTK.substringAfterLast("/")) },
+                        label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
                         modifier = Modifier.fillMaxWidth(),
 			keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number

@@ -109,8 +109,8 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
             composable("battery") {
                 BatteryScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
-            composable("misc") {
-                MiscScreen(lifecycleOwner = lifecycleOwner, navController = navController)
+            composable("kernel") {
+                KernelParameterScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
 	}
     }

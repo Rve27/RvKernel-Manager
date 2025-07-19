@@ -1,19 +1,20 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
 package com.rve.rvkernelmanager.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.compose.runtime.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.channels.Channel
-import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.utils.MiscUtils
 
-class MiscViewModel : ViewModel() {
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.Channel
+
+import com.rve.rvkernelmanager.utils.*
+
+class KernelParameterViewModel : ViewModel() {
     private val _schedAutogroup = MutableStateFlow("")
     val schedAutogroup: StateFlow<String> = _schedAutogroup
 
@@ -51,40 +52,40 @@ class MiscViewModel : ViewModel() {
 
     fun refresh() {
         refreshRequests.trySend(Unit)
-        loadMiscData()
+        loadKernelParameter()
     }
 
-    fun loadMiscData() {
+    fun loadKernelParameter() {
         viewModelScope.launch(Dispatchers.IO) {
-            _schedAutogroup.value = Utils.readFile(MiscUtils.SCHED_AUTOGROUP)
-            _hasSchedAutogroup.value = Utils.testFile(MiscUtils.SCHED_AUTOGROUP)
+            _schedAutogroup.value = Utils.readFile(KernelUtils.SCHED_AUTOGROUP)
+            _hasSchedAutogroup.value = Utils.testFile(KernelUtils.SCHED_AUTOGROUP)
 
-            _swappiness.value = Utils.readFile(MiscUtils.SWAPPINESS)
-            _hasSwappiness.value = Utils.testFile(MiscUtils.SWAPPINESS)
+            _swappiness.value = Utils.readFile(KernelUtils.SWAPPINESS)
+            _hasSwappiness.value = Utils.testFile(KernelUtils.SWAPPINESS)
 
-            _printk.value = Utils.readFile(MiscUtils.PRINTK)
-            _hasPrintk.value = Utils.testFile(MiscUtils.PRINTK)
+            _printk.value = Utils.readFile(KernelUtils.PRINTK)
+            _hasPrintk.value = Utils.testFile(KernelUtils.PRINTK)
         }
     }
 
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val newValue = if (isChecked) "1" else "0"
-            Utils.writeFile(MiscUtils.SCHED_AUTOGROUP, newValue)
+            Utils.writeFile(KernelUtils.SCHED_AUTOGROUP, newValue)
             _schedAutogroup.value = newValue
         }
     }
 
     fun updateSwappiness(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(MiscUtils.SWAPPINESS, newValue)
+            Utils.writeFile(KernelUtils.SWAPPINESS, newValue)
             _swappiness.value = newValue
         }
     }
 
     fun updatePrintk(newValue: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(MiscUtils.PRINTK, newValue)
+            Utils.writeFile(KernelUtils.PRINTK, newValue)
             _printk.value = newValue
         }
     }

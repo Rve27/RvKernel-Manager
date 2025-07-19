@@ -6,5 +6,5 @@
     <string name="home">Home</string>
     <string name="soc">SoC</string>
     <string name="battery">Battery</string>
-    <string name="misc">Misc</string>
+    <string name="kernel_parameter">Kernel</string>
 </resources>
