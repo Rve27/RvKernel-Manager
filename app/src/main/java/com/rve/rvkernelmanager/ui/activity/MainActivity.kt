@@ -1,29 +1,55 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package com.rve.rvkernelmanager.ui.activity
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+
+import androidx.activity.*
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.*
 import androidx.navigation.compose.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.screen.*
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
-import com.rve.rvkernelmanager.utils.RootUtils
+
 import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
+    private var isRoot = false
+    private var showRootDialog by mutableStateOf(false)
+    
+    private val checkRoot = Runnable {
+        Shell.getShell { shell ->
+            isRoot = shell.isRoot
+            if (!isRoot) {
+                showRootDialog = true
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+	val splashScreen: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+	splashScreen.setKeepOnScreenCondition { !isRoot }
         enableEdgeToEdge()
+	Thread(checkRoot).start()
 
         setContent {
             RvKernelManagerTheme {
-                RootCheckHandler()
+                RvKernelManagerApp(showRootDialog = showRootDialog)
             }
         }
     }
@@ -43,35 +69,31 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RootCheckHandler() {
-    var isShellReady by remember { mutableStateOf(false) }
-    var showNoRootDialog by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        Shell.getShell { shell ->
-            if (shell.isRoot) {
-                isShellReady = true
-            } else {
-                showNoRootDialog = true
-            }
-        }
-    }
-
-    when {
-        showNoRootDialog -> {
-            RootUtils.NoRootDialog { System.exit(0) }
-        }
-        isShellReady -> {
-            RvKernelManagerApp()
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RvKernelManagerApp() {
+fun RvKernelManagerApp(showRootDialog: Boolean = false) {
     val navController = rememberNavController()
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    if (showRootDialog) {
+	AlertDialog(
+	    onDismissRequest = {},
+	    text = {
+		Text(
+		    text = "RvKernel Manager requires root access!",
+		    style = MaterialTheme.typography.bodyLarge
+		)
+	    },
+	    confirmButton = {
+		TextButton(
+		    onClick = {
+			System.exit(0)
+		    },
+		    shapes = ButtonDefaults.shapes()
+		) {
+		    Text("Exit")
+		}
+	    }
+	)
+    }
 
     Scaffold {
 	NavHost(

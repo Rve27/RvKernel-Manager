@@ -11,7 +11,8 @@
         android:theme="@style/RvTheme">
         <activity 
 	    android:name=".ui.activity.MainActivity"
-            android:exported="true">
+            android:exported="true"
+	    android:theme="@style/Theme.RvTheme.SplashScreen">
             <intent-filter>
                 <action 
                     android:name="android.intent.action.MAIN" />
