@@ -49,6 +49,9 @@ fun KernelParameterScreen(
 
     var isDialogOpen by remember { mutableStateOf(false) }
 
+    val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
+    val hasPrintk by viewModel.hasPrintk.collectAsState()
+
     val hasZramSize by viewModel.hasZramSize.collectAsState()
     val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
 
@@ -113,10 +116,12 @@ fun KernelParameterScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-		item {
-		    Spacer(Modifier.height(16.dp))
-                    KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
-	        }
+		if (hasSchedAutogroup || hasPrintk) {
+		    item {
+		        Spacer(Modifier.height(16.dp))
+                        KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+	            }
+		}
 		if (hasZramSize || hasZramCompAlgorithm) {
 		    item {
 			MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
@@ -136,18 +141,13 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
     val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
 
-    val swappiness by viewModel.swappiness.collectAsState()
-    val hasSwappiness by viewModel.hasSwappiness.collectAsState()
-    // SD = Swappiness Dialog
-    var openSD by remember { mutableStateOf(false) }
-
     val printk by viewModel.printk.collectAsState()
     val hasPrintk by viewModel.hasPrintk.collectAsState()
     // PD = Printk Dialog
     var openPD by remember { mutableStateOf(false) }
 
-    LaunchedEffect(openSD, openPD) {
-	onDialogStateChange(openSD || openPD)
+    LaunchedEffect(openPD) {
+	onDialogStateChange(openPD)
     }
 
     Card {
@@ -170,15 +170,6 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 	    )
         }
 
-        if (hasSwappiness) {
-	    ButtonListItem(
-		title = "Swappiness",
-		summary = "Controls how aggressively the system uses swap memory",
-		value = "$swappiness%",
-		onClick = { openSD = true }
-	    )
-	}
-
 	if (hasPrintk) {
             ButtonListItem(
                 title = "printk",
@@ -187,37 +178,6 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 		onClick = { openPD = true }
             )
         }
-    }
-
-    if (openSD) {
-        var newSwappinessValue by remember { mutableStateOf(swappiness) }
-        AlertDialog(
-            onDismissRequest = { openSD = false },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = newSwappinessValue,
-			onValueChange = { newSwappinessValue = it },
-                        label = { Text("Swappiness") },
-                        modifier = Modifier.fillMaxWidth(),
-			keyboardOptions = KeyboardOptions.Default.copy(
-			    keyboardType = KeyboardType.Number
-			)
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateSwappiness(newSwappinessValue)
-                        openSD = false
-                    },
-		    shapes = ButtonDefaults.shapes()
-                ) {
-                    Text(text = "Change")
-                }
-            }
-        )
     }
 
     if (openPD) {
@@ -256,16 +216,23 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     val zramSize by viewModel.zramSize.collectAsState()
     val hasZramSize by viewModel.hasZramSize.collectAsState()
+
     val zramCompAlgorithm by viewModel.zramCompAlgorithm.collectAsState()
     val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
     val availableZramCompAlgorithms by viewModel.availableZramCompAlgorithms.collectAsState()
+
+    val swappiness by viewModel.swappiness.collectAsState()
+    val hasSwappiness by viewModel.hasSwappiness.collectAsState()
+
     // ZD = ZRAM Dialog
     var openZD by remember { mutableStateOf(false) }
     // ZCD = ZRAM Compression Dialog
     var openZCD by remember { mutableStateOf(false) }
+    // SD = Swappiness Dialog
+    var openSD by remember { mutableStateOf(false) }
 
-    LaunchedEffect(openZD, openZCD) {
-	onDialogStateChange(openZD || openZCD)
+    LaunchedEffect(openZD, openZCD, openSD) {
+	onDialogStateChange(openZD || openZCD || openSD)
     }
 
     Card {
@@ -298,6 +265,15 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
                 onClick = { openZCD = true }
             )
         }
+
+	if (hasSwappiness) {
+	    ButtonListItem(
+		title = "Swappiness",
+		summary = "Controls how aggressively the system uses swap memory",
+		value = "$swappiness%",
+		onClick = { openSD = true }
+	    )
+	}
     }
 
     if (openZD) {
@@ -354,6 +330,37 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
                     shapes = ButtonDefaults.shapes()
                 ) {
                     Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (openSD) {
+        var newSwappinessValue by remember { mutableStateOf(swappiness) }
+        AlertDialog(
+            onDismissRequest = { openSD = false },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = newSwappinessValue,
+			onValueChange = { newSwappinessValue = it },
+                        label = { Text("Swappiness") },
+                        modifier = Modifier.fillMaxWidth(),
+			keyboardOptions = KeyboardOptions.Default.copy(
+			    keyboardType = KeyboardType.Number
+			)
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateSwappiness(newSwappinessValue)
+                        openSD = false
+                    },
+		    shapes = ButtonDefaults.shapes()
+                ) {
+                    Text(text = "Change")
                 }
             }
         )
