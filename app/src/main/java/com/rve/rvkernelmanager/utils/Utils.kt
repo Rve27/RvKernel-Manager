@@ -44,23 +44,6 @@ object Utils {
         return "${ceil(memoryInfo.totalMem / 1e9).toInt()} GB"
     }
 
-    fun getZramSize(): String = runCatching {
-        val zramLines = shellReadLines("cat /proc/swaps | grep zram")
-        if (!zramLines.isNullOrEmpty()) {
-            val totalKB = zramLines.sumOf {
-                it.trim().split("\\s+".toRegex()).getOrNull(2)?.toLongOrNull() ?: 0
-            }
-            return if (totalKB > 0) "${floor(totalKB / 1e6).toInt()} GB" else "N/A"
-        }
-
-        val diskBytes = shellReadLine("cat /sys/block/zram0/disksize")?.toLongOrNull()
-        return if (diskBytes != null && diskBytes > 0)
-            "${floor(diskBytes / 1e9).toInt()} GB" else "N/A"
-    }.getOrElse {
-        Log.e("getZramSize", "Exception: ${it.message}", it)
-        "N/A"
-    }
-
     fun getSystemProperty(key: String): String = runCatching {
         val clazz = Class.forName("android.os.SystemProperties")
         val method = clazz.getMethod("get", String::class.java)
