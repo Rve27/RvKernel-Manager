@@ -41,7 +41,8 @@ object Utils {
         val memoryInfo = ActivityManager.MemoryInfo().apply {
             (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(this)
         }
-        return "${ceil(memoryInfo.totalMem / 1e9).toInt()} GB"
+	val sizeInGb = memoryInfo.totalMem / (1024.0 * 1024 * 1024)
+	return "${ceil(sizeInGb).toInt()} GB"
     }
 
     fun getSystemProperty(key: String): String = runCatching {
