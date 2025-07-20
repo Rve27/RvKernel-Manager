@@ -221,13 +221,14 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 @Composable
 fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetFreqCPU0 by remember { mutableStateOf<String?>(null) }
-    var openAFG by remember { mutableStateOf(false) }
+    // ACG = Available CPU Governor
+    var openACG by remember { mutableStateOf(false) }
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
 
-    LaunchedEffect(targetFreqCPU0, openAFG) {
-	onDialogStateChange(targetFreqCPU0 != null || openAFG)
+    LaunchedEffect(targetFreqCPU0, openACG) {
+	onDialogStateChange(targetFreqCPU0 != null || openACG)
     }
 
     Card {
@@ -259,7 +260,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 	    title = "Governor",
 	    summary = if (hasBigCluster) "Controls how the Little Cluster scales between min and max frequencies" else "Controls how the CPU scales between min and max frequencies",
 	    value = cpu0State.gov,
-	    onClick = { openAFG = true }
+	    onClick = { openACG = true }
 	)
 
 	if (targetFreqCPU0 != null) {
@@ -296,9 +297,9 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 	    )
 	}
 
-	if (openAFG) {
+	if (openACG) {
 	    AlertDialog(
-		onDismissRequest = { openAFG = false },
+		onDismissRequest = { openACG = false },
 		title = { Text("Available governor") },
 		text = {
 		    if (cpu0State.availableGov.isNotEmpty()) {
@@ -308,7 +309,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "little")
-					openAFG = false
+					openACG = false
 				    }
 				)
 			    }
@@ -319,7 +320,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openAFG = true },
+			onClick = { openACG = false },
 			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
@@ -333,12 +334,13 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetBigFreq by remember { mutableStateOf<String?>(null) }
-    var openAFG by remember { mutableStateOf(false) }
+    // ACG = Available CPU Governor
+    var openACG by remember { mutableStateOf(false) }
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
-    LaunchedEffect(targetBigFreq, openAFG) {
-	onDialogStateChange(targetBigFreq != null || openAFG)
+    LaunchedEffect(targetBigFreq, openACG) {
+	onDialogStateChange(targetBigFreq != null || openACG)
     }
 
     Card {
@@ -370,7 +372,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 	    title = "Governor",
 	    summary = "Controls how the Big Cluster scales between min and max frequencies",
 	    value = bigClusterState.gov,
-	    onClick = { openAFG = true }
+	    onClick = { openACG = true }
 	)
 
 	if (targetBigFreq != null) {
@@ -407,9 +409,9 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 	    )
 	}
 
-	if (openAFG) {
+	if (openACG) {
 	    AlertDialog(
-		onDismissRequest = { openAFG = false },
+		onDismissRequest = { openACG = false },
 		title = { Text("Available governor") },
 		text = {
 		    if (bigClusterState.availableGov.isNotEmpty()) {
@@ -419,7 +421,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "big")
-					openAFG = false
+					openACG = false
 				    }
 				)
 			    }
@@ -430,7 +432,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openAFG = true },
+			onClick = { openACG = false },
 			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
@@ -542,7 +544,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 		},
 		confirmButton = {
 		    TextButton(
-			onClick = { openACG = true },
+			onClick = { openACG = false },
 			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
