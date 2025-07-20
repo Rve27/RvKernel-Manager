@@ -53,7 +53,7 @@ class HomeViewModel : ViewModel() {
 	    _deviceName.value = Utils.getDeviceName()
             _deviceCodename.value = Utils.getDeviceCodename()
             _ramInfo.value = Utils.getTotalRam(context)
-	    _zram.value = Utils.getZramSize()
+	    _zram.value = KernelUtils.getZramSize()
             _gpuModel.value = Utils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
 	    _sdkVersion.value = Utils.getSdkVersion()

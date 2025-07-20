@@ -33,6 +33,12 @@ class KernelParameterViewModel : ViewModel() {
     private val _hasPrintk = MutableStateFlow(false)
     val hasPrintk: StateFlow<Boolean> = _hasPrintk
 
+    private val _zramSize = MutableStateFlow("")
+    val zramSize: StateFlow<String> = _zramSize
+
+    private val _hasZramSize = MutableStateFlow(false)
+    val hasZramSize: StateFlow<Boolean> = _hasZramSize
+
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
         private set
@@ -65,6 +71,9 @@ class KernelParameterViewModel : ViewModel() {
 
             _printk.value = Utils.readFile(KernelUtils.PRINTK)
             _hasPrintk.value = Utils.testFile(KernelUtils.PRINTK)
+
+	    _zramSize.value = KernelUtils.getZramSize()
+            _hasZramSize.value = Utils.testFile(KernelUtils.ZRAM_SIZE)
         }
     }
 
@@ -87,6 +96,18 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(KernelUtils.PRINTK, newValue)
             _printk.value = newValue
+        }
+    }
+
+    fun updateZramSize(sizeInGb: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val sizeInBytes = (sizeInGb * 1073741824L).toString()
+	    KernelUtils.swapoffZram()
+	    KernelUtils.resetZram()
+            Utils.writeFile(KernelUtils.ZRAM_SIZE, sizeInBytes)
+	    KernelUtils.mkswapZram()
+	    KernelUtils.swaponZram()
+	    _zramSize.value = KernelUtils.getZramSize()
         }
     }
 

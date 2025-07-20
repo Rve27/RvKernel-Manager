@@ -80,6 +80,8 @@ fun KernelParameterScreen(
         }
     }
 
+    val hasZramSize by viewModel.hasZramSize.collectAsState()
+
     Scaffold(
 	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
 	bottomBar = { BottomNavigationBar(navController) },
@@ -106,6 +108,11 @@ fun KernelParameterScreen(
 		    Spacer(Modifier.height(16.dp))
                     KernelParameterCard(viewModel)
 	        }
+		if (hasZramSize) {
+		    item {
+			MemoryCard(viewModel)
+		    }
+		}
 		item {
                     Spacer(Modifier)
 		}
@@ -226,6 +233,62 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(text = "Change")
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun MemoryCard(viewModel: KernelParameterViewModel) {
+    val zramSize by viewModel.zramSize.collectAsState()
+    val hasZramSize by viewModel.hasZramSize.collectAsState()
+    // ZD = ZRAM Dialog
+    var openZD by remember { mutableStateOf(false) }
+
+    Card {
+	CustomListItem(
+	    title = "Memory",
+	    titleLarge = true
+	)
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+	if (hasZramSize) {
+            ButtonListItem(
+                title = "ZRAM size",
+                summary = "It may takes a few minutes to change the ZRAM size",
+                value = zramSize,
+                onClick = { openZD = true }
+            )
+        }
+    }
+
+    if (openZD) {
+        val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
+        
+        AlertDialog(
+            onDismissRequest = { openZD = false },
+            title = { Text("Select ZRAM Size") },
+            text = {
+                Column {
+                    zramSizeOptions.forEach { size ->
+                        DialogTextButton(
+			    text = size,
+                            onClick = {
+                                val sizeInGb = size.substringBefore(" GB").toInt()
+                                viewModel.updateZramSize(sizeInGb)
+                                openZD = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openZD = false },
+                    shapes = ButtonDefaults.shapes()
+                ) {
+                    Text("Cancel")
                 }
             }
         )
