@@ -19,6 +19,7 @@ object KernelUtils {
     const val ZRAM = "/dev/block/zram0"
     const val ZRAM_RESET = "/sys/block/zram0/reset"
     const val ZRAM_SIZE = "/sys/block/zram0/disksize"
+    const val ZRAM_COMP_ALGORITHM = "/sys/block/zram0/comp_algorithm"
 
     fun getKernelVersion(): String {
         return Os.uname().release
@@ -32,6 +33,28 @@ object KernelUtils {
         val sizeInBytes = Utils.readFile(ZRAM_SIZE).toLongOrNull() ?: 0L
         val sizeInGb = sizeInBytes / 1073741824.0
         return if (sizeInGb == 0.0) "Unknown" else "${sizeInGb.toInt()} GB"
+    }
+
+    fun getZramCompAlgorithm(): String {
+        val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
+        return if (algorithms.isNotEmpty()) {
+            val regex = "\\[([^\\]]+)\\]".toRegex()
+            val match = regex.find(algorithms)
+            match?.groupValues?.get(1) ?: "Unknown"
+        } else {
+            "Unknown"
+        }
+    }
+
+    fun getAvailableZramCompAlgorithms(): List<String> {
+        val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
+        return if (algorithms.isNotEmpty()) {
+            algorithms.replace("[", "").replace("]", "")
+                .split("\\s+".toRegex())
+                .filter { it.isNotBlank() }
+        } else {
+            emptyList()
+        }
     }
 
     fun swapoffZram() {
@@ -48,5 +71,9 @@ object KernelUtils {
 
     fun resetZram() {
 	Shell.cmd("echo 1 > $ZRAM_RESET").exec()
+    }
+
+    fun setZramCompAlgorithm(algorithm: String) {
+        Shell.cmd("echo $algorithm > $ZRAM_COMP_ALGORITHM").exec()
     }
 }

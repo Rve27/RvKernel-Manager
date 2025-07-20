@@ -81,6 +81,7 @@ fun KernelParameterScreen(
     }
 
     val hasZramSize by viewModel.hasZramSize.collectAsState()
+    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
 
     Scaffold(
 	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
@@ -108,7 +109,7 @@ fun KernelParameterScreen(
 		    Spacer(Modifier.height(16.dp))
                     KernelParameterCard(viewModel)
 	        }
-		if (hasZramSize) {
+		if (hasZramSize || hasZramCompAlgorithm) {
 		    item {
 			MemoryCard(viewModel)
 		    }
@@ -243,8 +244,13 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 fun MemoryCard(viewModel: KernelParameterViewModel) {
     val zramSize by viewModel.zramSize.collectAsState()
     val hasZramSize by viewModel.hasZramSize.collectAsState()
+    val zramCompAlgorithm by viewModel.zramCompAlgorithm.collectAsState()
+    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
+    val availableZramCompAlgorithms by viewModel.availableZramCompAlgorithms.collectAsState()
     // ZD = ZRAM Dialog
     var openZD by remember { mutableStateOf(false) }
+    // ZCD = ZRAM Compression Dialog
+    var openZCD by remember { mutableStateOf(false) }
 
     Card {
 	CustomListItem(
@@ -253,12 +259,27 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
 	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
+	if (hasZramSize || hasZramCompAlgorithm) {
+	    CustomListItem(
+		summary = "NOTE: It may take a few minutes to change the ZRAM size, etc."
+	    )
+	}
+
 	if (hasZramSize) {
             ButtonListItem(
                 title = "ZRAM size",
-                summary = "It may takes a few minutes to change the ZRAM size",
+                summary = "Change the ZRAM size",
                 value = zramSize,
                 onClick = { openZD = true }
+            )
+        }
+
+	if (hasZramCompAlgorithm && availableZramCompAlgorithms.isNotEmpty()) {
+            ButtonListItem(
+                title = "ZRAM compression algorithm",
+                summary = "Different algorithms offer different compression ratios and performance",
+                value = zramCompAlgorithm,
+                onClick = { openZCD = true }
             )
         }
     }
@@ -268,7 +289,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         
         AlertDialog(
             onDismissRequest = { openZD = false },
-            title = { Text("Select ZRAM Size") },
+            title = { Text("ZRAM size") },
             text = {
                 Column {
                     zramSizeOptions.forEach { size ->
@@ -286,6 +307,34 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
             confirmButton = {
                 TextButton(
                     onClick = { openZD = false },
+                    shapes = ButtonDefaults.shapes()
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (openZCD) {
+        AlertDialog(
+            onDismissRequest = { openZCD = false },
+            title = { Text("ZRAM compression algorithm") },
+            text = {
+                Column {
+                    availableZramCompAlgorithms.forEach { algorithm ->
+                        DialogTextButton(
+                            text = algorithm,
+                            onClick = {
+                                viewModel.updateZramCompAlgorithm(algorithm)
+                                openZCD = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openZCD = false },
                     shapes = ButtonDefaults.shapes()
                 ) {
                     Text("Cancel")

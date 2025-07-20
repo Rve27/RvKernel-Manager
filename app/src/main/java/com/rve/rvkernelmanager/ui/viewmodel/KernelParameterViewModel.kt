@@ -39,6 +39,15 @@ class KernelParameterViewModel : ViewModel() {
     private val _hasZramSize = MutableStateFlow(false)
     val hasZramSize: StateFlow<Boolean> = _hasZramSize
 
+    private val _zramCompAlgorithm = MutableStateFlow("")
+    val zramCompAlgorithm: StateFlow<String> = _zramCompAlgorithm
+
+    private val _hasZramCompAlgorithm = MutableStateFlow(false)
+    val hasZramCompAlgorithm: StateFlow<Boolean> = _hasZramCompAlgorithm
+
+    private val _availableZramCompAlgorithms = MutableStateFlow<List<String>>(emptyList())
+    val availableZramCompAlgorithms: StateFlow<List<String>> = _availableZramCompAlgorithms
+
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
         private set
@@ -74,6 +83,10 @@ class KernelParameterViewModel : ViewModel() {
 
 	    _zramSize.value = KernelUtils.getZramSize()
             _hasZramSize.value = Utils.testFile(KernelUtils.ZRAM_SIZE)
+
+	    _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
+            _hasZramCompAlgorithm.value = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM)
+            _availableZramCompAlgorithms.value = KernelUtils.getAvailableZramCompAlgorithms()
         }
     }
 
@@ -100,14 +113,29 @@ class KernelParameterViewModel : ViewModel() {
     }
 
     fun updateZramSize(sizeInGb: Int) {
+	val sizeInBytes = (sizeInGb * 1073741824L).toString()
+
         viewModelScope.launch(Dispatchers.IO) {
-            val sizeInBytes = (sizeInGb * 1073741824L).toString()
 	    KernelUtils.swapoffZram()
 	    KernelUtils.resetZram()
             Utils.writeFile(KernelUtils.ZRAM_SIZE, sizeInBytes)
 	    KernelUtils.mkswapZram()
 	    KernelUtils.swaponZram()
 	    _zramSize.value = KernelUtils.getZramSize()
+        }
+    }
+
+    fun updateZramCompAlgorithm(algorithm: String) {
+	val currentSize = Utils.readFile(KernelUtils.ZRAM_SIZE)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            KernelUtils.swapoffZram()
+            KernelUtils.resetZram()
+            KernelUtils.setZramCompAlgorithm(algorithm)
+            Utils.writeFile(KernelUtils.ZRAM_SIZE, currentSize)
+            KernelUtils.mkswapZram()
+            KernelUtils.swaponZram()
+            _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
         }
     }
 
