@@ -12,26 +12,34 @@ Fine-tune your device for peak performance, maximum battery life, or a perfect b
 
 ## Features
 
-- **Real-Time Dashboard**
+- **Device Information Dashboard**
 
-  Monitor critical system information at a glance, including CPU & GPU frequencies, core temperatures.
+  Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.
 
-- **Advanced CPU Control**
+- **Battery Monitoring & Control**
 
-  Easily adjust CPU governors, set minimum/maximum frequencies for each core cluster (e.g., big.LITTLE).
+  Real-time battery monitoring with voltage, temperature, and charging level information. Includes thermal profile management and fast charging control for supported devices.
 
-- **GPU Tuning**
+- **SoC (System on Chip) Management**
 
-  Take command of your graphics performance. Change the GPU governor, control the maximum clock speed, and other parameters to optimize for gaming or save power.
+  Advanced CPU frequency control with support for different core clusters (Little, Big, Prime). Adjust CPU governors and set minimum/maximum frequencies for each cluster individually.
 
-- **More Features**
+- **Kernel Parameter Tuning**
 
-  Other features will be added soon in future updates!
+  Fine-tune kernel settings including:
+  - Scheduler auto group configuration
+  - Swappiness control for memory management
+  - ZRAM size and compression algorithm settings
+  - Kernel printk logging levels
+
+- **Material Design Interface**
+
+  Clean, modern interface with support for dynamic theming and blur effects.
 
 ## Screenshots
 
 <p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="32%" />
-<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/07.png" width="32%" /></p>
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="32%" /></p>
 
 ## Requirements
 
