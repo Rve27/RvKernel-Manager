@@ -25,6 +25,7 @@ import androidx.compose.animation.animateContentSize
 
 @Composable
 fun SwitchListItem(
+    icon: Any? = null,
     title: String,
     titleSmall: Boolean = false,
     titleLarge: Boolean = false,
@@ -48,6 +49,22 @@ fun SwitchListItem(
 	    .padding(16.dp),
 	verticalAlignment = Alignment.CenterVertically
     ) {
+	if (icon != null) {
+            when (icon) {
+                is ImageVector -> Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+                is Painter -> Icon(
+                    painter = icon,
+                    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
+        }
 	Column(
 	    modifier = Modifier.weight(1f)
 	) {

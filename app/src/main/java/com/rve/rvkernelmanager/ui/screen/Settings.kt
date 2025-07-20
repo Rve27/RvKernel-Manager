@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,12 +34,16 @@ fun SettingsScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
+    val blurEnabled by viewModel.blurEnabled.collectAsState()
 
     var openThemeDialog by remember { mutableStateOf(false) }
     var openPollingDialog by remember { mutableStateOf(false) }
 
+    val isDialogOpen = openThemeDialog || openPollingDialog
+
     Scaffold(
-        topBar = { SettingsTopAppBar(scrollBehavior = scrollBehavior) }
+        topBar = { SettingsTopAppBar(scrollBehavior = scrollBehavior) },
+	modifier = if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             CustomListItem(
@@ -52,6 +57,13 @@ fun SettingsScreen(
                 title = "SoC polling interval",
                 summary = "Set how often SoC data is updated (in seconds)",
                 onClick = { openPollingDialog = true }
+            )
+	    SwitchListItem(
+                icon = Icons.Default.BlurOn,
+                title = "Blur effect",
+                summary = "Enable blur effect when dialogs are open",
+                checked = blurEnabled,
+                onCheckedChange = { viewModel.setBlurEnabled(it) }
             )
         }
     }

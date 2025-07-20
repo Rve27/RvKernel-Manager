@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,8 +25,9 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.utils.SoCUtils
 import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
+import com.rve.rvkernelmanager.utils.SoCUtils
+import com.rve.rvkernelmanager.preference.BlurPreference
 
 @Composable
 fun SoCScreen(
@@ -32,6 +35,17 @@ fun SoCScreen(
     lifecycleOwner: LifecycleOwner,
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val blurPreference = remember { BlurPreference.getInstance(context) }
+    val blurEnabled by blurPreference.blurEnabled.collectAsState()
+
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    var isDialogOpen by remember { mutableStateOf(false) }
+
+    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -52,14 +66,10 @@ fun SoCScreen(
         }
     }
 
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
-    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
-
     Scaffold(
 	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
 	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier)
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
@@ -71,20 +81,20 @@ fun SoCScreen(
                 SoCMonitorCard(viewModel)
             }
             item {
-                LittleClusterCard(viewModel)
+                LittleClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
             }
 	    if (hasBigCluster) {
 		item {
-		    BigClusterCard(viewModel)
+		    BigClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		}
 	    }
 	    if (hasPrimeCluster) {
 		item {
-		    PrimeClusterCard(viewModel)
+		    PrimeClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		}
 	    }
 	    item {
-		GPUCard(viewModel)
+		GPUCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 	    }
             item {
                 Spacer(Modifier)
@@ -209,12 +219,16 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun LittleClusterCard(viewModel: SoCViewModel) {
+fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetFreqCPU0 by remember { mutableStateOf<String?>(null) }
     var openAFG by remember { mutableStateOf(false) }
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+
+    LaunchedEffect(targetFreqCPU0, openAFG) {
+	onDialogStateChange(targetFreqCPU0 != null || openAFG)
+    }
 
     Card {
 	CustomListItem(
@@ -317,11 +331,15 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun BigClusterCard(viewModel: SoCViewModel) {
+fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetBigFreq by remember { mutableStateOf<String?>(null) }
     var openAFG by remember { mutableStateOf(false) }
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
+
+    LaunchedEffect(targetBigFreq, openAFG) {
+	onDialogStateChange(targetBigFreq != null || openAFG)
+    }
 
     Card {
 	CustomListItem(
@@ -424,12 +442,16 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun PrimeClusterCard(viewModel: SoCViewModel) {
+fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetPrimeFreq by remember { mutableStateOf<String?>(null) }
     // ACG = Available CPU Governor
     var openACG by remember { mutableStateOf(false) }
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
+
+    LaunchedEffect(targetPrimeFreq, openACG) {
+	onDialogStateChange(targetPrimeFreq != null || openACG)
+    }
 
     Card {
 	CustomListItem(
@@ -532,7 +554,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun GPUCard(viewModel: SoCViewModel) {
+fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     var targetGpuFreq by remember { mutableStateOf<String?>(null) }
     // AGG = Available GPU Governor
     var openAGG by remember { mutableStateOf(false) }
@@ -543,6 +565,10 @@ fun GPUCard(viewModel: SoCViewModel) {
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember (gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
+
+    LaunchedEffect(targetGpuFreq, openAGG, openABD) {
+	onDialogStateChange(targetGpuFreq != null || openAGG || openABD)
+    }
 
     Card {
 	CustomListItem(

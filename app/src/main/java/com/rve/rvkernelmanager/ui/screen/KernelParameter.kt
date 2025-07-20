@@ -20,6 +20,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.animation.core.*
@@ -32,6 +33,7 @@ import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.KernelParameterViewModel
+import com.rve.rvkernelmanager.preference.BlurPreference
 
 @Composable
 fun KernelParameterScreen(
@@ -39,7 +41,16 @@ fun KernelParameterScreen(
     lifecycleOwner: LifecycleOwner,
     navController: NavController
 ) {
+    val context = LocalContext.current
+    val blurPreference = remember { BlurPreference.getInstance(context) }
+    val blurEnabled by blurPreference.blurEnabled.collectAsState()
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
+    var isDialogOpen by remember { mutableStateOf(false) }
+
+    val hasZramSize by viewModel.hasZramSize.collectAsState()
+    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
 
     val pullToRefreshState = remember {
 	object : PullToRefreshState {
@@ -80,13 +91,10 @@ fun KernelParameterScreen(
         }
     }
 
-    val hasZramSize by viewModel.hasZramSize.collectAsState()
-    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
-
     Scaffold(
 	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
 	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier)
     ) { innerPadding ->
         PullToRefreshBox(
 	    modifier = Modifier.padding(innerPadding),
@@ -107,11 +115,11 @@ fun KernelParameterScreen(
             ) {
 		item {
 		    Spacer(Modifier.height(16.dp))
-                    KernelParameterCard(viewModel)
+                    KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 	        }
 		if (hasZramSize || hasZramCompAlgorithm) {
 		    item {
-			MemoryCard(viewModel)
+			MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		    }
 		}
 		item {
@@ -123,7 +131,7 @@ fun KernelParameterScreen(
 }
 
 @Composable
-fun KernelParameterCard(viewModel: KernelParameterViewModel) {
+fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     val schedAutogroup by viewModel.schedAutogroup.collectAsState()
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
     val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
@@ -137,6 +145,10 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val hasPrintk by viewModel.hasPrintk.collectAsState()
     // PD = Printk Dialog
     var openPD by remember { mutableStateOf(false) }
+
+    LaunchedEffect(openSD, openPD) {
+	onDialogStateChange(openSD || openPD)
+    }
 
     Card {
 	CustomListItem(
@@ -241,7 +253,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 }
 
 @Composable
-fun MemoryCard(viewModel: KernelParameterViewModel) {
+fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
     val zramSize by viewModel.zramSize.collectAsState()
     val hasZramSize by viewModel.hasZramSize.collectAsState()
     val zramCompAlgorithm by viewModel.zramCompAlgorithm.collectAsState()
@@ -251,6 +263,10 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     var openZD by remember { mutableStateOf(false) }
     // ZCD = ZRAM Compression Dialog
     var openZCD by remember { mutableStateOf(false) }
+
+    LaunchedEffect(openZD, openZCD) {
+	onDialogStateChange(openZD || openZCD)
+    }
 
     Card {
 	CustomListItem(
