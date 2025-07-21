@@ -51,6 +51,7 @@ fun KernelParameterScreen(
 
     val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
     val hasPrintk by viewModel.hasPrintk.collectAsState()
+    val hasTcpCongestionAlgorithm by viewModel.hasTcpCongestionAlgorithm.collectAsState()
 
     val hasZramSize by viewModel.hasZramSize.collectAsState()
     val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
@@ -116,7 +117,7 @@ fun KernelParameterScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-		if (hasSchedAutogroup || hasPrintk) {
+		if (hasSchedAutogroup || hasPrintk || hasTcpCongestionAlgorithm) {
 		    item {
 		        Spacer(Modifier.height(16.dp))
                         KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
@@ -143,11 +144,18 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 
     val printk by viewModel.printk.collectAsState()
     val hasPrintk by viewModel.hasPrintk.collectAsState()
+
+    val tcpCongestionAlgorithm by viewModel.tcpCongestionAlgorithm.collectAsState()
+    val hasTcpCongestionAlgorithm by viewModel.hasTcpCongestionAlgorithm.collectAsState()
+    val availableTcpCongestionAlgorithm by viewModel.availableTcpCongestionAlgorithm.collectAsState()
+
     // PD = Printk Dialog
     var openPD by remember { mutableStateOf(false) }
+    // TCD = TCP Congestion Dialog
+    var openTCD by remember { mutableStateOf(false) }
 
-    LaunchedEffect(openPD) {
-	onDialogStateChange(openPD)
+    LaunchedEffect(openPD, openTCD) {
+	onDialogStateChange(openPD || openTCD)
     }
 
     Card {
@@ -178,6 +186,15 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 		onClick = { openPD = true }
             )
         }
+
+	if (hasTcpCongestionAlgorithm && availableTcpCongestionAlgorithm.isNotEmpty()) {
+            ButtonListItem(
+                title = "TCP congestion algorithm",
+                summary = "Transmission Control Protocol is one of the core protocols of the Internet protocol suite (IP), and is so common that the entire suite is often called TCP/IP.",
+                value = tcpCongestionAlgorithm,
+                onClick = { openTCD = true }
+            )
+        }
     }
 
     if (openPD) {
@@ -206,6 +223,34 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 		    shapes = ButtonDefaults.shapes()
                 ) {
                     Text(text = "Change")
+                }
+            }
+        )
+    }
+
+    if (openTCD) {
+        AlertDialog(
+            onDismissRequest = { openTCD = false },
+            title = { Text("TCP congestion algorithm") },
+            text = {
+                Column {
+                    availableTcpCongestionAlgorithm.forEach { algorithm ->
+                        DialogTextButton(
+                            text = algorithm,
+                            onClick = {
+                                viewModel.updateTcpCongestionAlgorithm(algorithm)
+                                openTCD = false
+                            }
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openTCD = false },
+                    shapes = ButtonDefaults.shapes()
+                ) {
+                    Text("Cancel")
                 }
             }
         )

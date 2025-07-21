@@ -13,13 +13,18 @@ import com.rve.rvkernelmanager.utils.Utils
 
 object KernelUtils {
     const val FULL_KERNEL_VERSION = "/proc/version"
-    const val SWAPPINESS = "/proc/sys/vm/swappiness"
+
     const val SCHED_AUTOGROUP = "/proc/sys/kernel/sched_autogroup_enabled"
     const val PRINTK = "/proc/sys/kernel/printk"
+
     const val ZRAM = "/dev/block/zram0"
     const val ZRAM_RESET = "/sys/block/zram0/reset"
     const val ZRAM_SIZE = "/sys/block/zram0/disksize"
     const val ZRAM_COMP_ALGORITHM = "/sys/block/zram0/comp_algorithm"
+    const val SWAPPINESS = "/proc/sys/vm/swappiness"
+
+    const val TCP_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_congestion_control"
+    const val TCP_AVAILABLE_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_available_congestion_control"
 
     fun getKernelVersion(): String {
         return Os.uname().release
@@ -75,5 +80,24 @@ object KernelUtils {
 
     fun setZramCompAlgorithm(algorithm: String) {
         Shell.cmd("echo $algorithm > $ZRAM_COMP_ALGORITHM").exec()
+    }
+
+    fun getTcpCongestionAlgorithm(): String {
+        return Utils.readFile(TCP_CONGESTION_ALGORITHM).trim().takeIf { it.isNotEmpty() } ?: "Unknown"
+    }
+
+    fun getAvailableTcpCongestionAlgorithm(): List<String> {
+        val algorithms = Utils.readFile(TCP_AVAILABLE_CONGESTION_ALGORITHM)
+        return if (algorithms.isNotEmpty()) {
+            algorithms.trim()
+                .split("\\s+".toRegex())
+                .filter { it.isNotBlank() }
+        } else {
+            emptyList()
+        }
+    }
+
+    fun setTcpCongestionAlgorithm(algorithm: String) {
+        Utils.writeFile(TCP_CONGESTION_ALGORITHM, algorithm)
     }
 }

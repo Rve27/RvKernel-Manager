@@ -48,6 +48,15 @@ class KernelParameterViewModel : ViewModel() {
     private val _availableZramCompAlgorithms = MutableStateFlow<List<String>>(emptyList())
     val availableZramCompAlgorithms: StateFlow<List<String>> = _availableZramCompAlgorithms
 
+    private val _tcpCongestionAlgorithm = MutableStateFlow("")
+    val tcpCongestionAlgorithm: StateFlow<String> = _tcpCongestionAlgorithm
+
+    private val _hasTcpCongestionAlgorithm = MutableStateFlow(false)
+    val hasTcpCongestionAlgorithm: StateFlow<Boolean> = _hasTcpCongestionAlgorithm
+
+    private val _availableTcpCongestionAlgorithm = MutableStateFlow<List<String>>(emptyList())
+    val availableTcpCongestionAlgorithm: StateFlow<List<String>> = _availableTcpCongestionAlgorithm
+
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
         private set
@@ -75,9 +84,6 @@ class KernelParameterViewModel : ViewModel() {
             _schedAutogroup.value = Utils.readFile(KernelUtils.SCHED_AUTOGROUP)
             _hasSchedAutogroup.value = Utils.testFile(KernelUtils.SCHED_AUTOGROUP)
 
-            _swappiness.value = Utils.readFile(KernelUtils.SWAPPINESS)
-            _hasSwappiness.value = Utils.testFile(KernelUtils.SWAPPINESS)
-
             _printk.value = Utils.readFile(KernelUtils.PRINTK)
             _hasPrintk.value = Utils.testFile(KernelUtils.PRINTK)
 
@@ -87,6 +93,13 @@ class KernelParameterViewModel : ViewModel() {
 	    _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
             _hasZramCompAlgorithm.value = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM)
             _availableZramCompAlgorithms.value = KernelUtils.getAvailableZramCompAlgorithms()
+
+	    _swappiness.value = Utils.readFile(KernelUtils.SWAPPINESS)
+            _hasSwappiness.value = Utils.testFile(KernelUtils.SWAPPINESS)
+
+	    _tcpCongestionAlgorithm.value = KernelUtils.getTcpCongestionAlgorithm()
+            _hasTcpCongestionAlgorithm.value = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM)
+            _availableTcpCongestionAlgorithm.value = KernelUtils.getAvailableTcpCongestionAlgorithm()
         }
     }
 
@@ -136,6 +149,13 @@ class KernelParameterViewModel : ViewModel() {
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
+        }
+    }
+
+    fun updateTcpCongestionAlgorithm(algorithm: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            KernelUtils.setTcpCongestionAlgorithm(algorithm)
+            _tcpCongestionAlgorithm.value = KernelUtils.getTcpCongestionAlgorithm()
         }
     }
 
