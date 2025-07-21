@@ -18,10 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.ui.component.*
 import com.rve.rvkernelmanager.ui.navigation.SettingsTopAppBar
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
@@ -29,17 +33,37 @@ import com.rve.rvkernelmanager.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewModel = viewModel()
+    viewModel: SettingsViewModel = viewModel(),
+    lifecycleOwner: LifecycleOwner
 ) {
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
     val blurEnabled by viewModel.blurEnabled.collectAsState()
+    val appVersion by viewModel.appVersion.collectAsState()
 
     var openThemeDialog by remember { mutableStateOf(false) }
     var openPollingDialog by remember { mutableStateOf(false) }
 
     val isDialogOpen = openThemeDialog || openPollingDialog
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> viewModel.loadSettingsData(context)
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold(
         topBar = { SettingsTopAppBar(scrollBehavior = scrollBehavior) },
@@ -64,6 +88,12 @@ fun SettingsScreen(
                 summary = "Enable blur effect when dialogs are open",
                 checked = blurEnabled,
                 onCheckedChange = { viewModel.setBlurEnabled(it) }
+            )
+	    CustomListItem(
+                icon = Icons.Default.Info,
+                title = "RvKernel Manager version",
+                summary = appVersion,
+		onLongClick = { clipboardManager.setText(AnnotatedString(appVersion)) }
             )
         }
     }

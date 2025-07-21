@@ -7,9 +7,9 @@ package com.rve.rvkernelmanager.utils
 
 import java.io.File
 
+import android.app.*
 import android.os.Build
 import android.content.Context
-import android.app.ActivityManager
 import android.util.Log
 
 import kotlin.math.*
@@ -75,6 +75,15 @@ object Utils {
     }.getOrElse {
         Log.e("writeFile", "Error writing to $filePath: ${it.message}", it)
         false
+    }
+
+    fun getAppVersion(context: Context): String {
+        return try {
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            "${packageInfo.versionName} (${packageInfo.longVersionCode})"
+        } catch (e: Exception) {
+            "Unknown"
+        }
     }
 
     private fun shellReadLine(command: String): String? =
