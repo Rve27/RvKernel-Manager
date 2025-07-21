@@ -88,6 +88,7 @@ fun RvKernelManagerTheme(
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
+	motionScheme = MotionScheme.expressive(),
         content = content
     )
 }
