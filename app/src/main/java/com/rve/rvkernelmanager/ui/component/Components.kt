@@ -188,11 +188,23 @@ fun CustomListItem(
     bodySmall: Boolean = false,
     bodyLarge: Boolean = false,
     onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
     animateContentSize: Boolean = false
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     Row(
 	modifier = Modifier
-	    .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+	    .then(
+		if (onClick != null || onLongClick != null) {
+		    Modifier.combinedClickable(
+			onClick = onClick?: {},
+			onLongClick = onLongClick
+		    )
+		} else {
+		    Modifier
+		}
+	    )
 	    .padding(16.dp)
 	    .fillMaxWidth(),
 	verticalAlignment = Alignment.CenterVertically
