@@ -12,7 +12,8 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.*
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,6 +78,8 @@ fun HomeScreen(
 
 @Composable
 fun DeviceInfoCard(viewModel: HomeViewModel) {
+    val clipboardManager = LocalClipboardManager.current
+
     val deviceName by viewModel.deviceName.collectAsState()
     val deviceCodename by viewModel.deviceCodename.collectAsState()
     val ramInfo by viewModel.ramInfo.collectAsState()
@@ -103,13 +106,15 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         CustomListItem(
             title = "Codename",
             summary = "$deviceName ($deviceCodename)",
-	    icon = painterResource(R.drawable.ic_smartphone)
+	    icon = painterResource(R.drawable.ic_smartphone),
+	    onLongClick = { clipboardManager.setText(AnnotatedString("$deviceName ($deviceCodename)")) }
         )
 
         CustomListItem(
             title = "RAM",
             summary = "$ramInfo + $zram (ZRAM)",
-	    icon = painterResource(R.drawable.ic_ram)
+	    icon = painterResource(R.drawable.ic_ram),
+	    onLongClick = { clipboardManager.setText(AnnotatedString("$ramInfo + $zram (ZRAM)")) }
         )
 
         CustomListItem(
@@ -117,19 +122,22 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             summary = if (isExtendCpuInfo) extendCpu else cpu,
             icon = painterResource(R.drawable.ic_cpu),
             onClick = { isExtendCpuInfo = !isExtendCpuInfo },
+	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) extendCpu else cpu)) },
 	    animateContentSize = true
         )
 
         CustomListItem(
             title = "GPU",
             summary = gpuModel,
-            icon = painterResource(R.drawable.ic_video_card)
+            icon = painterResource(R.drawable.ic_video_card),
+	    onLongClick = { clipboardManager.setText(AnnotatedString(gpuModel)) }
         )
 
         CustomListItem(
             title = "Android version",
             summary = "$androidVersion ($sdkVersion)",
-            icon = painterResource(R.drawable.ic_android)
+            icon = painterResource(R.drawable.ic_android),
+	    onLongClick = { clipboardManager.setText(AnnotatedString("$androidVersion ($sdkVersion)")) }
         )
 
         CustomListItem(
@@ -137,6 +145,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             summary = if (isFullKernelVersion) fullKernelVersion else kernelVersion,
             icon = painterResource(R.drawable.ic_linux),
             onClick = { isFullKernelVersion = !isFullKernelVersion },
+	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isFullKernelVersion) fullKernelVersion else kernelVersion)) },
 	    animateContentSize = true
         )
     }
