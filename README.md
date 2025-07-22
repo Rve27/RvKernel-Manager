@@ -1,19 +1,24 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Rve27/RvKernel-Manager/main/.github/banner.png" width="100%" alt="Banner">
+
 # RvKernel Manager
+</div>
+<p align="center">
+<a href="https://github.com/Rve27/RvKernel-Manager/releases"><img src="https://img.shields.io/github/downloads/Rve27/RvKernel-Manager/total?color=%238B0425&logo=android&logoColor=%23fff&style=for-the-badge" alt="Downloads"></a>
+</p>
+<div align="center">
 
-[![GitHub Downloads](https://img.shields.io/github/downloads/Rve27/RvKernel-Manager/total?color=blue)](https://github.com/Rve27/RvKernel-Manager/releases)
-[![GitHub Release](https://img.shields.io/github/v/release/Rve27/RvKernel-Manager)](https://github.com/Rve27/RvKernel-Manager/releases)
-[![License](https://img.shields.io/github/license/Rve27/RvKernel-Manager?color=blue)](LICENSE)
+<p><strong>Take full control of your device's kernel. Tune performance, battery life, and more!</strong></p>
+<br>
+<p>Unlock the true potential of your Android device with <strong>RvKernel Manager</strong>, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides a clean interface to tweak and monitor a wide range of kernel parameters without needing to use a terminal.</p>
+<br>
+<p>Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.</p>
 
-**Take full control of your device's kernel. Tune performance, battery life, and more!**
-
-Unlock the true potential of your Android device with RvKernel Manager, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides a clean interface to tweak and monitor a wide range of kernel parameters without needing to use a terminal.
-
-Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.
-
-## Download
+# Download
 
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.rve.rvkernelmanager)
 [<img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" alt="" height="80">](https://github.com/Rve27/RvKernel-Manager/releases)
+</div>
 
 ## Features
 
