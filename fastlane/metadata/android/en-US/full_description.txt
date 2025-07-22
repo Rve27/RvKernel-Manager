@@ -13,14 +13,16 @@ Real-time battery monitoring with voltage, temperature, and charging level infor
 <p><b>SoC (System on Chip) Management</b><br>
 Advanced CPU frequency control with support for different core clusters (Little, Big, Prime). Adjust CPU governors and set minimum/maximum frequencies for each cluster individually.</p>
 
-<p><b>Kernel Parameter Tuning</b><br>
-Fine-tune kernel settings including:<br>
-• Scheduler auto group configuration<br>
-• Swappiness control for memory management<br>
-• ZRAM size and compression algorithm settings<br>
-• Kernel printk logging levels</p>
+<p><b>Kernel Parameter Tuning</b></p>
+<p>Fine-tune kernel settings including:</p><ul>
+<li>Scheduler auto group configuration</li>
+<li>Swappiness control for memory management</li>
+<li>ZRAM size and compression algorithm settings</li>
+<li>Kernel printk logging levels</li>
+<li>Etc</li></ul>
+<p>and there are many other parameters that you can tune!<p>
 
-<p><b>Material Design Interface</b><br>
+<p><b>Material 3 Expressive Design Interface</b><br>
 Clean, modern interface with support for dynamic theming and blur effects.</p>
 
 <p><b>Requirements:</b><br>

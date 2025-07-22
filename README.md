@@ -10,6 +10,11 @@ Unlock the true potential of your Android device with RvKernel Manager, a powerf
 
 Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.
 
+## Download
+
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.rve.rvkernelmanager)
+[<img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" alt="" height="80">](https://github.com/Rve27/RvKernel-Manager/releases)
+
 ## Features
 
 - **Device Information Dashboard**
@@ -31,8 +36,11 @@ Fine-tune your device for peak performance, maximum battery life, or a perfect b
   - Swappiness control for memory management
   - ZRAM size and compression algorithm settings
   - Kernel printk logging levels
+  - Etc
 
-- **Material Design Interface**
+  and there are many other parameters that you can tune!
+
+- **Material 3 Expressive Design Interface**
 
   Clean, modern interface with support for dynamic theming and blur effects.
 
