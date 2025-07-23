@@ -18,8 +18,9 @@ import androidx.compose.ui.*
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +40,7 @@ fun BatteryScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
+
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
     val blurEnabled by settingsPreference.blurEnabled.collectAsState()
 
@@ -133,6 +135,8 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
 @Composable
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
+    val clipboardManager = LocalClipboardManager.current
+
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
     Card {
@@ -147,12 +151,14 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             title = "Technology",
             summary = batteryInfo.tech,
             icon = painterResource(R.drawable.ic_technology),
+	    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) }
         )
 
         CustomListItem(
             title = "Health",
             summary = batteryInfo.health,
             icon = painterResource(R.drawable.ic_health),
+	    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) }
         )
 
 	Column(
@@ -165,12 +171,14 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             ) {
                 CustomListItem(
                     title = "Design capacity",
-                    summary = batteryInfo.designCapacity
+                    summary = batteryInfo.designCapacity,
+		    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) }
                 )
 
                 CustomListItem(
                     title = "Maximum capacity",
-                    summary = batteryInfo.maximumCapacity
+                    summary = batteryInfo.maximumCapacity,
+		    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.maximumCapacity)) }
                 )
             }
         }
