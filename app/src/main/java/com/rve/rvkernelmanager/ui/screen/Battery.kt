@@ -200,17 +200,21 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
 	ButtonListItem(
 	    title = "Thermal profiles",
 	    summary = "Adjust thermal profiles for optimum performance",
-	    value = remember(thermalSconfig) {
-		when (thermalSconfig) {
-		    "0" -> "Default"
-		    "10" -> "Benchmark"
-		    "11" -> "Browser"
-		    "12" -> "Camera"
-		    "8" -> "Dialer"
-		    "13" -> "Gaming"
-		    "14" -> "Streaming"
-		    else -> "Unknown"
-		}
+	    value = {
+		Text(
+		    text = remember(thermalSconfig) {
+			when (thermalSconfig) {
+			    "0" -> "Default"
+			    "10" -> "Benchmark"
+			    "11" -> "Browser"
+			    "12" -> "Camera"
+			    "8" -> "Dialer"
+			    "13" -> "Gaming"
+			    "14" -> "Streaming"
+			    else -> thermalSconfig
+			}
+		    }
+		)
 	    },
 	    onClick = { openTPD = true }
 	)

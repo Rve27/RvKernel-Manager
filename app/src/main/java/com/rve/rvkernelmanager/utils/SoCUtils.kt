@@ -58,7 +58,7 @@ object SoCUtils {
             val file = File(filePath)
             if (file.exists()) {
                 val freq = file.readText().trim()
-                (freq.toInt() / 1000).toString()
+                (freq.toInt() / 1000).toString() + " MHz"
             } else {
                 ""
             }
@@ -170,16 +170,31 @@ object SoCUtils {
         return try {
             val result = Shell.cmd("cat $filePath").exec()
             if (result.isSuccess) {
+                result.out.joinToString("\n").trim() + " MHz"
+            } else {
+                Log.e("readFreqGPU", "Command execution failed: ${result.err}")
+                ""
+            }
+        } catch (e: Exception) {
+            Log.e("readFreqGPU", "Error reading file $filePath: ${e.message}", e)
+            ""
+        }
+    }
+
+    fun readCurrentFreqGPU(filePath: String): String {
+        return try {
+            val result = Shell.cmd("cat $filePath").exec()
+            if (result.isSuccess) {
                 result.out.firstOrNull()
                     ?.trim()
                     ?.let { (it.toLong() / 1000000).toString() }
                     ?: ""
             } else {
-                Log.e("readCurrentGPUFreq", "Command execution failed: ${result.err}")
+                Log.e("readCurrentFreqGPU", "Command execution failed: ${result.err}")
                 ""
             }
         } catch (e: Exception) {
-            Log.e("readCurrentGPUFreq", "Error reading file $filePath: ${e.message}", e)
+            Log.e("readCurrentFreqGPU", "Error reading file $filePath: ${e.message}", e)
             ""
         }
     }

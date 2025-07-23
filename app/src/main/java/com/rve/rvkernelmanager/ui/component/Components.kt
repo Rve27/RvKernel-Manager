@@ -112,14 +112,13 @@ fun SwitchListItem(
 
 @Composable
 fun ButtonListItem(
-    isFreq: Boolean = false,
     title: String,
     titleSmall: Boolean = false,
     titleLarge: Boolean = false,
     summary: String? = null,
     bodySmall: Boolean = false,
     bodyLarge: Boolean = false,
-    value: String,
+    value: @Composable () -> Unit,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -167,12 +166,7 @@ fun ButtonListItem(
                 interactionSource = interactionSource,
 		shapes = ButtonDefaults.shapes()
 	    ) {
-		Text(
-		    text = when {
-			isFreq -> if (value.isEmpty()) "N/A" else "$value MHz"
-			else -> if (value.trim().isEmpty()) "N/A" else value
-		    }
-		)
+		value()
 	    }
 	}
     }
