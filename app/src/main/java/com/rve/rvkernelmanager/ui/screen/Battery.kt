@@ -30,7 +30,7 @@ import com.rve.rvkernelmanager.utils.*
 import com.rve.rvkernelmanager.ui.navigation.*
 import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
 import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.preference.BlurPreference
+import com.rve.rvkernelmanager.preference.SettingsPreference
 
 @Composable
 fun BatteryScreen(
@@ -39,8 +39,8 @@ fun BatteryScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
-    val blurPreference = remember { BlurPreference.getInstance(context) }
-    val blurEnabled by blurPreference.blurEnabled.collectAsState()
+    val settingsPreference = remember { SettingsPreference.getInstance(context) }
+    val blurEnabled by settingsPreference.blurEnabled.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 

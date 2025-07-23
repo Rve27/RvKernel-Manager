@@ -8,10 +8,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 import com.rve.rvkernelmanager.utils.*
-import com.rve.rvkernelmanager.preference.SoCPreference
+import com.rve.rvkernelmanager.preference.SettingsPreference
 
 class SoCViewModel(application: Application) : AndroidViewModel(application) {
-    private val socPreference = SoCPreference.getInstance(application)
+    private val settingsPreference = SettingsPreference.getInstance(application)
 
     data class CPUState(
         val minFreq: String,
@@ -72,15 +72,15 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private var pollingJob: Job? = null
 
     init {
-        loadInitialData()
+        loadSoCData()
     }
 
     fun startPolling() {
         pollingJob?.cancel()
         pollingJob = viewModelScope.launch(Dispatchers.IO) {
-            socPreference.pollingInterval.collect { interval ->
+            settingsPreference.pollingInterval.collect { interval ->
                 while (true) {
-                    loadInitialData()
+                    loadSoCData()
                     delay(interval)
                 }
             }
@@ -92,7 +92,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         pollingJob = null
     }
 
-    private fun loadInitialData() {
+    private fun loadSoCData() {
         viewModelScope.launch(Dispatchers.IO) {
             val minFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MIN_FREQ_CPU0)
             val maxFreqCPU0 = SoCUtils.readFreqCPU(SoCUtils.MAX_FREQ_CPU0)

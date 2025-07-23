@@ -16,6 +16,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.*
 
+import com.rve.rvkernelmanager.preference.SettingsPreference
+
 private val DarkColorScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
@@ -60,8 +62,8 @@ fun RvKernelManagerTheme(
     content: @Composable() () -> Unit
 ) {
     val context = LocalContext.current
-    val themePreference = ThemePreference.getInstance(context)
-    val themeMode by themePreference.themeMode.collectAsState()
+    val settingsPreference = SettingsPreference.getInstance(context)
+    val themeMode by settingsPreference.themeMode.collectAsState()
 
     val isDarkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
