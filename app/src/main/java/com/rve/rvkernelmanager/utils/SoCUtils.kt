@@ -1,12 +1,25 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
 package com.rve.rvkernelmanager.utils
 
 import java.io.File
+
+import android.app.*
 import android.util.Log
+import android.content.Context
+
+import kotlin.math.ceil
+
 import com.topjohnwu.superuser.Shell
+
 import com.rve.rvkernelmanager.utils.Utils
 
 object SoCUtils {
 
+    const val CPU_INFO = "/proc/cpuinfo"
     const val CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp"
 
     const val MIN_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
@@ -39,6 +52,8 @@ object SoCUtils {
     const val AVAILABLE_BOOST_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_boost_frequencies"
     const val GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
     const val AVAILABLE_GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
+
+    const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
     
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
@@ -52,7 +67,21 @@ object SoCUtils {
 
     private var sPrevTotal: Long = -1
     private var sPrevIdle: Long = -1
-    
+
+    fun getCPUInfo(): String = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
+        .takeIf { it.isSuccess }?.out?.firstOrNull()
+        ?.replace("Hardware\t: ", "")?.trim()?.takeIf { it.isNotBlank() } ?: "Unknown"
+
+    fun getExtendCPUInfo(): String {
+        val hardware = getCPUInfo()
+        val cores = Shell.cmd("cat $CPU_INFO | grep 'processor' | wc -l").exec()
+            .takeIf { it.isSuccess }?.out?.firstOrNull() ?: "0"
+        val archLine = Shell.cmd("cat $CPU_INFO | grep 'Processor' | head -n 1").exec()
+            .takeIf { it.isSuccess }?.out?.firstOrNull()
+        val arch = if (archLine?.contains("AArch64") == true) "AArch64" else "Unknown"
+        return "$hardware\n$cores Cores ($arch)"
+    }
+
     fun readFreqCPU(filePath: String): String {
         return try {
             val file = File(filePath)
@@ -118,7 +147,12 @@ object SoCUtils {
 	emptyList()
         }
     }
-    
+
+    fun getGPUModel(): String = Shell.cmd("cat $GPU_MODEL").exec()
+        .takeIf { it.isSuccess }?.out?.firstOrNull()?.let { raw ->
+            raw.replace("Adreno", "Adreno (TM) ").replace(Regex("v\\d+"), "").trim()
+        }?.takeIf { it.isNotBlank() } ?: "Unknown"
+
     fun writeFreqGPU(filePath: String, frequency: String) {
         try {
             val freqInKHz = frequency.replace("000000", "")
@@ -248,5 +282,13 @@ object SoCUtils {
         } catch (e: NumberFormatException) {
             "N/A"
         }
+    }
+
+    fun getTotalRam(context: Context): String {
+        val memoryInfo = ActivityManager.MemoryInfo().apply {
+            (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(this)
+        }
+        val sizeInGb = memoryInfo.totalMem / (1024.0 * 1024 * 1024)
+        return "${ceil(sizeInGb).toInt()} GB"
     }
 }

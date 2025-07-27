@@ -52,13 +52,13 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 	    _deviceName.value = Utils.getDeviceName()
             _deviceCodename.value = Utils.getDeviceCodename()
-            _ramInfo.value = Utils.getTotalRam(context)
+            _ramInfo.value = SoCUtils.getTotalRam(context)
 	    _zram.value = KernelUtils.getZramSize()
-            _gpuModel.value = Utils.getGPUModel()
+            _gpuModel.value = SoCUtils.getGPUModel()
             _androidVersion.value = Utils.getAndroidVersion()
 	    _sdkVersion.value = Utils.getSdkVersion()
-            _cpu.value = Utils.getCPUInfo()
-	    _extendCpu.value = Utils.getExtendCPUInfo()
+            _cpu.value = SoCUtils.getCPUInfo()
+	    _extendCpu.value = SoCUtils.getExtendCPUInfo()
             _kernelVersion.value = KernelUtils.getKernelVersion()
 	    _fullKernelVersion.value = KernelUtils.getFullKernelVersion()
         }
