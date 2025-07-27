@@ -182,7 +182,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             ButtonListItem(
                 title = "printk",
 		summary = "Controls kernel message logging level",
-		value = { Text(text = printk) },
+		value = printk,
 		onClick = { openPD = true }
             )
         }
@@ -191,7 +191,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             ButtonListItem(
                 title = "TCP congestion algorithm",
                 summary = "Transmission Control Protocol is one of the core protocols of the Internet protocol suite (IP), and is so common that the entire suite is often called TCP/IP.",
-                value = { Text(text = tcpCongestionAlgorithm) },
+                value = tcpCongestionAlgorithm,
                 onClick = { openTCD = true }
             )
         }
@@ -297,7 +297,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             ButtonListItem(
                 title = "ZRAM size",
                 summary = "Change the ZRAM size",
-                value = { Text(text = zramSize) },
+                value = zramSize,
                 onClick = { openZD = true }
             )
         }
@@ -306,7 +306,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             ButtonListItem(
                 title = "ZRAM compression algorithm",
                 summary = "Different algorithms offer different compression ratios and performance",
-                value = { Text(text = zramCompAlgorithm) },
+                value = zramCompAlgorithm,
                 onClick = { openZCD = true }
             )
         }
@@ -315,7 +315,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
 	    ButtonListItem(
 		title = "Swappiness",
 		summary = "Controls how aggressively the system uses swap memory",
-		value = { Text(text = "$swappiness%") },
+		value = "$swappiness%",
 		onClick = { openSD = true }
 	    )
 	}

@@ -168,9 +168,9 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun loadGPUData() {
         val gpuState = GPUState(
-            minFreq = SoCUtils.readFreqGPU(SoCUtils.MIN_FREQ_GPU),
-            maxFreq = SoCUtils.readFreqGPU(SoCUtils.MAX_FREQ_GPU),
-            currentFreq = SoCUtils.readCurrentFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
+            minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
+            maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
+            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
             gov = Utils.readFile(SoCUtils.GOV_GPU),
             adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
             gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING),
@@ -276,8 +276,8 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         SoCUtils.writeFreqGPU(path, selectedFreq)
         
         _gpuState.value = _gpuState.value.copy(
-            minFreq = SoCUtils.readFreqGPU(SoCUtils.MIN_FREQ_GPU),
-            maxFreq = SoCUtils.readFreqGPU(SoCUtils.MAX_FREQ_GPU)
+            minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
+            maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
         )
     }
 

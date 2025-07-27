@@ -243,21 +243,23 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 	ButtonListItem(
 	    title = "Minimum frequency",
 	    summary = if (hasBigCluster) "The lowest speed the Little Cluster can run at" else "The lowest speed the CPU can run at",
-	    value = { Text(text = cpu0State.minFreq) },
+	    value = cpu0State.minFreq,
+	    isFreq = true,
 	    onClick = { targetFreqCPU0 = "min" }
 	)
 
 	ButtonListItem(
             title = "Maximum frequency",
 	    summary = if (hasBigCluster) "The highest speed the Little Cluster can run at" else "The highest speed the CPU can run at",
-            value = { Text(text = cpu0State.maxFreq) },
+            value = cpu0State.maxFreq,
+            isFreq = true,
             onClick = { targetFreqCPU0 = "max" }
         )
 
 	ButtonListItem(
 	    title = "Governor",
 	    summary = if (hasBigCluster) "Controls how the Little Cluster scales between min and max frequencies" else "Controls how the CPU scales between min and max frequencies",
-	    value = { Text(text = cpu0State.gov) },
+	    value = cpu0State.gov,
 	    onClick = { openACG = true }
 	)
 
@@ -353,21 +355,23 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 	ButtonListItem(
 	    title = "Minimum frequency",
 	    summary = "The lowest speed the Big Cluster can run at",
-	    value = { Text(text = bigClusterState.minFreq) },
+	    value = bigClusterState.minFreq,
+	    isFreq = true,
 	    onClick = { targetBigFreq = "min" }
 	)
 
 	ButtonListItem(
             title = "Maximum frequency",
 	    summary = "The highest speed the Big Cluster can run at",
-            value = { Text(text = bigClusterState.maxFreq) },
+            value = bigClusterState.maxFreq,
+            isFreq = true,
             onClick = { targetBigFreq = "max" }
         )
 
 	ButtonListItem(
 	    title = "Governor",
 	    summary = "Controls how the Big Cluster scales between min and max frequencies",
-	    value = { Text(text = bigClusterState.gov) },
+	    value = bigClusterState.gov,
 	    onClick = { openACG = true }
 	)
 
@@ -463,21 +467,23 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 	ButtonListItem(
 	    title = "Minimum frequency",
 	    summary = "The lowest speed the Prime Cluster can run at",
-	    value = { Text(text = primeClusterState.minFreq) },
+	    value = primeClusterState.minFreq,
+	    isFreq = true,
 	    onClick = { targetPrimeFreq = "min" }
 	)
 
 	ButtonListItem(
             title = "Maximum frequency",
 	    summary = "The highest speed the Prime Cluster can run at",
-            value = { Text(text = primeClusterState.maxFreq) },
+            value = primeClusterState.maxFreq,
+            isFreq = true,
             onClick = { targetPrimeFreq = "max" }
         )
 
 	ButtonListItem(
 	    title = "Governor",
 	    summary = "Controls how the Prime Cluster scales between min and max frequencies",
-	    value = { Text(text = primeClusterState.gov) },
+	    value = primeClusterState.gov,
 	    onClick = { openACG = true }
 	)
 
@@ -578,21 +584,23 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 	ButtonListItem(
 	    title = "Minimum frequency",
 	    summary = "The lowest speed the GPU can run at",
-	    value = { Text(text = gpuState.minFreq) },
+	    value = gpuState.minFreq,
+	    isFreq = true,
 	    onClick = { targetGpuFreq = "min" }
 	)
 
 	ButtonListItem(
 	    title = "Maximum frequency",
 	    summary = "The highest speed the GPU can run at",
-	    value = { Text(text = gpuState.maxFreq) },
+	    value = gpuState.maxFreq,
+	    isFreq = true,
 	    onClick = { targetGpuFreq = "max" }
 	)
 
 	ButtonListItem(
 	    title = "Governor",
 	    summary = "Controls how the CPU scales between min and max frequencies",
-	    value = { Text(text = gpuState.gov) },
+	    value = gpuState.gov,
 	    onClick = { openAGG = true }
 	)
 
@@ -600,18 +608,14 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 	    ButtonListItem(
 		title = "Adreno boost",
 		summary = "Boosts GPU performance for a short period",
-		value = {
-		    Text(
-			text = remember(gpuState.adrenoBoost) {
-			    when (gpuState.adrenoBoost) {
-				"0" -> "Off"
-				"1" -> "Low"
-				"2" -> "Medium"
-				"3" -> "High"
-				else -> gpuState.adrenoBoost
-			    }
-			}
-		    )
+		value = remember(gpuState.adrenoBoost) {
+		    when (gpuState.adrenoBoost) {
+			"0" -> "Off"
+			"1" -> "Low"
+			"2" -> "Medium"
+			"3" -> "High"
+			else -> "Unknown"
+		    }
 		},
 		onClick = { openABD = true }
 	    )
