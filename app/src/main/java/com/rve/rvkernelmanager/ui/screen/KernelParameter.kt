@@ -10,7 +10,7 @@ package com.rve.rvkernelmanager.ui.screen
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.*
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.animation.core.*
 import androidx.lifecycle.*
@@ -198,26 +198,31 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
     }
 
     if (openPD) {
-        var newPrintkValue by remember { mutableStateOf(printk) }
+        var value by remember { mutableStateOf(printk) }
         AlertDialog(
             onDismissRequest = { openPD = false },
             text = {
-                Column {
-                    OutlinedTextField(
-                        value = newPrintkValue,
-			onValueChange = { newPrintkValue = it },
-                        label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
-                        modifier = Modifier.fillMaxWidth(),
-			keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number
-                        )
-                    )
-                }
+                OutlinedTextField(
+                    value = value,
+		    onValueChange = { value = it },
+                    label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
+		    singleLine = true,
+		    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+			imeAction = ImeAction.Done
+                    ),
+		    keyboardActions = KeyboardActions(
+			onDone = {
+			    viewModel.updatePrintk(value)
+			    openPD = false
+			}
+		    )
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.updatePrintk(newPrintkValue)
+                        viewModel.updatePrintk(value)
                         openPD = false
                     },
 		    shapes = ButtonDefaults.shapes()
@@ -381,26 +386,31 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     }
 
     if (openSD) {
-        var newSwappinessValue by remember { mutableStateOf(swappiness) }
+        var value by remember { mutableStateOf(swappiness) }
         AlertDialog(
             onDismissRequest = { openSD = false },
             text = {
-                Column {
-                    OutlinedTextField(
-                        value = newSwappinessValue,
-			onValueChange = { newSwappinessValue = it },
-                        label = { Text("Swappiness") },
-                        modifier = Modifier.fillMaxWidth(),
-			keyboardOptions = KeyboardOptions.Default.copy(
-			    keyboardType = KeyboardType.Number
-			)
-                    )
-                }
+                OutlinedTextField(
+                    value = value,
+		    onValueChange = { value = it },
+                    label = { Text("Swappiness") },
+		    singleLine = true,
+		    keyboardOptions = KeyboardOptions.Default.copy(
+			keyboardType = KeyboardType.Number,
+			imeAction = ImeAction.Done
+		    ),
+		    keyboardActions = KeyboardActions(
+			onDone = {
+			    viewModel.updateSwappiness(value)
+			    openSD = false
+			}
+		    )
+                )
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.updateSwappiness(newSwappinessValue)
+                        viewModel.updateSwappiness(value)
                         openSD = false
                     },
 		    shapes = ButtonDefaults.shapes()

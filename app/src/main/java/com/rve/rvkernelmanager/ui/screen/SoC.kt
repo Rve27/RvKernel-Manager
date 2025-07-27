@@ -11,7 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.painterResource
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -721,8 +721,16 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 			value = value,
 			onValueChange = { value = it },
 			label = { Text("Default pwrlevel") },
+			singleLine = true,
 			keyboardOptions = KeyboardOptions.Default.copy(
-			    keyboardType = KeyboardType.Number
+			    keyboardType = KeyboardType.Number,
+			    imeAction = ImeAction.Done
+			),
+			keyboardActions = KeyboardActions(
+			    onDone = {
+				viewModel.updateDefaultPwrlevel(value)
+				openDPD = false
+			    }
 			)
 		    )
 		},

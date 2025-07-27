@@ -9,7 +9,7 @@ package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -142,7 +142,8 @@ fun SettingsScreen(
     }
 
     if (openPollingDialog) {
-        var newPollingValue by remember { mutableStateOf((pollingInterval / 1000).toString()) }
+        var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
+	val intervalSeconds = value.toLongOrNull()
         
         AlertDialog(
             onDismissRequest = { openPollingDialog = false },
@@ -152,12 +153,22 @@ fun SettingsScreen(
                     Text("Set the polling interval for SoC data (1-30 seconds)")
 		    Spacer(Modifier.height(16.dp))
                     OutlinedTextField(
-                        value = newPollingValue,
-                        onValueChange = { newPollingValue = it },
+                        value = value,
+                        onValueChange = { value = it },
                         label = { Text("Interval (seconds)") },
                         modifier = Modifier.fillMaxWidth(),
+			singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number
+                            keyboardType = KeyboardType.Number,
+			    imeAction = ImeAction.Done
+			),
+			keyboardActions = KeyboardActions(
+			    onDone = {
+				if (intervalSeconds != null && intervalSeconds in 1..30) {
+				    viewModel.setPollingInterval(intervalSeconds * 1000)
+				    openPollingDialog = false
+				}
+			    }
                         )
                     )
                 }
@@ -165,7 +176,6 @@ fun SettingsScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        val intervalSeconds = newPollingValue.toLongOrNull()
                         if (intervalSeconds != null && intervalSeconds in 1..30) {
                             viewModel.setPollingInterval(intervalSeconds * 1000)
                             openPollingDialog = false
