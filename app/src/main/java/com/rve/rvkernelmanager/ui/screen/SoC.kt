@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.*
 import androidx.compose.ui.res.painterResource
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -562,14 +564,17 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
     var openAGG by remember { mutableStateOf(false) }
     // ABD = Adreno Boost Dialog
     var openABD by remember { mutableStateOf(false) }
+    // DPD = Default Pwrlevel Dialog
+    var openDPD by remember { mutableStateOf(false) }
 
     val gpuState by viewModel.gpuState.collectAsState()
+    val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsState()
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember (gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
 
-    LaunchedEffect(targetGpuFreq, openAGG, openABD) {
-	onDialogStateChange(targetGpuFreq != null || openAGG || openABD)
+    LaunchedEffect(targetGpuFreq, openAGG, openABD, openDPD) {
+	onDialogStateChange(targetGpuFreq != null || openAGG || openABD || openDPD)
     }
 
     Card {
@@ -603,6 +608,15 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 	    value = gpuState.gov,
 	    onClick = { openAGG = true }
 	)
+
+	if (hasDefaultPwrlevel) {
+	    ButtonListItem(
+		title = "Default pwrlevel",
+		summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
+		value = gpuState.defaultPwrlevel,
+		onClick = { openDPD = true }
+	    )
+	}
 
 	if (hasAdrenoBoost) {
 	    ButtonListItem(
@@ -693,6 +707,34 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 			shapes = ButtonDefaults.shapes()
 		    ) {
 			Text("Close")
+		    }
+		}
+	    )
+	}
+
+	if (openDPD) {
+	    var value by remember { mutableStateOf(gpuState.defaultPwrlevel) }
+	    AlertDialog(
+		onDismissRequest = { openDPD = false },
+		text = {
+		    OutlinedTextField(
+			value = value,
+			onValueChange = { value = it },
+			label = { Text("Default pwrlevel") },
+			keyboardOptions = KeyboardOptions.Default.copy(
+			    keyboardType = KeyboardType.Number
+			)
+		    )
+		},
+		confirmButton = {
+		    TextButton(
+			onClick = {
+			    viewModel.updateDefaultPwrlevel(value)
+			    openDPD = false
+			},
+			shapes = ButtonDefaults.shapes()
+		    ) {
+			Text(text = "Change")
 		    }
 		}
 	    )

@@ -31,13 +31,14 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val maxFreq: String,
         val currentFreq: String,
         val gov: String,
+	val defaultPwrlevel: String,
         val adrenoBoost: String,
         val gpuThrottling: String,
         val availableFreq: List<String>,
         val availableGov: List<String>
     ) {
         companion object {
-            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", emptyList(), emptyList())
+            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", emptyList(), emptyList())
         }
     }
 
@@ -113,6 +114,9 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val _hasPrimeCluster = MutableStateFlow(false)
     val hasPrimeCluster: StateFlow<Boolean> = _hasPrimeCluster
 
+    private val _hasDefaultPwrlevel = MutableStateFlow(false)
+    val hasDefaultPwrlevel: StateFlow<Boolean> = _hasDefaultPwrlevel
+
     private val _hasAdrenoBoost = MutableStateFlow(false)
     val hasAdrenoBoost: StateFlow<Boolean> = _hasAdrenoBoost
 
@@ -172,6 +176,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
             currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
             gov = Utils.readFile(SoCUtils.GOV_GPU),
+	    defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
             adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
             gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING),
             availableFreq = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU),
@@ -179,6 +184,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         )
         _gpuState.value = gpuState
 
+	_hasDefaultPwrlevel.value = Utils.testFile(SoCUtils.DEFAULT_PWRLEVEL)
         _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
         _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
     }
@@ -315,6 +321,15 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
                 _gpuState.value = _gpuState.value.copy(gov = newGovernor)
             }
         }
+    }
+
+    fun updateDefaultPwrlevel(value: String) {
+	viewModelScope.launch(Dispatchers.IO) {
+	    Utils.writeFile(SoCUtils.DEFAULT_PWRLEVEL, value)
+	    _gpuState.value = _gpuState.value.copy(
+		defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL)
+	    )
+	}
     }
 
     fun updateAdrenoBoost(value: String) {
