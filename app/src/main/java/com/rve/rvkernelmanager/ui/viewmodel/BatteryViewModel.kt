@@ -17,13 +17,13 @@ import com.rve.rvkernelmanager.utils.*
 
 class BatteryViewModel : ViewModel() {
     data class BatteryInfo(
-	val level: String = "",
-        val tech: String = "",
-        val health: String = "",
-        val temp: String = "",
-        val voltage: String = "",
-        val designCapacity: String = "",
-        val maximumCapacity: String = ""
+	val level: String = "N/A",
+        val tech: String = "N/A",
+        val health: String = "N/A",
+        val temp: String = "N/A",
+        val voltage: String = "N/A",
+        val designCapacity: String = "N/A",
+        val maximumCapacity: String = "N/A"
     )
 
     data class ChargingState(
@@ -43,10 +43,15 @@ class BatteryViewModel : ViewModel() {
     private val _hasThermalSconfig = MutableStateFlow(false)
     val hasThermalSconfig: StateFlow<Boolean> = _hasThermalSconfig
 
+    private val _uptime = MutableStateFlow("N/A")
+    val uptime: StateFlow<String> = _uptime
+
     private var levelReceiver: BroadcastReceiver? = null
     private var tempReceiver: BroadcastReceiver? = null
     private var voltageReceiver: BroadcastReceiver? = null
     private var maxCapacityReceiver: BroadcastReceiver? = null
+
+    private var uptimeJob: Job? = null
 
     fun initializeBatteryInfo(context: Context) {
         loadBatteryInfo(context)
@@ -80,6 +85,21 @@ class BatteryViewModel : ViewModel() {
             _thermalSconfig.value = Utils.readFile(BatteryUtils.THERMAL_SCONFIG)
             _hasThermalSconfig.value = Utils.testFile(BatteryUtils.THERMAL_SCONFIG)
 	}
+    }
+
+    fun startUptimeUpdater() {
+        uptimeJob?.cancel()
+        uptimeJob = viewModelScope.launch {
+            while (isActive) {
+                _uptime.value = BatteryUtils.getUptime()
+                delay(1000L)
+            }
+        }
+    }
+
+    fun stopUptimeUpdater() {
+        uptimeJob?.cancel()
+        uptimeJob = null
     }
 
     fun registerBatteryListeners(context: Context) {
@@ -161,5 +181,6 @@ class BatteryViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
+	stopUptimeUpdater()
     }
 }

@@ -54,9 +54,14 @@ fun BatteryScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.initializeBatteryInfo(context)
-                Lifecycle.Event.ON_PAUSE -> viewModel.unregisterBatteryListeners(context)
-                else -> {}
+                Lifecycle.Event.ON_RESUME -> {
+		    viewModel.initializeBatteryInfo(context)
+		    viewModel.startUptimeUpdater()
+		}
+                Lifecycle.Event.ON_PAUSE -> {
+		    viewModel.unregisterBatteryListeners(context)
+		    viewModel.stopUptimeUpdater()
+		} else -> {}
             }
         }
 
@@ -104,6 +109,7 @@ fun BatteryScreen(
 @Composable
 fun BatteryMonitorCard(viewModel: BatteryViewModel) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
+    val uptime by viewModel.uptime.collectAsState()
 
     Card {
         CustomListItem(
@@ -128,6 +134,11 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 	    MonitorListItem(
 		title = "Temperature",
 		summary = batteryInfo.temp
+	    )
+	    Spacer(Modifier.height(8.dp))
+	    MonitorListItem(
+		title = "Uptime",
+		summary = uptime
 	    )
 	}
     }

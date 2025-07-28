@@ -5,14 +5,14 @@
 
 package com.rve.rvkernelmanager.utils
 
+import android.os.*
 import android.util.Log
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.os.BatteryManager
+import android.content.*
+
 import kotlin.math.roundToInt
+
 import com.topjohnwu.superuser.Shell
+
 import com.rve.rvkernelmanager.R
 
 object BatteryUtils {
@@ -83,6 +83,21 @@ object BatteryUtils {
     }.getOrElse {
         Log.e(TAG, "Error reading maximum capacity", it)
         "N/A"
+    }
+
+    fun getUptime(): String {
+        val uptimeMillis = SystemClock.elapsedRealtime()
+        val seconds = (uptimeMillis / 1000) % 60
+        val minutes = (uptimeMillis / (1000 * 60)) % 60
+        val hours = (uptimeMillis / (1000 * 60 * 60)) % 24
+        val days = (uptimeMillis / (1000 * 60 * 60 * 24))
+
+        return buildString {
+            if (days > 0) append("${days}d ")
+            if (hours > 0 || days > 0) append("${hours}h ")
+            if (minutes > 0 || hours > 0 || days > 0) append("${minutes}m ")
+            append("${seconds}s")
+        }.trim()
     }
 
     private fun registerBatteryListener(
