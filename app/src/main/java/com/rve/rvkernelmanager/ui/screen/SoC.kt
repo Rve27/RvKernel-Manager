@@ -45,6 +45,7 @@ fun SoCScreen(
 
     var isDialogOpen by remember { mutableStateOf(false) }
 
+    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
 
@@ -93,6 +94,11 @@ fun SoCScreen(
 	    if (hasPrimeCluster) {
 		item {
 		    PrimeClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+		}
+	    }
+	    if (hasCpuInputBoostMs) {
+		item {
+		    CPUBoostCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		}
 	    }
 	    item {
@@ -554,6 +560,73 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 		}
 	    )
 	}
+    }
+}
+
+@Composable
+fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    // CPU Input Boost Dialog
+    var openCIBD by remember { mutableStateOf(false) }
+
+    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
+    val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsState()
+
+    LaunchedEffect(openCIBD) {
+	onDialogStateChange(openCIBD)
+    }
+
+    Card {
+	CustomListItem(
+	    title = "CPU Boost",
+	    titleLarge = true
+	)
+
+	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+	if (hasCpuInputBoostMs) {
+	    ButtonListItem(
+		title = "Input boost ms",
+		summary = "Time boost is held after input",
+		value = "$cpuInputBoostMs ms",
+		onClick = { openCIBD = true }
+	    )
+	}
+    }
+
+    if (openCIBD) {
+	var value by remember { mutableStateOf(cpuInputBoostMs) }
+	AlertDialog(
+	    onDismissRequest = { openCIBD = false },
+	    text = {
+		OutlinedTextField(
+		    value = value,
+		    onValueChange = { value = it },
+		    label = { Text(text = "Input boost ms") },
+		    singleLine = true,
+		    keyboardOptions = KeyboardOptions.Default.copy(
+			keyboardType = KeyboardType.Number,
+			imeAction = ImeAction.Done
+		    ),
+		    keyboardActions = KeyboardActions(
+			onDone = {
+			    viewModel.updateCpuInputBoostMs(value)
+			    openCIBD = false
+			}
+		    )
+		)
+	    },
+	    confirmButton = {
+		TextButton(
+		    onClick = {
+			viewModel.updateCpuInputBoostMs(value)
+			openCIBD = false
+		    },
+		    shapes = ButtonDefaults.shapes()
+		) {
+		    Text(text = "Change")
+		}
+	    }
+	)
     }
 }
 

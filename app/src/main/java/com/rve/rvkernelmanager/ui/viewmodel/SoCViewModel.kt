@@ -93,6 +93,12 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val _cpuTemp = MutableStateFlow("N/A")
     val cpuTemp: StateFlow<String> = _cpuTemp
 
+    private val _hasCpuInputBoostMs = MutableStateFlow(false)
+    val hasCpuInputBoostMs: StateFlow<Boolean> = _hasCpuInputBoostMs
+
+    private val _cpuInputBoostMs = MutableStateFlow("N/A")
+    val cpuInputBoostMs: StateFlow<String> = _cpuInputBoostMs
+
     private val _bigClusterState = MutableStateFlow(CPUState.EMPTY)
     val bigClusterState: StateFlow<CPUState> = _bigClusterState
 
@@ -152,6 +158,9 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             loadCPUData()
             loadGPUData()
             loadTemperatureAndUsageData()
+
+	    _hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
+	    _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
         }
     }
 
@@ -323,6 +332,13 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateCpuInputBoostMs(value: String) {
+	viewModelScope.launch(Dispatchers.IO) {
+	    Utils.writeFile(SoCUtils.CPU_INPUT_BOOST_MS, value)
+	    _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
+	}
+    }
+
     fun updateDefaultPwrlevel(value: String) {
 	viewModelScope.launch(Dispatchers.IO) {
 	    Utils.writeFile(SoCUtils.DEFAULT_PWRLEVEL, value)
@@ -353,6 +369,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
+	viewModelScope.cancel()
         stopPolling()
     }
 }
