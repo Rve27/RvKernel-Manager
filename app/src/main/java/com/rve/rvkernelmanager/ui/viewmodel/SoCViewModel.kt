@@ -38,7 +38,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val availableGov: List<String>
     ) {
         companion object {
-            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", emptyList(), emptyList())
+            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0", emptyList(), emptyList())
         }
     }
 
@@ -99,6 +99,12 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val _cpuInputBoostMs = MutableStateFlow("N/A")
     val cpuInputBoostMs: StateFlow<String> = _cpuInputBoostMs
 
+    private val _hasCpuSchedBoostOnInput = MutableStateFlow(false)
+    val hasCpuSchedBoostOnInput: StateFlow<Boolean> = _hasCpuSchedBoostOnInput
+
+    private val _cpuSchedBoostOnInput = MutableStateFlow("0")
+    val cpuSchedBoostOnInput: StateFlow<String> = _cpuSchedBoostOnInput
+
     private val _bigClusterState = MutableStateFlow(CPUState.EMPTY)
     val bigClusterState: StateFlow<CPUState> = _bigClusterState
 
@@ -158,9 +164,6 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             loadCPUData()
             loadGPUData()
             loadTemperatureAndUsageData()
-
-	    _hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
-	    _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
         }
     }
 
@@ -177,6 +180,12 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         if (_hasPrimeCluster.value) {
             _primeClusterState.value = loadClusterState(ClusterConfig.Prime)
         }
+
+	_hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
+	_cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
+
+	_hasCpuSchedBoostOnInput.value = Utils.testFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+	_cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
     }
 
     private suspend fun loadGPUData() {
@@ -336,6 +345,15 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
 	viewModelScope.launch(Dispatchers.IO) {
 	    Utils.writeFile(SoCUtils.CPU_INPUT_BOOST_MS, value)
 	    _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
+	}
+    }
+
+    fun updateCpuSchedBoostOnInput(isEnabled: Boolean) {
+	viewModelScope.launch(Dispatchers.IO) {
+	    val value = if (isEnabled) "1" else "0"
+
+	    Utils.writeFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT, value)
+	    _cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
 	}
     }
 

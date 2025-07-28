@@ -46,6 +46,7 @@ fun SoCScreen(
     var isDialogOpen by remember { mutableStateOf(false) }
 
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
+    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
 
@@ -96,7 +97,7 @@ fun SoCScreen(
 		    PrimeClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		}
 	    }
-	    if (hasCpuInputBoostMs) {
+	    if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
 		item {
 		    CPUBoostCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		}
@@ -571,6 +572,10 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
     val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsState()
 
+    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
+    val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
+    val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
+
     LaunchedEffect(openCIBD) {
 	onDialogStateChange(openCIBD)
     }
@@ -589,6 +594,15 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 		summary = "Time boost is held after input",
 		value = "$cpuInputBoostMs ms",
 		onClick = { openCIBD = true }
+	    )
+	}
+
+	if (hasCpuSchedBoostOnInput) {
+	    SwitchListItem(
+		title = "Sched boost on input",
+		summary = "Boost scheduler when receiving user input",
+		checked = cpuSchedBoostOnInputChecked,
+		onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) }
 	    )
 	}
     }

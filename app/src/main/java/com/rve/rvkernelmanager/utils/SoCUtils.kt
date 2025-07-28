@@ -54,6 +54,7 @@ object SoCUtils {
     const val AVAILABLE_GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
 
     const val CPU_INPUT_BOOST_MS = "/sys/devices/system/cpu/cpu_boost/input_boost_ms"
+    const val CPU_SCHED_BOOST_ON_INPUT = "/sys/devices/system/cpu/cpu_boost/sched_boost_on_input"
 
     const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
     
