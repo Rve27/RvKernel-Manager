@@ -22,6 +22,7 @@ class BatteryViewModel : ViewModel() {
         val health: String = "N/A",
         val temp: String = "N/A",
         val voltage: String = "N/A",
+	val deepSleep: String = "N/A",
         val designCapacity: String = "N/A",
         val maximumCapacity: String = "N/A"
     )
@@ -51,7 +52,7 @@ class BatteryViewModel : ViewModel() {
     private var voltageReceiver: BroadcastReceiver? = null
     private var maxCapacityReceiver: BroadcastReceiver? = null
 
-    private var uptimeJob: Job? = null
+    private var job: Job? = null
 
     fun initializeBatteryInfo(context: Context) {
         loadBatteryInfo(context)
@@ -67,12 +68,14 @@ class BatteryViewModel : ViewModel() {
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
                 val designCapacity = BatteryUtils.getBatteryDesignCapacity()
+		val deepSleep = BatteryUtils.getDeepSleep()
 
                 _batteryInfo.value = _batteryInfo.value.copy(
 		    level = level,
                     tech = tech,
                     health = health,
-                    designCapacity = designCapacity
+                    designCapacity = designCapacity,
+		    deepSleep = deepSleep
                 )
             } catch (e: Exception) {
                 Log.e("BatteryVM", "Error loading battery info", e)
@@ -87,9 +90,9 @@ class BatteryViewModel : ViewModel() {
 	}
     }
 
-    fun startUptimeUpdater() {
-        uptimeJob?.cancel()
-        uptimeJob = viewModelScope.launch {
+    fun startJob() {
+        job?.cancel()
+        job = viewModelScope.launch {
             while (isActive) {
                 _uptime.value = BatteryUtils.getUptime()
                 delay(1000L)
@@ -97,9 +100,9 @@ class BatteryViewModel : ViewModel() {
         }
     }
 
-    fun stopUptimeUpdater() {
-        uptimeJob?.cancel()
-        uptimeJob = null
+    fun stopJob() {
+        job?.cancel()
+        job = null
     }
 
     fun registerBatteryListeners(context: Context) {
@@ -181,6 +184,6 @@ class BatteryViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
-	stopUptimeUpdater()
+	stopJob()
     }
 }

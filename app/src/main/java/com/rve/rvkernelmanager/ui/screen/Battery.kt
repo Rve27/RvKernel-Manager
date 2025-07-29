@@ -56,11 +56,11 @@ fun BatteryScreen(
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
 		    viewModel.initializeBatteryInfo(context)
-		    viewModel.startUptimeUpdater()
+		    viewModel.startJob()
 		}
                 Lifecycle.Event.ON_PAUSE -> {
 		    viewModel.unregisterBatteryListeners(context)
-		    viewModel.stopUptimeUpdater()
+		    viewModel.stopJob()
 		} else -> {}
             }
         }
@@ -139,6 +139,11 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 	    MonitorListItem(
 		title = "Uptime",
 		summary = uptime
+	    )
+	    Spacer(Modifier.height(8.dp))
+	    MonitorListItem(
+		title = "Deep sleep",
+		summary = batteryInfo.deepSleep
 	    )
 	}
     }

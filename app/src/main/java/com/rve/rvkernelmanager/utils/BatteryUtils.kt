@@ -100,6 +100,28 @@ object BatteryUtils {
         }.trim()
     }
 
+    fun getDeepSleep(): String {
+        val deepSleepMillis = SystemClock.elapsedRealtime() - SystemClock.uptimeMillis()
+        val seconds = (deepSleepMillis / 1000) % 60
+        val minutes = (deepSleepMillis / (1000 * 60)) % 60
+        val hours = (deepSleepMillis / (1000 * 60 * 60)) % 24
+        val days = deepSleepMillis / (1000 * 60 * 60 * 24)
+
+        val percentage = if (SystemClock.elapsedRealtime() > 0) {
+            (deepSleepMillis * 100 / SystemClock.elapsedRealtime()).toInt()
+        } else {
+            0
+        }
+
+        return buildString {
+            if (days > 0) append("${days}d ")
+            if (hours > 0 || days > 0) append("${hours}h ")
+            if (minutes > 0 || hours > 0 || days > 0) append("${minutes}m ")
+            append("${seconds}s")
+            append(" ($percentage%)")
+        }.trim()
+    }
+
     private fun registerBatteryListener(
         context: Context,
         onReceive: (Intent) -> Unit
