@@ -104,7 +104,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         CustomListItem(
-            title = "Codename",
+            title = "Device",
             summary = "$deviceName ($deviceCodename)",
 	    icon = painterResource(R.drawable.ic_smartphone),
 	    onLongClick = { clipboardManager.setText(AnnotatedString("$deviceName ($deviceCodename)")) }
@@ -156,18 +156,18 @@ fun DonateCard() {
     val context = LocalContext.current
 
     Card(
-        modifier = Modifier.clickable { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://paypal.me/rve27"))) }
+	colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/rve27"))) }
     ) {
 	CustomListItem(
-	    title = "Donate",
-	    titleLarge = true
+	    icon = painterResource(R.drawable.ic_kofi),
+	    title = "Buy Me a Coffee"
 	)
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         CustomListItem(
-             summary = "Click this donate card if you want to donate or buy me a coffee.",
-             icon = painterResource(R.drawable.ic_donate)
+             summary = "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!",
         )
     }
 }
