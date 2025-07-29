@@ -80,18 +80,7 @@ fun HomeScreen(
 fun DeviceInfoCard(viewModel: HomeViewModel) {
     val clipboardManager = LocalClipboardManager.current
 
-    val deviceName by viewModel.deviceName.collectAsState()
-    val deviceCodename by viewModel.deviceCodename.collectAsState()
-    val manufacturer by viewModel.manufacturer.collectAsState()
-    val ramInfo by viewModel.ramInfo.collectAsState()
-    val zram by viewModel.zram.collectAsState()
-    val cpu by viewModel.cpu.collectAsState()
-    val extendCpu by viewModel.extendCpu.collectAsState()
-    val gpuModel by viewModel.gpuModel.collectAsState()
-    val androidVersion by viewModel.androidVersion.collectAsState()
-    val sdkVersion by viewModel.sdkVersion.collectAsState()
-    val kernelVersion by viewModel.kernelVersion.collectAsState()
-    val fullKernelVersion by viewModel.fullKernelVersion.collectAsState()
+    val deviceInfo by viewModel.deviceInfo.collectAsState()
 
     var isExtendCpuInfo by rememberSaveable { mutableStateOf(false) }
     var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
@@ -106,47 +95,47 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "Device",
-            summary = "$manufacturer $deviceName ($deviceCodename)",
+            summary = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
 	    icon = painterResource(R.drawable.ic_smartphone),
-	    onLongClick = { clipboardManager.setText(AnnotatedString("$deviceName ($deviceCodename)")) }
+	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})")) }
         )
 
         CustomListItem(
             title = "RAM",
-            summary = "$ramInfo + $zram (ZRAM)",
+            summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
 	    icon = painterResource(R.drawable.ic_ram),
-	    onLongClick = { clipboardManager.setText(AnnotatedString("$ramInfo + $zram (ZRAM)")) }
+	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) }
         )
 
         CustomListItem(
             title = "CPU",
-            summary = if (isExtendCpuInfo) extendCpu else cpu,
+            summary = if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu,
             icon = painterResource(R.drawable.ic_cpu),
             onClick = { isExtendCpuInfo = !isExtendCpuInfo },
-	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) extendCpu else cpu)) },
+	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu)) },
 	    animateContentSize = true
         )
 
         CustomListItem(
             title = "GPU",
-            summary = gpuModel,
+            summary = deviceInfo.gpuModel,
             icon = painterResource(R.drawable.ic_video_card),
-	    onLongClick = { clipboardManager.setText(AnnotatedString(gpuModel)) }
+	    onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) }
         )
 
         CustomListItem(
             title = "Android version",
-            summary = "$androidVersion ($sdkVersion)",
+            summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
             icon = painterResource(R.drawable.ic_android),
-	    onLongClick = { clipboardManager.setText(AnnotatedString("$androidVersion ($sdkVersion)")) }
+	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) }
         )
 
         CustomListItem(
             title = "Kernel version",
-            summary = if (isFullKernelVersion) fullKernelVersion else kernelVersion,
+            summary = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
             icon = painterResource(R.drawable.ic_linux),
             onClick = { isFullKernelVersion = !isFullKernelVersion },
-	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isFullKernelVersion) fullKernelVersion else kernelVersion)) },
+	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion)) },
 	    animateContentSize = true
         )
     }

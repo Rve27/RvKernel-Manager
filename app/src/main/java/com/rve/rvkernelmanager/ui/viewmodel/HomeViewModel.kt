@@ -15,56 +15,40 @@ import kotlinx.coroutines.flow.*
 import com.rve.rvkernelmanager.utils.*
 
 class HomeViewModel : ViewModel() {
-    private val _deviceName = MutableStateFlow("N/A")
-    val deviceName: StateFlow<String> = _deviceName
+    data class DeviceInfo(
+        val deviceName: String = "N/A",
+        val deviceCodename: String = "N/A",
+        val manufacturer: String = "N/A",
+        val ramInfo: String = "N/A",
+        val zram: String = "N/A",
+        val cpu: String = "N/A",
+        val extendCpu: String = "N/A",
+        val gpuModel: String = "N/A",
+        val androidVersion: String = "N/A",
+        val sdkVersion: String = "N/A",
+        val kernelVersion: String = "N/A",
+        val fullKernelVersion: String = "N/A"
+    )
 
-    private val _deviceCodename = MutableStateFlow("N/A")
-    val deviceCodename: StateFlow<String> = _deviceCodename
-
-    private val _manufacturer = MutableStateFlow("N/A")
-    val manufacturer: StateFlow<String> = _manufacturer
-
-    private val _ramInfo = MutableStateFlow("N/A")
-    val ramInfo: StateFlow<String> = _ramInfo
-
-    private val _zram = MutableStateFlow("N/A")
-    val zram: StateFlow<String> = _zram
-
-    private val _cpu = MutableStateFlow("N/A")
-    val cpu: StateFlow<String> = _cpu
-
-    private val _extendCpu = MutableStateFlow("N/A")
-    val extendCpu: StateFlow<String> = _extendCpu
-
-    private val _gpuModel = MutableStateFlow("N/A")
-    val gpuModel: StateFlow<String> = _gpuModel
-
-    private val _androidVersion = MutableStateFlow("N/A")
-    val androidVersion: StateFlow<String> = _androidVersion
-
-    private val _sdkVersion = MutableStateFlow("N/A")
-    val sdkVersion: StateFlow<String> = _sdkVersion
-
-    private val _kernelVersion = MutableStateFlow("N/A")
-    val kernelVersion: StateFlow<String> = _kernelVersion
-
-    private val _fullKernelVersion = MutableStateFlow("N/A")
-    val fullKernelVersion: StateFlow<String> = _fullKernelVersion
+    private val _deviceInfo = MutableStateFlow(DeviceInfo())
+    val deviceInfo: StateFlow<DeviceInfo> = _deviceInfo
 
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-	    _deviceName.value = Utils.getDeviceName()
-            _deviceCodename.value = Utils.getDeviceCodename()
-	    _manufacturer.value = Utils.getManufacturer()
-            _ramInfo.value = SoCUtils.getTotalRam(context)
-	    _zram.value = KernelUtils.getZramSize()
-            _gpuModel.value = SoCUtils.getGPUModel()
-            _androidVersion.value = Utils.getAndroidVersion()
-	    _sdkVersion.value = Utils.getSdkVersion()
-            _cpu.value = SoCUtils.getCPUInfo()
-	    _extendCpu.value = SoCUtils.getExtendCPUInfo()
-            _kernelVersion.value = KernelUtils.getKernelVersion()
-	    _fullKernelVersion.value = KernelUtils.getFullKernelVersion()
+            _deviceInfo.value = DeviceInfo(
+                deviceName = Utils.getDeviceName(),
+                deviceCodename = Utils.getDeviceCodename(),
+                manufacturer = Utils.getManufacturer(),
+                ramInfo = SoCUtils.getTotalRam(context),
+                zram = KernelUtils.getZramSize(),
+                gpuModel = SoCUtils.getGPUModel(),
+                androidVersion = Utils.getAndroidVersion(),
+                sdkVersion = Utils.getSdkVersion(),
+                cpu = SoCUtils.getCPUInfo(),
+                extendCpu = SoCUtils.getExtendCPUInfo(),
+                kernelVersion = KernelUtils.getKernelVersion(),
+                fullKernelVersion = KernelUtils.getFullKernelVersion()
+            )
         }
     }
 
