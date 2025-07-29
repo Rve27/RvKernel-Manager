@@ -21,6 +21,9 @@ class HomeViewModel : ViewModel() {
     private val _deviceCodename = MutableStateFlow("N/A")
     val deviceCodename: StateFlow<String> = _deviceCodename
 
+    private val _manufacturer = MutableStateFlow("N/A")
+    val manufacturer: StateFlow<String> = _manufacturer
+
     private val _ramInfo = MutableStateFlow("N/A")
     val ramInfo: StateFlow<String> = _ramInfo
 
@@ -52,6 +55,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
 	    _deviceName.value = Utils.getDeviceName()
             _deviceCodename.value = Utils.getDeviceCodename()
+	    _manufacturer.value = Utils.getManufacturer()
             _ramInfo.value = SoCUtils.getTotalRam(context)
 	    _zram.value = KernelUtils.getZramSize()
             _gpuModel.value = SoCUtils.getGPUModel()

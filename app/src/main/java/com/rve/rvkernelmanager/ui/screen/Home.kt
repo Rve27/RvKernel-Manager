@@ -82,6 +82,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
     val deviceName by viewModel.deviceName.collectAsState()
     val deviceCodename by viewModel.deviceCodename.collectAsState()
+    val manufacturer by viewModel.manufacturer.collectAsState()
     val ramInfo by viewModel.ramInfo.collectAsState()
     val zram by viewModel.zram.collectAsState()
     val cpu by viewModel.cpu.collectAsState()
@@ -105,7 +106,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 
         CustomListItem(
             title = "Device",
-            summary = "$deviceName ($deviceCodename)",
+            summary = "$manufacturer $deviceName ($deviceCodename)",
 	    icon = painterResource(R.drawable.ic_smartphone),
 	    onLongClick = { clipboardManager.setText(AnnotatedString("$deviceName ($deviceCodename)")) }
         )

@@ -23,6 +23,8 @@ object Utils {
 
     fun getSdkVersion() = Build.VERSION.SDK_INT.toString()
 
+    fun getManufacturer() = Build.MANUFACTURER
+
     fun getSystemProperty(key: String): String = runCatching {
         val clazz = Class.forName("android.os.SystemProperties")
         val method = clazz.getMethod("get", String::class.java)
