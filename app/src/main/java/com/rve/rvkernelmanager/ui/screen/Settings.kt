@@ -121,7 +121,7 @@ fun SettingsScreen(
 			}
 		    )
 		    DialogTextButton(
-			icon = painterResource(R.drawable.ic_android),
+			icon = Icons.Default.Android,
 			text = "System default",
 			onClick = {
 			    viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)

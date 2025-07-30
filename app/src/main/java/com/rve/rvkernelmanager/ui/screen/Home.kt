@@ -5,6 +5,8 @@ import android.net.Uri
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -96,7 +98,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         CustomListItem(
             title = "Device",
             summary = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-	    icon = painterResource(R.drawable.ic_smartphone),
+	    icon = Icons.Filled.Smartphone,
 	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})")) }
         )
 
@@ -126,7 +128,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         CustomListItem(
             title = "Android version",
             summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-            icon = painterResource(R.drawable.ic_android),
+            icon = Icons.Filled.Android,
 	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) }
         )
 

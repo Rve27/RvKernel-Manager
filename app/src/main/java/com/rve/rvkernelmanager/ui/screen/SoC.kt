@@ -8,6 +8,8 @@
 package com.rve.rvkernelmanager.ui.screen
 
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.lazy.*
@@ -129,7 +131,7 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
         CustomListItem(
             title = "SoC Monitor",
             titleLarge = true,
-	    icon = painterResource(R.drawable.ic_monitor)
+	    icon = Icons.AutoMirrored.Default.Dvr
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -582,6 +584,7 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 
     Card {
 	CustomListItem(
+	    icon = painterResource(R.drawable.ic_cpu),
 	    title = "CPU Boost",
 	    titleLarge = true
 	)

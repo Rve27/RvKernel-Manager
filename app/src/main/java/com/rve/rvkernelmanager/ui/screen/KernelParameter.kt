@@ -147,6 +147,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 
     Card {
 	CustomListItem(
+	    icon = painterResource(R.drawable.ic_linux),
 	    title = "Kernel Parameter",
 	    titleLarge = true
 	)
@@ -266,6 +267,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
 
     Card {
 	CustomListItem(
+	    icon = painterResource(R.drawable.ic_ram),
 	    title = "Memory",
 	    titleLarge = true
 	)

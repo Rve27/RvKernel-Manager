@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.semantics.*
@@ -115,7 +116,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         CustomListItem(
             title = "Battery Monitor",
             titleLarge = true,
-	    icon = painterResource(R.drawable.ic_monitor)
+	    icon = Icons.AutoMirrored.Default.Dvr
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
