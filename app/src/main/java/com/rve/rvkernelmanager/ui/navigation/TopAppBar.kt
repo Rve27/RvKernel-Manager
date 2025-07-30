@@ -30,6 +30,11 @@ fun PinnedTopAppBar(
 
     TopAppBar(
 	title = { Text("RvKernel Manager", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+	navigationIcon = {
+	    IconButton(onClick = { /* doSomething() */ }) {
+		Icon(imageVector = Icons.Filled.Menu, contentDescription = "Menu")
+	    }
+	},
 	actions = {
 	    IconButton(onClick = { expanded = true }) {
 		Icon(
