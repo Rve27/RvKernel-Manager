@@ -48,7 +48,8 @@ fun BottomNavigationBar(navController: NavController) {
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
+		alwaysShowLabel = false
             )
         }
     }
