@@ -7,55 +7,31 @@ package com.rve.rvkernelmanager.ui.viewmodel
 
 import androidx.lifecycle.*
 import androidx.compose.runtime.*
-
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.channels.Channel
-
 import com.rve.rvkernelmanager.utils.*
 
 class KernelParameterViewModel : ViewModel() {
-    private val _schedAutogroup = MutableStateFlow("")
-    val schedAutogroup: StateFlow<String> = _schedAutogroup
+    data class KernelParameters(
+        val schedAutogroup: String = "N/A",
+        val hasSchedAutogroup: Boolean = false,
+        val swappiness: String = "N/A",
+        val hasSwappiness: Boolean = false,
+        val printk: String = "N/A",
+        val hasPrintk: Boolean = false,
+        val zramSize: String = "N/A",
+        val hasZramSize: Boolean = false,
+        val zramCompAlgorithm: String = "N/A",
+        val hasZramCompAlgorithm: Boolean = false,
+        val availableZramCompAlgorithms: List<String> = emptyList(),
+        val tcpCongestionAlgorithm: String = "N/A",
+        val hasTcpCongestionAlgorithm: Boolean = false,
+        val availableTcpCongestionAlgorithm: List<String> = emptyList()
+    )
 
-    private val _hasSchedAutogroup = MutableStateFlow(false)
-    val hasSchedAutogroup: StateFlow<Boolean> = _hasSchedAutogroup
-
-    private val _swappiness = MutableStateFlow("")
-    val swappiness: StateFlow<String> = _swappiness
-
-    private val _hasSwappiness = MutableStateFlow(false)
-    val hasSwappiness: StateFlow<Boolean> = _hasSwappiness
-
-    private val _printk = MutableStateFlow("")
-    val printk: StateFlow<String> = _printk
-
-    private val _hasPrintk = MutableStateFlow(false)
-    val hasPrintk: StateFlow<Boolean> = _hasPrintk
-
-    private val _zramSize = MutableStateFlow("")
-    val zramSize: StateFlow<String> = _zramSize
-
-    private val _hasZramSize = MutableStateFlow(false)
-    val hasZramSize: StateFlow<Boolean> = _hasZramSize
-
-    private val _zramCompAlgorithm = MutableStateFlow("")
-    val zramCompAlgorithm: StateFlow<String> = _zramCompAlgorithm
-
-    private val _hasZramCompAlgorithm = MutableStateFlow(false)
-    val hasZramCompAlgorithm: StateFlow<Boolean> = _hasZramCompAlgorithm
-
-    private val _availableZramCompAlgorithms = MutableStateFlow<List<String>>(emptyList())
-    val availableZramCompAlgorithms: StateFlow<List<String>> = _availableZramCompAlgorithms
-
-    private val _tcpCongestionAlgorithm = MutableStateFlow("")
-    val tcpCongestionAlgorithm: StateFlow<String> = _tcpCongestionAlgorithm
-
-    private val _hasTcpCongestionAlgorithm = MutableStateFlow(false)
-    val hasTcpCongestionAlgorithm: StateFlow<Boolean> = _hasTcpCongestionAlgorithm
-
-    private val _availableTcpCongestionAlgorithm = MutableStateFlow<List<String>>(emptyList())
-    val availableTcpCongestionAlgorithm: StateFlow<List<String>> = _availableTcpCongestionAlgorithm
+    private val _kernelParameters = MutableStateFlow(KernelParameters())
+    val kernelParameters: StateFlow<KernelParameters> = _kernelParameters
 
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
@@ -81,66 +57,69 @@ class KernelParameterViewModel : ViewModel() {
 
     fun loadKernelParameter() {
         viewModelScope.launch(Dispatchers.IO) {
-            _schedAutogroup.value = Utils.readFile(KernelUtils.SCHED_AUTOGROUP)
-            _hasSchedAutogroup.value = Utils.testFile(KernelUtils.SCHED_AUTOGROUP)
-
-            _printk.value = Utils.readFile(KernelUtils.PRINTK)
-            _hasPrintk.value = Utils.testFile(KernelUtils.PRINTK)
-
-	    _zramSize.value = KernelUtils.getZramSize()
-            _hasZramSize.value = Utils.testFile(KernelUtils.ZRAM_SIZE)
-
-	    _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
-            _hasZramCompAlgorithm.value = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM)
-            _availableZramCompAlgorithms.value = KernelUtils.getAvailableZramCompAlgorithms()
-
-	    _swappiness.value = Utils.readFile(KernelUtils.SWAPPINESS)
-            _hasSwappiness.value = Utils.testFile(KernelUtils.SWAPPINESS)
-
-	    _tcpCongestionAlgorithm.value = KernelUtils.getTcpCongestionAlgorithm()
-            _hasTcpCongestionAlgorithm.value = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM)
-            _availableTcpCongestionAlgorithm.value = KernelUtils.getAvailableTcpCongestionAlgorithm()
+            _kernelParameters.value = KernelParameters(
+                schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTOGROUP),
+                hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTOGROUP),
+                printk = Utils.readFile(KernelUtils.PRINTK),
+                hasPrintk = Utils.testFile(KernelUtils.PRINTK),
+                zramSize = KernelUtils.getZramSize(),
+                hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
+                hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM),
+                availableZramCompAlgorithms = KernelUtils.getAvailableZramCompAlgorithms(),
+                swappiness = Utils.readFile(KernelUtils.SWAPPINESS),
+                hasSwappiness = Utils.testFile(KernelUtils.SWAPPINESS),
+                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
+                hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
+                availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm()
+            )
         }
     }
 
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newValue = if (isChecked) "1" else "0"
-            Utils.writeFile(KernelUtils.SCHED_AUTOGROUP, newValue)
-            _schedAutogroup.value = newValue
+            val value = if (isChecked) "1" else "0"
+            Utils.writeFile(KernelUtils.SCHED_AUTOGROUP, value)
+            _kernelParameters.value = _kernelParameters.value.copy(
+                schedAutogroup = value
+            )
         }
     }
 
-    fun updateSwappiness(newValue: String) {
+    fun updateSwappiness(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.SWAPPINESS, newValue)
-            _swappiness.value = newValue
+            Utils.writeFile(KernelUtils.SWAPPINESS, value)
+            _kernelParameters.value = _kernelParameters.value.copy(
+                swappiness = value
+            )
         }
     }
 
-    fun updatePrintk(newValue: String) {
+    fun updatePrintk(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.PRINTK, newValue)
-            _printk.value = newValue
+            Utils.writeFile(KernelUtils.PRINTK, value)
+            _kernelParameters.value = _kernelParameters.value.copy(
+                printk = value
+            )
         }
     }
 
     fun updateZramSize(sizeInGb: Int) {
-	val sizeInBytes = (sizeInGb * 1073741824L).toString()
-
+        val sizeInBytes = (sizeInGb * 1073741824L).toString()
         viewModelScope.launch(Dispatchers.IO) {
-	    KernelUtils.swapoffZram()
-	    KernelUtils.resetZram()
+            KernelUtils.swapoffZram()
+            KernelUtils.resetZram()
             Utils.writeFile(KernelUtils.ZRAM_SIZE, sizeInBytes)
-	    KernelUtils.mkswapZram()
-	    KernelUtils.swaponZram()
-	    _zramSize.value = KernelUtils.getZramSize()
+            KernelUtils.mkswapZram()
+            KernelUtils.swaponZram()
+            _kernelParameters.value = _kernelParameters.value.copy(
+                zramSize = KernelUtils.getZramSize()
+            )
         }
     }
 
     fun updateZramCompAlgorithm(algorithm: String) {
-	val currentSize = Utils.readFile(KernelUtils.ZRAM_SIZE)
-
+        val currentSize = Utils.readFile(KernelUtils.ZRAM_SIZE)
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.swapoffZram()
             KernelUtils.resetZram()
@@ -148,14 +127,18 @@ class KernelParameterViewModel : ViewModel() {
             Utils.writeFile(KernelUtils.ZRAM_SIZE, currentSize)
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
-            _zramCompAlgorithm.value = KernelUtils.getZramCompAlgorithm()
+            _kernelParameters.value = _kernelParameters.value.copy(
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm()
+            )
         }
     }
 
     fun updateTcpCongestionAlgorithm(algorithm: String) {
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.setTcpCongestionAlgorithm(algorithm)
-            _tcpCongestionAlgorithm.value = KernelUtils.getTcpCongestionAlgorithm()
+            _kernelParameters.value = _kernelParameters.value.copy(
+                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm()
+            )
         }
     }
 

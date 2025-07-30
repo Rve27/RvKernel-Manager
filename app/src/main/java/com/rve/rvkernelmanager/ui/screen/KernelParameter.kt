@@ -49,12 +49,7 @@ fun KernelParameterScreen(
 
     var isDialogOpen by remember { mutableStateOf(false) }
 
-    val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
-    val hasPrintk by viewModel.hasPrintk.collectAsState()
-    val hasTcpCongestionAlgorithm by viewModel.hasTcpCongestionAlgorithm.collectAsState()
-
-    val hasZramSize by viewModel.hasZramSize.collectAsState()
-    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
+    val kernelParameters by viewModel.kernelParameters.collectAsState()
 
     val pullToRefreshState = remember {
 	object : PullToRefreshState {
@@ -117,13 +112,13 @@ fun KernelParameterScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-		if (hasSchedAutogroup || hasPrintk || hasTcpCongestionAlgorithm) {
+		if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
 		    item {
 		        Spacer(Modifier.height(16.dp))
                         KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 	            }
 		}
-		if (hasZramSize || hasZramCompAlgorithm) {
+		if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
 		    item {
 			MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
 		    }
@@ -138,16 +133,8 @@ fun KernelParameterScreen(
 
 @Composable
 fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
-    val schedAutogroup by viewModel.schedAutogroup.collectAsState()
-    val hasSchedAutogroup by viewModel.hasSchedAutogroup.collectAsState()
-    val schedAutogroupStatus = remember(schedAutogroup) { schedAutogroup == "1" }
-
-    val printk by viewModel.printk.collectAsState()
-    val hasPrintk by viewModel.hasPrintk.collectAsState()
-
-    val tcpCongestionAlgorithm by viewModel.tcpCongestionAlgorithm.collectAsState()
-    val hasTcpCongestionAlgorithm by viewModel.hasTcpCongestionAlgorithm.collectAsState()
-    val availableTcpCongestionAlgorithm by viewModel.availableTcpCongestionAlgorithm.collectAsState()
+    val kernelParameters by viewModel.kernelParameters.collectAsState()
+    val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
     // PD = Printk Dialog
     var openPD by remember { mutableStateOf(false) }
@@ -165,7 +152,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-        if (hasSchedAutogroup) {
+        if (kernelParameters.hasSchedAutogroup) {
 	    SwitchListItem(
 		titleSmall = true,
 		title = "Sched auto group",
@@ -178,27 +165,27 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 	    )
         }
 
-	if (hasPrintk) {
+	if (kernelParameters.hasPrintk) {
             ButtonListItem(
                 title = "printk",
 		summary = "Controls kernel message logging level",
-		value = printk,
+		value = kernelParameters.printk,
 		onClick = { openPD = true }
             )
         }
 
-	if (hasTcpCongestionAlgorithm && availableTcpCongestionAlgorithm.isNotEmpty()) {
+	if (kernelParameters.hasTcpCongestionAlgorithm && kernelParameters.availableTcpCongestionAlgorithm.isNotEmpty()) {
             ButtonListItem(
                 title = "TCP congestion algorithm",
                 summary = "Transmission Control Protocol is one of the core protocols of the Internet protocol suite (IP), and is so common that the entire suite is often called TCP/IP.",
-                value = tcpCongestionAlgorithm,
+                value = kernelParameters.tcpCongestionAlgorithm,
                 onClick = { openTCD = true }
             )
         }
     }
 
     if (openPD) {
-        var value by remember { mutableStateOf(printk) }
+        var value by remember { mutableStateOf(kernelParameters.printk) }
         AlertDialog(
             onDismissRequest = { openPD = false },
             text = {
@@ -239,7 +226,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             title = { Text("TCP congestion algorithm") },
             text = {
                 Column {
-                    availableTcpCongestionAlgorithm.forEach { algorithm ->
+                    kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
                         DialogTextButton(
                             text = algorithm,
                             onClick = {
@@ -264,15 +251,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 
 @Composable
 fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
-    val zramSize by viewModel.zramSize.collectAsState()
-    val hasZramSize by viewModel.hasZramSize.collectAsState()
-
-    val zramCompAlgorithm by viewModel.zramCompAlgorithm.collectAsState()
-    val hasZramCompAlgorithm by viewModel.hasZramCompAlgorithm.collectAsState()
-    val availableZramCompAlgorithms by viewModel.availableZramCompAlgorithms.collectAsState()
-
-    val swappiness by viewModel.swappiness.collectAsState()
-    val hasSwappiness by viewModel.hasSwappiness.collectAsState()
+    val kernelParameters by viewModel.kernelParameters.collectAsState()
 
     // ZD = ZRAM Dialog
     var openZD by remember { mutableStateOf(false) }
@@ -292,35 +271,35 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
 	)
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	if (hasZramSize || hasZramCompAlgorithm) {
+	if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
 	    CustomListItem(
 		summary = "NOTE: It may take a few minutes to change the ZRAM size, etc."
 	    )
 	}
 
-	if (hasZramSize) {
+	if (kernelParameters.hasZramSize) {
             ButtonListItem(
                 title = "ZRAM size",
                 summary = "Change the ZRAM size",
-                value = zramSize,
+                value = kernelParameters.zramSize,
                 onClick = { openZD = true }
             )
         }
 
-	if (hasZramCompAlgorithm && availableZramCompAlgorithms.isNotEmpty()) {
+	if (kernelParameters.hasZramCompAlgorithm && kernelParameters.availableZramCompAlgorithms.isNotEmpty()) {
             ButtonListItem(
                 title = "ZRAM compression algorithm",
                 summary = "Different algorithms offer different compression ratios and performance",
-                value = zramCompAlgorithm,
+                value = kernelParameters.zramCompAlgorithm,
                 onClick = { openZCD = true }
             )
         }
 
-	if (hasSwappiness) {
+	if (kernelParameters.hasSwappiness) {
 	    ButtonListItem(
 		title = "Swappiness",
 		summary = "Controls how aggressively the system uses swap memory",
-		value = "$swappiness%",
+		value = "${kernelParameters.swappiness}%",
 		onClick = { openSD = true }
 	    )
 	}
@@ -363,7 +342,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             title = { Text("ZRAM compression algorithm") },
             text = {
                 Column {
-                    availableZramCompAlgorithms.forEach { algorithm ->
+                    kernelParameters.availableZramCompAlgorithms.forEach { algorithm ->
                         DialogTextButton(
                             text = algorithm,
                             onClick = {
@@ -386,7 +365,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     }
 
     if (openSD) {
-        var value by remember { mutableStateOf(swappiness) }
+        var value by remember { mutableStateOf(kernelParameters.swappiness) }
         AlertDialog(
             onDismissRequest = { openSD = false },
             text = {
