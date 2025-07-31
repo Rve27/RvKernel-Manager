@@ -1,8 +1,8 @@
 [versions]
 agp = "8.11.1"
 kotlin = "2.2.0"
-androidx-navigation = "2.9.2"
-material3 = "1.4.0-alpha18"
+androidx-navigation = "2.9.3"
+material3 = "1.5.0-alpha01"
 compose = "1.7.8"
 lifecycle = "2.9.2"
 libsuVersion = "6.0.0"
