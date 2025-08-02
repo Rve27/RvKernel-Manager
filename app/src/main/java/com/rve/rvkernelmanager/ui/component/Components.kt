@@ -256,6 +256,65 @@ fun CustomListItem(
 }
 
 @Composable
+fun TitleExpandable(
+    leadingIcon: Any? = null,
+    text: String,
+    titleSmall: Boolean = false,
+    titleLarge: Boolean = false,
+    trailingIcon: Any? = null,
+    onClick: () -> Unit
+) {
+    Row(
+	modifier = Modifier
+	    .clickable(onClick = onClick)
+	    .padding(16.dp)
+	    .fillMaxWidth(),
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	if (leadingIcon != null) {
+	    when (leadingIcon) {
+		is ImageVector -> Icon(
+		    imageVector = leadingIcon,
+		    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+		    modifier = Modifier.padding(end = 16.dp)
+		)
+		is Painter -> Icon(
+		    painter = leadingIcon,
+		    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+		    modifier = Modifier.padding(end = 16.dp)
+		)
+	    }
+	}
+	Text(
+	    text = text,
+	    style = when {
+		titleSmall -> MaterialTheme.typography.titleSmall
+		titleLarge -> MaterialTheme.typography.titleLarge
+		else -> MaterialTheme.typography.titleMedium
+	    },
+	    color = MaterialTheme.colorScheme.onSurface,
+	    modifier = Modifier.weight(1f)
+	)
+	if (trailingIcon != null) {
+	    when (trailingIcon) {
+		is ImageVector -> Icon(
+		    imageVector = trailingIcon,
+		    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant
+		)
+		is Painter -> Icon(
+		    painter = trailingIcon,
+		    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant
+		)
+	    }
+	}
+    }
+}
+
+@Composable
 fun MonitorListItem(
     title: String,
     summary: String,
