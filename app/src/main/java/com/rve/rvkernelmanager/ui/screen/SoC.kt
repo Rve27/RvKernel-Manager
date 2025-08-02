@@ -7,8 +7,11 @@
 
 package com.rve.rvkernelmanager.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.*
@@ -231,6 +234,8 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 
 @Composable
 fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
     var targetFreqCPU0 by remember { mutableStateOf<String?>(null) }
     // ACG = Available CPU Governor
     var openACG by remember { mutableStateOf(false) }
@@ -243,36 +248,42 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
     }
 
     Card {
-	CustomListItem(
-	    title = if (hasBigCluster) "Little Cluster" else "CPU",
+	TitleExpandable(
+	    leadingIcon = painterResource(R.drawable.ic_cpu),
+	    text = if (hasBigCluster) "Little Cluster" else "CPU",
 	    titleLarge = true,
-	    icon = painterResource(R.drawable.ic_cpu)
+	    trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+	    onClick = { isExpanded = !isExpanded }
 	)
 
-	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+	AnimatedVisibility(isExpanded) {
+	    Column {
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	ButtonListItem(
-	    title = "Minimum frequency",
-	    summary = if (hasBigCluster) "The lowest speed the Little Cluster can run at" else "The lowest speed the CPU can run at",
-	    value = cpu0State.minFreq,
-	    isFreq = true,
-	    onClick = { targetFreqCPU0 = "min" }
-	)
+		ButtonListItem(
+		    title = "Minimum frequency",
+		    summary = if (hasBigCluster) "The lowest speed the Little Cluster can run at" else "The lowest speed the CPU can run at",
+		    value = cpu0State.minFreq,
+		    isFreq = true,
+		    onClick = { targetFreqCPU0 = "min" }
+		)
 
-	ButtonListItem(
-            title = "Maximum frequency",
-	    summary = if (hasBigCluster) "The highest speed the Little Cluster can run at" else "The highest speed the CPU can run at",
-            value = cpu0State.maxFreq,
-            isFreq = true,
-            onClick = { targetFreqCPU0 = "max" }
-        )
+		ButtonListItem(
+	            title = "Maximum frequency",
+		    summary = if (hasBigCluster) "The highest speed the Little Cluster can run at" else "The highest speed the CPU can run at",
+	            value = cpu0State.maxFreq,
+	            isFreq = true,
+	            onClick = { targetFreqCPU0 = "max" }
+	        )
 
-	ButtonListItem(
-	    title = "Governor",
-	    summary = if (hasBigCluster) "Controls how the Little Cluster scales between min and max frequencies" else "Controls how the CPU scales between min and max frequencies",
-	    value = cpu0State.gov,
-	    onClick = { openACG = true }
-	)
+		ButtonListItem(
+		    title = "Governor",
+		    summary = if (hasBigCluster) "Controls how the Little Cluster scales between min and max frequencies" else "Controls how the CPU scales between min and max frequencies",
+		    value = cpu0State.gov,
+		    onClick = { openACG = true }
+		)
+	    }
+	}
 
 	if (targetFreqCPU0 != null) {
 	    AlertDialog(
@@ -344,6 +355,8 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
     var targetBigFreq by remember { mutableStateOf<String?>(null) }
     // ACG = Available CPU Governor
     var openACG by remember { mutableStateOf(false) }
@@ -355,36 +368,42 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
     }
 
     Card {
-	CustomListItem(
-	    title = "Big Cluster",
+	TitleExpandable(
+	    leadingIcon = painterResource(R.drawable.ic_cpu),
+	    text = "Big Cluster",
 	    titleLarge = true,
-	    icon = painterResource(R.drawable.ic_cpu)
+	    onClick = { isExpanded = !isExpanded },
+	    trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
 	)
 
-	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+	AnimatedVisibility(isExpanded) {
+	    Column {
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	ButtonListItem(
-	    title = "Minimum frequency",
-	    summary = "The lowest speed the Big Cluster can run at",
-	    value = bigClusterState.minFreq,
-	    isFreq = true,
-	    onClick = { targetBigFreq = "min" }
-	)
+		ButtonListItem(
+		    title = "Minimum frequency",
+		    summary = "The lowest speed the Big Cluster can run at",
+		    value = bigClusterState.minFreq,
+		    isFreq = true,
+		    onClick = { targetBigFreq = "min" }
+		)
 
-	ButtonListItem(
-            title = "Maximum frequency",
-	    summary = "The highest speed the Big Cluster can run at",
-            value = bigClusterState.maxFreq,
-            isFreq = true,
-            onClick = { targetBigFreq = "max" }
-        )
+		ButtonListItem(
+	            title = "Maximum frequency",
+		    summary = "The highest speed the Big Cluster can run at",
+	            value = bigClusterState.maxFreq,
+	            isFreq = true,
+	            onClick = { targetBigFreq = "max" }
+	        )
 
-	ButtonListItem(
-	    title = "Governor",
-	    summary = "Controls how the Big Cluster scales between min and max frequencies",
-	    value = bigClusterState.gov,
-	    onClick = { openACG = true }
-	)
+		ButtonListItem(
+		    title = "Governor",
+		    summary = "Controls how the Big Cluster scales between min and max frequencies",
+		    value = bigClusterState.gov,
+		    onClick = { openACG = true }
+		)
+	    }
+	}
 
 	if (targetBigFreq != null) {
 	    AlertDialog(
@@ -456,6 +475,8 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 
 @Composable
 fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
     var targetPrimeFreq by remember { mutableStateOf<String?>(null) }
     // ACG = Available CPU Governor
     var openACG by remember { mutableStateOf(false) }
@@ -467,36 +488,42 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
     }
 
     Card {
-	CustomListItem(
-	    title = "Prime Cluster",
+	TitleExpandable(
+	    leadingIcon = painterResource(R.drawable.ic_cpu),
+	    text = "Prime Cluster",
 	    titleLarge = true,
-	    icon = painterResource(R.drawable.ic_cpu)
+	    onClick = { isExpanded = !isExpanded },
+	    trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
 	)
 
-	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+	AnimatedVisibility(isExpanded) {
+	    Column {
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	ButtonListItem(
-	    title = "Minimum frequency",
-	    summary = "The lowest speed the Prime Cluster can run at",
-	    value = primeClusterState.minFreq,
-	    isFreq = true,
-	    onClick = { targetPrimeFreq = "min" }
-	)
+		ButtonListItem(
+		    title = "Minimum frequency",
+		    summary = "The lowest speed the Prime Cluster can run at",
+		    value = primeClusterState.minFreq,
+		    isFreq = true,
+		    onClick = { targetPrimeFreq = "min" }
+		)
 
-	ButtonListItem(
-            title = "Maximum frequency",
-	    summary = "The highest speed the Prime Cluster can run at",
-            value = primeClusterState.maxFreq,
-            isFreq = true,
-            onClick = { targetPrimeFreq = "max" }
-        )
+		ButtonListItem(
+	            title = "Maximum frequency",
+		    summary = "The highest speed the Prime Cluster can run at",
+	            value = primeClusterState.maxFreq,
+	            isFreq = true,
+	            onClick = { targetPrimeFreq = "max" }
+	        )
 
-	ButtonListItem(
-	    title = "Governor",
-	    summary = "Controls how the Prime Cluster scales between min and max frequencies",
-	    value = primeClusterState.gov,
-	    onClick = { openACG = true }
-	)
+		ButtonListItem(
+		    title = "Governor",
+		    summary = "Controls how the Prime Cluster scales between min and max frequencies",
+		    value = primeClusterState.gov,
+		    onClick = { openACG = true }
+		)
+	    }
+	}
 
 	if (targetPrimeFreq != null) {
 	    AlertDialog(
@@ -568,6 +595,8 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 
 @Composable
 fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
     // CPU Input Boost Dialog
     var openCIBD by remember { mutableStateOf(false) }
 
@@ -583,30 +612,36 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
     }
 
     Card {
-	CustomListItem(
-	    icon = painterResource(R.drawable.ic_cpu),
-	    title = "CPU Boost",
-	    titleLarge = true
+	TitleExpandable(
+	    leadingIcon = painterResource(R.drawable.ic_cpu),
+	    text = "CPU Boost",
+	    titleLarge = true,
+	    onClick = { isExpanded = !isExpanded },
+	    trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
 	)
 
-	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+	AnimatedVisibility(isExpanded) {
+	    Column {
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	if (hasCpuInputBoostMs) {
-	    ButtonListItem(
-		title = "Input boost ms",
-		summary = "Time boost is held after input",
-		value = "$cpuInputBoostMs ms",
-		onClick = { openCIBD = true }
-	    )
-	}
+		if (hasCpuInputBoostMs) {
+		    ButtonListItem(
+			title = "Input boost ms",
+			summary = "Time boost is held after input",
+			value = "$cpuInputBoostMs ms",
+			onClick = { openCIBD = true }
+		    )
+		}
 
-	if (hasCpuSchedBoostOnInput) {
-	    SwitchListItem(
-		title = "Sched boost on input",
-		summary = "Boost scheduler when receiving user input",
-		checked = cpuSchedBoostOnInputChecked,
-		onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) }
-	    )
+		if (hasCpuSchedBoostOnInput) {
+		    SwitchListItem(
+			title = "Sched boost on input",
+			summary = "Boost scheduler when receiving user input",
+			checked = cpuSchedBoostOnInputChecked,
+			onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) }
+		    )
+		}
+	    }
 	}
     }
 
@@ -649,6 +684,8 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 
 @Composable
 fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+
     var targetGpuFreq by remember { mutableStateOf<String?>(null) }
     // AGG = Available GPU Governor
     var openAGG by remember { mutableStateOf(false) }
@@ -668,72 +705,78 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
     }
 
     Card {
-	CustomListItem(
-	    title = "GPU",
+	TitleExpandable(
+	    leadingIcon = painterResource(R.drawable.ic_video_card),
+	    text = "GPU",
 	    titleLarge = true,
-	    icon = painterResource(R.drawable.ic_video_card)
+	    onClick = { isExpanded = !isExpanded },
+	    trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown
 	)
 
-	HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+	AnimatedVisibility(isExpanded) {
+	    Column {
+		HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	ButtonListItem(
-	    title = "Minimum frequency",
-	    summary = "The lowest speed the GPU can run at",
-	    value = gpuState.minFreq,
-	    isFreq = true,
-	    onClick = { targetGpuFreq = "min" }
-	)
+		ButtonListItem(
+		    title = "Minimum frequency",
+		    summary = "The lowest speed the GPU can run at",
+		    value = gpuState.minFreq,
+		    isFreq = true,
+		    onClick = { targetGpuFreq = "min" }
+		)
 
-	ButtonListItem(
-	    title = "Maximum frequency",
-	    summary = "The highest speed the GPU can run at",
-	    value = gpuState.maxFreq,
-	    isFreq = true,
-	    onClick = { targetGpuFreq = "max" }
-	)
+		ButtonListItem(
+		    title = "Maximum frequency",
+		    summary = "The highest speed the GPU can run at",
+		    value = gpuState.maxFreq,
+		    isFreq = true,
+		    onClick = { targetGpuFreq = "max" }
+		)
 
-	ButtonListItem(
-	    title = "Governor",
-	    summary = "Controls how the CPU scales between min and max frequencies",
-	    value = gpuState.gov,
-	    onClick = { openAGG = true }
-	)
+		ButtonListItem(
+		    title = "Governor",
+		    summary = "Controls how the CPU scales between min and max frequencies",
+		    value = gpuState.gov,
+		    onClick = { openAGG = true }
+		)
 
-	if (hasDefaultPwrlevel) {
-	    ButtonListItem(
-		title = "Default pwrlevel",
-		summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
-		value = gpuState.defaultPwrlevel,
-		onClick = { openDPD = true }
-	    )
-	}
-
-	if (hasAdrenoBoost) {
-	    ButtonListItem(
-		title = "Adreno boost",
-		summary = "Boosts GPU performance for a short period",
-		value = remember(gpuState.adrenoBoost) {
-		    when (gpuState.adrenoBoost) {
-			"0" -> "Off"
-			"1" -> "Low"
-			"2" -> "Medium"
-			"3" -> "High"
-			else -> "Unknown"
-		    }
-		},
-		onClick = { openABD = true }
-	    )
-	}
-
-	if (hasGPUThrottling) {
-	    SwitchListItem(
-		title = "GPU throttling",
-		summary = "Reduces GPU performance to prevent overheating",
-		checked = gpuThrottlingStatus,
-		onCheckedChange = { isChecked ->
-		    viewModel.updateGPUThrottling(isChecked)
+		if (hasDefaultPwrlevel) {
+		    ButtonListItem(
+			title = "Default pwrlevel",
+			summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
+			value = gpuState.defaultPwrlevel,
+			onClick = { openDPD = true }
+		    )
 		}
-	    )
+
+		if (hasAdrenoBoost) {
+		    ButtonListItem(
+			title = "Adreno boost",
+			summary = "Boosts GPU performance for a short period",
+			value = remember(gpuState.adrenoBoost) {
+			    when (gpuState.adrenoBoost) {
+				"0" -> "Off"
+				"1" -> "Low"
+				"2" -> "Medium"
+				"3" -> "High"
+				else -> "Unknown"
+			    }
+			},
+			onClick = { openABD = true }
+		    )
+		}
+
+		if (hasGPUThrottling) {
+		    SwitchListItem(
+			title = "GPU throttling",
+			summary = "Reduces GPU performance to prevent overheating",
+			checked = gpuThrottlingStatus,
+			onCheckedChange = { isChecked ->
+			    viewModel.updateGPUThrottling(isChecked)
+			}
+		    )
+		}
+	    }
 	}
 
 	if (targetGpuFreq != null) {
