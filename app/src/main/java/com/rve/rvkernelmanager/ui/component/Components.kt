@@ -120,7 +120,8 @@ fun ButtonListItem(
     bodySmall: Boolean = false,
     bodyLarge: Boolean = false,
     value: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -164,6 +165,7 @@ fun ButtonListItem(
 	) {
             Button(
 		onClick = onClick,
+		enabled = enabled,
                 interactionSource = interactionSource,
 		shapes = ButtonDefaults.shapes()
 	    ) {
