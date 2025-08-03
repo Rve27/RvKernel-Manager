@@ -129,6 +129,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core)
     implementation(libs.androidx.customview.poolingcontainer)
+    implementation(libs.androidx.emoji2)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.core.splashscreen)
