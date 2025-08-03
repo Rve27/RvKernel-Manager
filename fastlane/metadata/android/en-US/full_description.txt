@@ -2,32 +2,48 @@
 
 <p>Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.</p>
 
-<p><b>Features:</b></p>
+<h3>Features:</h3>
 
-<p><b>Device Information Dashboard</b><br>
+<h4>Device Information Dashboard</h4>
 Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.</p>
 
-<p><b>Battery Monitoring & Control</b><br>
-Real-time battery monitoring with voltage, temperature, and charging level information. Includes thermal profile management and fast charging control for supported devices.</p>
+<h4>Battery Monitoring & Control</h4>
+<ul>
+  <li><strong>Real-time monitoring</strong>: Voltage, temperature, and charging level</li>
+  <li><strong>Thermal profile management</strong>: Optimize temperature thresholds</li>
+  <li><strong>Fast charging control</strong>: Enable/disable for supported devices</li>
+  <li><strong>Battery health tracking</strong>: Monitor degradation over time</li>
+</ul>
 
-<p><b>SoC (System on Chip) Management</b><br>
-Advanced CPU frequency control with support for different core clusters (Little, Big, Prime). Adjust CPU governors and set minimum/maximum frequencies for each cluster individually.</p>
+<h4>Advanced CPU & GPU control</h4>
+<ul>
+  <li><strong>Multi-cluster CPU support</strong>: Little, Big, and Prime core clusters</li>
+  <li><strong>Governor selection</strong>: Choose optimal CPU & GPU scheduling policies</li>
+  <li><strong>Frequency scaling</strong>: Set custom min/max frequencies</li>
+</ul>
 
-<p><b>Kernel Parameter Tuning</b></p>
-<p>Fine-tune kernel settings including:</p><ul>
-<li>Scheduler auto group configuration</li>
-<li>Swappiness control for memory management</li>
-<li>ZRAM size and compression algorithm settings</li>
-<li>Kernel printk logging levels</li>
-<li>Etc</li></ul>
-<p>and there are many other parameters that you can tune!<p>
+<h4>Kernel Parameter Tuning</h4>
+<p>Fine-tune kernel settings for optimal performance:</p>
+<ul>
+  <li><strong>Scheduler configuration</strong>: Auto group and task scheduling</li>
+  <li><strong>Memory management</strong>: Swappiness settings</li>
+  <li><strong>ZRAM optimization</strong>: Size allocation and compression algorithms</li>
+  <li><strong>Logging control</strong>: Kernel printk levels</li>
+  <li><strong>Network tuning</strong>: TCP congestion control</li>
+  <li><strong>And many more advanced parameters!</strong></li>
+</ul>
 
-<p><b>Material 3 Expressive Design Interface</b><br>
-Clean, modern interface with support for dynamic theming and blur effects.</p>
+<h4>Material 3 Expressive Design</h4>
+<ul>
+  <li><strong>Modern interface</strong>: Clean, intuitive Material 3 design</li>
+  <li><strong>Dynamic theming</strong>: Adapts to your system colors</li>
+  <li><strong>Blur effects</strong>: Beautiful visual enhancements</li>
+  <li><strong>Dark/Light modes</strong>: Full theme support</li>
+</ul>
 
-<p><b>Requirements:</b><br>
-• ROOTED device<br>
-• Android 12+<br>
-• For now only suitable with Snapdragon devices</p>
-
-<p>Take full control of your device's kernel. Tune performance, battery life, and more!</p>
+<h4>Requirements</h4>
+<ul>
+  <li><strong>ROOT ACCESS REQUIRED</strong>: This app needs root permissions to modify kernel parameters</li>
+  <li><strong>Android 12+</strong>: Minimum supported Android version</li>
+  <li><strong>Snapdragon devices</strong>: Currently only compatible with Qualcomm Snapdragon SoCs</li>
+</ul>

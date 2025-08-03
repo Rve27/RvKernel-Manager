@@ -14,51 +14,54 @@
 <br>
 <p>Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.</p>
 
-# Download
+## Download
 
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.rve.rvkernelmanager)
 [<img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" alt="" height="80">](https://github.com/Rve27/RvKernel-Manager/releases)
 </div>
 
-## Features
+## ✨ Features
 
-- **Device Information Dashboard**
+### 📊 Device Information Dashboard
+Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.
 
-  Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.
+### 🔋 Battery Monitoring & Control
+- **Real-time monitoring**: Voltage, temperature, and charging level
+- **Thermal profile management**: Optimize temperature thresholds
+- **Fast charging control**: Enable/disable for supported devices
+- **Battery health tracking**: Monitor degradation over time
 
-- **Battery Monitoring & Control**
+### ⚡ SoC (System on Chip) Management
+Advanced CPU & GPU control with comprehensive support for:
+- **Multi-cluster CPU support**: Little, Big, and Prime core clusters
+- **Governor selection**: Choose optimal CPU & GPU scheduling policies
+- **Frequency scaling**: Set custom min/max frequencies
 
-  Real-time battery monitoring with voltage, temperature, and charging level information. Includes thermal profile management and fast charging control for supported devices.
+### 🛠️ Kernel Parameter Tuning
+Fine-tune kernel settings for optimal performance:
+- **Scheduler configuration**: Auto group and task scheduling
+- **Memory management**: Swappiness settings
+- **ZRAM optimization**: Size allocation and compression algorithms
+- **Logging control**: Kernel printk levels
+- **Network tuning**: TCP congestion control
+- **And many more advanced parameters!**
 
-- **SoC (System on Chip) Management**
+### 🎨 Material 3 Expressive Design
+- **Modern interface**: Clean, intuitive Material 3 design
+- **Dynamic theming**: Adapts to your system colors
+- **Blur effects**: Beautiful visual enhancements
+- **Dark/Light modes**: Full theme support
 
-  Advanced CPU frequency control with support for different core clusters (Little, Big, Prime). Adjust CPU governors and set minimum/maximum frequencies for each cluster individually.
-
-- **Kernel Parameter Tuning**
-
-  Fine-tune kernel settings including:
-  - Scheduler auto group configuration
-  - Swappiness control for memory management
-  - ZRAM size and compression algorithm settings
-  - Kernel printk logging levels
-  - Etc
-
-  and there are many other parameters that you can tune!
-
-- **Material 3 Expressive Design Interface**
-
-  Clean, modern interface with support for dynamic theming and blur effects.
-
-## Screenshots
+## 📱 Screenshots
 
 <p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="32%" />
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="32%" /></p>
 
-## Requirements
+## 📋 Requirements
 
-- **ROOTED** device
-- Android 12+
-- For now only suitable with Snapdragon devices
+- ⚠️ **ROOT ACCESS REQUIRED** - This app needs root permissions to modify kernel parameters
+- 📱 **Android 12+** - Minimum supported Android version
+- 🔧 **Snapdragon devices** - Currently only compatible with Qualcomm Snapdragon SoCs
 
 ## Telegram
 
