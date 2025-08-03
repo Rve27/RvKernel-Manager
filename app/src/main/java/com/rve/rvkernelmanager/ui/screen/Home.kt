@@ -16,7 +16,8 @@ import androidx.compose.ui.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.*
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -167,6 +168,34 @@ fun DonateCard() {
 
 @Composable
 fun CopyrightCard() {
+    val licenseText = buildAnnotatedString {
+        append("Copyright (C) 2025 Rve\n\n")
+        append("This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n")
+        append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n")
+        append("You should have received a copy of the GNU General Public License along with this program. If not, see ")
+
+        val urlStart = length
+        append("https://www.gnu.org/licenses/")
+        val urlEnd = length
+
+        addStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            ),
+            start = urlStart,
+            end = urlEnd
+        )
+
+	addLink(
+            LinkAnnotation.Url("https://www.gnu.org/licenses/"),
+            start = urlStart,
+            end = urlEnd
+        )
+
+        append(".")
+    }
+
     Card {
 	var isExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -182,17 +211,12 @@ fun CopyrightCard() {
 	    Column {
 	        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	        CustomListItem(
-	            summary = """
-	                Copyright (C) 2025 Rve
-
-	                This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-	                This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	                You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
-	            """.trimIndent()
-	        )
+		Text(
+		    text = licenseText,
+		    style = MaterialTheme.typography.bodyMedium,
+		    color = MaterialTheme.colorScheme.onSurfaceVariant,
+		    modifier = Modifier.padding(16.dp)
+		)
 	    }
 	}
     }
