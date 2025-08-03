@@ -118,6 +118,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
