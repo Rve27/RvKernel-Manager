@@ -121,6 +121,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.annotation.experimental)
     implementation(libs.androidx.appcompat.resources)
+    implementation(libs.androidx.autofill)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
