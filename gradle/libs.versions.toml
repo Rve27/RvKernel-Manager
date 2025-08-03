@@ -12,6 +12,7 @@ compose-material-icons-extended = "1.7.8"
 compose-material-ripple = "1.9.0-rc01"
 compose-ui = "1.9.0-rc01"
 core = "1.17.0-rc01"
+customview-poolingcontainer = "1.1.0"
 androidx-navigation = "2.9.3"
 lifecycle = "2.9.2"
 libsuVersion = "6.0.0"
@@ -35,6 +36,7 @@ androidx-compose-material-icons-extended = { module = "androidx.compose.material
 androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose-material-ripple" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui" }
 androidx-core = { module = "androidx.core:core", version.ref = "core" }
+androidx-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "customview-poolingcontainer" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
