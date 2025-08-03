@@ -59,10 +59,10 @@ fun SoCScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    viewModel.startPolling()
+                    viewModel.startJob()
                 }
                 Lifecycle.Event.ON_PAUSE -> {
-                    viewModel.stopPolling()
+                    viewModel.stopJob()
                 }
                 else -> {}
             }
@@ -129,6 +129,10 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
     val gpuState by viewModel.gpuState.collectAsState()
     val gpuTemp by viewModel.gpuTemp.collectAsState()
     val gpuUsage by viewModel.gpuUsage.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.setActiveState("monitor", true)
+    }
 
     Card {
         CustomListItem(
@@ -242,6 +246,10 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+
+    LaunchedEffect(isExpanded) {
+        viewModel.setActiveState("little", isExpanded)
+    }
 
     LaunchedEffect(targetFreqCPU0, openACG) {
 	onDialogStateChange(targetFreqCPU0 != null || openACG)
@@ -363,6 +371,10 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
+    LaunchedEffect(isExpanded) {
+        viewModel.setActiveState("big", isExpanded)
+    }
+
     LaunchedEffect(targetBigFreq, openACG) {
 	onDialogStateChange(targetBigFreq != null || openACG)
     }
@@ -482,6 +494,10 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
     var openACG by remember { mutableStateOf(false) }
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
+
+    LaunchedEffect(isExpanded) {
+        viewModel.setActiveState("prime", isExpanded)
+    }
 
     LaunchedEffect(targetPrimeFreq, openACG) {
 	onDialogStateChange(targetPrimeFreq != null || openACG)
@@ -607,6 +623,10 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
     val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
+    LaunchedEffect(isExpanded) {
+        viewModel.setActiveState("cpuBoost", isExpanded)
+    }
+
     LaunchedEffect(openCIBD) {
 	onDialogStateChange(openCIBD)
     }
@@ -699,6 +719,10 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember (gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
+
+    LaunchedEffect(isExpanded) {
+        viewModel.setActiveState("gpu", isExpanded)
+    }
 
     LaunchedEffect(targetGpuFreq, openAGG, openABD, openDPD) {
 	onDialogStateChange(targetGpuFreq != null || openAGG || openABD || openDPD)

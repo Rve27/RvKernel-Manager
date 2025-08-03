@@ -135,16 +135,34 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val _hasGPUThrottling = MutableStateFlow(false)
     val hasGPUThrottling: StateFlow<Boolean> = _hasGPUThrottling
 
-    private var pollingJob: Job? = null
+    private val _activeStates = MutableStateFlow(
+        mapOf(
+            "monitor" to true,
+            "little" to false,
+            "big" to false,
+            "prime" to false,
+            "gpu" to false,
+            "cpuBoost" to false
+        )
+    )
+    private val activeStates: StateFlow<Map<String, Boolean>> = _activeStates
+
+    private var job: Job? = null
     private var detectedBigClusterConfig: ClusterConfig.Big? = null
 
     init {
         loadSoCData()
     }
 
-    fun startPolling() {
-        pollingJob?.cancel()
-        pollingJob = viewModelScope.launch(Dispatchers.IO) {
+    fun setActiveState(state: String, active: Boolean) {
+        val currentState = _activeStates.value.toMutableMap()
+        currentState[state] = active
+        _activeStates.value = currentState
+    }
+
+    fun startJob() {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
             settingsPreference.pollingInterval.collect { interval ->
                 while (true) {
                     loadSoCData()
@@ -154,45 +172,79 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun stopPolling() {
-        pollingJob?.cancel()
-        pollingJob = null
+    fun stopJob() {
+        job?.cancel()
+        job = null
     }
 
     private fun loadSoCData() {
         viewModelScope.launch(Dispatchers.IO) {
-            loadCPUData()
-            loadGPUData()
-            loadTemperatureAndUsageData()
+            val activeStates = _activeStates.value
+
+	    detectedBigClusterConfig = detectBigClusterConfig()
+	    _hasBigCluster.value = detectedBigClusterConfig != null
+
+	    _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
+
+	    _hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
+
+	    _hasCpuSchedBoostOnInput.value = Utils.testFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+
+            if (activeStates["monitor"] == true) {
+                loadMonitorData()
+            }
+
+            if (activeStates["little"] == true) {
+                loadLittleClusterData()
+            }
+
+            if (activeStates["big"] == true && _hasBigCluster.value) {
+                loadBigClusterData()
+            }
+
+            if (activeStates["prime"] == true && _hasPrimeCluster.value) {
+                loadPrimeClusterData()
+            }
+
+            if (activeStates["gpu"] == true) {
+                loadGPUData()
+            }
+
+            if (activeStates["cpuBoost"] == true) {
+                loadCPUBoostData()
+            }
         }
     }
 
-    private suspend fun loadCPUData() {
+    private suspend fun loadLittleClusterData() {
         _cpu0State.value = loadClusterState(ClusterConfig.Little)
+    }
 
-        detectedBigClusterConfig = detectBigClusterConfig()
-        _hasBigCluster.value = detectedBigClusterConfig != null
+    private suspend fun loadBigClusterData() {
+	detectedBigClusterConfig = detectBigClusterConfig()
         detectedBigClusterConfig?.let { config ->
             _bigClusterState.value = loadClusterStateWithBoost(config)
         }
+    }
 
-        _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
-        if (_hasPrimeCluster.value) {
-            _primeClusterState.value = loadClusterState(ClusterConfig.Prime)
+    private suspend fun loadPrimeClusterData() {
+        _primeClusterState.value = loadClusterState(ClusterConfig.Prime)
+    }
+
+    private suspend fun loadCPUBoostData() {
+        if (_hasCpuInputBoostMs.value) {
+            _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
         }
-
-	_hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
-	_cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
-
-	_hasCpuSchedBoostOnInput.value = Utils.testFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
-	_cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+        if (_hasCpuSchedBoostOnInput.value) {
+            _cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+        }
     }
 
     private suspend fun loadGPUData() {
         val gpuState = GPUState(
             minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
             maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
-            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
+	    currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
             gov = Utils.readFile(SoCUtils.GOV_GPU),
 	    defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
             adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
@@ -207,11 +259,33 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
     }
 
-    private suspend fun loadTemperatureAndUsageData() {
+    private suspend fun loadMonitorData() {
         _cpuUsage.value = SoCUtils.getCpuUsage()
         _cpuTemp.value = Utils.getTemp(SoCUtils.CPU_TEMP)
         _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
         _gpuUsage.value = SoCUtils.getGpuUsage()
+
+	_cpu0State.value = _cpu0State.value.copy(
+            currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Little.currentFreqPath)
+        )
+
+        if (_hasBigCluster.value) {
+            detectedBigClusterConfig?.let { config ->
+                _bigClusterState.value = _bigClusterState.value.copy(
+                    currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath)
+                )
+            }
+        }
+
+        if (_hasPrimeCluster.value) {
+            _primeClusterState.value = _primeClusterState.value.copy(
+                currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Prime.currentFreqPath)
+            )
+        }
+
+        _gpuState.value = _gpuState.value.copy(
+            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU)
+        )
     }
 
     private fun detectBigClusterConfig(): ClusterConfig.Big? {
@@ -388,6 +462,6 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     override fun onCleared() {
         super.onCleared()
 	viewModelScope.cancel()
-        stopPolling()
+        stopJob()
     }
 }
