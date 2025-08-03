@@ -3,6 +3,7 @@ agp = "8.12.0"
 kotlin = "2.2.0"
 
 activity = "1.12.0-alpha05"
+annotation-experimental = "1.5.1"
 compose-ui = "1.9.0-rc01"
 androidx-navigation = "2.9.3"
 material3 = "1.5.0-alpha01"
@@ -20,6 +21,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-annotation-experimental = { module = "androidx.annotation:annotation-experimental", version.ref = "annotation-experimental" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose" }
