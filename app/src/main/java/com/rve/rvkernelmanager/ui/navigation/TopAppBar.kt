@@ -53,7 +53,7 @@ fun PinnedTopAppBar(
 		    },
 		    leadingIcon = {
 			Icon(
-			    painter = painterResource(R.drawable.ic_github),
+			    Icons.Default.Code,
 			    contentDescription = null
 			)
 		    }
