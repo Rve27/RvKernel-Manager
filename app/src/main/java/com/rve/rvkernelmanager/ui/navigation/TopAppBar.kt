@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.navigation
 
 import android.net.Uri
@@ -20,7 +27,6 @@ import androidx.compose.foundation.layout.*
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.activity.SettingsActivity
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PinnedTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior
@@ -94,15 +100,17 @@ fun PinnedTopAppBar(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
-    val context = LocalContext.current
+fun TopAppBarWithBackButton(
+    text: String,
+    onBack: () -> Unit
+) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    TopAppBar(
+    LargeFlexibleTopAppBar(
 	title = { Text("Settings", maxLines = 1, overflow = TextOverflow.Ellipsis) },
 	navigationIcon = {
-            IconButton(onClick = { (context as? Activity)?.finish() }) {
+            IconButton(onClick = onBack) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
         },
