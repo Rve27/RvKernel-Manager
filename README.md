@@ -63,6 +63,10 @@ Fine-tune kernel settings for optimal performance:
 - 📱 **Android 12+** - Minimum supported Android version
 - 🔧 **Snapdragon devices** - Currently only compatible with Qualcomm Snapdragon SoCs
 
+## Contributing
+
+Contributions to RvKernel Manager are welcome!  Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute.
+
 ## Telegram
 
 - [Channel](https://t.me/rveproject)
