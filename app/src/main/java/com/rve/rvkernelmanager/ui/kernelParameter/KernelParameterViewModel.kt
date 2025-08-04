@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package com.rve.rvkernelmanager.ui.viewmodel
+package com.rve.rvkernelmanager.ui.kernelParameter
 
 import androidx.lifecycle.*
 import androidx.compose.runtime.*

@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.rve.rvkernelmanager.ui.activity
+package com.rve.rvkernelmanager.ui
 
 import android.os.Bundle
 
@@ -20,8 +20,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.screen.*
+import com.rve.rvkernelmanager.ui.home.HomeScreen
+import com.rve.rvkernelmanager.ui.soc.SoCScreen
+import com.rve.rvkernelmanager.ui.battery.BatteryScreen
+import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 
 import com.topjohnwu.superuser.Shell

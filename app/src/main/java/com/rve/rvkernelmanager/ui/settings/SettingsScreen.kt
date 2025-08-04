@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.rve.rvkernelmanager.ui.screen
+package com.rve.rvkernelmanager.ui.settings
 
 import android.app.Activity
 
@@ -28,10 +28,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.ui.navigation.TopAppBarWithBackButton
+import com.rve.rvkernelmanager.ui.component.TitleExpandable
+import com.rve.rvkernelmanager.ui.component.appBar.TopAppBarWithBackButton
+import com.rve.rvkernelmanager.ui.component.listItem.*
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
-import com.rve.rvkernelmanager.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
@@ -110,7 +110,7 @@ fun SettingsScreen(
 	    title = { Text("Select Theme") },
 	    text = {
 		Column {
-		    DialogTextButton(
+		    DialogTextButtonListItem(
 			icon = Icons.Default.LightMode,
 			text = "Light mode",
 			onClick = {
@@ -118,7 +118,7 @@ fun SettingsScreen(
 			    openThemeDialog = false
 			}
 		    )
-		    DialogTextButton(
+		    DialogTextButtonListItem(
 			icon = Icons.Default.DarkMode,
 			text = "Dark mode",
 			onClick = {
@@ -126,7 +126,7 @@ fun SettingsScreen(
 			    openThemeDialog = false
 			}
 		    )
-		    DialogTextButton(
+		    DialogTextButtonListItem(
 			icon = Icons.Default.Android,
 			text = "System default",
 			onClick = {

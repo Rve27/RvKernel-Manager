@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.rve.rvkernelmanager.ui.screen
+package com.rve.rvkernelmanager.ui.kernelParameter
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -29,11 +29,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.component.TitleExpandable
+import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.*
-import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.viewmodel.KernelParameterViewModel
-import com.rve.rvkernelmanager.preference.SettingsPreference
 
 @Composable
 fun KernelParameterScreen(
@@ -228,7 +229,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             text = {
                 Column {
                     kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
-                        DialogTextButton(
+                        DialogTextButtonListItem(
                             text = algorithm,
                             onClick = {
                                 viewModel.updateTcpCongestionAlgorithm(algorithm)
@@ -316,7 +317,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             text = {
                 Column {
                     zramSizeOptions.forEach { size ->
-                        DialogTextButton(
+                        DialogTextButtonListItem(
 			    text = size,
                             onClick = {
                                 val sizeInGb = size.substringBefore(" GB").toInt()
@@ -345,7 +346,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             text = {
                 Column {
                     kernelParameters.availableZramCompAlgorithms.forEach { algorithm ->
-                        DialogTextButton(
+                        DialogTextButtonListItem(
                             text = algorithm,
                             onClick = {
                                 viewModel.updateZramCompAlgorithm(algorithm)

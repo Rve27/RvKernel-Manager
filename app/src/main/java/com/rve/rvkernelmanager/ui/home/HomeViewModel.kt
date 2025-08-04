@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package com.rve.rvkernelmanager.ui.viewmodel
+package com.rve.rvkernelmanager.ui.home
 
 import android.content.Context
 

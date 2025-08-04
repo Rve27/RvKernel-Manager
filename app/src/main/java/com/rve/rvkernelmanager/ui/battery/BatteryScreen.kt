@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.rve.rvkernelmanager.ui.screen
+package com.rve.rvkernelmanager.ui.battery
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -28,11 +28,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.component.TitleExpandable
+import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.*
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.viewmodel.BatteryViewModel
-import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.preference.SettingsPreference
 
 @Composable
 fun BatteryScreen(
@@ -244,7 +245,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
 		    Column(
 			modifier = Modifier.fillMaxWidth()
 		    ) {
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    icon = painterResource(R.drawable.ic_mode_cool),
 			    text = "Default",
 			    onClick = {
@@ -252,7 +253,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
 				openTPD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    icon = Icons.Default.Speed,
 			    text = "Benchmark",
 			    onClick = {
@@ -260,7 +261,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
 				openTPD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    icon = Icons.Default.Language,
 			    text = "Browser",
 			    onClick = {
@@ -268,7 +269,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
 				openTPD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
                             icon = Icons.Default.PhotoCamera,
                             text = "Camera",
                             onClick = {
@@ -276,7 +277,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
                                 openTPD = false
                             }
                         )
-			DialogTextButton(
+			DialogTextButtonListItem(
                             icon = Icons.Default.Call,
                             text = "Dialer",
                             onClick = {
@@ -284,7 +285,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
                                 openTPD = false
                             }
                         )
-			DialogTextButton(
+			DialogTextButtonListItem(
                             icon = Icons.Default.SportsEsports,
                             text = "Gaming",
                             onClick = {
@@ -292,7 +293,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
                                 openTPD = false
                             }
                         )
-			DialogTextButton(
+			DialogTextButtonListItem(
                             icon = Icons.Default.Videocam,
                             text = "Streaming",
                             onClick = {

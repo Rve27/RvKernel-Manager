@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.rve.rvkernelmanager.ui.screen
+package com.rve.rvkernelmanager.ui.soc
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.*
@@ -30,11 +30,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.viewmodel.SoCViewModel
+import com.rve.rvkernelmanager.ui.component.TitleExpandable
+import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.SoCUtils
-import com.rve.rvkernelmanager.preference.SettingsPreference
 
 @Composable
 fun SoCScreen(
@@ -301,7 +302,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 		    if (cpu0State.availableFreq.isNotEmpty()) {
 			LazyColumn {
 			    items(cpu0State.availableFreq) { freq ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = "$freq MHz",
 				    onClick = {
 					targetFreqCPU0?.let { targetFreq ->
@@ -335,7 +336,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 		    if (cpu0State.availableGov.isNotEmpty()) {
 			LazyColumn {
 			    items(cpu0State.availableGov) { gov ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "little")
@@ -425,7 +426,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 		    if (bigClusterState.availableFreq.isNotEmpty()) {
 			LazyColumn {
 			    items(bigClusterState.availableFreq) { freq ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = "$freq MHz",
 				    onClick = {
 					targetBigFreq?.let { targetFreq ->
@@ -459,7 +460,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 		    if (bigClusterState.availableGov.isNotEmpty()) {
 			LazyColumn {
 			    items(bigClusterState.availableGov) { gov ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "big")
@@ -549,7 +550,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 		    if (primeClusterState.availableFreq.isNotEmpty()) {
 			LazyColumn {
 			    items(primeClusterState.availableFreq) { freq ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = "$freq MHz",
 				    onClick = {
 					targetPrimeFreq?.let { targetFreq ->
@@ -583,7 +584,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 		    if (primeClusterState.availableGov.isNotEmpty()) {
 			LazyColumn {
 			    items(primeClusterState.availableGov) { gov ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "prime")
@@ -811,7 +812,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 		    if (gpuState.availableFreq.isNotEmpty()) {
 			LazyColumn {
 			    items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = "$freq MHz",
 				    onClick = {
 					targetGpuFreq?.let { targetFreq ->
@@ -845,7 +846,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 		    if (gpuState.availableGov.isNotEmpty()) {
 			LazyColumn {
 			    items(gpuState.availableGov) { gov ->
-				DialogTextButton(
+				DialogTextButtonListItem(
 				    text = gov,
 				    onClick = {
 					viewModel.updateGov(gov, "gpu")
@@ -911,28 +912,28 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 		title = { Text("Adreno boost") },
 		text = {
 		    Column {
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    text = "Off",
 			    onClick = {
 				viewModel.updateAdrenoBoost("0")
 				openABD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    text = "Low",
 			    onClick = {
 				viewModel.updateAdrenoBoost("1")
 				openABD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    text = "Medium",
 			     onClick = {
 				viewModel.updateAdrenoBoost("2")
 				openABD = false
 			    }
 			)
-			DialogTextButton(
+			DialogTextButtonListItem(
 			    text = "High",
 			    onClick = {
 				viewModel.updateAdrenoBoost("3")

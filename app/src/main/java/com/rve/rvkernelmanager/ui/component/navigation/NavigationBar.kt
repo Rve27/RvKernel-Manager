@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package com.rve.rvkernelmanager.ui.navigation
+package com.rve.rvkernelmanager.ui.component.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*

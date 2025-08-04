@@ -5,23 +5,117 @@
 
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.rve.rvkernelmanager.ui.component
+package com.rve.rvkernelmanager.ui.component.listItem
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.animation.animateContentSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
+
+@Composable
+fun CustomListItem(
+    icon: Any? = null,
+    title: String? = null,
+    titleSmall: Boolean = false,
+    titleLarge: Boolean = false,
+    summary: String? = null,
+    bodySmall: Boolean = false,
+    bodyLarge: Boolean = false,
+    onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    animateContentSize: Boolean = false
+) {
+    Row(
+	modifier = Modifier
+	    .then(
+		if (onClick != null || onLongClick != null) {
+		    Modifier.combinedClickable(
+			onClick = onClick?: {},
+			onLongClick = onLongClick
+		    )
+		} else {
+		    Modifier
+		}
+	    )
+	    .padding(16.dp)
+	    .fillMaxWidth(),
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	if (icon != null) {
+            when (icon) {
+                is ImageVector -> Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+                is Painter -> Icon(
+                    painter = icon,
+                    contentDescription = null,
+		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
+        }
+	Column {
+	    if (title != null) {
+		Text(
+		    text = title,
+		    style = when {
+			titleSmall -> MaterialTheme.typography.titleSmall
+			titleLarge -> MaterialTheme.typography.titleLarge
+			else -> MaterialTheme.typography.titleMedium
+		    },
+		    color = MaterialTheme.colorScheme.onSurface
+		)
+	    }
+	    if (summary != null) {
+		Text(
+		    text = summary,
+		    style = when {
+			bodySmall -> MaterialTheme.typography.bodySmall
+			bodyLarge -> MaterialTheme.typography.bodyLarge
+			else -> MaterialTheme.typography.bodyMedium
+		    },
+		    color = MaterialTheme.colorScheme.onSurfaceVariant,
+		    modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier
+		)
+	    }
+	}
+    }
+}
+
+@Composable
+fun MonitorListItem(
+    title: String,
+    summary: String,
+) {
+    Row(
+	verticalAlignment = Alignment.CenterVertically
+    ) {
+	Text(
+	    text = title,
+	    style = MaterialTheme.typography.bodyMedium,
+	    color = MaterialTheme.colorScheme.onSurface,
+	    modifier = Modifier.weight(1f)
+	)
+	Text(
+	    text = summary,
+	    style = MaterialTheme.typography.bodyMedium,
+	    color = MaterialTheme.colorScheme.onSurfaceVariant
+	)
+    }
+}
 
 @Composable
 fun SwitchListItem(
@@ -181,163 +275,7 @@ fun ButtonListItem(
 }
 
 @Composable
-fun CustomListItem(
-    icon: Any? = null,
-    title: String? = null,
-    titleSmall: Boolean = false,
-    titleLarge: Boolean = false,
-    summary: String? = null,
-    bodySmall: Boolean = false,
-    bodyLarge: Boolean = false,
-    onClick: (() -> Unit)? = null,
-    onLongClick: (() -> Unit)? = null,
-    animateContentSize: Boolean = false
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-	modifier = Modifier
-	    .then(
-		if (onClick != null || onLongClick != null) {
-		    Modifier.combinedClickable(
-			onClick = onClick?: {},
-			onLongClick = onLongClick
-		    )
-		} else {
-		    Modifier
-		}
-	    )
-	    .padding(16.dp)
-	    .fillMaxWidth(),
-	verticalAlignment = Alignment.CenterVertically
-    ) {
-	if (icon != null) {
-            when (icon) {
-                is ImageVector -> Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-                is Painter -> Icon(
-                    painter = icon,
-                    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-            }
-        }
-	Column {
-	    if (title != null) {
-		Text(
-		    text = title,
-		    style = when {
-			titleSmall -> MaterialTheme.typography.titleSmall
-			titleLarge -> MaterialTheme.typography.titleLarge
-			else -> MaterialTheme.typography.titleMedium
-		    },
-		    color = MaterialTheme.colorScheme.onSurface
-		)
-	    }
-	    if (summary != null) {
-		Text(
-		    text = summary,
-		    style = when {
-			bodySmall -> MaterialTheme.typography.bodySmall
-			bodyLarge -> MaterialTheme.typography.bodyLarge
-			else -> MaterialTheme.typography.bodyMedium
-		    },
-		    color = MaterialTheme.colorScheme.onSurfaceVariant,
-		    modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier
-		)
-	    }
-	}
-    }
-}
-
-@Composable
-fun TitleExpandable(
-    leadingIcon: Any? = null,
-    text: String,
-    titleSmall: Boolean = false,
-    titleLarge: Boolean = false,
-    trailingIcon: Any? = null,
-    onClick: () -> Unit
-) {
-    Row(
-	modifier = Modifier
-	    .clickable(onClick = onClick)
-	    .padding(16.dp)
-	    .fillMaxWidth(),
-	verticalAlignment = Alignment.CenterVertically
-    ) {
-	if (leadingIcon != null) {
-	    when (leadingIcon) {
-		is ImageVector -> Icon(
-		    imageVector = leadingIcon,
-		    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-		    modifier = Modifier.padding(end = 16.dp)
-		)
-		is Painter -> Icon(
-		    painter = leadingIcon,
-		    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-		    modifier = Modifier.padding(end = 16.dp)
-		)
-	    }
-	}
-	Text(
-	    text = text,
-	    style = when {
-		titleSmall -> MaterialTheme.typography.titleSmall
-		titleLarge -> MaterialTheme.typography.titleLarge
-		else -> MaterialTheme.typography.titleMedium
-	    },
-	    color = MaterialTheme.colorScheme.onSurface,
-	    modifier = Modifier.weight(1f)
-	)
-	if (trailingIcon != null) {
-	    when (trailingIcon) {
-		is ImageVector -> Icon(
-		    imageVector = trailingIcon,
-		    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant
-		)
-		is Painter -> Icon(
-		    painter = trailingIcon,
-		    contentDescription = null,
-		    tint = MaterialTheme.colorScheme.onSurfaceVariant
-		)
-	    }
-	}
-    }
-}
-
-@Composable
-fun MonitorListItem(
-    title: String,
-    summary: String,
-) {
-    Row(
-	verticalAlignment = Alignment.CenterVertically
-    ) {
-	Text(
-	    text = title,
-	    style = MaterialTheme.typography.bodyMedium,
-	    color = MaterialTheme.colorScheme.onSurface,
-	    modifier = Modifier.weight(1f)
-	)
-	Text(
-	    text = summary,
-	    style = MaterialTheme.typography.bodyMedium,
-	    color = MaterialTheme.colorScheme.onSurfaceVariant
-	)
-    }
-}
-
-@Composable
-fun DialogTextButton(
+fun DialogTextButtonListItem(
     icon: Any? = null,
     text: String,
     onClick: () -> Unit

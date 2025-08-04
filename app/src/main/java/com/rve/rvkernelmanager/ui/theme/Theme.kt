@@ -16,7 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.*
 
-import com.rve.rvkernelmanager.preference.SettingsPreference
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable
 fun RvKernelManagerTheme(content: @Composable () -> Unit) {

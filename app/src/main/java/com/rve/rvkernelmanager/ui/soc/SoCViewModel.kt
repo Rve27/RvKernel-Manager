@@ -1,4 +1,9 @@
-package com.rve.rvkernelmanager.ui.viewmodel
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+package com.rve.rvkernelmanager.ui.soc
 
 import android.app.Application
 
@@ -7,8 +12,8 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.*
-import com.rve.rvkernelmanager.preference.SettingsPreference
 
 class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val settingsPreference = SettingsPreference.getInstance(application)

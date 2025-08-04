@@ -10,7 +10,7 @@
 	android:enableOnBackInvokedCallback="true"
         android:theme="@style/RvTheme">
         <activity 
-	    android:name=".ui.activity.MainActivity"
+	    android:name=".ui.MainActivity"
             android:exported="true"
 	    android:theme="@style/Theme.RvTheme.SplashScreen">
             <intent-filter>
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 	<activity
-	    android:name=".ui.activity.SettingsActivity"
+	    android:name=".ui.settings.SettingsActivity"
 	    android:exported="false" />
     </application>
 </manifest>

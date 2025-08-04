@@ -1,4 +1,4 @@
-package com.rve.rvkernelmanager.ui.screen
+package com.rve.rvkernelmanager.ui.home
 
 import android.content.*
 import android.net.Uri
@@ -24,9 +24,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.navigation.*
-import com.rve.rvkernelmanager.ui.viewmodel.HomeViewModel
-import com.rve.rvkernelmanager.ui.component.*
+import com.rve.rvkernelmanager.ui.component.TitleExpandable
+import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

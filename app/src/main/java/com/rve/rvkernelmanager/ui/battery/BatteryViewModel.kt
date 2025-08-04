@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package com.rve.rvkernelmanager.ui.viewmodel
+package com.rve.rvkernelmanager.ui.battery
 
 import android.util.Log
 import android.content.*

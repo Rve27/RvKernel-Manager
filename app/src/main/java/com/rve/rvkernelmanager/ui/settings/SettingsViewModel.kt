@@ -1,4 +1,9 @@
-package com.rve.rvkernelmanager.ui.viewmodel
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
+
+package com.rve.rvkernelmanager.ui.settings
 
 import android.app.Application
 import android.content.Context
@@ -9,7 +14,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.preference.SettingsPreference
+import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.ui.theme.*
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {

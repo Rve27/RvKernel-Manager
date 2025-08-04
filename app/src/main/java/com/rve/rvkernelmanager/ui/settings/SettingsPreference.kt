@@ -1,4 +1,4 @@
-package com.rve.rvkernelmanager.preference
+package com.rve.rvkernelmanager.ui.settings
 
 import android.content.*
 
