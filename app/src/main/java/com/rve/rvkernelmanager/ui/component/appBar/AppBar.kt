@@ -107,7 +107,13 @@ fun TopAppBarWithBackButton(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     LargeFlexibleTopAppBar(
-	title = { Text("Settings", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+	title = {
+	    Text(
+		text = text,
+		maxLines = 1,
+		overflow = TextOverflow.Ellipsis
+	    )
+	},
 	navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
