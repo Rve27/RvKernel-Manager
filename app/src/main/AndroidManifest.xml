@@ -23,5 +23,8 @@
 	<activity
 	    android:name=".ui.settings.SettingsActivity"
 	    android:exported="false" />
+	<activity
+            android:name=".ui.contributor.ContributorActivity"
+            android:exported="false" />
     </application>
 </manifest>

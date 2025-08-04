@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.*
 
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
 
 @Composable
@@ -78,6 +79,21 @@ fun PinnedTopAppBar(
 			)
 		    }
 		)
+		DropdownMenuItem(
+                    text = {
+                        Text("Contributors")
+                    },
+                    onClick = {
+                        context.startActivity(Intent(context, ContributorActivity::class.java))
+                        expanded = false
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.People,
+                            contentDescription = "Contributors"
+                        )
+                    }
+                )
 		DropdownMenuItem(
 		    text = {
 			Text("Settings")
