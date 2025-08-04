@@ -7,6 +7,8 @@
 
 package com.rve.rvkernelmanager.ui.screen
 
+import android.app.Activity
+
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.*
@@ -27,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.Utils
 import com.rve.rvkernelmanager.ui.component.*
-import com.rve.rvkernelmanager.ui.navigation.SettingsTopAppBar
+import com.rve.rvkernelmanager.ui.navigation.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 import com.rve.rvkernelmanager.ui.viewmodel.SettingsViewModel
 
@@ -38,7 +40,6 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
@@ -66,7 +67,12 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        topBar = { SettingsTopAppBar(scrollBehavior = scrollBehavior) },
+        topBar = {
+	    TopAppBarWithBackButton(
+		text = "Settings",
+		onBack = { (context as? Activity)?.finish() }
+	    )
+	},
 	modifier = if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
