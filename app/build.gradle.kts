@@ -91,23 +91,17 @@ android {
 	    useLegacyPackaging = true
 	}
 
-        resources {
-            excludes += setOf(
-                "DebugProbesKt.bin",
-                "META-INF/DEPENDENCIES",
-                "META-INF/LICENSE",
-                "META-INF/LICENSE.txt",
-                "META-INF/license.txt",
-                "META-INF/NOTICE",
-                "META-INF/NOTICE.txt",
-                "META-INF/notice.txt",
-                "META-INF/ASL2.0",
-                "META-INF/AL2.0",
-                "META-INF/LGPL2.1",
-                "META-INF/*.kotlin_module",
-                "**/attach_hotspot_windows.dll"
-            )
-        }
+	resources {
+	    excludes += setOf(
+		"DebugProbesKt.bin",
+		"META-INF/androidx/annotation/annotation/LICENSE.txt",
+		"META-INF/androidx/collection/collection/LICENSE.txt",
+		"META-INF/androidx/collection/collection-ktx/LICENSE.txt",
+		"META-INF/androidx/emoji2/emoji2/LICENSE.txt",
+		"META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt",
+		"META-INF/androidx/lifecycle/lifecycle-common-java8/LICENSE.txt"
+	    )
+	}
     }
 }
 
