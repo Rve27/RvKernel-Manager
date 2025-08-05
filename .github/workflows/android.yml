@@ -33,20 +33,8 @@ jobs:
     - name: Build Debug
       run: ./gradlew assembleDebug
 
-    - name: Upload arm64-v8a debug artifact
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: arm64-v8a-debug
-        path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
-
-    - name: Upload armeabi-v7a debug artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: armeabi-v7a-debug
-        path: app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
-
-    - name: Upload universal debug artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: universal-debug
-        path: app/build/outputs/apk/debug/app-universal-debug.apk
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
