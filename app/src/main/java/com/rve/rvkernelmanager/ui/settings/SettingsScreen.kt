@@ -28,7 +28,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.utils.Utils
-import com.rve.rvkernelmanager.ui.component.TitleExpandable
 import com.rve.rvkernelmanager.ui.component.appBar.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.component.listItem.*
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
