@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.plugin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -131,6 +132,10 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.io.coil.kt.coil3.compose)
+    implementation(libs.io.coil.kt.coil3.network.okhttp)
 
     implementation(libs.topjohnwu.libsu.core)
 }
