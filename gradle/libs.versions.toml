@@ -1,6 +1,9 @@
 [versions]
 agp = "8.12.0"
+
 kotlin = "2.2.0"
+
+spotless = "7.0.4"
 
 activity = "1.12.0-alpha05"
 annotation-experimental = "1.5.1"
@@ -33,6 +36,8 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
