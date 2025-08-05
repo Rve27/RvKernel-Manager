@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -26,8 +30,8 @@ android {
             }
 
             val getString: (String, String, String) -> String? = { propertyName, environmentName, prompt ->
-                properties?.getProperty(propertyName) ?: System.getenv(environmentName) ?:
-                System.console()?.readLine("\n$prompt: ")
+                properties?.getProperty(propertyName) ?: System.getenv(environmentName)
+                    ?: System.console()?.readLine("\n$prompt: ")
             }
 
             storeFile = getString("storeFile", "STORE_FILE", "Store file")?.let { rootProject.file(it) }
@@ -36,19 +40,19 @@ android {
             keyPassword = getString("keyPassword", "KEY_PASSWORD", "Key password")
         }
     }
-    
+
     defaultConfig {
         applicationId = "com.rve.rvkernelmanager"
         minSdk = 31
         targetSdk = 36
         versionCode = 123
         versionName = "1.2.3"
-        
-        vectorDrawables { 
+
+        vectorDrawables {
             useSupportLibrary = true
         }
 
-	ndk {
+        ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
     }
@@ -69,7 +73,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-	    isDebuggable = false
+            isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
@@ -88,21 +92,21 @@ android {
             useLegacyPackaging = true
         }
 
-	dex {
-	    useLegacyPackaging = true
-	}
+        dex {
+            useLegacyPackaging = true
+        }
 
-	resources {
-	    excludes += setOf(
-		"DebugProbesKt.bin",
-		"META-INF/androidx/annotation/annotation/LICENSE.txt",
-		"META-INF/androidx/collection/collection/LICENSE.txt",
-		"META-INF/androidx/collection/collection-ktx/LICENSE.txt",
-		"META-INF/androidx/emoji2/emoji2/LICENSE.txt",
-		"META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt",
-		"META-INF/androidx/lifecycle/lifecycle-common-java8/LICENSE.txt"
-	    )
-	}
+        resources {
+            excludes += setOf(
+                "DebugProbesKt.bin",
+                "META-INF/androidx/annotation/annotation/LICENSE.txt",
+                "META-INF/androidx/collection/collection/LICENSE.txt",
+                "META-INF/androidx/collection/collection-ktx/LICENSE.txt",
+                "META-INF/androidx/emoji2/emoji2/LICENSE.txt",
+                "META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt",
+                "META-INF/androidx/lifecycle/lifecycle-common-java8/LICENSE.txt",
+            )
+        }
     }
 }
 

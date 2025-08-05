@@ -2,44 +2,70 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
 package com.rve.rvkernelmanager.ui.battery
-
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.semantics.*
-import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.automirrored.filled.Dvr
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.lifecycle.*
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.listItem.ButtonListItem
+import com.rve.rvkernelmanager.ui.component.listItem.CustomListItem
+import com.rve.rvkernelmanager.ui.component.listItem.DialogTextButtonListItem
+import com.rve.rvkernelmanager.ui.component.listItem.MonitorListItem
+import com.rve.rvkernelmanager.ui.component.listItem.SwitchListItem
 import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
-import com.rve.rvkernelmanager.utils.*
 
 @Composable
-fun BatteryScreen(
-    viewModel: BatteryViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner,
-    navController: NavController
-) {
+fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
 
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
@@ -56,13 +82,13 @@ fun BatteryScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-		    viewModel.initializeBatteryInfo(context)
-		    viewModel.startJob()
-		}
+                    viewModel.initializeBatteryInfo(context)
+                    viewModel.startJob()
+                }
                 Lifecycle.Event.ON_PAUSE -> {
-		    viewModel.unregisterBatteryListeners(context)
-		    viewModel.stopJob()
-		} else -> {}
+                    viewModel.unregisterBatteryListeners(context)
+                    viewModel.stopJob()
+                } else -> {}
             }
         }
 
@@ -74,35 +100,39 @@ fun BatteryScreen(
     }
 
     Scaffold(
-	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
-	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier)
+        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        bottomBar = { BottomNavigationBar(navController) },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(
+            if (isDialogOpen &&
+                blurEnabled
+            ) Modifier.blur(4.dp) else Modifier,
+        ),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-	    state = rememberLazyListState()
+            state = rememberLazyListState(),
         ) {
-	    item {
-		Spacer(Modifier.height(16.dp))
-		BatteryMonitorCard(viewModel)
-	    }
-	    item {
-                BatteryInfoCard(viewModel)
-	    }
-	    if (hasThermalSconfig) {
-		item {
-		    ThermalProfilesCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
-		}
-	    }
-            if (chargingState.hasFastCharging) {
-		item {
-                    ChargingCard(viewModel)
-		}
+            item {
+                Spacer(Modifier.height(16.dp))
+                BatteryMonitorCard(viewModel)
             }
-	    item {
+            item {
+                BatteryInfoCard(viewModel)
+            }
+            if (hasThermalSconfig) {
+                item {
+                    ThermalProfilesCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                }
+            }
+            if (chargingState.hasFastCharging) {
+                item {
+                    ChargingCard(viewModel)
+                }
+            }
+            item {
                 Spacer(Modifier)
-	    }
+            }
         }
     }
 }
@@ -116,37 +146,37 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         CustomListItem(
             title = "Battery Monitor",
             titleLarge = true,
-	    icon = Icons.AutoMirrored.Default.Dvr
+            icon = Icons.AutoMirrored.Default.Dvr,
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	Column(modifier = Modifier.padding(16.dp)) {
-	    MonitorListItem(
+        Column(modifier = Modifier.padding(16.dp)) {
+            MonitorListItem(
                 title = "Level",
-                summary = batteryInfo.level
-	    )
-	    Spacer(Modifier.height(8.dp))
-	    MonitorListItem(
-		title = "Voltage",
-		summary = batteryInfo.voltage
-	    )
-	    Spacer(Modifier.height(8.dp))
-	    MonitorListItem(
-		title = "Temperature",
-		summary = batteryInfo.temp
-	    )
-	    Spacer(Modifier.height(8.dp))
-	    MonitorListItem(
-		title = "Uptime",
-		summary = uptime
-	    )
-	    Spacer(Modifier.height(8.dp))
-	    MonitorListItem(
-		title = "Deep sleep",
-		summary = batteryInfo.deepSleep
-	    )
-	}
+                summary = batteryInfo.level,
+            )
+            Spacer(Modifier.height(8.dp))
+            MonitorListItem(
+                title = "Voltage",
+                summary = batteryInfo.voltage,
+            )
+            Spacer(Modifier.height(8.dp))
+            MonitorListItem(
+                title = "Temperature",
+                summary = batteryInfo.temp,
+            )
+            Spacer(Modifier.height(8.dp))
+            MonitorListItem(
+                title = "Uptime",
+                summary = uptime,
+            )
+            Spacer(Modifier.height(8.dp))
+            MonitorListItem(
+                title = "Deep sleep",
+                summary = batteryInfo.deepSleep,
+            )
+        }
     }
 }
 
@@ -159,7 +189,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     Card {
         CustomListItem(
             title = "Battery Information",
-	    titleLarge = true
+            titleLarge = true,
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -168,34 +198,34 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             title = "Technology",
             summary = batteryInfo.tech,
             icon = painterResource(R.drawable.ic_technology),
-	    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) }
+            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) },
         )
 
         CustomListItem(
             title = "Health",
             summary = batteryInfo.health,
             icon = painterResource(R.drawable.ic_health),
-	    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) }
+            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) },
         )
 
-	Column(
-	    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-	) {
+        Column(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        ) {
             Card(
-		elevation = CardDefaults.cardElevation(
-		    defaultElevation = 8.dp
-                )
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 8.dp,
+                ),
             ) {
                 CustomListItem(
                     title = "Design capacity",
                     summary = batteryInfo.designCapacity,
-		    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) }
+                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) },
                 )
 
                 CustomListItem(
                     title = "Maximum capacity",
                     summary = batteryInfo.maximumCapacity,
-		    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.maximumCapacity)) }
+                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.maximumCapacity)) },
                 )
             }
         }
@@ -210,107 +240,107 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
 
     LaunchedEffect(openTPD) {
-	onDialogStateChange(openTPD)
+        onDialogStateChange(openTPD)
     }
 
     Card {
-	ButtonListItem(
-	    title = "Thermal profiles",
-	    summary = "Adjust thermal profiles for optimum performance",
-	    value = remember(thermalSconfig) {
-		when (thermalSconfig) {
-		    "0" -> "Default"
-		    "10" -> "Benchmark"
-		    "11" -> "Browser"
-		    "12" -> "Camera"
-		    "8" -> "Dialer"
-		    "13" -> "Gaming"
-		    "14" -> "Streaming"
-		    else -> "Unknown"
-		}
-	    },
-	    onClick = { openTPD = true }
-	)
+        ButtonListItem(
+            title = "Thermal profiles",
+            summary = "Adjust thermal profiles for optimum performance",
+            value = remember(thermalSconfig) {
+                when (thermalSconfig) {
+                    "0" -> "Default"
+                    "10" -> "Benchmark"
+                    "11" -> "Browser"
+                    "12" -> "Camera"
+                    "8" -> "Dialer"
+                    "13" -> "Gaming"
+                    "14" -> "Streaming"
+                    else -> "Unknown"
+                }
+            },
+            onClick = { openTPD = true },
+        )
 
-	if (openTPD) {
-	    AlertDialog(
-		onDismissRequest = { openTPD = false },
-		title = {
-		    Text(
-			text = "Thermal profiles"
-		    )
-		},
-		text = {
-		    Column(
-			modifier = Modifier.fillMaxWidth()
-		    ) {
-			DialogTextButtonListItem(
-			    icon = painterResource(R.drawable.ic_mode_cool),
-			    text = "Default",
-			    onClick = {
-				viewModel.updateThermalSconfig("0")
-				openTPD = false
-			    }
-			)
-			DialogTextButtonListItem(
-			    icon = Icons.Default.Speed,
-			    text = "Benchmark",
-			    onClick = {
-				viewModel.updateThermalSconfig("10")
-				openTPD = false
-			    }
-			)
-			DialogTextButtonListItem(
-			    icon = Icons.Default.Language,
-			    text = "Browser",
-			    onClick = {
-				viewModel.updateThermalSconfig("11")
-				openTPD = false
-			    }
-			)
-			DialogTextButtonListItem(
+        if (openTPD) {
+            AlertDialog(
+                onDismissRequest = { openTPD = false },
+                title = {
+                    Text(
+                        text = "Thermal profiles",
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        DialogTextButtonListItem(
+                            icon = painterResource(R.drawable.ic_mode_cool),
+                            text = "Default",
+                            onClick = {
+                                viewModel.updateThermalSconfig("0")
+                                openTPD = false
+                            },
+                        )
+                        DialogTextButtonListItem(
+                            icon = Icons.Default.Speed,
+                            text = "Benchmark",
+                            onClick = {
+                                viewModel.updateThermalSconfig("10")
+                                openTPD = false
+                            },
+                        )
+                        DialogTextButtonListItem(
+                            icon = Icons.Default.Language,
+                            text = "Browser",
+                            onClick = {
+                                viewModel.updateThermalSconfig("11")
+                                openTPD = false
+                            },
+                        )
+                        DialogTextButtonListItem(
                             icon = Icons.Default.PhotoCamera,
                             text = "Camera",
                             onClick = {
                                 viewModel.updateThermalSconfig("12")
                                 openTPD = false
-                            }
+                            },
                         )
-			DialogTextButtonListItem(
+                        DialogTextButtonListItem(
                             icon = Icons.Default.Call,
                             text = "Dialer",
                             onClick = {
                                 viewModel.updateThermalSconfig("8")
                                 openTPD = false
-                            }
+                            },
                         )
-			DialogTextButtonListItem(
+                        DialogTextButtonListItem(
                             icon = Icons.Default.SportsEsports,
                             text = "Gaming",
                             onClick = {
                                 viewModel.updateThermalSconfig("13")
                                 openTPD = false
-                            }
+                            },
                         )
-			DialogTextButtonListItem(
+                        DialogTextButtonListItem(
                             icon = Icons.Default.Videocam,
                             text = "Streaming",
                             onClick = {
                                 viewModel.updateThermalSconfig("14")
                                 openTPD = false
-                            }
+                            },
                         )
-		    }
-		},
-		confirmButton = {
-		    TextButton(
-			onClick = { openTPD = false },
-			shapes = ButtonDefaults.shapes()
-		    ) {
-			Text("Close")
-		    }
-		}
-	    )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { openTPD = false },
+                        shapes = ButtonDefaults.shapes(),
+                    ) {
+                        Text("Close")
+                    }
+                },
+            )
         }
     }
 }
@@ -322,7 +352,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
     Card {
         CustomListItem(
             title = "Charging",
-            titleLarge = true
+            titleLarge = true,
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -332,7 +362,7 @@ fun ChargingCard(viewModel: BatteryViewModel) {
                 title = "Fast charging",
                 summary = "Enable force fast charging",
                 checked = chargingState.isFastChargingChecked,
-                onCheckedChange = { viewModel.toggleFastCharging(it) }
+                onCheckedChange = { viewModel.toggleFastCharging(it) },
             )
         }
     }

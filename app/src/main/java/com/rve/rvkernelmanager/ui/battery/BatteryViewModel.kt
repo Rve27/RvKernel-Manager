@@ -2,35 +2,37 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.ui.battery
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.util.Log
-import android.content.*
-
-import androidx.lifecycle.*
-
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-
-import com.rve.rvkernelmanager.utils.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rve.rvkernelmanager.utils.BatteryUtils
+import com.rve.rvkernelmanager.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class BatteryViewModel : ViewModel() {
     data class BatteryInfo(
-	val level: String = "N/A",
+        val level: String = "N/A",
         val tech: String = "N/A",
         val health: String = "N/A",
         val temp: String = "N/A",
         val voltage: String = "N/A",
-	val deepSleep: String = "N/A",
+        val deepSleep: String = "N/A",
         val designCapacity: String = "N/A",
-        val maximumCapacity: String = "N/A"
+        val maximumCapacity: String = "N/A",
     )
 
-    data class ChargingState(
-        val hasFastCharging: Boolean = false,
-        val isFastChargingChecked: Boolean = false,
-    )
+    data class ChargingState(val hasFastCharging: Boolean = false, val isFastChargingChecked: Boolean = false)
 
     private val _batteryInfo = MutableStateFlow(BatteryInfo())
     val batteryInfo: StateFlow<BatteryInfo> = _batteryInfo
@@ -56,7 +58,7 @@ class BatteryViewModel : ViewModel() {
 
     fun initializeBatteryInfo(context: Context) {
         loadBatteryInfo(context)
-	loadThermalSconfig()
+        loadThermalSconfig()
         registerBatteryListeners(context)
         checkChargingFiles()
     }
@@ -64,18 +66,18 @@ class BatteryViewModel : ViewModel() {
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-		val level = BatteryUtils.getBatteryLevel(context)
+                val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
                 val designCapacity = BatteryUtils.getBatteryDesignCapacity()
-		val deepSleep = BatteryUtils.getDeepSleep()
+                val deepSleep = BatteryUtils.getDeepSleep()
 
                 _batteryInfo.value = _batteryInfo.value.copy(
-		    level = level,
+                    level = level,
                     tech = tech,
                     health = health,
                     designCapacity = designCapacity,
-		    deepSleep = deepSleep
+                    deepSleep = deepSleep,
                 )
             } catch (e: Exception) {
                 Log.e("BatteryVM", "Error loading battery info", e)
@@ -84,10 +86,10 @@ class BatteryViewModel : ViewModel() {
     }
 
     fun loadThermalSconfig() {
-	viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             _thermalSconfig.value = Utils.readFile(BatteryUtils.THERMAL_SCONFIG)
             _hasThermalSconfig.value = Utils.testFile(BatteryUtils.THERMAL_SCONFIG)
-	}
+        }
     }
 
     fun startJob() {
@@ -107,9 +109,9 @@ class BatteryViewModel : ViewModel() {
 
     fun registerBatteryListeners(context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
-	    levelReceiver = BatteryUtils.registerBatteryLevelListener(context) { level ->
-		_batteryInfo.value = _batteryInfo.value.copy(level = level)
-	    }
+            levelReceiver = BatteryUtils.registerBatteryLevelListener(context) { level ->
+                _batteryInfo.value = _batteryInfo.value.copy(level = level)
+            }
             tempReceiver = BatteryUtils.registerBatteryTemperatureListener(context) { temp ->
                 _batteryInfo.value = _batteryInfo.value.copy(temp = temp)
             }
@@ -125,7 +127,7 @@ class BatteryViewModel : ViewModel() {
     fun unregisterBatteryListeners(context: Context) {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-		levelReceiver?.let {
+                levelReceiver?.let {
                     context.unregisterReceiver(it)
                     levelReceiver = null
                 }
@@ -155,7 +157,7 @@ class BatteryViewModel : ViewModel() {
 
             _chargingState.value = ChargingState(
                 hasFastCharging = hasFastCharging,
-                isFastChargingChecked = isFastChargingChecked
+                isFastChargingChecked = isFastChargingChecked,
             )
         }
     }
@@ -166,7 +168,7 @@ class BatteryViewModel : ViewModel() {
 
             if (success) {
                 _chargingState.value = _chargingState.value.copy(
-                    isFastChargingChecked = checked
+                    isFastChargingChecked = checked,
                 )
             }
         }
@@ -176,7 +178,7 @@ class BatteryViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.setPermissions(644, BatteryUtils.THERMAL_SCONFIG)
             Utils.writeFile(BatteryUtils.THERMAL_SCONFIG, value)
-	    Utils.setPermissions(444, BatteryUtils.THERMAL_SCONFIG)
+            Utils.setPermissions(444, BatteryUtils.THERMAL_SCONFIG)
             _thermalSconfig.value = value
         }
     }
@@ -184,6 +186,6 @@ class BatteryViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
-	stopJob()
+        stopJob()
     }
 }

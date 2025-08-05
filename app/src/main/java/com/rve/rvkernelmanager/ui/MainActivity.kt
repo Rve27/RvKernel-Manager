@@ -2,36 +2,41 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.rve.rvkernelmanager.ui
-
 import android.os.Bundle
-
-import androidx.activity.*
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.material3.*
-import androidx.navigation.compose.*
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-
-import com.rve.rvkernelmanager.ui.home.HomeScreen
-import com.rve.rvkernelmanager.ui.soc.SoCScreen
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.rve.rvkernelmanager.ui.battery.BatteryScreen
+import com.rve.rvkernelmanager.ui.home.HomeScreen
 import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
+import com.rve.rvkernelmanager.ui.soc.SoCScreen
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
-
 import com.topjohnwu.superuser.Shell
 
 class MainActivity : ComponentActivity() {
     private var isRoot = false
     private var showRootDialog by mutableStateOf(false)
-    
+
     private val checkRoot = Runnable {
         Shell.getShell { shell ->
             isRoot = shell.isRoot
@@ -42,12 +47,12 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-	val splashScreen: SplashScreen = installSplashScreen()
+        val splashScreen: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-	splashScreen.setKeepOnScreenCondition { !isRoot }
+        splashScreen.setKeepOnScreenCondition { !isRoot }
         enableEdgeToEdge()
-	Thread(checkRoot).start()
+        Thread(checkRoot).start()
 
         setContent {
             RvKernelManagerTheme {
@@ -58,12 +63,12 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         init {
-	    @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION")
             if (Shell.getCachedShell() == null) {
                 Shell.setDefaultBuilder(
                     Shell.Builder.create()
                         .setFlags(Shell.FLAG_MOUNT_MASTER or Shell.FLAG_REDIRECT_STDERR)
-                        .setTimeout(20)
+                        .setTimeout(20),
                 )
             }
         }
@@ -76,32 +81,32 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     if (showRootDialog) {
-	AlertDialog(
-	    onDismissRequest = {},
-	    text = {
-		Text(
-		    text = "RvKernel Manager requires root access!",
-		    style = MaterialTheme.typography.bodyLarge
-		)
-	    },
-	    confirmButton = {
-		TextButton(
-		    onClick = {
-			System.exit(0)
-		    },
-		    shapes = ButtonDefaults.shapes()
-		) {
-		    Text("Exit")
-		}
-	    }
-	)
+        AlertDialog(
+            onDismissRequest = {},
+            text = {
+                Text(
+                    text = "RvKernel Manager requires root access!",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        System.exit(0)
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Exit")
+                }
+            },
+        )
     }
 
     Scaffold {
-	NavHost(
+        NavHost(
             navController = navController,
             startDestination = "home",
-	) {
+        ) {
             composable("home") {
                 HomeScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
@@ -114,6 +119,6 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
             composable("kernel") {
                 KernelParameterScreen(lifecycleOwner = lifecycleOwner, navController = navController)
             }
-	}
+        }
     }
 }

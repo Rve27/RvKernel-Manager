@@ -2,18 +2,17 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.utils
 
-import android.os.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
+import android.os.SystemClock
 import android.util.Log
-import android.content.*
-
-import kotlin.math.roundToInt
-
 import com.topjohnwu.superuser.Shell
-
-import com.rve.rvkernelmanager.R
+import kotlin.math.roundToInt
 
 object BatteryUtils {
 
@@ -25,12 +24,11 @@ object BatteryUtils {
 
     const val TAG = "BatteryUtils"
 
-    private fun Context.getBatteryIntent(): Intent? =
-        registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-    
+    private fun Context.getBatteryIntent(): Intent? = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+
     fun getBatteryTechnology(context: Context): String =
         context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
-    
+
     fun getBatteryHealth(context: Context): String {
         return when (context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
             BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
@@ -122,10 +120,7 @@ object BatteryUtils {
         }.trim()
     }
 
-    private fun registerBatteryListener(
-        context: Context,
-        onReceive: (Intent) -> Unit
-    ): BroadcastReceiver {
+    private fun registerBatteryListener(context: Context, onReceive: (Intent) -> Unit): BroadcastReceiver {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context?, intent: Intent?) {
                 intent?.let(onReceive)

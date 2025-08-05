@@ -2,45 +2,71 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
 package com.rve.rvkernelmanager.ui.kernelParameter
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.text.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.res.*
-import androidx.compose.ui.draw.*
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.animation.core.*
-import androidx.lifecycle.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.listItem.ButtonListItem
+import com.rve.rvkernelmanager.ui.component.listItem.CustomListItem
+import com.rve.rvkernelmanager.ui.component.listItem.DialogTextButtonListItem
+import com.rve.rvkernelmanager.ui.component.listItem.SwitchListItem
 import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
-import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.KernelUtils
 
 @Composable
-fun KernelParameterScreen(
-    viewModel: KernelParameterViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner,
-    navController: NavController
-) {
+fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
     val blurEnabled by settingsPreference.blurEnabled.collectAsState()
@@ -52,7 +78,7 @@ fun KernelParameterScreen(
     val kernelParameters by viewModel.kernelParameters.collectAsState()
 
     val pullToRefreshState = remember {
-	object : PullToRefreshState {
+        object : PullToRefreshState {
             private val anim = Animatable(0f, Float.VectorConverter)
 
             override val distanceFraction
@@ -91,41 +117,45 @@ fun KernelParameterScreen(
     }
 
     Scaffold(
-	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
-	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier)
+        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        bottomBar = { BottomNavigationBar(navController) },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(
+            if (isDialogOpen &&
+                blurEnabled
+            ) Modifier.blur(4.dp) else Modifier,
+        ),
     ) { innerPadding ->
         PullToRefreshBox(
-	    modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding),
             isRefreshing = viewModel.isRefreshing,
             onRefresh = { viewModel.refresh() },
-	    state = pullToRefreshState,
-	    indicator = {
+            state = pullToRefreshState,
+            indicator = {
                 PullToRefreshDefaults.LoadingIndicator(
-		    state = pullToRefreshState,
+                    state = pullToRefreshState,
                     isRefreshing = viewModel.isRefreshing,
                     modifier = Modifier.align(Alignment.TopCenter),
                 )
-            }
+            },
         ) {
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-		if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
-		    item {
-		        Spacer(Modifier.height(16.dp))
+                if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
+                    item {
+                        Spacer(Modifier.height(16.dp))
                         KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
-	            }
-		}
-		if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
-		    item {
-			MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
-		    }
-		}
-		item {
+                    }
+                }
+                if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
+                    item {
+                        MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    }
+                }
+                item {
                     Spacer(Modifier)
-		}
+                }
             }
         }
     }
@@ -142,45 +172,45 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
     var openTCD by remember { mutableStateOf(false) }
 
     LaunchedEffect(openPD, openTCD) {
-	onDialogStateChange(openPD || openTCD)
+        onDialogStateChange(openPD || openTCD)
     }
 
     Card {
-	CustomListItem(
-	    icon = painterResource(R.drawable.ic_linux),
-	    title = "Kernel Parameter",
-	    titleLarge = true
-	)
+        CustomListItem(
+            icon = painterResource(R.drawable.ic_linux),
+            title = "Kernel Parameter",
+            titleLarge = true,
+        )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         if (kernelParameters.hasSchedAutogroup) {
-	    SwitchListItem(
-		titleSmall = true,
-		title = "Sched auto group",
-		bodySmall = true,
-		summary = "Automatically groups related tasks for better CPU scheduling",
-		checked = schedAutogroupStatus,
-		onCheckedChange = { isChecked ->
-		    viewModel.updateSchedAutogroup(isChecked)
-		}
-	    )
-        }
-
-	if (kernelParameters.hasPrintk) {
-            ButtonListItem(
-                title = "printk",
-		summary = "Controls kernel message logging level",
-		value = kernelParameters.printk,
-		onClick = { openPD = true }
+            SwitchListItem(
+                titleSmall = true,
+                title = "Sched auto group",
+                bodySmall = true,
+                summary = "Automatically groups related tasks for better CPU scheduling",
+                checked = schedAutogroupStatus,
+                onCheckedChange = { isChecked ->
+                    viewModel.updateSchedAutogroup(isChecked)
+                },
             )
         }
 
-	if (kernelParameters.hasTcpCongestionAlgorithm && kernelParameters.availableTcpCongestionAlgorithm.isNotEmpty()) {
+        if (kernelParameters.hasPrintk) {
+            ButtonListItem(
+                title = "printk",
+                summary = "Controls kernel message logging level",
+                value = kernelParameters.printk,
+                onClick = { openPD = true },
+            )
+        }
+
+        if (kernelParameters.hasTcpCongestionAlgorithm && kernelParameters.availableTcpCongestionAlgorithm.isNotEmpty()) {
             ButtonListItem(
                 title = "TCP congestion algorithm",
-                summary = "Transmission Control Protocol is one of the core protocols of the Internet protocol suite (IP), and is so common that the entire suite is often called TCP/IP.",
+                summary = "TCP is a core protocol of the Internet protocol suite, often referred to as TCP/IP.",
                 value = kernelParameters.tcpCongestionAlgorithm,
-                onClick = { openTCD = true }
+                onClick = { openTCD = true },
             )
         }
     }
@@ -192,19 +222,19 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             text = {
                 OutlinedTextField(
                     value = value,
-		    onValueChange = { value = it },
+                    onValueChange = { value = it },
                     label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
-		    singleLine = true,
-		    keyboardOptions = KeyboardOptions.Default.copy(
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
-			imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
                     ),
-		    keyboardActions = KeyboardActions(
-			onDone = {
-			    viewModel.updatePrintk(value)
-			    openPD = false
-			}
-		    )
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updatePrintk(value)
+                            openPD = false
+                        },
+                    ),
                 )
             },
             confirmButton = {
@@ -213,11 +243,11 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
                         viewModel.updatePrintk(value)
                         openPD = false
                     },
-		    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(text = "Change")
                 }
-            }
+            },
         )
     }
 
@@ -233,7 +263,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
                             onClick = {
                                 viewModel.updateTcpCongestionAlgorithm(algorithm)
                                 openTCD = false
-                            }
+                            },
                         )
                     }
                 }
@@ -241,11 +271,11 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
             confirmButton = {
                 TextButton(
                     onClick = { openTCD = false },
-                    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 }
@@ -262,54 +292,54 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     var openSD by remember { mutableStateOf(false) }
 
     LaunchedEffect(openZD, openZCD, openSD) {
-	onDialogStateChange(openZD || openZCD || openSD)
+        onDialogStateChange(openZD || openZCD || openSD)
     }
 
     Card {
-	CustomListItem(
-	    icon = painterResource(R.drawable.ic_ram),
-	    title = "Memory",
-	    titleLarge = true
-	)
+        CustomListItem(
+            icon = painterResource(R.drawable.ic_ram),
+            title = "Memory",
+            titleLarge = true,
+        )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-	if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
-	    CustomListItem(
-		summary = "NOTE: It may take a few minutes to change the ZRAM size, etc."
-	    )
-	}
+        if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
+            CustomListItem(
+                summary = "NOTE: It may take a few minutes to change the ZRAM size, etc.",
+            )
+        }
 
-	if (kernelParameters.hasZramSize) {
+        if (kernelParameters.hasZramSize) {
             ButtonListItem(
                 title = "ZRAM size",
                 summary = "Change the ZRAM size",
                 value = kernelParameters.zramSize,
-                onClick = { openZD = true }
+                onClick = { openZD = true },
             )
         }
 
-	if (kernelParameters.hasZramCompAlgorithm && kernelParameters.availableZramCompAlgorithms.isNotEmpty()) {
+        if (kernelParameters.hasZramCompAlgorithm && kernelParameters.availableZramCompAlgorithms.isNotEmpty()) {
             ButtonListItem(
                 title = "ZRAM compression algorithm",
                 summary = "Different algorithms offer different compression ratios and performance",
                 value = kernelParameters.zramCompAlgorithm,
-                onClick = { openZCD = true }
+                onClick = { openZCD = true },
             )
         }
 
-	if (kernelParameters.hasSwappiness) {
-	    ButtonListItem(
-		title = "Swappiness",
-		summary = "Controls how aggressively the system uses swap memory",
-		value = "${kernelParameters.swappiness}%",
-		onClick = { openSD = true }
-	    )
-	}
+        if (kernelParameters.hasSwappiness) {
+            ButtonListItem(
+                title = "Swappiness",
+                summary = "Controls how aggressively the system uses swap memory",
+                value = "${kernelParameters.swappiness}%",
+                onClick = { openSD = true },
+            )
+        }
     }
 
     if (openZD) {
         val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
-        
+
         AlertDialog(
             onDismissRequest = { openZD = false },
             title = { Text("ZRAM size") },
@@ -317,12 +347,12 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
                 Column {
                     zramSizeOptions.forEach { size ->
                         DialogTextButtonListItem(
-			    text = size,
+                            text = size,
                             onClick = {
                                 val sizeInGb = size.substringBefore(" GB").toInt()
                                 viewModel.updateZramSize(sizeInGb)
                                 openZD = false
-                            }
+                            },
                         )
                     }
                 }
@@ -330,11 +360,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             confirmButton = {
                 TextButton(
                     onClick = { openZD = false },
-                    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
@@ -350,7 +380,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
                             onClick = {
                                 viewModel.updateZramCompAlgorithm(algorithm)
                                 openZCD = false
-                            }
+                            },
                         )
                     }
                 }
@@ -358,11 +388,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             confirmButton = {
                 TextButton(
                     onClick = { openZCD = false },
-                    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text("Cancel")
                 }
-            }
+            },
         )
     }
 
@@ -373,19 +403,19 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
             text = {
                 OutlinedTextField(
                     value = value,
-		    onValueChange = { value = it },
+                    onValueChange = { value = it },
                     label = { Text("Swappiness") },
-		    singleLine = true,
-		    keyboardOptions = KeyboardOptions.Default.copy(
-			keyboardType = KeyboardType.Number,
-			imeAction = ImeAction.Done
-		    ),
-		    keyboardActions = KeyboardActions(
-			onDone = {
-			    viewModel.updateSwappiness(value)
-			    openSD = false
-			}
-		    )
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateSwappiness(value)
+                            openSD = false
+                        },
+                    ),
                 )
             },
             confirmButton = {
@@ -394,11 +424,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
                         viewModel.updateSwappiness(value)
                         openSD = false
                     },
-		    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(text = "Change")
                 }
-            }
+            },
         )
     }
 }

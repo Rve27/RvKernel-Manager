@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
 package com.rve.rvkernelmanager.ui.theme
 
 import androidx.compose.ui.graphics.Color

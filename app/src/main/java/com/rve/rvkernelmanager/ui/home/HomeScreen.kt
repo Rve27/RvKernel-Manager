@@ -1,41 +1,54 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
 package com.rve.rvkernelmanager.ui.home
-
-import android.content.*
+import android.content.Intent
 import android.net.Uri
-
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.ui.*
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.platform.*
-import androidx.compose.ui.text.*
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.material.icons.filled.Android
+import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.lifecycle.*
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.component.TitleExpandable
 import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.component.listItem.*
+import com.rve.rvkernelmanager.ui.component.listItem.CustomListItem
 import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(),
-    lifecycleOwner: LifecycleOwner,
-    navController: NavController
-) {
+fun HomeScreen(viewModel: HomeViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -55,28 +68,25 @@ fun HomeScreen(
     }
 
     Scaffold(
-	topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
-	bottomBar = { BottomNavigationBar(navController) },
-	modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        bottomBar = { BottomNavigationBar(navController) },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-	    state = rememberLazyListState()
+            state = rememberLazyListState(),
         ) {
-	    item {
-		    Spacer(Modifier.height(16.dp))
-                    DeviceInfoCard(viewModel)
-	    }
-	    item {
-                    DonateCard()
-	    }
-	    item {
-                    CopyrightCard()
-	    }
-	    item {
-                    Spacer(Modifier)
-	    }
+            item {
+                Spacer(Modifier.height(16.dp))
+                DeviceInfoCard(viewModel)
+            }
+            item {
+                DonateCard()
+            }
+            item {
+                Spacer(Modifier)
+            }
         }
     }
 }
@@ -93,7 +103,7 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     Card {
         CustomListItem(
             title = "Device Information",
-	    titleLarge = true
+            titleLarge = true,
         )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -101,15 +111,19 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
         CustomListItem(
             title = "Device",
             summary = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-	    icon = Icons.Filled.Smartphone,
-	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})")) }
+            icon = Icons.Filled.Smartphone,
+            onLongClick = {
+                clipboardManager.setText(
+                    AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})"),
+                )
+            },
         )
 
         CustomListItem(
             title = "RAM",
             summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-	    icon = painterResource(R.drawable.ic_ram),
-	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) }
+            icon = painterResource(R.drawable.ic_ram),
+            onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) },
         )
 
         CustomListItem(
@@ -117,22 +131,22 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             summary = if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu,
             icon = painterResource(R.drawable.ic_cpu),
             onClick = { isExtendCpuInfo = !isExtendCpuInfo },
-	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu)) },
-	    animateContentSize = true
+            onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu)) },
+            animateContentSize = true,
         )
 
         CustomListItem(
             title = "GPU",
             summary = deviceInfo.gpuModel,
             icon = painterResource(R.drawable.ic_video_card),
-	    onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) }
+            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) },
         )
 
         CustomListItem(
             title = "Android version",
             summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
             icon = Icons.Filled.Android,
-	    onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) }
+            onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
         )
 
         CustomListItem(
@@ -140,8 +154,12 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             summary = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
             icon = painterResource(R.drawable.ic_linux),
             onClick = { isFullKernelVersion = !isFullKernelVersion },
-	    onLongClick = { clipboardManager.setText(AnnotatedString(if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion)) },
-	    animateContentSize = true
+            onLongClick = {
+                clipboardManager.setText(
+                    AnnotatedString(if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion),
+                )
+            },
+            animateContentSize = true,
         )
     }
 }
@@ -150,75 +168,22 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 fun DonateCard() {
     val context = LocalContext.current
 
+    val summary =
+        "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
+
     Card(
-	colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/rve27"))) }
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/rve27"))) },
     ) {
-	CustomListItem(
-	    icon = painterResource(R.drawable.ic_kofi),
-	    title = "Buy Me a Coffee"
-	)
+        CustomListItem(
+            icon = painterResource(R.drawable.ic_kofi),
+            title = "Buy Me a Coffee",
+        )
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         CustomListItem(
-             summary = "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!",
+            summary = summary,
         )
-    }
-}
-
-@Composable
-fun CopyrightCard() {
-    val licenseText = buildAnnotatedString {
-        append("Copyright (C) 2025 Rve\n\n")
-        append("This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n")
-        append("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n")
-        append("You should have received a copy of the GNU General Public License along with this program. If not, see ")
-
-        val urlStart = length
-        append("https://www.gnu.org/licenses/")
-        val urlEnd = length
-
-        addStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
-            ),
-            start = urlStart,
-            end = urlEnd
-        )
-
-	addLink(
-            LinkAnnotation.Url("https://www.gnu.org/licenses/"),
-            start = urlStart,
-            end = urlEnd
-        )
-
-        append(".")
-    }
-
-    Card {
-	var isExpanded by rememberSaveable { mutableStateOf(false) }
-
-        TitleExpandable(
-	    leadingIcon = painterResource(R.drawable.ic_license),
-            text = "License",
-	    titleLarge = true,
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-	    onClick = { isExpanded = !isExpanded }
-        )
-
-	AnimatedVisibility(isExpanded) {
-	    Column {
-	        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-		Text(
-		    text = licenseText,
-		    style = MaterialTheme.typography.bodyMedium,
-		    color = MaterialTheme.colorScheme.onSurfaceVariant,
-		    modifier = Modifier.padding(16.dp)
-		)
-	    }
-	}
     }
 }

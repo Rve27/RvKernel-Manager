@@ -2,18 +2,21 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.ui.soc
 
 import android.app.Application
-
-import androidx.lifecycle.*
-
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
-import com.rve.rvkernelmanager.utils.*
+import com.rve.rvkernelmanager.utils.SoCUtils
+import com.rve.rvkernelmanager.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private val settingsPreference = SettingsPreference.getInstance(application)
@@ -24,7 +27,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val currentFreq: String,
         val gov: String,
         val availableFreq: List<String>,
-        val availableGov: List<String>
+        val availableGov: List<String>,
     ) {
         companion object {
             val EMPTY = CPUState("N/A", "N/A", "N/A", "N/A", emptyList(), emptyList())
@@ -36,11 +39,11 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val maxFreq: String,
         val currentFreq: String,
         val gov: String,
-	val defaultPwrlevel: String,
+        val defaultPwrlevel: String,
         val adrenoBoost: String,
         val gpuThrottling: String,
         val availableFreq: List<String>,
-        val availableGov: List<String>
+        val availableGov: List<String>,
     ) {
         companion object {
             val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0", emptyList(), emptyList())
@@ -55,7 +58,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val govPath: String,
         val availableFreqPath: String,
         val availableGovPath: String,
-        val availableBoostFreqPath: String? = null
+        val availableBoostFreqPath: String? = null,
     ) {
         object Little : ClusterConfig(
             name = "little",
@@ -64,19 +67,20 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             currentFreqPath = SoCUtils.CURRENT_FREQ_CPU0,
             govPath = SoCUtils.GOV_CPU0,
             availableFreqPath = SoCUtils.AVAILABLE_FREQ_CPU0,
-            availableGovPath = SoCUtils.AVAILABLE_GOV_CPU0
+            availableGovPath = SoCUtils.AVAILABLE_GOV_CPU0,
         )
 
-        data class Big(val cpuIndex: Int) : ClusterConfig(
-            name = "big",
-            minFreqPath = if (cpuIndex == 4) SoCUtils.MIN_FREQ_CPU4 else SoCUtils.MIN_FREQ_CPU6,
-            maxFreqPath = if (cpuIndex == 4) SoCUtils.MAX_FREQ_CPU4 else SoCUtils.MAX_FREQ_CPU6,
-            currentFreqPath = if (cpuIndex == 4) SoCUtils.CURRENT_FREQ_CPU4 else SoCUtils.CURRENT_FREQ_CPU6,
-            govPath = if (cpuIndex == 4) SoCUtils.GOV_CPU4 else SoCUtils.GOV_CPU6,
-            availableFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_FREQ_CPU4 else SoCUtils.AVAILABLE_FREQ_CPU6,
-            availableGovPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_GOV_CPU4 else SoCUtils.AVAILABLE_GOV_CPU6,
-            availableBoostFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_BOOST_CPU4 else SoCUtils.AVAILABLE_BOOST_CPU6
-        )
+        data class Big(val cpuIndex: Int) :
+            ClusterConfig(
+                name = "big",
+                minFreqPath = if (cpuIndex == 4) SoCUtils.MIN_FREQ_CPU4 else SoCUtils.MIN_FREQ_CPU6,
+                maxFreqPath = if (cpuIndex == 4) SoCUtils.MAX_FREQ_CPU4 else SoCUtils.MAX_FREQ_CPU6,
+                currentFreqPath = if (cpuIndex == 4) SoCUtils.CURRENT_FREQ_CPU4 else SoCUtils.CURRENT_FREQ_CPU6,
+                govPath = if (cpuIndex == 4) SoCUtils.GOV_CPU4 else SoCUtils.GOV_CPU6,
+                availableFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_FREQ_CPU4 else SoCUtils.AVAILABLE_FREQ_CPU6,
+                availableGovPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_GOV_CPU4 else SoCUtils.AVAILABLE_GOV_CPU6,
+                availableBoostFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_BOOST_CPU4 else SoCUtils.AVAILABLE_BOOST_CPU6,
+            )
 
         object Prime : ClusterConfig(
             name = "prime",
@@ -85,7 +89,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             currentFreqPath = SoCUtils.CURRENT_FREQ_CPU7,
             govPath = SoCUtils.GOV_CPU7,
             availableFreqPath = SoCUtils.AVAILABLE_FREQ_CPU7,
-            availableGovPath = SoCUtils.AVAILABLE_GOV_CPU7
+            availableGovPath = SoCUtils.AVAILABLE_GOV_CPU7,
         )
     }
 
@@ -147,8 +151,8 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             "big" to false,
             "prime" to false,
             "gpu" to false,
-            "cpuBoost" to false
-        )
+            "cpuBoost" to false,
+        ),
     )
     private val activeStates: StateFlow<Map<String, Boolean>> = _activeStates
 
@@ -186,14 +190,14 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val activeStates = _activeStates.value
 
-	    detectedBigClusterConfig = detectBigClusterConfig()
-	    _hasBigCluster.value = detectedBigClusterConfig != null
+            detectedBigClusterConfig = detectBigClusterConfig()
+            _hasBigCluster.value = detectedBigClusterConfig != null
 
-	    _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
+            _hasPrimeCluster.value = Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU7)
 
-	    _hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
+            _hasCpuInputBoostMs.value = Utils.testFile(SoCUtils.CPU_INPUT_BOOST_MS)
 
-	    _hasCpuSchedBoostOnInput.value = Utils.testFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+            _hasCpuSchedBoostOnInput.value = Utils.testFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
 
             if (activeStates["monitor"] == true) {
                 loadMonitorData()
@@ -226,7 +230,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun loadBigClusterData() {
-	detectedBigClusterConfig = detectBigClusterConfig()
+        detectedBigClusterConfig = detectBigClusterConfig()
         detectedBigClusterConfig?.let { config ->
             _bigClusterState.value = loadClusterStateWithBoost(config)
         }
@@ -249,17 +253,17 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val gpuState = GPUState(
             minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
             maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
-	    currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
+            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
             gov = Utils.readFile(SoCUtils.GOV_GPU),
-	    defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
+            defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
             adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
             gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING),
             availableFreq = SoCUtils.readAvailableFreqGPU(SoCUtils.AVAILABLE_FREQ_GPU),
-            availableGov = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU)
+            availableGov = SoCUtils.readAvailableGovGPU(SoCUtils.AVAILABLE_GOV_GPU),
         )
         _gpuState.value = gpuState
 
-	_hasDefaultPwrlevel.value = Utils.testFile(SoCUtils.DEFAULT_PWRLEVEL)
+        _hasDefaultPwrlevel.value = Utils.testFile(SoCUtils.DEFAULT_PWRLEVEL)
         _hasAdrenoBoost.value = Utils.testFile(SoCUtils.ADRENO_BOOST)
         _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
     }
@@ -270,26 +274,26 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
         _gpuUsage.value = SoCUtils.getGpuUsage()
 
-	_cpu0State.value = _cpu0State.value.copy(
-            currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Little.currentFreqPath)
+        _cpu0State.value = _cpu0State.value.copy(
+            currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Little.currentFreqPath),
         )
 
         if (_hasBigCluster.value) {
             detectedBigClusterConfig?.let { config ->
                 _bigClusterState.value = _bigClusterState.value.copy(
-                    currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath)
+                    currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath),
                 )
             }
         }
 
         if (_hasPrimeCluster.value) {
             _primeClusterState.value = _primeClusterState.value.copy(
-                currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Prime.currentFreqPath)
+                currentFreq = SoCUtils.readFreqCPU(ClusterConfig.Prime.currentFreqPath),
             )
         }
 
         _gpuState.value = _gpuState.value.copy(
-            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU)
+            currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
         )
     }
 
@@ -308,7 +312,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath),
             gov = Utils.readFile(config.govPath),
             availableFreq = SoCUtils.readAvailableFreqCPU(config.availableFreqPath),
-            availableGov = SoCUtils.readAvailableGovCPU(config.availableGovPath)
+            availableGov = SoCUtils.readAvailableGovCPU(config.availableGovPath),
         )
     }
 
@@ -326,7 +330,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath),
             gov = Utils.readFile(config.govPath),
             availableFreq = availableFreq,
-            availableGov = SoCUtils.readAvailableGovCPU(config.availableGovPath)
+            availableGov = SoCUtils.readAvailableGovCPU(config.availableGovPath),
         )
     }
 
@@ -345,10 +349,10 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val config = ClusterConfig.Little
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
-        
+
         _cpu0State.value = _cpu0State.value.copy(
             minFreq = SoCUtils.readFreqCPU(config.minFreqPath),
-            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath)
+            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath),
         )
     }
 
@@ -356,10 +360,10 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val config = detectedBigClusterConfig ?: return
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
-        
+
         _bigClusterState.value = _bigClusterState.value.copy(
             minFreq = SoCUtils.readFreqCPU(config.minFreqPath),
-            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath)
+            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath),
         )
     }
 
@@ -367,20 +371,20 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val config = ClusterConfig.Prime
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
-        
+
         _primeClusterState.value = _primeClusterState.value.copy(
             minFreq = SoCUtils.readFreqCPU(config.minFreqPath),
-            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath)
+            maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath),
         )
     }
 
     private suspend fun updateGPUFreq(target: String, selectedFreq: String) {
         val path = if (target == "min") SoCUtils.MIN_FREQ_GPU else SoCUtils.MAX_FREQ_GPU
         SoCUtils.writeFreqGPU(path, selectedFreq)
-        
+
         _gpuState.value = _gpuState.value.copy(
             minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
-            maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU)
+            maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
         )
     }
 
@@ -421,35 +425,35 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateCpuInputBoostMs(value: String) {
-	viewModelScope.launch(Dispatchers.IO) {
-	    Utils.writeFile(SoCUtils.CPU_INPUT_BOOST_MS, value)
-	    _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
-	}
+        viewModelScope.launch(Dispatchers.IO) {
+            Utils.writeFile(SoCUtils.CPU_INPUT_BOOST_MS, value)
+            _cpuInputBoostMs.value = Utils.readFile(SoCUtils.CPU_INPUT_BOOST_MS)
+        }
     }
 
     fun updateCpuSchedBoostOnInput(isEnabled: Boolean) {
-	viewModelScope.launch(Dispatchers.IO) {
-	    val value = if (isEnabled) "1" else "0"
+        viewModelScope.launch(Dispatchers.IO) {
+            val value = if (isEnabled) "1" else "0"
 
-	    Utils.writeFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT, value)
-	    _cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
-	}
+            Utils.writeFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT, value)
+            _cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
+        }
     }
 
     fun updateDefaultPwrlevel(value: String) {
-	viewModelScope.launch(Dispatchers.IO) {
-	    Utils.writeFile(SoCUtils.DEFAULT_PWRLEVEL, value)
-	    _gpuState.value = _gpuState.value.copy(
-		defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL)
-	    )
-	}
+        viewModelScope.launch(Dispatchers.IO) {
+            Utils.writeFile(SoCUtils.DEFAULT_PWRLEVEL, value)
+            _gpuState.value = _gpuState.value.copy(
+                defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
+            )
+        }
     }
 
     fun updateAdrenoBoost(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(SoCUtils.ADRENO_BOOST, value)
             _gpuState.value = _gpuState.value.copy(
-                adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST)
+                adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
             )
         }
     }
@@ -459,14 +463,14 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             val newValue = if (isChecked) "1" else "0"
             Utils.writeFile(SoCUtils.GPU_THROTTLING, newValue)
             _gpuState.value = _gpuState.value.copy(
-                gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING)
+                gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING),
             )
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-	viewModelScope.cancel()
+        viewModelScope.cancel()
         stopJob()
     }
 }

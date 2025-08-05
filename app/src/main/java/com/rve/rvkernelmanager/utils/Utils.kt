@@ -2,17 +2,13 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.utils
 
-import java.io.File
-
-import android.app.*
-import android.os.Build
 import android.content.Context
+import android.os.Build
 import android.util.Log
-
 import com.topjohnwu.superuser.Shell
+import java.io.File
 
 object Utils {
     fun getDeviceName() = Build.MODEL
@@ -36,8 +32,8 @@ object Utils {
         return value.toFloatOrNull()?.div(1000)?.let { "%.1f".format(it) } ?: "N/A"
     }
 
-    fun testFile(filePath: String): Boolean =
-        File(filePath).exists() || Shell.cmd("test -f $filePath && echo true || echo false").exec()
+    fun testFile(filePath: String): Boolean = File(filePath).exists() ||
+        Shell.cmd("test -f $filePath && echo true || echo false").exec()
             .takeIf { it.isSuccess }?.out?.firstOrNull() == "true"
 
     fun setPermissions(permission: Int, filePath: String) {

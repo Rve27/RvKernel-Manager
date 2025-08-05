@@ -2,17 +2,19 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.Context
-
-import androidx.lifecycle.*
-
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-
-import com.rve.rvkernelmanager.utils.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rve.rvkernelmanager.utils.KernelUtils
+import com.rve.rvkernelmanager.utils.SoCUtils
+import com.rve.rvkernelmanager.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     data class DeviceInfo(
@@ -27,7 +29,7 @@ class HomeViewModel : ViewModel() {
         val androidVersion: String = "N/A",
         val sdkVersion: String = "N/A",
         val kernelVersion: String = "N/A",
-        val fullKernelVersion: String = "N/A"
+        val fullKernelVersion: String = "N/A",
     )
 
     private val _deviceInfo = MutableStateFlow(DeviceInfo())
@@ -47,7 +49,7 @@ class HomeViewModel : ViewModel() {
                 cpu = SoCUtils.getCPUInfo(),
                 extendCpu = SoCUtils.getExtendCPUInfo(),
                 kernelVersion = KernelUtils.getKernelVersion(),
-                fullKernelVersion = KernelUtils.getFullKernelVersion()
+                fullKernelVersion = KernelUtils.getFullKernelVersion(),
             )
         }
     }

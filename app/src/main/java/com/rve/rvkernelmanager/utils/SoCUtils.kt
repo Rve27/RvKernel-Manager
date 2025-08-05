@@ -2,20 +2,15 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.utils
 
-import java.io.File
-
-import android.app.*
-import android.util.Log
+import android.app.ActivityManager
 import android.content.Context
-
-import kotlin.math.ceil
-
-import com.topjohnwu.superuser.Shell
-
+import android.util.Log
 import com.rve.rvkernelmanager.utils.Utils
+import com.topjohnwu.superuser.Shell
+import java.io.File
+import kotlin.math.ceil
 
 object SoCUtils {
 
@@ -28,7 +23,7 @@ object SoCUtils {
     const val AVAILABLE_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies"
     const val GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
     const val AVAILABLE_GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
-    
+
     const val MIN_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
     const val MAX_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
     const val CURRENT_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_cur_freq"
@@ -44,7 +39,7 @@ object SoCUtils {
     const val AVAILABLE_BOOST_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_boost_frequencies"
     const val GOV_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
     const val AVAILABLE_GOV_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_governors"
-    
+
     const val MIN_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
     const val MAX_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
     const val CURRENT_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_cur_freq"
@@ -57,7 +52,7 @@ object SoCUtils {
     const val CPU_SCHED_BOOST_ON_INPUT = "/sys/devices/system/cpu/cpu_boost/sched_boost_on_input"
 
     const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
-    
+
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
     const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpuclk"
@@ -100,7 +95,7 @@ object SoCUtils {
             ""
         }
     }
-    
+
     fun writeFreqCPU(filePath: String, frequency: String) {
         try {
             val freqInKHz = (frequency.toInt() * 1000).toString()
@@ -110,7 +105,7 @@ object SoCUtils {
             e.printStackTrace()
         }
     }
-    
+
     fun readAvailableFreqCPU(filePath: String): List<String> {
         return try {
             val file = File("$filePath")
@@ -127,15 +122,15 @@ object SoCUtils {
             emptyList()
         }
     }
-    
+
     fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> {
         val regularFreq = readAvailableFreqCPU(freqPath)
         val boostFreq = readAvailableFreqCPU(boostPath)
         return (regularFreq + boostFreq)
-	.distinct()
-	.sortedBy { it.toIntOrNull() ?: 0 }
+            .distinct()
+            .sortedBy { it.toIntOrNull() ?: 0 }
     }
-    
+
     fun readAvailableGovCPU(filePath: String): List<String> {
         return try {
             val file = File("$filePath")
@@ -148,7 +143,7 @@ object SoCUtils {
             }
         } catch (e: Exception) {
             Log.e("readAvailableGov", "Error reading file $filePath: ${e.message}", e)
-	emptyList()
+            emptyList()
         }
     }
 
@@ -166,7 +161,7 @@ object SoCUtils {
             e.printStackTrace()
         }
     }
-    
+
     fun readAvailableFreqGPU(filePath: String): List<String> {
         return try {
             val result = Shell.cmd("cat $filePath").exec()
@@ -185,7 +180,7 @@ object SoCUtils {
             emptyList()
         }
     }
-    
+
     fun readAvailableGovGPU(filePath: String): List<String> {
         return try {
             val result = Shell.cmd("cat $filePath").exec()
@@ -223,13 +218,13 @@ object SoCUtils {
     }
 
     fun getCpuUsage(): String {
-	val stat = Utils.readFile("/proc/stat") ?: return "N/A"
-	val trimmedStat = stat.trim()
+        val stat = Utils.readFile("/proc/stat") ?: return "N/A"
+        val trimmedStat = stat.trim()
 
-	if (!trimmedStat.startsWith("cpu")) return "N/A"
+        if (!trimmedStat.startsWith("cpu")) return "N/A"
 
-	val parts = trimmedStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
-	if (parts.size < 8) return "N/A"
+        val parts = trimmedStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
+        if (parts.size < 8) return "N/A"
 
         try {
             val user = parts[1].toLong()
@@ -256,7 +251,7 @@ object SoCUtils {
                 return "N/A"
             }
         } catch (e: NumberFormatException) {
-	    Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
+            Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
             return "N/A"
         }
     }

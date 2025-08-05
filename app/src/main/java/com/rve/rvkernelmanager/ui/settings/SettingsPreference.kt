@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
+ * All Rights Reserved.
+ */
 package com.rve.rvkernelmanager.ui.settings
 
-import android.content.*
-
-import kotlinx.coroutines.flow.*
-
+import android.content.Context
+import android.content.SharedPreferences
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsPreference(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
@@ -14,22 +19,22 @@ class SettingsPreference(context: Context) {
 
     private val _pollingInterval = MutableStateFlow(getPollingInterval())
     val pollingInterval: StateFlow<Long> = _pollingInterval.asStateFlow()
-    
+
     private val _blurEnabled = MutableStateFlow(getBlurEnabled())
     val blurEnabled: StateFlow<Boolean> = _blurEnabled.asStateFlow()
-    
+
     companion object {
-	private const val THEME_KEY = "theme_mode"
+        private const val THEME_KEY = "theme_mode"
 
         private const val POLLING_INTERVAL_KEY = "soc_polling_interval"
         private const val DEFAULT_POLLING_INTERVAL = 3000L
-        
+
         private const val BLUR_ENABLED_KEY = "blur_enabled"
         private const val DEFAULT_BLUR_ENABLED = true
-        
+
         @Volatile
         private var INSTANCE: SettingsPreference? = null
-        
+
         fun getInstance(context: Context): SettingsPreference {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: SettingsPreference(context).also { INSTANCE = it }
@@ -55,16 +60,16 @@ class SettingsPreference(context: Context) {
         prefs.edit().putLong(POLLING_INTERVAL_KEY, interval).apply()
         _pollingInterval.value = interval
     }
-    
+
     private fun getPollingInterval(): Long {
         return prefs.getLong(POLLING_INTERVAL_KEY, DEFAULT_POLLING_INTERVAL)
     }
-    
+
     fun setBlurEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(BLUR_ENABLED_KEY, enabled).apply()
         _blurEnabled.value = enabled
     }
-    
+
     private fun getBlurEnabled(): Boolean {
         return prefs.getBoolean(BLUR_ENABLED_KEY, DEFAULT_BLUR_ENABLED)
     }

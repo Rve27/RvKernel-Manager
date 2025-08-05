@@ -2,15 +2,22 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.ui.kernelParameter
 
-import androidx.lifecycle.*
-import androidx.compose.runtime.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.rve.rvkernelmanager.utils.KernelUtils
+import com.rve.rvkernelmanager.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
-import com.rve.rvkernelmanager.utils.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class KernelParameterViewModel : ViewModel() {
     data class KernelParameters(
@@ -27,7 +34,7 @@ class KernelParameterViewModel : ViewModel() {
         val availableZramCompAlgorithms: List<String> = emptyList(),
         val tcpCongestionAlgorithm: String = "N/A",
         val hasTcpCongestionAlgorithm: Boolean = false,
-        val availableTcpCongestionAlgorithm: List<String> = emptyList()
+        val availableTcpCongestionAlgorithm: List<String> = emptyList(),
     )
 
     private val _kernelParameters = MutableStateFlow(KernelParameters())
@@ -71,7 +78,7 @@ class KernelParameterViewModel : ViewModel() {
                 hasSwappiness = Utils.testFile(KernelUtils.SWAPPINESS),
                 tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
                 hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
-                availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm()
+                availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm(),
             )
         }
     }
@@ -81,7 +88,7 @@ class KernelParameterViewModel : ViewModel() {
             val value = if (isChecked) "1" else "0"
             Utils.writeFile(KernelUtils.SCHED_AUTOGROUP, value)
             _kernelParameters.value = _kernelParameters.value.copy(
-                schedAutogroup = value
+                schedAutogroup = value,
             )
         }
     }
@@ -90,7 +97,7 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(KernelUtils.SWAPPINESS, value)
             _kernelParameters.value = _kernelParameters.value.copy(
-                swappiness = value
+                swappiness = value,
             )
         }
     }
@@ -99,7 +106,7 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(KernelUtils.PRINTK, value)
             _kernelParameters.value = _kernelParameters.value.copy(
-                printk = value
+                printk = value,
             )
         }
     }
@@ -113,7 +120,7 @@ class KernelParameterViewModel : ViewModel() {
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _kernelParameters.value = _kernelParameters.value.copy(
-                zramSize = KernelUtils.getZramSize()
+                zramSize = KernelUtils.getZramSize(),
             )
         }
     }
@@ -128,7 +135,7 @@ class KernelParameterViewModel : ViewModel() {
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _kernelParameters.value = _kernelParameters.value.copy(
-                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm()
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
             )
         }
     }
@@ -137,7 +144,7 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.setTcpCongestionAlgorithm(algorithm)
             _kernelParameters.value = _kernelParameters.value.copy(
-                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm()
+                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
             )
         }
     }

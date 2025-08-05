@@ -2,14 +2,11 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-
 package com.rve.rvkernelmanager.utils
 
 import android.system.Os
-
-import com.topjohnwu.superuser.Shell
-
 import com.rve.rvkernelmanager.utils.Utils
+import com.topjohnwu.superuser.Shell
 
 object KernelUtils {
     const val FULL_KERNEL_VERSION = "/proc/version"
@@ -31,7 +28,7 @@ object KernelUtils {
     }
 
     fun getFullKernelVersion(): String {
-	return Utils.readFile(FULL_KERNEL_VERSION)
+        return Utils.readFile(FULL_KERNEL_VERSION)
     }
 
     fun getZramSize(): String {
@@ -63,19 +60,19 @@ object KernelUtils {
     }
 
     fun swapoffZram() {
-	Shell.cmd("swapoff $ZRAM").exec()
+        Shell.cmd("swapoff $ZRAM").exec()
     }
 
     fun swaponZram() {
-	Shell.cmd("swapon $ZRAM").exec()
+        Shell.cmd("swapon $ZRAM").exec()
     }
 
     fun mkswapZram() {
-	Shell.cmd("mkswap $ZRAM").exec()
+        Shell.cmd("mkswap $ZRAM").exec()
     }
 
     fun resetZram() {
-	Shell.cmd("echo 1 > $ZRAM_RESET").exec()
+        Shell.cmd("echo 1 > $ZRAM_RESET").exec()
     }
 
     fun setZramCompAlgorithm(algorithm: String) {
