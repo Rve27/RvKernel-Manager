@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +57,7 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
@@ -217,7 +217,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 
     if (openPD) {
         var value by remember { mutableStateOf(kernelParameters.printk) }
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openPD = false },
             text = {
                 OutlinedTextField(
@@ -252,7 +252,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
     }
 
     if (openTCD) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openTCD = false },
             title = { Text("TCP congestion algorithm") },
             text = {
@@ -340,7 +340,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     if (openZD) {
         val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
 
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openZD = false },
             title = { Text("ZRAM size") },
             text = {
@@ -369,7 +369,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     }
 
     if (openZCD) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openZCD = false },
             title = { Text("ZRAM compression algorithm") },
             text = {
@@ -398,7 +398,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
 
     if (openSD) {
         var value by remember { mutableStateOf(kernelParameters.swappiness) }
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openSD = false },
             text = {
                 OutlinedTextField(

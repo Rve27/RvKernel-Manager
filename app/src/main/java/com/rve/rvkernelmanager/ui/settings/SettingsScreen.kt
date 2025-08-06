@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -50,6 +49,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
@@ -124,7 +124,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
     }
 
     if (openThemeDialog) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openThemeDialog = false },
             title = { Text("Select Theme") },
             text = {
@@ -170,7 +170,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
         val intervalSeconds = value.toLongOrNull()
 
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openPollingDialog = false },
             title = { Text("SoC Polling Interval") },
             text = {

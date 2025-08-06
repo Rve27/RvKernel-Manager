@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Dvr
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -59,6 +58,7 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
@@ -332,7 +332,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
         }
 
         if (targetFreqCPU0 != null) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { targetFreqCPU0 = null },
                 title = { Text("Available frequencies") },
                 text = {
@@ -366,7 +366,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
         }
 
         if (openACG) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openACG = false },
                 title = { Text("Available governor") },
                 text = {
@@ -456,7 +456,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
         }
 
         if (targetBigFreq != null) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { targetBigFreq = null },
                 title = { Text("Available frequencies") },
                 text = {
@@ -490,7 +490,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
         }
 
         if (openACG) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openACG = false },
                 title = { Text("Available governor") },
                 text = {
@@ -580,7 +580,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
         }
 
         if (targetPrimeFreq != null) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { targetPrimeFreq = null },
                 title = { Text("Available frequencies") },
                 text = {
@@ -614,7 +614,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
         }
 
         if (openACG) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openACG = false },
                 title = { Text("Available governor") },
                 text = {
@@ -705,7 +705,7 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 
     if (openCIBD) {
         var value by remember { mutableStateOf(cpuInputBoostMs) }
-        AlertDialog(
+        Dialog(
             onDismissRequest = { openCIBD = false },
             text = {
                 OutlinedTextField(
@@ -848,7 +848,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
         }
 
         if (targetGpuFreq != null) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { targetGpuFreq = null },
                 title = { Text("Available frequencies") },
                 text = {
@@ -882,7 +882,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
         }
 
         if (openAGG) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openAGG = false },
                 title = { Text("Available governor") },
                 text = {
@@ -915,7 +915,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 
         if (openDPD) {
             var value by remember { mutableStateOf(gpuState.defaultPwrlevel) }
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openDPD = false },
                 text = {
                     OutlinedTextField(
@@ -950,7 +950,7 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
         }
 
         if (openABD) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openABD = false },
                 title = { Text("Adreno boost") },
                 text = {

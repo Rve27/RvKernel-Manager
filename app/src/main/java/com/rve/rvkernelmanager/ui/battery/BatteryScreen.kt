@@ -5,6 +5,7 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
 package com.rve.rvkernelmanager.ui.battery
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +22,6 @@ import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,6 +57,7 @@ import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
@@ -263,7 +264,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boole
         )
 
         if (openTPD) {
-            AlertDialog(
+            Dialog(
                 onDismissRequest = { openTPD = false },
                 title = {
                     Text(

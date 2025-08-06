@@ -9,7 +9,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rve.rvkernelmanager.ui.battery.BatteryScreen
+import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.home.HomeScreen
 import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
 import com.rve.rvkernelmanager.ui.soc.SoCScreen
@@ -81,7 +81,7 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     if (showRootDialog) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = {},
             text = {
                 Text(
