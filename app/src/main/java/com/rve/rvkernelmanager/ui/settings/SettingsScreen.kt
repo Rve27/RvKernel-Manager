@@ -49,10 +49,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.components.appBar.TopAppBarWithBackButton
-import com.rve.rvkernelmanager.ui.components.listItem.CustomListItem
-import com.rve.rvkernelmanager.ui.components.listItem.DialogTextButtonListItem
-import com.rve.rvkernelmanager.ui.components.listItem.SwitchListItem
+import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.DialogTextButton
+import com.rve.rvkernelmanager.ui.components.SwitchListItem
+import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 
 @Composable
@@ -129,7 +129,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
             title = { Text("Select Theme") },
             text = {
                 Column {
-                    DialogTextButtonListItem(
+                    DialogTextButton(
                         icon = Icons.Default.LightMode,
                         text = "Light mode",
                         onClick = {
@@ -137,7 +137,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                             openThemeDialog = false
                         },
                     )
-                    DialogTextButtonListItem(
+                    DialogTextButton(
                         icon = Icons.Default.DarkMode,
                         text = "Dark mode",
                         onClick = {
@@ -145,7 +145,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                             openThemeDialog = false
                         },
                     )
-                    DialogTextButtonListItem(
+                    DialogTextButton(
                         icon = Icons.Default.Android,
                         text = "System default",
                         onClick = {

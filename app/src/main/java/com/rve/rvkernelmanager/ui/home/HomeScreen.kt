@@ -42,8 +42,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.appBar.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.components.listItem.CustomListItem
+import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
