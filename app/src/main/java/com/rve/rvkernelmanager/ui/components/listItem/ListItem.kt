@@ -4,7 +4,8 @@
  */
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.rve.rvkernelmanager.ui.component.listItem
+package com.rve.rvkernelmanager.ui.components.listItem
+
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable

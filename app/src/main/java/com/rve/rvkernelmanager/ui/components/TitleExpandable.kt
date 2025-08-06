@@ -4,7 +4,8 @@
  */
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
-package com.rve.rvkernelmanager.ui.component
+package com.rve.rvkernelmanager.ui.components
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

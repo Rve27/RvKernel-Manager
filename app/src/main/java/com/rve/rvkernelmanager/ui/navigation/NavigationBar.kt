@@ -2,7 +2,8 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
-package com.rve.rvkernelmanager.ui.component.navigation
+package com.rve.rvkernelmanager.ui.navigation
+
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon

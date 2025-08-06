@@ -41,7 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.rve.rvkernelmanager.ui.component.appBar.TopAppBarWithBackButton
+import com.rve.rvkernelmanager.ui.components.appBar.TopAppBarWithBackButton
 
 @Composable
 fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {

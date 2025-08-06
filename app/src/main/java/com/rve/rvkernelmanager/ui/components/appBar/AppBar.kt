@@ -4,7 +4,8 @@
  */
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
-package com.rve.rvkernelmanager.ui.component.appBar
+package com.rve.rvkernelmanager.ui.components.appBar
+
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.material.icons.Icons

@@ -55,13 +55,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.component.appBar.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.component.listItem.ButtonListItem
-import com.rve.rvkernelmanager.ui.component.listItem.CustomListItem
-import com.rve.rvkernelmanager.ui.component.listItem.DialogTextButtonListItem
-import com.rve.rvkernelmanager.ui.component.listItem.MonitorListItem
-import com.rve.rvkernelmanager.ui.component.listItem.SwitchListItem
-import com.rve.rvkernelmanager.ui.component.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.ui.components.appBar.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.components.listItem.ButtonListItem
+import com.rve.rvkernelmanager.ui.components.listItem.CustomListItem
+import com.rve.rvkernelmanager.ui.components.listItem.DialogTextButtonListItem
+import com.rve.rvkernelmanager.ui.components.listItem.MonitorListItem
+import com.rve.rvkernelmanager.ui.components.listItem.SwitchListItem
+import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable

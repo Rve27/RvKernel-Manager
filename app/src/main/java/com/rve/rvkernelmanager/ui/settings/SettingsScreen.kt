@@ -49,10 +49,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rve.rvkernelmanager.ui.component.appBar.TopAppBarWithBackButton
-import com.rve.rvkernelmanager.ui.component.listItem.CustomListItem
-import com.rve.rvkernelmanager.ui.component.listItem.DialogTextButtonListItem
-import com.rve.rvkernelmanager.ui.component.listItem.SwitchListItem
+import com.rve.rvkernelmanager.ui.components.appBar.TopAppBarWithBackButton
+import com.rve.rvkernelmanager.ui.components.listItem.CustomListItem
+import com.rve.rvkernelmanager.ui.components.listItem.DialogTextButtonListItem
+import com.rve.rvkernelmanager.ui.components.listItem.SwitchListItem
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 
 @Composable
