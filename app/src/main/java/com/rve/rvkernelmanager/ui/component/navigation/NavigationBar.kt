@@ -19,10 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.rve.rvkernelmanager.R
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -42,10 +40,10 @@ fun BottomNavigationBar(navController: NavController) {
                 icon = {
                     Icon(
                         if (currentDestination?.route == item.route) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = stringResource(id = item.title),
+                        contentDescription = item.title,
                     )
                 },
-                label = { Text(stringResource(id = item.title)) },
+                label = { Text(item.title) },
                 selected = currentDestination?.route == item.route,
                 onClick = {
                     navController.navigate(item.route) {
@@ -62,31 +60,31 @@ fun BottomNavigationBar(navController: NavController) {
     }
 }
 
-sealed class BottomNavItem(val route: String, val title: Int, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
+sealed class BottomNavItem(val route: String, val title: String, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
     object Home : BottomNavItem(
         route = "home",
-        title = R.string.home,
+        title = "Home",
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
     )
 
     object SoC : BottomNavItem(
         route = "soc",
-        title = R.string.soc,
+        title = "SoC",
         selectedIcon = Icons.Filled.Memory,
         unselectedIcon = Icons.Outlined.Memory,
     )
 
     object Battery : BottomNavItem(
         route = "battery",
-        title = R.string.battery,
+        title = "Battery",
         selectedIcon = Icons.Filled.BatteryFull,
         unselectedIcon = Icons.Outlined.Battery0Bar,
     )
 
     object KernelParameter : BottomNavItem(
         route = "kernel",
-        title = R.string.kernel_parameter,
+        title = "Kernel",
         selectedIcon = Icons.Filled.Storage,
         unselectedIcon = Icons.Outlined.Storage,
     )
