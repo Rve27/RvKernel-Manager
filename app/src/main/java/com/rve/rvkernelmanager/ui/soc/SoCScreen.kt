@@ -803,40 +803,46 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
                 )
 
                 if (hasDefaultPwrlevel) {
-                    ButtonListItem(
-                        title = "Default pwrlevel",
-                        summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
-                        value = gpuState.defaultPwrlevel,
-                        onClick = { openDPD = true },
-                    )
+                    AnimatedVisibility(hasDefaultPwrlevel) {
+                        ButtonListItem(
+                            title = "Default pwrlevel",
+                            summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
+                            value = gpuState.defaultPwrlevel,
+                            onClick = { openDPD = true },
+                        )
+                    }
                 }
 
                 if (hasAdrenoBoost) {
-                    ButtonListItem(
-                        title = "Adreno boost",
-                        summary = "Boosts GPU performance for a short period",
-                        value = remember(gpuState.adrenoBoost) {
-                            when (gpuState.adrenoBoost) {
-                                "0" -> "Off"
-                                "1" -> "Low"
-                                "2" -> "Medium"
-                                "3" -> "High"
-                                else -> "Unknown"
-                            }
-                        },
-                        onClick = { openABD = true },
-                    )
+                    AnimatedVisibility(hasAdrenoBoost) {
+                        ButtonListItem(
+                            title = "Adreno boost",
+                            summary = "Boosts GPU performance for a short period",
+                            value = remember(gpuState.adrenoBoost) {
+                                when (gpuState.adrenoBoost) {
+                                    "0" -> "Off"
+                                    "1" -> "Low"
+                                    "2" -> "Medium"
+                                    "3" -> "High"
+                                    else -> "Unknown"
+                                }
+                            },
+                            onClick = { openABD = true },
+                        )
+                    }
                 }
 
                 if (hasGPUThrottling) {
-                    SwitchListItem(
-                        title = "GPU throttling",
-                        summary = "Reduces GPU performance to prevent overheating",
-                        checked = gpuThrottlingStatus,
-                        onCheckedChange = { isChecked ->
-                            viewModel.updateGPUThrottling(isChecked)
-                        },
-                    )
+                    AnimatedVisibility(hasGPUThrottling) {
+                        SwitchListItem(
+                            title = "GPU throttling",
+                            summary = "Reduces GPU performance to prevent overheating",
+                            checked = gpuThrottlingStatus,
+                            onCheckedChange = { isChecked ->
+                                viewModel.updateGPUThrottling(isChecked)
+                            },
+                        )
+                    }
                 }
             }
         }
