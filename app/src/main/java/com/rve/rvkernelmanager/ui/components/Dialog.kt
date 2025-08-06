@@ -26,14 +26,14 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Dialog(
     onDismissRequest: () -> Unit,
-    title: @Composable () -> Unit,
+    title: (@Composable () -> Unit)? = null,
     text: @Composable () -> Unit,
     confirmButton: @Composable () -> Unit,
     dismissButton: (@Composable () -> Unit)? = null,
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = title,
+        title = title ?: {},
         text = text,
         confirmButton = confirmButton,
         dismissButton = dismissButton ?: {},
