@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -59,6 +61,7 @@ import com.rve.rvkernelmanager.ui.theme.ThemeMode
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: LifecycleOwner) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
@@ -86,13 +89,18 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
     }
 
     Scaffold(
+        modifier = Modifier
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .then(
+                if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier,
+            ),
         topBar = {
             TopAppBarWithBackButton(
                 text = "Settings",
                 onBack = { (context as? Activity)?.finish() },
+                scrollBehavior = scrollBehavior,
             )
         },
-        modifier = if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier,
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             CustomListItem(
