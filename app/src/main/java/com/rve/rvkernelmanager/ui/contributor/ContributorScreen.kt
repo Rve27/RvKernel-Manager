@@ -27,8 +27,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
+import com.rve.rvkernelmanager.ui.components.shimmerEffect
 
 @Composable
 fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
@@ -80,18 +81,26 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                     else -> ContentState.Content
                 },
                 transitionSpec = {
-                    fadeIn(animationSpec = androidx.compose.animation.core.tween(300)) togetherWith
-                        fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+                    fadeIn(animationSpec = androidx.compose.animation.core.tween(1000)) togetherWith
+                        fadeOut(animationSpec = androidx.compose.animation.core.tween(1000))
                 },
                 label = "contributor_content",
             ) { contentState ->
                 when (contentState) {
                     ContentState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
+                        LazyColumn(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            CircularWavyProgressIndicator()
+                            item {
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                            items(6) {
+                                PlaceholderItem()
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                         }
                     }
                     ContentState.Error -> {
@@ -182,6 +191,49 @@ fun ContributorItem(contributor: Contributor, onClick: () -> Unit) {
                     text = "${contributor.contributions} contributions",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlaceholderItem() {
+    Card(Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .shimmerEffect(),
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect(),
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect(),
                 )
             }
         }
