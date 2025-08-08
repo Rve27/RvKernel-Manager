@@ -14,6 +14,10 @@ object KernelUtils {
     const val SCHED_AUTOGROUP = "/proc/sys/kernel/sched_autogroup_enabled"
     const val PRINTK = "/proc/sys/kernel/printk"
 
+    const val SCHED_UTIL_CLAMP_MAX = "/proc/sys/kernel/sched_util_clamp_max"
+    const val SCHED_UTIL_CLAMP_MIN = "/proc/sys/kernel/sched_util_clamp_min"
+    const val SCHED_UTIL_CLAMP_MIN_RT_DEFAULT = "/proc/sys/kernel/sched_util_clamp_min_rt_default"
+
     const val ZRAM = "/dev/block/zram0"
     const val ZRAM_RESET = "/sys/block/zram0/reset"
     const val ZRAM_SIZE = "/sys/block/zram0/disksize"

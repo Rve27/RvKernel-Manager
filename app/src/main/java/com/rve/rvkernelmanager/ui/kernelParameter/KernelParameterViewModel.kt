@@ -27,6 +27,12 @@ class KernelParameterViewModel : ViewModel() {
         val hasSwappiness: Boolean = false,
         val printk: String = "N/A",
         val hasPrintk: Boolean = false,
+        val hasUclampMax: Boolean = false,
+        val uclampMax: String = "N/A",
+        val hasUclampMin: Boolean = false,
+        val uclampMin: String = "N/A",
+        val hasUclampMinRt: Boolean = false,
+        val uclampMinRt: String = "N/A",
         val zramSize: String = "N/A",
         val hasZramSize: Boolean = false,
         val zramCompAlgorithm: String = "N/A",
@@ -69,6 +75,12 @@ class KernelParameterViewModel : ViewModel() {
                 hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTOGROUP),
                 printk = Utils.readFile(KernelUtils.PRINTK),
                 hasPrintk = Utils.testFile(KernelUtils.PRINTK),
+                hasUclampMax = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                hasUclampMin = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                hasUclampMinRt = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
+                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
                 zramSize = KernelUtils.getZramSize(),
                 hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
                 zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
@@ -108,6 +120,18 @@ class KernelParameterViewModel : ViewModel() {
             _kernelParameters.value = _kernelParameters.value.copy(
                 printk = value,
             )
+        }
+    }
+
+    fun updateUclamp(target: String, path: String, value: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Utils.writeFile(path, value)
+            _kernelParameters.value = when (target) {
+                "max" -> _kernelParameters.value.copy(uclampMax = value)
+                "min" -> _kernelParameters.value.copy(uclampMin = value)
+                "min_rt" -> _kernelParameters.value.copy(uclampMinRt = value)
+                else -> _kernelParameters.value
+            }
         }
     }
 

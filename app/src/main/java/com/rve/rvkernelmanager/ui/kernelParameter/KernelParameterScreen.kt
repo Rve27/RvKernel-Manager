@@ -13,6 +13,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -148,6 +149,11 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
                         KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
                     }
                 }
+                if (kernelParameters.hasUclampMax || kernelParameters.hasUclampMin || kernelParameters.hasUclampMinRt) {
+                    item {
+                        UclampCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    }
+                }
                 if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
                     item {
                         MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
@@ -274,6 +280,165 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
                     shapes = ButtonDefaults.shapes(),
                 ) {
                     Text("Cancel")
+                }
+            },
+        )
+    }
+}
+
+@Composable
+fun UclampCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+    val kernelParameters by viewModel.kernelParameters.collectAsState()
+
+    // UMX = Uclamp Max
+    var openUMX by remember { mutableStateOf(false) }
+    // UMN = Uclamp Min
+    var openUMN by remember { mutableStateOf(false) }
+    // UMRT = Uclamp Min RT
+    var openUMRT by remember { mutableStateOf(false) }
+
+    LaunchedEffect(openUMX, openUMN, openUMRT) {
+        onDialogStateChange(openUMX || openUMN || openUMRT)
+    }
+
+    Card(Modifier.fillMaxWidth()) {
+        CustomListItem(
+            title = "Uclamp",
+            titleLarge = true,
+        )
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+
+        if (kernelParameters.hasUclampMax) {
+            ButtonListItem(
+                title = "Uclamp max",
+                summary = "Upper performance limit for CPU tasks.",
+                value = kernelParameters.uclampMax,
+                onClick = { openUMX = true },
+            )
+        }
+
+        if (kernelParameters.hasUclampMin) {
+            ButtonListItem(
+                title = "Uclamp min",
+                summary = "Lower performance limit to keep CPU tasks above this level.",
+                value = kernelParameters.uclampMin,
+                onClick = { openUMN = true },
+            )
+        }
+
+        if (kernelParameters.hasUclampMinRt) {
+            ButtonListItem(
+                title = "Uclamp min RT default",
+                summary = "Default lower performace limit for real-time (RT) tasks.",
+                value = kernelParameters.uclampMinRt,
+                onClick = { openUMRT = true },
+            )
+        }
+    }
+
+    if (openUMX) {
+        var value by remember { mutableStateOf(kernelParameters.uclampMax) }
+        Dialog(
+            onDismissRequest = { openUMX = false },
+            text = {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = { Text("Uclamp max") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = value)
+                            openUMX = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = value)
+                        openUMX = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(text = "Change")
+                }
+            },
+        )
+    }
+
+    if (openUMN) {
+        var value by remember { mutableStateOf(kernelParameters.uclampMin) }
+        Dialog(
+            onDismissRequest = { openUMN = false },
+            text = {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = { Text("Uclamp min") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = value)
+                            openUMX = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = value)
+                        openUMN = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(text = "Change")
+                }
+            },
+        )
+    }
+
+    if (openUMRT) {
+        var value by remember { mutableStateOf(kernelParameters.uclampMinRt) }
+        Dialog(
+            onDismissRequest = { openUMRT = false },
+            text = {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = { Text("Uclamp min RT default") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = value)
+                            openUMRT = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = value)
+                        openUMRT = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(text = "Change")
                 }
             },
         )
