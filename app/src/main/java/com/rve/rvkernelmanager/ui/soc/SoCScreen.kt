@@ -43,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,17 +64,11 @@ import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.components.TitleExpandable
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable
 fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
-    val settingsPreference = remember { SettingsPreference.getInstance(context) }
-    val blurEnabled by settingsPreference.blurEnabled.collectAsState()
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    var isDialogOpen by remember { mutableStateOf(false) }
 
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
     val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
@@ -105,9 +98,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
     Scaffold(
         topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
         bottomBar = { BottomNavigationBar(navController) },
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .then(if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
@@ -119,25 +110,25 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOw
                 SoCMonitorCard(viewModel)
             }
             item {
-                LittleClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                LittleClusterCard(viewModel = viewModel)
             }
             if (hasBigCluster) {
                 item {
-                    BigClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    BigClusterCard(viewModel = viewModel)
                 }
             }
             if (hasPrimeCluster) {
                 item {
-                    PrimeClusterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    PrimeClusterCard(viewModel = viewModel)
                 }
             }
             if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
                 item {
-                    CPUBoostCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    CPUBoostCard(viewModel = viewModel)
                 }
             }
             item {
-                GPUCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                GPUCard(viewModel = viewModel)
             }
             item {
                 Spacer(Modifier)
@@ -266,7 +257,7 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun LittleClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     var targetFreqCPU0 by remember { mutableStateOf<String?>(null) }
@@ -278,10 +269,6 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 
     LaunchedEffect(isExpanded) {
         viewModel.setActiveState("little", isExpanded)
-    }
-
-    LaunchedEffect(targetFreqCPU0, openACG) {
-        onDialogStateChange(targetFreqCPU0 != null || openACG)
     }
 
     Card {
@@ -400,7 +387,7 @@ fun LittleClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) ->
 }
 
 @Composable
-fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun BigClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     var targetBigFreq by remember { mutableStateOf<String?>(null) }
@@ -411,10 +398,6 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 
     LaunchedEffect(isExpanded) {
         viewModel.setActiveState("big", isExpanded)
-    }
-
-    LaunchedEffect(targetBigFreq, openACG) {
-        onDialogStateChange(targetBigFreq != null || openACG)
     }
 
     Card {
@@ -524,7 +507,7 @@ fun BigClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Un
 }
 
 @Composable
-fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun PrimeClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     var targetPrimeFreq by remember { mutableStateOf<String?>(null) }
@@ -535,10 +518,6 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 
     LaunchedEffect(isExpanded) {
         viewModel.setActiveState("prime", isExpanded)
-    }
-
-    LaunchedEffect(targetPrimeFreq, openACG) {
-        onDialogStateChange(targetPrimeFreq != null || openACG)
     }
 
     Card {
@@ -648,7 +627,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> 
 }
 
 @Composable
-fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun CPUBoostCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     // CPU Input Boost Dialog
@@ -663,10 +642,6 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 
     LaunchedEffect(isExpanded) {
         viewModel.setActiveState("cpuBoost", isExpanded)
-    }
-
-    LaunchedEffect(openCIBD) {
-        onDialogStateChange(openCIBD)
     }
 
     Card {
@@ -741,7 +716,7 @@ fun CPUBoostCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit
 }
 
 @Composable
-fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun GPUCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     var targetGpuFreq by remember { mutableStateOf<String?>(null) }
@@ -760,10 +735,6 @@ fun GPUCard(viewModel: SoCViewModel, onDialogStateChange: (Boolean) -> Unit = {}
 
     LaunchedEffect(isExpanded) {
         viewModel.setActiveState("gpu", isExpanded)
-    }
-
-    LaunchedEffect(targetGpuFreq, openAGG, openABD, openDPD) {
-        onDialogStateChange(targetGpuFreq != null || openAGG || openABD || openDPD)
     }
 
     Card {

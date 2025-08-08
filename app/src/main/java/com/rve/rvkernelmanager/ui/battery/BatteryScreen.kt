@@ -35,14 +35,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -70,7 +68,6 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: Lif
     val context = LocalContext.current
 
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
-    val blurEnabled by settingsPreference.blurEnabled.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -103,11 +100,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: Lif
     Scaffold(
         topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
         bottomBar = { BottomNavigationBar(navController) },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(
-            if (isDialogOpen &&
-                blurEnabled
-            ) Modifier.blur(4.dp) else Modifier,
-        ),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
@@ -123,7 +116,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: Lif
             }
             if (hasThermalSconfig) {
                 item {
-                    ThermalProfilesCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                    ThermalProfilesCard(viewModel = viewModel)
                 }
             }
             if (chargingState.hasFastCharging) {
@@ -234,15 +227,11 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 }
 
 @Composable
-fun ThermalProfilesCard(viewModel: BatteryViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     // TPD = Thermal Profiles Dialog
     var openTPD by remember { mutableStateOf(false) }
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
-
-    LaunchedEffect(openTPD) {
-        onDialogStateChange(openTPD)
-    }
 
     Card {
         ButtonListItem(

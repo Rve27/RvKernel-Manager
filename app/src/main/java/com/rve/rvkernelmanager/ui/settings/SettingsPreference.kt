@@ -20,17 +20,11 @@ class SettingsPreference(context: Context) {
     private val _pollingInterval = MutableStateFlow(getPollingInterval())
     val pollingInterval: StateFlow<Long> = _pollingInterval.asStateFlow()
 
-    private val _blurEnabled = MutableStateFlow(getBlurEnabled())
-    val blurEnabled: StateFlow<Boolean> = _blurEnabled.asStateFlow()
-
     companion object {
         private const val THEME_KEY = "theme_mode"
 
         private const val POLLING_INTERVAL_KEY = "soc_polling_interval"
         private const val DEFAULT_POLLING_INTERVAL = 3000L
-
-        private const val BLUR_ENABLED_KEY = "blur_enabled"
-        private const val DEFAULT_BLUR_ENABLED = true
 
         @Volatile
         private var INSTANCE: SettingsPreference? = null
@@ -63,14 +57,5 @@ class SettingsPreference(context: Context) {
 
     private fun getPollingInterval(): Long {
         return prefs.getLong(POLLING_INTERVAL_KEY, DEFAULT_POLLING_INTERVAL)
-    }
-
-    fun setBlurEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(BLUR_ENABLED_KEY, enabled).apply()
-        _blurEnabled.value = enabled
-    }
-
-    private fun getBlurEnabled(): Boolean {
-        return prefs.getBoolean(BLUR_ENABLED_KEY, DEFAULT_BLUR_ENABLED)
     }
 }

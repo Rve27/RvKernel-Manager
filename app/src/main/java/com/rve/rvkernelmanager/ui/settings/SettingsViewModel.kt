@@ -21,7 +21,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     val themeMode: StateFlow<ThemeMode> = settingsPreference.themeMode
     val pollingInterval: StateFlow<Long> = settingsPreference.pollingInterval
-    val blurEnabled: StateFlow<Boolean> = settingsPreference.blurEnabled
 
     private val _appVersion = MutableStateFlow("Unknown")
     val appVersion: StateFlow<String> = _appVersion
@@ -35,12 +34,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setPollingInterval(interval: Long) {
         viewModelScope.launch {
             settingsPreference.setPollingInterval(interval)
-        }
-    }
-
-    fun setBlurEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            settingsPreference.setBlurEnabled(enabled)
         }
     }
 

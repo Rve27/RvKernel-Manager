@@ -35,7 +35,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -70,7 +68,6 @@ import com.rve.rvkernelmanager.utils.KernelUtils
 fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
-    val blurEnabled by settingsPreference.blurEnabled.collectAsState()
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -120,11 +117,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
     Scaffold(
         topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
         bottomBar = { BottomNavigationBar(navController) },
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).then(
-            if (isDialogOpen &&
-                blurEnabled
-            ) Modifier.blur(4.dp) else Modifier,
-        ),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         PullToRefreshBox(
             modifier = Modifier.padding(innerPadding),
@@ -146,17 +139,17 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
                         Spacer(Modifier.height(16.dp))
-                        KernelParameterCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                        KernelParameterCard(viewModel = viewModel)
                     }
                 }
                 if (kernelParameters.hasUclampMax || kernelParameters.hasUclampMin || kernelParameters.hasUclampMinRt) {
                     item {
-                        UclampCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                        UclampCard(viewModel = viewModel)
                     }
                 }
                 if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
                     item {
-                        MemoryCard(viewModel = viewModel, onDialogStateChange = { isOpen -> isDialogOpen = isOpen })
+                        MemoryCard(viewModel = viewModel)
                     }
                 }
                 item {
@@ -168,7 +161,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
 }
 
 @Composable
-fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
     val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
@@ -176,10 +169,6 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
     var openPD by remember { mutableStateOf(false) }
     // TCD = TCP Congestion Dialog
     var openTCD by remember { mutableStateOf(false) }
-
-    LaunchedEffect(openPD, openTCD) {
-        onDialogStateChange(openPD || openTCD)
-    }
 
     Card {
         CustomListItem(
@@ -287,7 +276,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel, onDialogStateChange
 }
 
 @Composable
-fun UclampCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun UclampCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
 
     // UMX = Uclamp Max
@@ -296,10 +285,6 @@ fun UclampCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     var openUMN by remember { mutableStateOf(false) }
     // UMRT = Uclamp Min RT
     var openUMRT by remember { mutableStateOf(false) }
-
-    LaunchedEffect(openUMX, openUMN, openUMRT) {
-        onDialogStateChange(openUMX || openUMN || openUMRT)
-    }
 
     Card(Modifier.fillMaxWidth()) {
         CustomListItem(
@@ -446,7 +431,7 @@ fun UclampCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
 }
 
 @Composable
-fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolean) -> Unit = {}) {
+fun MemoryCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
 
     // ZD = ZRAM Dialog
@@ -455,10 +440,6 @@ fun MemoryCard(viewModel: KernelParameterViewModel, onDialogStateChange: (Boolea
     var openZCD by remember { mutableStateOf(false) }
     // SD = Swappiness Dialog
     var openSD by remember { mutableStateOf(false) }
-
-    LaunchedEffect(openZD, openZCD, openSD) {
-        onDialogStateChange(openZD || openZCD || openSD)
-    }
 
     Card {
         CustomListItem(

@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.BlurOn
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
@@ -38,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +51,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
-import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 
@@ -65,7 +62,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
 
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
-    val blurEnabled by viewModel.blurEnabled.collectAsState()
     val appVersion by viewModel.appVersion.collectAsState()
 
     var openThemeDialog by remember { mutableStateOf(false) }
@@ -89,11 +85,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
     }
 
     Scaffold(
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .then(
-                if (isDialogOpen && blurEnabled) Modifier.blur(4.dp) else Modifier,
-            ),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBarWithBackButton(
                 text = "Settings",
@@ -114,13 +106,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 title = "SoC polling interval",
                 summary = "Set how often SoC data is updated (in seconds)",
                 onClick = { openPollingDialog = true },
-            )
-            SwitchListItem(
-                icon = Icons.Default.BlurOn,
-                title = "Blur effect",
-                summary = "Enable blur effect when dialogs are open",
-                checked = blurEnabled,
-                onCheckedChange = { viewModel.setBlurEnabled(it) },
             )
             CustomListItem(
                 icon = Icons.Default.Info,
