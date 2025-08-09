@@ -1,61 +1,44 @@
 [versions]
-agp = "8.12.0"
-
+androidGradlePlugin = "8.12.0"
 kotlin = "2.2.0"
-
 spotless = "7.2.1"
-
-activity = "1.12.0-alpha05"
-annotation-experimental = "1.5.1"
-appcompat = "1.7.1"
-autofill = "1.3.0"
-compose-animation = "1.9.0-rc01"
-material3 = "1.5.0-alpha01"
-compose-material-icons-extended = "1.7.8"
-compose-material-ripple = "1.9.0-rc01"
-compose-ui = "1.9.0-rc01"
-core = "1.17.0-rc01"
-splashscreen = "1.2.0-rc01"
-customview-poolingcontainer = "1.1.0"
-emoji2 = "1.6.0-alpha01"
-graphics-shapes = "1.1.0-beta01"
-androidx-navigation = "2.9.3"
-lifecycle = "2.9.2"
-
+androidxCore = "1.16.0"
+androidxActivity = "1.10.1"
+androidxComposeBom = "2025.07.00"
+androidxCompose = "1.9.0-rc01"
+androidxComposeMaterial3 = "1.5.0-alpha01"
+androidxComposeMaterialIcons = "1.7.8"
+androidxCoreSplashscreen = "1.2.0-rc01"
+androidxNavigation = "2.9.3"
+androidxLifecycle = "2.9.2"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
-
 coil3 = "3.3.0"
-
 libsuVersion = "6.0.0"
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [libraries]
-androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
-androidx-annotation-experimental = { module = "androidx.annotation:annotation-experimental", version.ref = "annotation-experimental" }
-androidx-appcompat-resources = { module = "androidx.appcompat:appcompat-resources", version.ref = "appcompat" }
-androidx-autofill = { module = "androidx.autofill:autofill", version.ref = "autofill" }
-androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose-animation" }
-androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose-material-icons-extended" }
-androidx-compose-material-ripple = { module = "androidx.compose.material:material-ripple", version.ref = "compose-material-ripple" }
-androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui" }
-androidx-core = { module = "androidx.core:core", version.ref = "core" }
-androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
-androidx-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "customview-poolingcontainer" }
-androidx-emoji2 = { module = "androidx.emoji2:emoji2", version.ref = "emoji2" }
-androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "graphics-shapes" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
-androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
+androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidxCompose" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3" }
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidxComposeMaterialIcons" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxCoreSplashscreen" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }

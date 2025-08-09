@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.plugin.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -117,22 +117,19 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.annotation.experimental)
-    implementation(libs.androidx.appcompat.resources)
-    implementation(libs.androidx.autofill)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.bom)
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.compose.material.ripple)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.customview.poolingcontainer)
-    implementation(libs.androidx.emoji2)
-    implementation(libs.androidx.graphics.shapes)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.kotlinx.coroutines.core)
