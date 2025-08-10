@@ -54,11 +54,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
+import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
@@ -260,9 +261,12 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 fun LittleClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    var targetFreqCPU0 by remember { mutableStateOf<String?>(null) }
+    // AMXF = Available Max Frequencies
+    val openAMXF = rememberDialogState(initiallyVisible = false)
+    // AMNF = Available Min Frequencies
+    val openAMNF = rememberDialogState(initiallyVisible = false)
     // ACG = Available CPU Governor
-    var openACG by remember { mutableStateOf(false) }
+    val openACG = rememberDialogState(initiallyVisible = false)
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
@@ -292,7 +296,7 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
                         "The lowest speed the CPU can run at",
                     value = cpu0State.minFreq,
                     isFreq = true,
-                    onClick = { targetFreqCPU0 = "min" },
+                    onClick = { openAMNF.visible = true },
                 )
 
                 ButtonListItem(
@@ -303,7 +307,7 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
                         "The highest speed the CPU can run at",
                     value = cpu0State.maxFreq,
                     isFreq = true,
-                    onClick = { targetFreqCPU0 = "max" },
+                    onClick = { openAMXF.visible = true },
                 )
 
                 ButtonListItem(
@@ -313,76 +317,100 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
                     else
                         "Controls how the CPU scales between min and max frequencies",
                     value = cpu0State.gov,
-                    onClick = { openACG = true },
+                    onClick = { openACG.visible = true },
                 )
             }
         }
 
-        if (targetFreqCPU0 != null) {
-            Dialog(
-                onDismissRequest = { targetFreqCPU0 = null },
-                title = { Text("Available frequencies") },
-                text = {
-                    if (cpu0State.availableFreq.isNotEmpty()) {
-                        LazyColumn {
-                            items(cpu0State.availableFreq) { freq ->
-                                DialogTextButton(
-                                    text = "$freq MHz",
-                                    onClick = {
-                                        targetFreqCPU0?.let { targetFreq ->
-                                            viewModel.updateFreq(targetFreq, freq, "little")
-                                        }
-                                        targetFreqCPU0 = null
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMNF,
+            title = "Available frequencies",
+            text = {
+                if (cpu0State.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "little")
+                                    openAMNF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available frequencies found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { targetFreqCPU0 = null },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMNF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
 
-        if (openACG) {
-            Dialog(
-                onDismissRequest = { openACG = false },
-                title = { Text("Available governor") },
-                text = {
-                    if (cpu0State.availableGov.isNotEmpty()) {
-                        LazyColumn {
-                            items(cpu0State.availableGov) { gov ->
-                                DialogTextButton(
-                                    text = gov,
-                                    onClick = {
-                                        viewModel.updateGov(gov, "little")
-                                        openACG = false
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMXF,
+            title = "Available frequencies",
+            text = {
+                if (cpu0State.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "little")
+                                    openAMXF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available governor found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openACG = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMXF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
+
+        DialogUnstyled(
+            state = openACG,
+            title = "Available governor",
+            text = {
+                if (cpu0State.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableGov) { gov ->
+                            DialogTextButton(
+                                text = gov,
+                                onClick = {
+                                    viewModel.updateGov(gov, "little")
+                                    openACG.visible = false
+                                },
+                            )
+                        }
                     }
-                },
-            )
-        }
+                } else {
+                    Text("No available governor found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openACG.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
     }
 }
 
@@ -390,9 +418,12 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 fun BigClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    var targetBigFreq by remember { mutableStateOf<String?>(null) }
+    // Available Max Frequencies
+    val openAMXF = rememberDialogState(initiallyVisible = false)
+    // Available Min Frequencies
+    val openAMNF = rememberDialogState(initiallyVisible = false)
     // ACG = Available CPU Governor
-    var openACG by remember { mutableStateOf(false) }
+    val openACG = rememberDialogState(initiallyVisible = false)
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
@@ -418,7 +449,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                     summary = "The lowest speed the Big Cluster can run at",
                     value = bigClusterState.minFreq,
                     isFreq = true,
-                    onClick = { targetBigFreq = "min" },
+                    onClick = { openAMNF.visible = true },
                 )
 
                 ButtonListItem(
@@ -426,83 +457,107 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                     summary = "The highest speed the Big Cluster can run at",
                     value = bigClusterState.maxFreq,
                     isFreq = true,
-                    onClick = { targetBigFreq = "max" },
+                    onClick = { openAMXF.visible = true },
                 )
 
                 ButtonListItem(
                     title = "Governor",
                     summary = "Controls how the Big Cluster scales between min and max frequencies",
                     value = bigClusterState.gov,
-                    onClick = { openACG = true },
+                    onClick = { openACG.visible = true },
                 )
             }
         }
 
-        if (targetBigFreq != null) {
-            Dialog(
-                onDismissRequest = { targetBigFreq = null },
-                title = { Text("Available frequencies") },
-                text = {
-                    if (bigClusterState.availableFreq.isNotEmpty()) {
-                        LazyColumn {
-                            items(bigClusterState.availableFreq) { freq ->
-                                DialogTextButton(
-                                    text = "$freq MHz",
-                                    onClick = {
-                                        targetBigFreq?.let { targetFreq ->
-                                            viewModel.updateFreq(targetFreq, freq, "big")
-                                        }
-                                        targetBigFreq = null
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMNF,
+            title = "Available frequencies",
+            text = {
+                if (bigClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "big")
+                                    openAMNF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available frequencies found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { targetBigFreq = null },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMNF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
 
-        if (openACG) {
-            Dialog(
-                onDismissRequest = { openACG = false },
-                title = { Text("Available governor") },
-                text = {
-                    if (bigClusterState.availableGov.isNotEmpty()) {
-                        LazyColumn {
-                            items(bigClusterState.availableGov) { gov ->
-                                DialogTextButton(
-                                    text = gov,
-                                    onClick = {
-                                        viewModel.updateGov(gov, "big")
-                                        openACG = false
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMXF,
+            title = "Available frequencies",
+            text = {
+                if (bigClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "big")
+                                    openAMXF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available governor found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openACG = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMXF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
+
+        DialogUnstyled(
+            state = openACG,
+            title = "Available governor",
+            text = {
+                if (bigClusterState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableGov) { gov ->
+                            DialogTextButton(
+                                text = gov,
+                                onClick = {
+                                    viewModel.updateGov(gov, "big")
+                                    openACG.visible = false
+                                },
+                            )
+                        }
                     }
-                },
-            )
-        }
+                } else {
+                    Text("No available governor found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openACG.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
     }
 }
 
@@ -510,9 +565,12 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 fun PrimeClusterCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    var targetPrimeFreq by remember { mutableStateOf<String?>(null) }
+    // Available Max Frequencies
+    val openAMXF = rememberDialogState(initiallyVisible = false)
+    // Available Min Frequencies
+    val openAMNF = rememberDialogState(initiallyVisible = false)
     // ACG = Available CPU Governor
-    var openACG by remember { mutableStateOf(false) }
+    val openACG = rememberDialogState(initiallyVisible = false)
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
 
@@ -538,7 +596,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                     summary = "The lowest speed the Prime Cluster can run at",
                     value = primeClusterState.minFreq,
                     isFreq = true,
-                    onClick = { targetPrimeFreq = "min" },
+                    onClick = { openAMNF.visible = true },
                 )
 
                 ButtonListItem(
@@ -546,83 +604,107 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                     summary = "The highest speed the Prime Cluster can run at",
                     value = primeClusterState.maxFreq,
                     isFreq = true,
-                    onClick = { targetPrimeFreq = "max" },
+                    onClick = { openAMXF.visible = true },
                 )
 
                 ButtonListItem(
                     title = "Governor",
                     summary = "Controls how the Prime Cluster scales between min and max frequencies",
                     value = primeClusterState.gov,
-                    onClick = { openACG = true },
+                    onClick = { openACG.visible = true },
                 )
             }
         }
 
-        if (targetPrimeFreq != null) {
-            Dialog(
-                onDismissRequest = { targetPrimeFreq = null },
-                title = { Text("Available frequencies") },
-                text = {
-                    if (primeClusterState.availableFreq.isNotEmpty()) {
-                        LazyColumn {
-                            items(primeClusterState.availableFreq) { freq ->
-                                DialogTextButton(
-                                    text = "$freq MHz",
-                                    onClick = {
-                                        targetPrimeFreq?.let { targetFreq ->
-                                            viewModel.updateFreq(targetFreq, freq, "prime")
-                                        }
-                                        targetPrimeFreq = null
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMNF,
+            title = "Available frequencies",
+            text = {
+                if (primeClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "prime")
+                                    openAMNF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available frequencies found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { targetPrimeFreq = null },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMNF.visible = true },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
 
-        if (openACG) {
-            Dialog(
-                onDismissRequest = { openACG = false },
-                title = { Text("Available governor") },
-                text = {
-                    if (primeClusterState.availableGov.isNotEmpty()) {
-                        LazyColumn {
-                            items(primeClusterState.availableGov) { gov ->
-                                DialogTextButton(
-                                    text = gov,
-                                    onClick = {
-                                        viewModel.updateGov(gov, "prime")
-                                        openACG = false
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMXF,
+            title = "Available frequencies",
+            text = {
+                if (primeClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableFreq) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "prime")
+                                    openAMXF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available governor found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openACG = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMXF.visible = true },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
+
+        DialogUnstyled(
+            state = openACG,
+            title = "Available governor",
+            text = {
+                if (primeClusterState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableGov) { gov ->
+                            DialogTextButton(
+                                text = gov,
+                                onClick = {
+                                    viewModel.updateGov(gov, "prime")
+                                    openACG.visible = false
+                                },
+                            )
+                        }
                     }
-                },
-            )
-        }
+                } else {
+                    Text("No available governor found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openACG.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
     }
 }
 
@@ -631,10 +713,11 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     // CPU Input Boost Dialog
-    var openCIBD by remember { mutableStateOf(false) }
+    val openCIBD = rememberDialogState(initiallyVisible = false)
 
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
     val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsState()
+    var cpuInputBoostMsValue by remember { mutableStateOf(cpuInputBoostMs) }
 
     val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
     val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
@@ -662,7 +745,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                         title = "Input boost ms",
                         summary = "Time boost is held after input",
                         value = "$cpuInputBoostMs ms",
-                        onClick = { openCIBD = true },
+                        onClick = { openCIBD.visible = true },
                     )
                 }
 
@@ -678,57 +761,66 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
         }
     }
 
-    if (openCIBD) {
-        var value by remember { mutableStateOf(cpuInputBoostMs) }
-        Dialog(
-            onDismissRequest = { openCIBD = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text(text = "Input boost ms") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateCpuInputBoostMs(value)
-                            openCIBD = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateCpuInputBoostMs(value)
-                        openCIBD = false
+    DialogUnstyled(
+        state = openCIBD,
+        text = {
+            OutlinedTextField(
+                value = cpuInputBoostMsValue,
+                onValueChange = { cpuInputBoostMsValue = it },
+                label = { Text(text = "Input boost ms") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateCpuInputBoostMs(cpuInputBoostMsValue)
+                        openCIBD.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
-                }
-            },
-        )
-    }
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateCpuInputBoostMs(cpuInputBoostMsValue)
+                    openCIBD.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openCIBD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 }
 
 @Composable
 fun GPUCard(viewModel: SoCViewModel) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    var targetGpuFreq by remember { mutableStateOf<String?>(null) }
+    // Available Max Frequencies
+    val openAMXF = rememberDialogState(initiallyVisible = false)
+    // Available Min Frequencies
+    val openAMNF = rememberDialogState(initiallyVisible = false)
     // AGG = Available GPU Governor
-    var openAGG by remember { mutableStateOf(false) }
+    val openAGG = rememberDialogState(initiallyVisible = false)
     // ABD = Adreno Boost Dialog
-    var openABD by remember { mutableStateOf(false) }
+    val openABD = rememberDialogState(initiallyVisible = false)
     // DPD = Default Pwrlevel Dialog
-    var openDPD by remember { mutableStateOf(false) }
+    val openDPD = rememberDialogState(initiallyVisible = false)
 
     val gpuState by viewModel.gpuState.collectAsState()
     val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsState()
+    var defaultPwrlevel by remember { mutableStateOf(gpuState.defaultPwrlevel) }
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember(gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
@@ -755,7 +847,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     summary = "The lowest speed the GPU can run at",
                     value = gpuState.minFreq,
                     isFreq = true,
-                    onClick = { targetGpuFreq = "min" },
+                    onClick = { openAMNF.visible = true },
                 )
 
                 ButtonListItem(
@@ -763,14 +855,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                     summary = "The highest speed the GPU can run at",
                     value = gpuState.maxFreq,
                     isFreq = true,
-                    onClick = { targetGpuFreq = "max" },
+                    onClick = { openAMXF.visible = true },
                 )
 
                 ButtonListItem(
                     title = "Governor",
                     summary = "Controls how the CPU scales between min and max frequencies",
                     value = gpuState.gov,
-                    onClick = { openAGG = true },
+                    onClick = { openAGG.visible = true },
                 )
 
                 if (hasDefaultPwrlevel) {
@@ -779,7 +871,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             title = "Default pwrlevel",
                             summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
                             value = gpuState.defaultPwrlevel,
-                            onClick = { openDPD = true },
+                            onClick = { openDPD.visible = true },
                         )
                     }
                 }
@@ -798,7 +890,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     else -> "Unknown"
                                 }
                             },
-                            onClick = { openABD = true },
+                            onClick = { openABD.visible = true },
                         )
                     }
                 }
@@ -818,153 +910,180 @@ fun GPUCard(viewModel: SoCViewModel) {
             }
         }
 
-        if (targetGpuFreq != null) {
-            Dialog(
-                onDismissRequest = { targetGpuFreq = null },
-                title = { Text("Available frequencies") },
-                text = {
-                    if (gpuState.availableFreq.isNotEmpty()) {
-                        LazyColumn {
-                            items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                                DialogTextButton(
-                                    text = "$freq MHz",
-                                    onClick = {
-                                        targetGpuFreq?.let { targetFreq ->
-                                            viewModel.updateFreq(targetFreq, freq, "gpu")
-                                        }
-                                        targetGpuFreq = null
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMNF,
+            title = "Available frequencies",
+            text = {
+                if (gpuState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "gpu")
+                                    openAMNF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available frequencies found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { targetGpuFreq = null },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMNF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
 
-        if (openAGG) {
-            Dialog(
-                onDismissRequest = { openAGG = false },
-                title = { Text("Available governor") },
-                text = {
-                    if (gpuState.availableGov.isNotEmpty()) {
-                        LazyColumn {
-                            items(gpuState.availableGov) { gov ->
-                                DialogTextButton(
-                                    text = gov,
-                                    onClick = {
-                                        viewModel.updateGov(gov, "gpu")
-                                        openAGG = false
-                                    },
-                                )
-                            }
+        DialogUnstyled(
+            state = openAMXF,
+            title = "Available frequencies",
+            text = {
+                if (gpuState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                            DialogTextButton(
+                                text = "$freq MHz",
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "gpu")
+                                    openAMXF.visible = false
+                                },
+                            )
                         }
-                    } else {
-                        Text("No available governor found.")
                     }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openAGG = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                } else {
+                    Text("No available frequencies found.")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openAMXF.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
 
-        if (openDPD) {
-            var value by remember { mutableStateOf(gpuState.defaultPwrlevel) }
-            Dialog(
-                onDismissRequest = { openDPD = false },
-                text = {
-                    OutlinedTextField(
-                        value = value,
-                        onValueChange = { value = it },
-                        label = { Text("Default pwrlevel") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                viewModel.updateDefaultPwrlevel(value)
-                                openDPD = false
-                            },
-                        ),
-                    )
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            viewModel.updateDefaultPwrlevel(value)
-                            openDPD = false
+        DialogUnstyled(
+            state = openAGG,
+            title = "Available governor",
+            text = {
+                if (gpuState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableGov) { gov ->
+                            DialogTextButton(
+                                text = gov,
+                                onClick = {
+                                    viewModel.updateGov(gov, "gpu")
+                                    openAGG.visible = false
+                                },
+                            )
+                        }
+                    }
+                } else {
+                    Text("No available governor found.")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAGG.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
+
+        DialogUnstyled(
+            state = openDPD,
+            text = {
+                OutlinedTextField(
+                    value = defaultPwrlevel,
+                    onValueChange = { defaultPwrlevel = it },
+                    label = { Text("Default pwrlevel") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateDefaultPwrlevel(defaultPwrlevel)
+                            openDPD.visible = false
                         },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text(text = "Change")
-                    }
-                },
-            )
-        }
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.updateDefaultPwrlevel(defaultPwrlevel)
+                        openDPD.visible = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Change")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openDPD.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Cancel")
+                }
+            },
+        )
 
-        if (openABD) {
-            Dialog(
-                onDismissRequest = { openABD = false },
-                title = { Text("Adreno boost") },
-                text = {
-                    Column {
-                        DialogTextButton(
-                            text = "Off",
-                            onClick = {
-                                viewModel.updateAdrenoBoost("0")
-                                openABD = false
-                            },
-                        )
-                        DialogTextButton(
-                            text = "Low",
-                            onClick = {
-                                viewModel.updateAdrenoBoost("1")
-                                openABD = false
-                            },
-                        )
-                        DialogTextButton(
-                            text = "Medium",
-                            onClick = {
-                                viewModel.updateAdrenoBoost("2")
-                                openABD = false
-                            },
-                        )
-                        DialogTextButton(
-                            text = "High",
-                            onClick = {
-                                viewModel.updateAdrenoBoost("3")
-                                openABD = false
-                            },
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openABD = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+        DialogUnstyled(
+            state = openABD,
+            title = "Adreno boost",
+            text = {
+                Column {
+                    DialogTextButton(
+                        text = "Off",
+                        onClick = {
+                            viewModel.updateAdrenoBoost("0")
+                            openABD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        text = "Low",
+                        onClick = {
+                            viewModel.updateAdrenoBoost("1")
+                            openABD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        text = "Medium",
+                        onClick = {
+                            viewModel.updateAdrenoBoost("2")
+                            openABD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        text = "High",
+                        onClick = {
+                            viewModel.updateAdrenoBoost("3")
+                            openABD.visible = false
+                        },
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openABD.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
     }
 }
