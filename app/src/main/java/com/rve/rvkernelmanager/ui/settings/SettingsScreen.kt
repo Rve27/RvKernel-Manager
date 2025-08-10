@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,9 +49,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
+import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 
@@ -62,12 +64,12 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
 
     val themeMode by viewModel.themeMode.collectAsState()
     val pollingInterval by viewModel.pollingInterval.collectAsState()
+    var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
+    val intervalSeconds = value.toLongOrNull()
     val appVersion by viewModel.appVersion.collectAsState()
 
-    var openThemeDialog by remember { mutableStateOf(false) }
-    var openPollingDialog by remember { mutableStateOf(false) }
-
-    val isDialogOpen = openThemeDialog || openPollingDialog
+    val openThemeDialog = rememberDialogState(initiallyVisible = false)
+    val openPollingDialog = rememberDialogState(initiallyVisible = false)
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -99,13 +101,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 icon = Icons.Default.Palette,
                 title = "App theme",
                 summary = "Choose between light, dark, or system default theme",
-                onClick = { openThemeDialog = true },
+                onClick = { openThemeDialog.visible = true },
             )
             CustomListItem(
                 icon = Icons.Default.Timer,
                 title = "SoC polling interval",
                 summary = "Set how often SoC data is updated (in seconds)",
-                onClick = { openPollingDialog = true },
+                onClick = { openPollingDialog.visible = true },
             )
             CustomListItem(
                 icon = Icons.Default.Info,
@@ -116,102 +118,99 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         }
     }
 
-    if (openThemeDialog) {
-        Dialog(
-            onDismissRequest = { openThemeDialog = false },
-            title = { Text("Select Theme") },
-            text = {
-                Column {
-                    DialogTextButton(
-                        icon = Icons.Default.LightMode,
-                        text = "Light mode",
-                        onClick = {
-                            viewModel.setThemeMode(ThemeMode.LIGHT)
-                            openThemeDialog = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.DarkMode,
-                        text = "Dark mode",
-                        onClick = {
-                            viewModel.setThemeMode(ThemeMode.DARK)
-                            openThemeDialog = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.Android,
-                        text = "System default",
-                        onClick = {
-                            viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)
-                            openThemeDialog = false
-                        },
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openThemeDialog = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
-    }
-
-    if (openPollingDialog) {
-        var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
-        val intervalSeconds = value.toLongOrNull()
-
-        Dialog(
-            onDismissRequest = { openPollingDialog = false },
-            title = { Text("SoC Polling Interval") },
-            text = {
-                Column {
-                    Text("Set the polling interval for SoC data (1-30 seconds)")
-                    Spacer(Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = value,
-                        onValueChange = { value = it },
-                        label = { Text("Interval (seconds)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done,
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                if (intervalSeconds != null && intervalSeconds in 1..30) {
-                                    viewModel.setPollingInterval(intervalSeconds * 1000)
-                                    openPollingDialog = false
-                                }
-                            },
-                        ),
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
+    DialogUnstyled(
+        state = openThemeDialog,
+        title = "Select theme",
+        text = {
+            Column {
+                DialogTextButton(
+                    icon = Icons.Default.LightMode,
+                    text = "Light mode",
                     onClick = {
-                        if (intervalSeconds != null && intervalSeconds in 1..30) {
-                            viewModel.setPollingInterval(intervalSeconds * 1000)
-                            openPollingDialog = false
-                        }
+                        viewModel.setThemeMode(ThemeMode.LIGHT)
+                        openThemeDialog.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Apply")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openPollingDialog = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
-    }
+                )
+                DialogTextButton(
+                    icon = Icons.Default.DarkMode,
+                    text = "Dark mode",
+                    onClick = {
+                        viewModel.setThemeMode(ThemeMode.DARK)
+                        openThemeDialog.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.Android,
+                    text = "System default",
+                    onClick = {
+                        viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)
+                        openThemeDialog.visible = false
+                    },
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { openThemeDialog.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openPollingDialog,
+        title = "SoC polling interval",
+        text = {
+            Column {
+                Text(
+                    text = "Set the polling interval for SoC data (1-30 seconds)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = { Text("Interval (seconds)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (intervalSeconds != null && intervalSeconds in 1..30) {
+                                viewModel.setPollingInterval(intervalSeconds * 1000)
+                                openPollingDialog.visible = false
+                            }
+                        },
+                    ),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    if (intervalSeconds != null && intervalSeconds in 1..30) {
+                        viewModel.setPollingInterval(intervalSeconds * 1000)
+                        openPollingDialog.visible = false
+                    }
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Apply")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openPollingDialog.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 }
