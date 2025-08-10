@@ -15,6 +15,7 @@ kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
 coil3 = "3.3.0"
 libsuVersion = "6.0.0"
+composables = "1.39.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -46,4 +47,6 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 io-coil-kt-coil3-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 io-coil-kt-coil3-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil3" }
 
-topjohnwu-libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsuVersion" }
+topjohnwu-libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsuVersion" }
+
+composables-core = { module = "com.composables:core", version.ref = "composables" }

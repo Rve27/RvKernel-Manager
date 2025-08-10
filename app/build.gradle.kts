@@ -139,4 +139,6 @@ dependencies {
     implementation(libs.io.coil.kt.coil3.network.okhttp)
 
     implementation(libs.topjohnwu.libsu.core)
+
+    implementation(libs.composables.core)
 }
