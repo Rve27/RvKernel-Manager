@@ -9,7 +9,6 @@ package com.rve.rvkernelmanager.ui.battery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,11 +51,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
+import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
@@ -229,7 +229,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 @Composable
 fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     // TPD = Thermal Profiles Dialog
-    var openTPD by remember { mutableStateOf(false) }
+    val openTPD = rememberDialogState(initiallyVisible = false)
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
 
@@ -249,89 +249,81 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                     else -> "Unknown"
                 }
             },
-            onClick = { openTPD = true },
+            onClick = { openTPD.visible = true },
         )
 
-        if (openTPD) {
-            Dialog(
-                onDismissRequest = { openTPD = false },
-                title = {
-                    Text(
-                        text = "Thermal profiles",
+        DialogUnstyled(
+            state = openTPD,
+            title = "Thermal profiles",
+            text = {
+                Column {
+                    DialogTextButton(
+                        icon = painterResource(R.drawable.ic_mode_cool),
+                        text = "Default",
+                        onClick = {
+                            viewModel.updateThermalSconfig("0")
+                            openTPD.visible = false
+                        },
                     )
-                },
-                text = {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        DialogTextButton(
-                            icon = painterResource(R.drawable.ic_mode_cool),
-                            text = "Default",
-                            onClick = {
-                                viewModel.updateThermalSconfig("0")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.Speed,
-                            text = "Benchmark",
-                            onClick = {
-                                viewModel.updateThermalSconfig("10")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.Language,
-                            text = "Browser",
-                            onClick = {
-                                viewModel.updateThermalSconfig("11")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.PhotoCamera,
-                            text = "Camera",
-                            onClick = {
-                                viewModel.updateThermalSconfig("12")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.Call,
-                            text = "Dialer",
-                            onClick = {
-                                viewModel.updateThermalSconfig("8")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.SportsEsports,
-                            text = "Gaming",
-                            onClick = {
-                                viewModel.updateThermalSconfig("13")
-                                openTPD = false
-                            },
-                        )
-                        DialogTextButton(
-                            icon = Icons.Default.Videocam,
-                            text = "Streaming",
-                            onClick = {
-                                viewModel.updateThermalSconfig("14")
-                                openTPD = false
-                            },
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = { openTPD = false },
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text("Close")
-                    }
-                },
-            )
-        }
+                    DialogTextButton(
+                        icon = Icons.Default.Speed,
+                        text = "Benchmark",
+                        onClick = {
+                            viewModel.updateThermalSconfig("10")
+                            openTPD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        icon = Icons.Default.Language,
+                        text = "Browser",
+                        onClick = {
+                            viewModel.updateThermalSconfig("11")
+                            openTPD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        icon = Icons.Default.PhotoCamera,
+                        text = "Camera",
+                        onClick = {
+                            viewModel.updateThermalSconfig("12")
+                            openTPD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        icon = Icons.Default.Call,
+                        text = "Dialer",
+                        onClick = {
+                            viewModel.updateThermalSconfig("8")
+                            openTPD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        icon = Icons.Default.SportsEsports,
+                        text = "Gaming",
+                        onClick = {
+                            viewModel.updateThermalSconfig("13")
+                            openTPD.visible = false
+                        },
+                    )
+                    DialogTextButton(
+                        icon = Icons.Default.Videocam,
+                        text = "Streaming",
+                        onClick = {
+                            viewModel.updateThermalSconfig("14")
+                            openTPD.visible = false
+                        },
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openTPD.visible = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text("Close")
+                }
+            },
+        )
     }
 }
 
