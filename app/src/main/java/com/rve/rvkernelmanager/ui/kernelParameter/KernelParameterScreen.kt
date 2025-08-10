@@ -53,11 +53,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.Dialog
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
+import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
@@ -70,8 +71,6 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-
-    var isDialogOpen by remember { mutableStateOf(false) }
 
     val kernelParameters by viewModel.kernelParameters.collectAsState()
 
@@ -163,12 +162,13 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lif
 @Composable
 fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
+    var printk by remember { mutableStateOf(kernelParameters.printk) }
     val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
     // PD = Printk Dialog
-    var openPD by remember { mutableStateOf(false) }
+    val openPD = rememberDialogState(initiallyVisible = false)
     // TCD = TCP Congestion Dialog
-    var openTCD by remember { mutableStateOf(false) }
+    val openTCD = rememberDialogState(initiallyVisible = false)
 
     Card {
         CustomListItem(
@@ -196,7 +196,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 title = "printk",
                 summary = "Controls kernel message logging level",
                 value = kernelParameters.printk,
-                onClick = { openPD = true },
+                onClick = { openPD.visible = true },
             )
         }
 
@@ -205,86 +205,92 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 title = "TCP congestion algorithm",
                 summary = "TCP is a core protocol of the Internet protocol suite, often referred to as TCP/IP.",
                 value = kernelParameters.tcpCongestionAlgorithm,
-                onClick = { openTCD = true },
+                onClick = { openTCD.visible = true },
             )
         }
     }
 
-    if (openPD) {
-        var value by remember { mutableStateOf(kernelParameters.printk) }
-        Dialog(
-            onDismissRequest = { openPD = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updatePrintk(value)
-                            openPD = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updatePrintk(value)
-                        openPD = false
+    DialogUnstyled(
+        state = openPD,
+        text = {
+            OutlinedTextField(
+                value = printk,
+                onValueChange = { printk = it },
+                label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updatePrintk(printk)
+                        openPD.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
-                }
-            },
-        )
-    }
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updatePrintk(printk)
+                    openPD.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openPD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 
-    if (openTCD) {
-        Dialog(
-            onDismissRequest = { openTCD = false },
-            title = { Text("TCP congestion algorithm") },
-            text = {
-                Column {
-                    kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
-                        DialogTextButton(
-                            text = algorithm,
-                            onClick = {
-                                viewModel.updateTcpCongestionAlgorithm(algorithm)
-                                openTCD = false
-                            },
-                        )
-                    }
+    DialogUnstyled(
+        state = openTCD,
+        title = "TCP congestion algorithm",
+        text = {
+            Column {
+                kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
+                    DialogTextButton(
+                        text = algorithm,
+                        onClick = {
+                            viewModel.updateTcpCongestionAlgorithm(algorithm)
+                            openTCD.visible = false
+                        },
+                    )
                 }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openTCD = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
-    }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openTCD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 }
 
 @Composable
 fun UclampCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
+    var uclampMax by remember { mutableStateOf(kernelParameters.uclampMax) }
+    var uclampMin by remember { mutableStateOf(kernelParameters.uclampMin) }
+    var uclampMinRt by remember { mutableStateOf(kernelParameters.uclampMinRt) }
 
     // UMX = Uclamp Max
-    var openUMX by remember { mutableStateOf(false) }
+    val openUMX = rememberDialogState(initiallyVisible = false)
     // UMN = Uclamp Min
-    var openUMN by remember { mutableStateOf(false) }
+    val openUMN = rememberDialogState(initiallyVisible = false)
     // UMRT = Uclamp Min RT
-    var openUMRT by remember { mutableStateOf(false) }
+    val openUMRT = rememberDialogState(initiallyVisible = false)
 
     Card(Modifier.fillMaxWidth()) {
         CustomListItem(
@@ -298,7 +304,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 title = "Uclamp max",
                 summary = "Upper performance limit for CPU tasks.",
                 value = kernelParameters.uclampMax,
-                onClick = { openUMX = true },
+                onClick = { openUMX.visible = true },
             )
         }
 
@@ -307,7 +313,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 title = "Uclamp min",
                 summary = "Lower performance limit to keep CPU tasks above this level.",
                 value = kernelParameters.uclampMin,
-                onClick = { openUMN = true },
+                onClick = { openUMN.visible = true },
             )
         }
 
@@ -316,130 +322,147 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 title = "Uclamp min RT default",
                 summary = "Default lower performace limit for real-time (RT) tasks.",
                 value = kernelParameters.uclampMinRt,
-                onClick = { openUMRT = true },
+                onClick = { openUMRT.visible = true },
             )
         }
     }
 
-    if (openUMX) {
-        var value by remember { mutableStateOf(kernelParameters.uclampMax) }
-        Dialog(
-            onDismissRequest = { openUMX = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text("Uclamp max") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = value)
-                            openUMX = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = value)
-                        openUMX = false
+    DialogUnstyled(
+        state = openUMX,
+        text = {
+            OutlinedTextField(
+                value = uclampMax,
+                onValueChange = { uclampMax = it },
+                label = { Text("Uclamp max") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                        openUMX.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
-                }
-            },
-        )
-    }
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                    openUMX.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openUMX.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 
-    if (openUMN) {
-        var value by remember { mutableStateOf(kernelParameters.uclampMin) }
-        Dialog(
-            onDismissRequest = { openUMN = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text("Uclamp min") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = value)
-                            openUMX = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = value)
-                        openUMN = false
+    DialogUnstyled(
+        state = openUMN,
+        text = {
+            OutlinedTextField(
+                value = uclampMin,
+                onValueChange = { uclampMin = it },
+                label = { Text("Uclamp min") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                        openUMX.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
-                }
-            },
-        )
-    }
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                    openUMN.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openUMN.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 
-    if (openUMRT) {
-        var value by remember { mutableStateOf(kernelParameters.uclampMinRt) }
-        Dialog(
-            onDismissRequest = { openUMRT = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text("Uclamp min RT default") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = value)
-                            openUMRT = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = value)
-                        openUMRT = false
+    DialogUnstyled(
+        state = openUMRT,
+        text = {
+            OutlinedTextField(
+                value = uclampMinRt,
+                onValueChange = { uclampMinRt = it },
+                label = { Text("Uclamp min RT default") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                        openUMRT.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
-                }
-            },
-        )
-    }
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                    openUMRT.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text(text = "Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openUMRT.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 }
 
 @Composable
 fun MemoryCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
+    val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
+    var swappiness by remember { mutableStateOf(kernelParameters.swappiness) }
 
     // ZD = ZRAM Dialog
-    var openZD by remember { mutableStateOf(false) }
+    val openZD = rememberDialogState(initiallyVisible = false)
     // ZCD = ZRAM Compression Dialog
-    var openZCD by remember { mutableStateOf(false) }
+    val openZCD = rememberDialogState(initiallyVisible = false)
     // SD = Swappiness Dialog
-    var openSD by remember { mutableStateOf(false) }
+    val openSD = rememberDialogState(initiallyVisible = false)
 
     Card {
         CustomListItem(
@@ -460,7 +483,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 title = "ZRAM size",
                 summary = "Change the ZRAM size",
                 value = kernelParameters.zramSize,
-                onClick = { openZD = true },
+                onClick = { openZD.visible = true },
             )
         }
 
@@ -469,7 +492,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 title = "ZRAM compression algorithm",
                 summary = "Different algorithms offer different compression ratios and performance",
                 value = kernelParameters.zramCompAlgorithm,
-                onClick = { openZCD = true },
+                onClick = { openZCD.visible = true },
             )
         }
 
@@ -478,103 +501,102 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 title = "Swappiness",
                 summary = "Controls how aggressively the system uses swap memory",
                 value = "${kernelParameters.swappiness}%",
-                onClick = { openSD = true },
+                onClick = { openSD.visible = true },
             )
         }
     }
 
-    if (openZD) {
-        val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
-
-        Dialog(
-            onDismissRequest = { openZD = false },
-            title = { Text("ZRAM size") },
-            text = {
-                Column {
-                    zramSizeOptions.forEach { size ->
-                        DialogTextButton(
-                            text = size,
-                            onClick = {
-                                val sizeInGb = size.substringBefore(" GB").toInt()
-                                viewModel.updateZramSize(sizeInGb)
-                                openZD = false
-                            },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openZD = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
-    }
-
-    if (openZCD) {
-        Dialog(
-            onDismissRequest = { openZCD = false },
-            title = { Text("ZRAM compression algorithm") },
-            text = {
-                Column {
-                    kernelParameters.availableZramCompAlgorithms.forEach { algorithm ->
-                        DialogTextButton(
-                            text = algorithm,
-                            onClick = {
-                                viewModel.updateZramCompAlgorithm(algorithm)
-                                openZCD = false
-                            },
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openZCD = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
-    }
-
-    if (openSD) {
-        var value by remember { mutableStateOf(kernelParameters.swappiness) }
-        Dialog(
-            onDismissRequest = { openSD = false },
-            text = {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text("Swappiness") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateSwappiness(value)
-                            openSD = false
+    DialogUnstyled(
+        state = openZD,
+        title = "ZRAM size",
+        text = {
+            Column {
+                zramSizeOptions.forEach { size ->
+                    DialogTextButton(
+                        text = size,
+                        onClick = {
+                            val sizeInGb = size.substringBefore(" GB").toInt()
+                            viewModel.updateZramSize(sizeInGb)
+                            openZD.visible = false
                         },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        viewModel.updateSwappiness(value)
-                        openSD = false
-                    },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text(text = "Change")
+                    )
                 }
-            },
-        )
-    }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openZD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openZCD,
+        title = "ZRAM compression algorithm",
+        text = {
+            Column {
+                kernelParameters.availableZramCompAlgorithms.forEach { algorithm ->
+                    DialogTextButton(
+                        text = algorithm,
+                        onClick = {
+                            viewModel.updateZramCompAlgorithm(algorithm)
+                            openZCD.visible = false
+                        },
+                    )
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openZCD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openSD,
+        text = {
+            OutlinedTextField(
+                value = swappiness,
+                onValueChange = { swappiness = it },
+                label = { Text("Swappiness") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateSwappiness(swappiness)
+                        openSD.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateSwappiness(swappiness)
+                    openSD.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openSD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 }
