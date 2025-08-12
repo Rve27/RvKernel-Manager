@@ -35,7 +35,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -150,10 +149,6 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
     val gpuState by viewModel.gpuState.collectAsState()
     val gpuTemp by viewModel.gpuTemp.collectAsState()
     val gpuUsage by viewModel.gpuUsage.collectAsState()
-
-    LaunchedEffect(Unit) {
-        viewModel.setActiveState("monitor", true)
-    }
 
     Card {
         CustomListItem(
@@ -270,10 +265,6 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
-
-    LaunchedEffect(isExpanded) {
-        viewModel.setActiveState("little", isExpanded)
-    }
 
     Card {
         TitleExpandable(
@@ -427,10 +418,6 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
-    LaunchedEffect(isExpanded) {
-        viewModel.setActiveState("big", isExpanded)
-    }
-
     Card {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
@@ -573,10 +560,6 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     val openACG = rememberDialogState(initiallyVisible = false)
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
-
-    LaunchedEffect(isExpanded) {
-        viewModel.setActiveState("prime", isExpanded)
-    }
 
     Card {
         TitleExpandable(
@@ -723,10 +706,6 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
-    LaunchedEffect(isExpanded) {
-        viewModel.setActiveState("cpuBoost", isExpanded)
-    }
-
     Card {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
@@ -824,10 +803,6 @@ fun GPUCard(viewModel: SoCViewModel) {
     val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember(gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
-
-    LaunchedEffect(isExpanded) {
-        viewModel.setActiveState("gpu", isExpanded)
-    }
 
     Card {
         TitleExpandable(
