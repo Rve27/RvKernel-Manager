@@ -2,6 +2,8 @@
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.Intent
@@ -21,8 +23,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -48,7 +56,6 @@ import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
     val context = LocalContext.current
@@ -175,22 +182,32 @@ fun DonateCard() {
 
     val summary =
         "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
+    val kofiLink = "https://ko-fi.com/rve27"
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/rve27"))) },
+    TooltipBox(
+        positionProvider =
+        TooltipDefaults.rememberTooltipPositionProvider(
+            TooltipAnchorPosition.Above,
+        ),
+        tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(kofiLink) } },
+        state = rememberTooltipState(),
     ) {
-        CustomListItem(
-            icon = painterResource(R.drawable.ic_kofi),
-            title = "Buy Me a Coffee",
-        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(kofiLink))) },
+        ) {
+            CustomListItem(
+                icon = painterResource(R.drawable.ic_kofi),
+                title = "Buy Me a Coffee",
+            )
 
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-        CustomListItem(
-            summary = summary,
-        )
+            CustomListItem(
+                summary = summary,
+            )
+        }
     }
 }
