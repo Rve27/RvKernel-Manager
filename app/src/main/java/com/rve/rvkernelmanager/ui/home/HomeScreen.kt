@@ -3,10 +3,12 @@
  * All Rights Reserved.
  */
 package com.rve.rvkernelmanager.ui.home
+
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -100,7 +102,10 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
     var isExtendCpuInfo by rememberSaveable { mutableStateOf(false) }
     var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "Device Information",
             titleLarge = true,
@@ -172,6 +177,8 @@ fun DonateCard() {
         "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
 
     Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/rve27"))) },
     ) {
