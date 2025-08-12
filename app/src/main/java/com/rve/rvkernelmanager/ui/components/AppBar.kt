@@ -18,12 +18,19 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,17 +51,25 @@ fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
     TopAppBar(
         title = { Text("RvKernel Manager", maxLines = 1, overflow = TextOverflow.Ellipsis) },
         actions = {
-            IconButton(onClick = { expanded = true }) {
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "More",
-                )
+            TooltipBox(
+                positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Left,
+                ),
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("Menu") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = { expanded = true }) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "More",
+                    )
+                }
             }
             DropdownMenu(
                 expanded = expanded,
-                onDismissRequest = {
-                    expanded = false
-                },
+                onDismissRequest = { expanded = false },
+                shape = MaterialTheme.shapes.large,
             ) {
                 DropdownMenuItem(
                     text = {
@@ -101,6 +116,7 @@ fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                         )
                     },
                 )
+                HorizontalDivider()
                 DropdownMenuItem(
                     text = {
                         Text("Settings")
@@ -133,8 +149,17 @@ fun TopAppBarWithBackButton(text: String, onBack: () -> Unit, scrollBehavior: To
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            TooltipBox(
+                positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Below,
+                ),
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("Back") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
             }
         },
         scrollBehavior = scrollBehavior,
