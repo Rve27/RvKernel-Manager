@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         applicationId = "com.rve.rvkernelmanager"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 36
         versionCode = 124
         versionName = "1.2.4"
