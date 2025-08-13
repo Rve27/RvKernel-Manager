@@ -22,9 +22,8 @@ object Utils {
     fun getManufacturer() = Build.MANUFACTURER
 
     fun getSystemProperty(key: String): String = runCatching {
-        val clazz = Class.forName("android.os.SystemProperties")
-        val method = clazz.getMethod("get", String::class.java)
-        method.invoke(null, key) as? String
+        Shell.cmd("getprop $key").exec()
+            .takeIf { it.isSuccess }?.out?.firstOrNull()?.trim()
     }.getOrNull().orEmpty()
 
     fun getTemp(filePath: String): String {
