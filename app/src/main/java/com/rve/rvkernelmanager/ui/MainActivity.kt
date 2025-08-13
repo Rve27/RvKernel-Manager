@@ -22,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.rememberNavController
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
@@ -71,8 +70,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RvKernelManagerApp(showRootDialog: Boolean = false) {
-    val navController = rememberNavController()
-
     if (showRootDialog) {
         AlertDialog(
             onDismissRequest = {},
@@ -95,6 +92,6 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
         )
     }
     Surface {
-        RvKernelManagerNavHost(navController = navController)
+        RvKernelManagerNavHost()
     }
 }

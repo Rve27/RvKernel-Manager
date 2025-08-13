@@ -15,9 +15,9 @@ import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.rve.rvkernelmanager.ui.battery.BatteryScreen
 import com.rve.rvkernelmanager.ui.home.HomeScreen
 import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
@@ -54,7 +54,9 @@ sealed class NavigationRoute(val route: String, val title: String, val selectedI
 }
 
 @Composable
-fun RvKernelManagerNavHost(navController: NavHostController) {
+fun RvKernelManagerNavHost() {
+    val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = "home") {
         composable(HomeRoute) {
             HomeScreen(navController = navController)
