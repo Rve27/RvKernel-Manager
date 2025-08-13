@@ -10,6 +10,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -150,7 +152,10 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
     val gpuTemp by viewModel.gpuTemp.collectAsState()
     val gpuUsage by viewModel.gpuUsage.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "SoC Monitor",
             titleLarge = true,
@@ -164,8 +169,10 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
         ) {
             Card(
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 8.dp,
+                    defaultElevation = 16.dp,
                 ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 CustomListItem(
                     title = "CPU",
@@ -216,8 +223,10 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 
             Card(
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 8.dp,
+                    defaultElevation = 16.dp,
                 ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 CustomListItem(
                     title = "GPU",
@@ -266,7 +275,10 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
     val cpu0State by viewModel.cpu0State.collectAsState()
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
             text = if (hasBigCluster) "Little Cluster" else "CPU",
@@ -418,7 +430,10 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
             text = "Big Cluster",
@@ -561,7 +576,10 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
             text = "Prime Cluster",
@@ -706,7 +724,10 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_cpu),
             text = "CPU Boost",
@@ -804,7 +825,10 @@ fun GPUCard(viewModel: SoCViewModel) {
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember(gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         TitleExpandable(
             leadingIcon = painterResource(R.drawable.ic_video_card),
             text = "GPU",
