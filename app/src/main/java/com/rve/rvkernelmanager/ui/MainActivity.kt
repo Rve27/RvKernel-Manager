@@ -13,7 +13,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,13 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.rve.rvkernelmanager.ui.battery.BatteryScreen
-import com.rve.rvkernelmanager.ui.home.HomeScreen
-import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
-import com.rve.rvkernelmanager.ui.soc.SoCScreen
+import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
 
@@ -101,24 +96,7 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
             },
         )
     }
-
-    Scaffold {
-        NavHost(
-            navController = navController,
-            startDestination = "home",
-        ) {
-            composable("home") {
-                HomeScreen(lifecycleOwner = lifecycleOwner, navController = navController)
-            }
-            composable("soc") {
-                SoCScreen(lifecycleOwner = lifecycleOwner, navController = navController)
-            }
-            composable("battery") {
-                BatteryScreen(lifecycleOwner = lifecycleOwner, navController = navController)
-            }
-            composable("kernel") {
-                KernelParameterScreen(lifecycleOwner = lifecycleOwner, navController = navController)
-            }
-        }
+    Surface {
+        RvKernelManagerNavHost(navController = navController, lifecycleOwner = lifecycleOwner)
     }
 }
