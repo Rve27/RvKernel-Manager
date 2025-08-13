@@ -7,7 +7,6 @@
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -196,7 +196,7 @@ fun DonateCard() {
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(kofiLink))) },
+            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, kofiLink.toUri())) },
         ) {
             CustomListItem(
                 icon = painterResource(R.drawable.ic_kofi),

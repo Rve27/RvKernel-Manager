@@ -8,7 +8,6 @@ package com.rve.rvkernelmanager.ui.contributor
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -46,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
@@ -142,7 +142,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             items(contributors) { contributor ->
                                 ContributorItem(
                                     contributor = contributor,
-                                    onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(contributor.htmlUrl))) },
+                                    onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, contributor.htmlUrl.toUri())) },
                                 )
                             }
                             item {

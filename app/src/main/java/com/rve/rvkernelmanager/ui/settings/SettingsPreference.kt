@@ -6,6 +6,7 @@ package com.rve.rvkernelmanager.ui.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +38,7 @@ class SettingsPreference(context: Context) {
     }
 
     fun setThemeMode(mode: ThemeMode) {
-        prefs.edit().putString(THEME_KEY, mode.name).apply()
+        prefs.edit { putString(THEME_KEY, mode.name) }
         _themeMode.value = mode
     }
 
@@ -51,7 +52,7 @@ class SettingsPreference(context: Context) {
     }
 
     fun setPollingInterval(interval: Long) {
-        prefs.edit().putLong(POLLING_INTERVAL_KEY, interval).apply()
+        prefs.edit { putLong(POLLING_INTERVAL_KEY, interval) }
         _pollingInterval.value = interval
     }
 

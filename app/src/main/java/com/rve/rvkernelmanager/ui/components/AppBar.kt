@@ -7,7 +7,6 @@
 package com.rve.rvkernelmanager.ui.components
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Code
@@ -39,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.core.net.toUri
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
@@ -76,7 +76,7 @@ fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                         Text("Source code")
                     },
                     onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Rve27/RvKernel-Manager")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri()))
                         expanded = false
                     },
                     leadingIcon = {
@@ -91,7 +91,7 @@ fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                         Text("Telegram group")
                     },
                     onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/rve_enterprises")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri()))
                         expanded = false
                     },
                     leadingIcon = {
