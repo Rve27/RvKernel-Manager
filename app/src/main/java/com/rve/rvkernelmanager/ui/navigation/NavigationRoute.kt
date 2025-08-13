@@ -15,7 +15,6 @@ import androidx.compose.material.icons.outlined.Memory
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,19 +54,19 @@ sealed class NavigationRoute(val route: String, val title: String, val selectedI
 }
 
 @Composable
-fun RvKernelManagerNavHost(navController: NavHostController, lifecycleOwner: LifecycleOwner) {
+fun RvKernelManagerNavHost(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "home") {
         composable(HomeRoute) {
-            HomeScreen(lifecycleOwner = lifecycleOwner, navController = navController)
+            HomeScreen(navController = navController)
         }
         composable(SoCRoute) {
-            SoCScreen(lifecycleOwner = lifecycleOwner, navController = navController)
+            SoCScreen(navController = navController)
         }
         composable(BatteryRoute) {
-            BatteryScreen(lifecycleOwner = lifecycleOwner, navController = navController)
+            BatteryScreen(navController = navController)
         }
         composable(KernelRoute) {
-            KernelParameterScreen(lifecycleOwner = lifecycleOwner, navController = navController)
+            KernelParameterScreen(navController = navController)
         }
     }
 }

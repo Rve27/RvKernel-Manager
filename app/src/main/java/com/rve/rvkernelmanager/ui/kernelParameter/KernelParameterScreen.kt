@@ -50,7 +50,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
@@ -66,8 +66,10 @@ import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.KernelUtils
 
 @Composable
-fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
+fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), navController: NavController) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())

@@ -48,7 +48,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
@@ -64,8 +64,9 @@ import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable
-fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
+fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavController) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val settingsPreference = remember { SettingsPreference.getInstance(context) }
 

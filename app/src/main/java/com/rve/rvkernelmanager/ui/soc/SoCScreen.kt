@@ -52,7 +52,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
@@ -68,8 +68,10 @@ import com.rve.rvkernelmanager.ui.components.TitleExpandable
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
 @Composable
-fun SoCScreen(viewModel: SoCViewModel = viewModel(), lifecycleOwner: LifecycleOwner, navController: NavController) {
+fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavController) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
