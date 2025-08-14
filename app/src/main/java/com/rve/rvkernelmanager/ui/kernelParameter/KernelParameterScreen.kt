@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -140,17 +141,17 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
                         Spacer(Modifier.height(16.dp))
-                        KernelParameterCard(viewModel = viewModel)
+                        KernelParameterCard(viewModel)
                     }
                 }
                 if (kernelParameters.hasUclampMax || kernelParameters.hasUclampMin || kernelParameters.hasUclampMinRt) {
                     item {
-                        UclampCard(viewModel = viewModel)
+                        UclampCard(viewModel)
                     }
                 }
                 if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
                     item {
-                        MemoryCard(viewModel = viewModel)
+                        MemoryCard(viewModel)
                     }
                 }
                 item {
@@ -172,7 +173,10 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     // TCD = TCP Congestion Dialog
     val openTCD = rememberDialogState(initiallyVisible = false)
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             icon = painterResource(R.drawable.ic_linux),
             title = "Kernel Parameter",
@@ -294,7 +298,10 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
     // UMRT = Uclamp Min RT
     val openUMRT = rememberDialogState(initiallyVisible = false)
 
-    Card(Modifier.fillMaxWidth()) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "Uclamp",
             titleLarge = true,
@@ -466,7 +473,10 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     // SD = Swappiness Dialog
     val openSD = rememberDialogState(initiallyVisible = false)
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             icon = painterResource(R.drawable.ic_ram),
             title = "Memory",
