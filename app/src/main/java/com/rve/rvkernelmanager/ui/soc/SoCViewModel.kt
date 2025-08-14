@@ -148,7 +148,9 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private var detectedBigClusterConfig: ClusterConfig.Big? = null
 
     init {
-        loadSoCData()
+        viewModelScope.launch(Dispatchers.IO) {
+            loadSoCData()
+        }
     }
 
     fun startJob() {
