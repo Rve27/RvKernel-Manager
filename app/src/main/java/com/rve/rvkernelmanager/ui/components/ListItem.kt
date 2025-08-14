@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
@@ -42,7 +43,9 @@ fun CustomListItem(
     title: String? = null,
     titleSmall: Boolean = false,
     titleLarge: Boolean = false,
+    titleColor: Color? = null,
     summary: String? = null,
+    summaryColor: Color? = null,
     bodySmall: Boolean = false,
     bodyLarge: Boolean = false,
     onClick: (() -> Unit)? = null,
@@ -90,7 +93,7 @@ fun CustomListItem(
                         titleLarge -> MaterialTheme.typography.titleLarge
                         else -> MaterialTheme.typography.titleMedium
                     },
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = titleColor ?: MaterialTheme.colorScheme.onSurface,
                 )
             }
             if (summary != null) {
@@ -101,7 +104,7 @@ fun CustomListItem(
                         bodyLarge -> MaterialTheme.typography.bodyLarge
                         else -> MaterialTheme.typography.bodyMedium
                     },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = summaryColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier,
                 )
             }
