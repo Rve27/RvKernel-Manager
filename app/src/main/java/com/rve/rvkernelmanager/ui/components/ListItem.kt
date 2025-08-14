@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CustomListItem(
     icon: Any? = null,
+    iconColor: Color? = null,
     title: String? = null,
     titleSmall: Boolean = false,
     titleLarge: Boolean = false,
@@ -73,13 +74,13 @@ fun CustomListItem(
                 is ImageVector -> Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = iconColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(end = 16.dp),
                 )
                 is Painter -> Icon(
                     painter = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = iconColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(end = 16.dp),
                 )
             }
