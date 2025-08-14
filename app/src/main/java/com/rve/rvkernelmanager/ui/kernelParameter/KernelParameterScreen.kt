@@ -77,6 +77,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
 
     val kernelParameters by viewModel.kernelParameters.collectAsState()
     val uclamp by viewModel.uclamp.collectAsState()
+    val memory by viewModel.memory.collectAsState()
 
     val pullToRefreshState = remember {
         object : PullToRefreshState {
@@ -150,7 +151,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                         UclampCard(viewModel)
                     }
                 }
-                if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
+                if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
                     item {
                         MemoryCard(viewModel)
                     }
@@ -463,9 +464,9 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 
 @Composable
 fun MemoryCard(viewModel: KernelParameterViewModel) {
-    val kernelParameters by viewModel.kernelParameters.collectAsState()
+    val memory by viewModel.memory.collectAsState()
     val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
-    var swappiness by remember { mutableStateOf(kernelParameters.swappiness) }
+    var swappiness by remember { mutableStateOf(memory.swappiness) }
 
     // ZD = ZRAM Dialog
     val openZD = rememberDialogState(initiallyVisible = false)
@@ -485,35 +486,35 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-        if (kernelParameters.hasZramSize || kernelParameters.hasZramCompAlgorithm) {
+        if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
             CustomListItem(
                 summary = "NOTE: It may take a few minutes to change the ZRAM size, etc.",
             )
         }
 
-        if (kernelParameters.hasZramSize) {
+        if (memory.hasZramSize) {
             ButtonListItem(
                 title = "ZRAM size",
                 summary = "Change the ZRAM size",
-                value = kernelParameters.zramSize,
+                value = memory.zramSize,
                 onClick = { openZD.visible = true },
             )
         }
 
-        if (kernelParameters.hasZramCompAlgorithm && kernelParameters.availableZramCompAlgorithms.isNotEmpty()) {
+        if (memory.hasZramCompAlgorithm && memory.availableZramCompAlgorithms.isNotEmpty()) {
             ButtonListItem(
                 title = "ZRAM compression algorithm",
                 summary = "Different algorithms offer different compression ratios and performance",
-                value = kernelParameters.zramCompAlgorithm,
+                value = memory.zramCompAlgorithm,
                 onClick = { openZCD.visible = true },
             )
         }
 
-        if (kernelParameters.hasSwappiness) {
+        if (memory.hasSwappiness) {
             ButtonListItem(
                 title = "Swappiness",
                 summary = "Controls how aggressively the system uses swap memory",
-                value = "${kernelParameters.swappiness}%",
+                value = "${memory.swappiness}%",
                 onClick = { openSD.visible = true },
             )
         }
@@ -551,7 +552,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         title = "ZRAM compression algorithm",
         text = {
             Column {
-                kernelParameters.availableZramCompAlgorithms.forEach { algorithm ->
+                memory.availableZramCompAlgorithms.forEach { algorithm ->
                     DialogTextButton(
                         text = algorithm,
                         onClick = {

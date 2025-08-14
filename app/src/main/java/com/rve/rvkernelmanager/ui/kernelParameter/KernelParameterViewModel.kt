@@ -23,15 +23,8 @@ class KernelParameterViewModel : ViewModel() {
     data class KernelParameters(
         val schedAutogroup: String = "N/A",
         val hasSchedAutogroup: Boolean = false,
-        val swappiness: String = "N/A",
-        val hasSwappiness: Boolean = false,
         val printk: String = "N/A",
         val hasPrintk: Boolean = false,
-        val zramSize: String = "N/A",
-        val hasZramSize: Boolean = false,
-        val zramCompAlgorithm: String = "N/A",
-        val hasZramCompAlgorithm: Boolean = false,
-        val availableZramCompAlgorithms: List<String> = emptyList(),
         val tcpCongestionAlgorithm: String = "N/A",
         val hasTcpCongestionAlgorithm: Boolean = false,
         val availableTcpCongestionAlgorithm: List<String> = emptyList(),
@@ -46,11 +39,24 @@ class KernelParameterViewModel : ViewModel() {
         val uclampMinRt: String = "N/A",
     )
 
+    data class Memory(
+        val zramSize: String = "N/A",
+        val hasZramSize: Boolean = false,
+        val zramCompAlgorithm: String = "N/A",
+        val hasZramCompAlgorithm: Boolean = false,
+        val availableZramCompAlgorithms: List<String> = emptyList(),
+        val swappiness: String = "N/A",
+        val hasSwappiness: Boolean = false,
+    )
+
     private val _kernelParameters = MutableStateFlow(KernelParameters())
     val kernelParameters: StateFlow<KernelParameters> = _kernelParameters
 
     private val _uclamp = MutableStateFlow(Uclamp())
     val uclamp: StateFlow<Uclamp> = _uclamp
+
+    private val _memory = MutableStateFlow(Memory())
+    val memory: StateFlow<Memory> = _memory
 
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
@@ -60,6 +66,7 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             loadKernelParameter()
             loadUclamp()
+            loadMemory()
 
             for (r in refreshRequests) {
                 isRefreshing = true
@@ -76,6 +83,7 @@ class KernelParameterViewModel : ViewModel() {
         refreshRequests.trySend(Unit)
         loadKernelParameter()
         loadUclamp()
+        loadMemory()
     }
 
     fun loadKernelParameter() {
@@ -85,13 +93,6 @@ class KernelParameterViewModel : ViewModel() {
                 hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTOGROUP),
                 printk = Utils.readFile(KernelUtils.PRINTK),
                 hasPrintk = Utils.testFile(KernelUtils.PRINTK),
-                zramSize = KernelUtils.getZramSize(),
-                hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
-                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
-                hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM),
-                availableZramCompAlgorithms = KernelUtils.getAvailableZramCompAlgorithms(),
-                swappiness = Utils.readFile(KernelUtils.SWAPPINESS),
-                hasSwappiness = Utils.testFile(KernelUtils.SWAPPINESS),
                 tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
                 hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
                 availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm(),
@@ -111,6 +112,21 @@ class KernelParameterViewModel : ViewModel() {
             )
         }
     }
+
+    fun loadMemory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _memory.value = Memory(
+                zramSize = KernelUtils.getZramSize(),
+                hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
+                hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM),
+                availableZramCompAlgorithms = KernelUtils.getAvailableZramCompAlgorithms(),
+                swappiness = Utils.readFile(KernelUtils.SWAPPINESS),
+                hasSwappiness = Utils.testFile(KernelUtils.SWAPPINESS),
+            )
+        }
+    }
+
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = if (isChecked) "1" else "0"
@@ -124,7 +140,7 @@ class KernelParameterViewModel : ViewModel() {
     fun updateSwappiness(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(KernelUtils.SWAPPINESS, value)
-            _kernelParameters.value = _kernelParameters.value.copy(
+            _memory.value = _memory.value.copy(
                 swappiness = value,
             )
         }
@@ -159,7 +175,7 @@ class KernelParameterViewModel : ViewModel() {
             Utils.writeFile(KernelUtils.ZRAM_SIZE, sizeInBytes)
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
-            _kernelParameters.value = _kernelParameters.value.copy(
+            _memory.value = _memory.value.copy(
                 zramSize = KernelUtils.getZramSize(),
             )
         }
@@ -174,7 +190,7 @@ class KernelParameterViewModel : ViewModel() {
             Utils.writeFile(KernelUtils.ZRAM_SIZE, currentSize)
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
-            _kernelParameters.value = _kernelParameters.value.copy(
+            _memory.value = _memory.value.copy(
                 zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
             )
         }
