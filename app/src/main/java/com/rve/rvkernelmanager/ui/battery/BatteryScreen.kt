@@ -9,6 +9,7 @@ package com.rve.rvkernelmanager.ui.battery
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +28,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -117,7 +119,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
             }
             if (hasThermalSconfig) {
                 item {
-                    ThermalProfilesCard(viewModel = viewModel)
+                    ThermalProfilesCard(viewModel)
                 }
             }
             if (chargingState.hasFastCharging) {
@@ -137,7 +139,10 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
     val batteryInfo by viewModel.batteryInfo.collectAsState()
     val uptime by viewModel.uptime.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "Battery Monitor",
             titleLarge = true,
@@ -181,7 +186,10 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "Battery Information",
             titleLarge = true,
@@ -208,8 +216,10 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         ) {
             Card(
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 8.dp,
+                    defaultElevation = 16.dp,
                 ),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 CustomListItem(
                     title = "Design capacity",
@@ -234,7 +244,10 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         ButtonListItem(
             title = "Thermal profiles",
             summary = "Adjust thermal profiles for optimum performance",
@@ -332,7 +345,10 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 fun ChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsState()
 
-    Card {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
         CustomListItem(
             title = "Charging",
             titleLarge = true,
