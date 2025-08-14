@@ -27,6 +27,8 @@ object KernelUtils {
     const val TCP_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_congestion_control"
     const val TCP_AVAILABLE_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_available_congestion_control"
 
+    const val WireGuard = "/sys/module/wireguard/version"
+
     fun getKernelVersion(): String {
         return Os.uname().release
     }
@@ -100,5 +102,9 @@ object KernelUtils {
 
     fun setTcpCongestionAlgorithm(algorithm: String) {
         Utils.writeFile(TCP_CONGESTION_ALGORITHM, algorithm)
+    }
+
+    fun getWireGuardVersion(): String {
+        return Utils.readFile(WireGuard)
     }
 }

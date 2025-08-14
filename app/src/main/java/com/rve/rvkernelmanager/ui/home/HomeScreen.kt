@@ -7,6 +7,7 @@
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -161,6 +163,15 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             icon = Icons.Filled.Android,
             onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
         )
+
+        AnimatedVisibility(visible = deviceInfo.hasWireGuard) {
+            CustomListItem(
+                title = "WireGuard VPN version",
+                summary = deviceInfo.wireGuard,
+                icon = Icons.Filled.Shield,
+                onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.wireGuard)) },
+            )
+        }
 
         CustomListItem(
             title = "Kernel version",

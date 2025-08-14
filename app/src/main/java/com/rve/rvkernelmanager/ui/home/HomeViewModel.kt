@@ -28,6 +28,8 @@ class HomeViewModel : ViewModel() {
         val gpuModel: String = "N/A",
         val androidVersion: String = "N/A",
         val sdkVersion: String = "N/A",
+        val hasWireGuard: Boolean = false,
+        val wireGuard: String = "N/A",
         val kernelVersion: String = "N/A",
         val fullKernelVersion: String = "N/A",
     )
@@ -48,6 +50,8 @@ class HomeViewModel : ViewModel() {
                 sdkVersion = Utils.getSdkVersion(),
                 cpu = SoCUtils.getCPUInfo(),
                 extendCpu = SoCUtils.getExtendCPUInfo(),
+                hasWireGuard = Utils.testFile(KernelUtils.WireGuard),
+                wireGuard = KernelUtils.getWireGuardVersion(),
                 kernelVersion = KernelUtils.getKernelVersion(),
                 fullKernelVersion = KernelUtils.getFullKernelVersion(),
             )
