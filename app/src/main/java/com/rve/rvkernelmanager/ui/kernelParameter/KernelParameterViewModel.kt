@@ -52,6 +52,8 @@ class KernelParameterViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            loadKernelParameter()
+
             for (r in refreshRequests) {
                 isRefreshing = true
                 try {
