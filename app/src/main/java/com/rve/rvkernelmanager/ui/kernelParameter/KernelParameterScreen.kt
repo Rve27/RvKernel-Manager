@@ -76,6 +76,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val kernelParameters by viewModel.kernelParameters.collectAsState()
+    val uclamp by viewModel.uclamp.collectAsState()
 
     val pullToRefreshState = remember {
         object : PullToRefreshState {
@@ -144,7 +145,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                         KernelParameterCard(viewModel)
                     }
                 }
-                if (kernelParameters.hasUclampMax || kernelParameters.hasUclampMin || kernelParameters.hasUclampMinRt) {
+                if (uclamp.hasUclampMax || uclamp.hasUclampMin || uclamp.hasUclampMinRt) {
                     item {
                         UclampCard(viewModel)
                     }
@@ -286,10 +287,10 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 
 @Composable
 fun UclampCard(viewModel: KernelParameterViewModel) {
-    val kernelParameters by viewModel.kernelParameters.collectAsState()
-    var uclampMax by remember { mutableStateOf(kernelParameters.uclampMax) }
-    var uclampMin by remember { mutableStateOf(kernelParameters.uclampMin) }
-    var uclampMinRt by remember { mutableStateOf(kernelParameters.uclampMinRt) }
+    val uclamp by viewModel.uclamp.collectAsState()
+    var uclampMax by remember { mutableStateOf(uclamp.uclampMax) }
+    var uclampMin by remember { mutableStateOf(uclamp.uclampMin) }
+    var uclampMinRt by remember { mutableStateOf(uclamp.uclampMinRt) }
 
     // UMX = Uclamp Max
     val openUMX = rememberDialogState(initiallyVisible = false)
@@ -308,29 +309,29 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         )
         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-        if (kernelParameters.hasUclampMax) {
+        if (uclamp.hasUclampMax) {
             ButtonListItem(
                 title = "Uclamp max",
                 summary = "Upper performance limit for CPU tasks.",
-                value = kernelParameters.uclampMax,
+                value = uclamp.uclampMax,
                 onClick = { openUMX.visible = true },
             )
         }
 
-        if (kernelParameters.hasUclampMin) {
+        if (uclamp.hasUclampMin) {
             ButtonListItem(
                 title = "Uclamp min",
                 summary = "Lower performance limit to keep CPU tasks above this level.",
-                value = kernelParameters.uclampMin,
+                value = uclamp.uclampMin,
                 onClick = { openUMN.visible = true },
             )
         }
 
-        if (kernelParameters.hasUclampMinRt) {
+        if (uclamp.hasUclampMinRt) {
             ButtonListItem(
                 title = "Uclamp min RT default",
                 summary = "Default lower performace limit for real-time (RT) tasks.",
-                value = kernelParameters.uclampMinRt,
+                value = uclamp.uclampMinRt,
                 onClick = { openUMRT.visible = true },
             )
         }

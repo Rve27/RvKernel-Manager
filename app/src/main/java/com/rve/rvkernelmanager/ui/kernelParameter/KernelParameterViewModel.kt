@@ -27,12 +27,6 @@ class KernelParameterViewModel : ViewModel() {
         val hasSwappiness: Boolean = false,
         val printk: String = "N/A",
         val hasPrintk: Boolean = false,
-        val hasUclampMax: Boolean = false,
-        val uclampMax: String = "N/A",
-        val hasUclampMin: Boolean = false,
-        val uclampMin: String = "N/A",
-        val hasUclampMinRt: Boolean = false,
-        val uclampMinRt: String = "N/A",
         val zramSize: String = "N/A",
         val hasZramSize: Boolean = false,
         val zramCompAlgorithm: String = "N/A",
@@ -43,8 +37,20 @@ class KernelParameterViewModel : ViewModel() {
         val availableTcpCongestionAlgorithm: List<String> = emptyList(),
     )
 
+    data class Uclamp(
+        val hasUclampMax: Boolean = false,
+        val uclampMax: String = "N/A",
+        val hasUclampMin: Boolean = false,
+        val uclampMin: String = "N/A",
+        val hasUclampMinRt: Boolean = false,
+        val uclampMinRt: String = "N/A",
+    )
+
     private val _kernelParameters = MutableStateFlow(KernelParameters())
     val kernelParameters: StateFlow<KernelParameters> = _kernelParameters
+
+    private val _uclamp = MutableStateFlow(Uclamp())
+    val uclamp: StateFlow<Uclamp> = _uclamp
 
     private val refreshRequests = Channel<Unit>(1)
     var isRefreshing by mutableStateOf(false)
@@ -53,6 +59,7 @@ class KernelParameterViewModel : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.IO) {
             loadKernelParameter()
+            loadUclamp()
 
             for (r in refreshRequests) {
                 isRefreshing = true
@@ -68,6 +75,7 @@ class KernelParameterViewModel : ViewModel() {
     fun refresh() {
         refreshRequests.trySend(Unit)
         loadKernelParameter()
+        loadUclamp()
     }
 
     fun loadKernelParameter() {
@@ -77,12 +85,6 @@ class KernelParameterViewModel : ViewModel() {
                 hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTOGROUP),
                 printk = Utils.readFile(KernelUtils.PRINTK),
                 hasPrintk = Utils.testFile(KernelUtils.PRINTK),
-                hasUclampMax = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
-                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
-                hasUclampMin = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
-                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
-                hasUclampMinRt = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
-                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
                 zramSize = KernelUtils.getZramSize(),
                 hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
                 zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
@@ -97,6 +99,18 @@ class KernelParameterViewModel : ViewModel() {
         }
     }
 
+    fun loadUclamp() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uclamp.value = Uclamp(
+                hasUclampMax = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                hasUclampMin = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                hasUclampMinRt = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
+                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
+            )
+        }
+    }
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = if (isChecked) "1" else "0"
@@ -128,11 +142,11 @@ class KernelParameterViewModel : ViewModel() {
     fun updateUclamp(target: String, path: String, value: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Utils.writeFile(path, value)
-            _kernelParameters.value = when (target) {
-                "max" -> _kernelParameters.value.copy(uclampMax = value)
-                "min" -> _kernelParameters.value.copy(uclampMin = value)
-                "min_rt" -> _kernelParameters.value.copy(uclampMinRt = value)
-                else -> _kernelParameters.value
+            _uclamp.value = when (target) {
+                "max" -> _uclamp.value.copy(uclampMax = value)
+                "min" -> _uclamp.value.copy(uclampMin = value)
+                "min_rt" -> _uclamp.value.copy(uclampMinRt = value)
+                else -> _uclamp.value
             }
         }
     }
