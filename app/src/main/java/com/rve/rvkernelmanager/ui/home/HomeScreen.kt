@@ -212,13 +212,19 @@ fun DonateCard() {
         ) {
             CustomListItem(
                 icon = painterResource(R.drawable.ic_kofi),
+                iconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 title = "Buy Me a Coffee",
+                titleColor = MaterialTheme.colorScheme.onPrimaryContainer,
             )
 
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
 
             CustomListItem(
                 summary = summary,
+                summaryColor = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
     }
