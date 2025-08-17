@@ -6,11 +6,13 @@
 
 package com.rve.rvkernelmanager.ui.kernelParameter
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,20 +21,30 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -40,6 +52,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -224,7 +237,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = printk,
                 onValueChange = { printk = it },
-                label = { Text(KernelUtils.PRINTK.substringAfterLast("/")) },
+                label = { Text("printk") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -352,7 +365,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                        viewModel.updateUclamp("max", KernelUtils.SchedUtilClampMax, value = uclampMax)
                         openUMX.visible = false
                     },
                 ),
@@ -361,7 +374,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                    viewModel.updateUclamp("max", KernelUtils.SchedUtilClampMax, value = uclampMax)
                     openUMX.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -393,7 +406,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                        viewModel.updateUclamp("min", KernelUtils.SchedUtilClampMin, value = uclampMin)
                         openUMX.visible = false
                     },
                 ),
@@ -402,7 +415,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                    viewModel.updateUclamp("min", KernelUtils.SchedUtilClampMin, value = uclampMin)
                     openUMN.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -434,7 +447,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                        viewModel.updateUclamp("min_rt", KernelUtils.SchedUtilClampMinRtDefault, value = uclampMinRt)
                         openUMRT.visible = false
                     },
                 ),
@@ -443,7 +456,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                    viewModel.updateUclamp("min_rt", KernelUtils.SchedUtilClampMinRtDefault, value = uclampMinRt)
                     openUMRT.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -464,9 +477,12 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 
 @Composable
 fun MemoryCard(viewModel: KernelParameterViewModel) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
     val memory by viewModel.memory.collectAsState()
     val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
     var swappiness by remember { mutableStateOf(memory.swappiness) }
+    var dirtyRatio by remember { mutableStateOf(memory.dirtyRatio) }
 
     // ZD = ZRAM Dialog
     val openZD = rememberDialogState(initiallyVisible = false)
@@ -474,6 +490,8 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     val openZCD = rememberDialogState(initiallyVisible = false)
     // SD = Swappiness Dialog
     val openSD = rememberDialogState(initiallyVisible = false)
+    // DR = Dirty Ratio
+    val openDR = rememberDialogState(initiallyVisible = false)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -517,6 +535,36 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 value = "${memory.swappiness}%",
                 onClick = { openSD.visible = true },
             )
+        }
+
+        AnimatedVisibility(expanded) {
+            ButtonListItem(
+                title = "dirty ratio",
+                value = memory.dirtyRatio,
+                onClick = { openDR.visible = true },
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            TooltipBox(
+                positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Above,
+                ),
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("More VM parameters") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(
+                        if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        contentDescription = "More VM parameters",
+                    )
+                }
+            }
         }
     }
 
@@ -607,6 +655,47 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         dismissButton = {
             TextButton(
                 onClick = { openSD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openDR,
+        text = {
+            OutlinedTextField(
+                value = dirtyRatio,
+                onValueChange = { dirtyRatio = it },
+                label = { Text("dirty ratio") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateDirtyRatio(dirtyRatio)
+                        openDR.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateDirtyRatio(dirtyRatio)
+                    openDR.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openDR.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
                 Text("Cancel")
