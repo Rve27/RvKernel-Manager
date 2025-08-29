@@ -7,8 +7,8 @@ package com.rve.rvkernelmanager.ui.navigation
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,9 +27,9 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationRoute.KernelParameter,
     )
 
-    NavigationBar {
+    ShortNavigationBar {
         items.forEach { item ->
-            NavigationBarItem(
+            ShortNavigationBarItem(
                 icon = {
                     Icon(
                         if (currentDestination?.route == item.route) item.selectedIcon else item.unselectedIcon,
@@ -47,7 +47,6 @@ fun BottomNavigationBar(navController: NavController) {
                         restoreState = true
                     }
                 },
-                alwaysShowLabel = false,
             )
         }
     }
