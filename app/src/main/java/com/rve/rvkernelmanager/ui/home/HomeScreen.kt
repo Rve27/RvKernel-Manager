@@ -8,17 +8,21 @@ package com.rve.rvkernelmanager.ui.home
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,6 +45,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -84,97 +90,64 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            state = rememberLazyListState(),
-        ) {
-            item {
-                Spacer(Modifier.height(16.dp))
-                DeviceInfoCard(viewModel)
-            }
-            item {
-                DonateCard()
-            }
-            item {
-                Spacer(Modifier)
-            }
-        }
-    }
-}
+        val clipboardManager = LocalClipboardManager.current
 
-@Composable
-fun DeviceInfoCard(viewModel: HomeViewModel) {
-    val clipboardManager = LocalClipboardManager.current
+        var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
-    val deviceInfo by viewModel.deviceInfo.collectAsState()
+        val deviceInfo by viewModel.deviceInfo.collectAsState()
 
-    var isExtendCpuInfo by rememberSaveable { mutableStateOf(false) }
-    var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
-    ) {
-        CustomListItem(
-            title = "Device Information",
-            titleLarge = true,
+        val deviceInfoList = listOf(
+            DeviceInfoItem(
+                title = "Device",
+                summary = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
+                icon = painterResource(R.drawable.ic_smartphone),
+                onClick = { /* do nothing */ },
+                onLongClick = {
+                    clipboardManager.setText(
+                        AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})"),
+                    )
+                },
+            ),
+            DeviceInfoItem(
+                title = "Android",
+                summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
+                icon = painterResource(R.drawable.ic_android),
+                onClick = { /* do nothing */ },
+                onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
+            ),
+            DeviceInfoItem(
+                title = "CPU",
+                summary = deviceInfo.cpu,
+                icon = painterResource(R.drawable.ic_cpu),
+                onClick = { /* do nothing */ },
+                onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.cpu)) },
+            ),
+            DeviceInfoItem(
+                title = "GPU",
+                summary = deviceInfo.gpuModel,
+                icon = painterResource(R.drawable.ic_video_card),
+                onClick = { /* do nothing */ },
+                onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) },
+            ),
+            DeviceInfoItem(
+                title = "RAM",
+                summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
+                icon = painterResource(R.drawable.ic_ram),
+                onClick = { /* do nothing */ },
+                onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) },
+            ),
         )
 
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-        CustomListItem(
-            title = "Device",
-            summary = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-            icon = Icons.Filled.Smartphone,
-            onLongClick = {
-                clipboardManager.setText(
-                    AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})"),
-                )
-            },
+        val wireGuardInfo = DeviceInfoItem(
+            title = "WireGuard",
+            summary = deviceInfo.wireGuard,
+            icon = painterResource(R.drawable.ic_shield),
+            onClick = { /* do nothing */ },
+            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.wireGuard)) },
         )
 
-        CustomListItem(
-            title = "RAM",
-            summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-            icon = painterResource(R.drawable.ic_ram),
-            onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) },
-        )
-
-        CustomListItem(
-            title = "CPU",
-            summary = if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu,
-            icon = painterResource(R.drawable.ic_cpu),
-            onClick = { isExtendCpuInfo = !isExtendCpuInfo },
-            onLongClick = { clipboardManager.setText(AnnotatedString(if (isExtendCpuInfo) deviceInfo.extendCpu else deviceInfo.cpu)) },
-            animateContentSize = true,
-        )
-
-        CustomListItem(
-            title = "GPU",
-            summary = deviceInfo.gpuModel,
-            icon = painterResource(R.drawable.ic_video_card),
-            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) },
-        )
-
-        CustomListItem(
-            title = "Android version",
-            summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-            icon = Icons.Filled.Android,
-            onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
-        )
-
-        AnimatedVisibility(visible = deviceInfo.hasWireGuard) {
-            CustomListItem(
-                title = "WireGuard VPN version",
-                summary = deviceInfo.wireGuard,
-                icon = Icons.Filled.Shield,
-                onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.wireGuard)) },
-            )
-        }
-
-        CustomListItem(
-            title = "Kernel version",
+        val kernelInfo = DeviceInfoItem(
+            title = "Kernel",
             summary = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
             icon = painterResource(R.drawable.ic_linux),
             onClick = { isFullKernelVersion = !isFullKernelVersion },
@@ -185,6 +158,98 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
             },
             animateContentSize = true,
         )
+
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalItemSpacing = 16.dp,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                DeviceInfoTitle()
+            }
+
+            items(deviceInfoList) { item ->
+                DeviceInfoItemCard(item = item)
+            }
+
+            item {
+                AnimatedVisibility(
+                    visible = deviceInfo.hasWireGuard,
+                    enter = fadeIn() + slideInVertically { it / 2 },
+                    exit = fadeOut() + slideOutVertically { it / 2 },
+                ) {
+                    DeviceInfoItemCard(item = wireGuardInfo)
+                }
+            }
+
+            item(span = StaggeredGridItemSpan.FullLine) {
+                DeviceInfoItemCard(item = kernelInfo)
+            }
+
+            item(span = StaggeredGridItemSpan.FullLine) {
+                DonateCard()
+            }
+        }
+    }
+}
+
+@Composable
+fun DeviceInfoTitle() {
+    Card(
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+        ),
+        border = BorderStroke(
+            width = 1.0.dp,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+        ),
+    ) {
+        CustomListItem(
+            title = "Device Information",
+            titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            titleLarge = true,
+        )
+    }
+}
+
+data class DeviceInfoItem(
+    val title: String,
+    val summary: String,
+    val icon: Painter,
+    val onClick: () -> Unit,
+    val onLongClick: () -> Unit,
+    val animateContentSize: Boolean = false,
+)
+
+@Composable
+fun DeviceInfoItemCard(item: DeviceInfoItem) {
+    Card(
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+        ),
+        border = BorderStroke(
+            width = 1.0.dp,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+        ),
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.extraLarge)
+            .combinedClickable(
+                onClick = item.onClick,
+                onLongClick = item.onLongClick,
+            ),
+    ) {
+        CustomListItem(
+            icon = item.icon,
+            iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            title = item.title,
+            titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            summary = item.summary,
+            animateContentSize = item.animateContentSize,
+        )
     }
 }
 
@@ -192,23 +257,32 @@ fun DeviceInfoCard(viewModel: HomeViewModel) {
 fun DonateCard() {
     val context = LocalContext.current
 
+    val tooltipState = rememberTooltipState()
+    val positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+        TooltipAnchorPosition.Above,
+    )
+
     val summary =
         "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
     val kofiLink = "https://ko-fi.com/rve27"
 
     TooltipBox(
-        positionProvider =
-        TooltipDefaults.rememberTooltipPositionProvider(
-            TooltipAnchorPosition.Above,
-        ),
+        positionProvider = positionProvider,
         tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(kofiLink) } },
-        state = rememberTooltipState(),
+        state = tooltipState,
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-            onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, kofiLink.toUri())) },
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+            ),
+            onClick = {
+                context.startActivity(Intent(Intent.ACTION_VIEW, kofiLink.toUri()))
+            },
+            border = BorderStroke(
+                width = 1.0.dp,
+                color = MaterialTheme.colorScheme.primaryContainer,
+            ),
         ) {
             CustomListItem(
                 icon = painterResource(R.drawable.ic_kofi),
