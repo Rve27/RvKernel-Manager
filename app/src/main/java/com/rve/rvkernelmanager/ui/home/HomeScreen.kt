@@ -12,8 +12,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -200,16 +198,12 @@ fun DeviceInfoTitle() {
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
-        ),
-        border = BorderStroke(
-            width = 1.0.dp,
-            color = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         ),
     ) {
         CustomListItem(
             title = "Device Information",
-            titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
             titleLarge = true,
         )
     }
@@ -229,11 +223,7 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
-        ),
-        border = BorderStroke(
-            width = 1.0.dp,
-            color = MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         ),
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraLarge)
@@ -244,9 +234,9 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
     ) {
         CustomListItem(
             icon = item.icon,
-            iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            iconColor = MaterialTheme.colorScheme.onTertiaryContainer,
             title = item.title,
-            titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
             summary = item.summary,
             animateContentSize = item.animateContentSize,
         )
@@ -274,15 +264,11 @@ fun DonateCard() {
         Card(
             shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
             onClick = {
                 context.startActivity(Intent(Intent.ACTION_VIEW, kofiLink.toUri()))
             },
-            border = BorderStroke(
-                width = 1.0.dp,
-                color = MaterialTheme.colorScheme.primaryContainer,
-            ),
         ) {
             CustomListItem(
                 icon = painterResource(R.drawable.ic_kofi),
