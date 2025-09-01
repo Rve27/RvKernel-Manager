@@ -272,7 +272,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
             text = {
                 Column {
                     DialogTextButton(
-                        icon = painterResource(R.drawable.ic_mode_cool),
+                        icon = painterResource(R.drawable.ic_cool),
                         text = "Default",
                         onClick = {
                             viewModel.updateThermalSconfig("0")

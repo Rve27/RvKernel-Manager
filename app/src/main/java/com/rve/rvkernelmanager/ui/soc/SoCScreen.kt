@@ -7,30 +7,41 @@
 package com.rve.rvkernelmanager.ui.soc
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Dvr
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,6 +54,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -57,14 +69,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.ButtonListItem
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
-import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.components.SwitchListItem
-import com.rve.rvkernelmanager.ui.components.TitleExpandable
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
 @Composable
@@ -105,158 +113,270 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(innerPadding),
             state = rememberLazyListState(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                Spacer(Modifier.height(16.dp))
-                SoCMonitorCard(viewModel)
+                CPUMonitorCard(viewModel)
             }
             item {
-                LittleClusterCard(viewModel = viewModel)
+                GPUMonitorCard(viewModel)
+            }
+            item {
+                CPULittleClusterCard(viewModel)
             }
             if (hasBigCluster) {
                 item {
-                    BigClusterCard(viewModel = viewModel)
+                    BigClusterCard(viewModel)
                 }
             }
             if (hasPrimeCluster) {
                 item {
-                    PrimeClusterCard(viewModel = viewModel)
+                    PrimeClusterCard(viewModel)
                 }
             }
             if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
                 item {
-                    CPUBoostCard(viewModel = viewModel)
+                    CPUBoostCard(viewModel)
                 }
             }
             item {
-                GPUCard(viewModel = viewModel)
-            }
-            item {
-                Spacer(Modifier)
+                GPUCard(viewModel)
             }
         }
     }
 }
 
 @Composable
-fun SoCMonitorCard(viewModel: SoCViewModel) {
-    val cpu0State by viewModel.cpu0State.collectAsState()
+fun CPUMonitorCard(viewModel: SoCViewModel) {
     val cpuUsage by viewModel.cpuUsage.collectAsState()
+    val cpuUsageProgress = remember(cpuUsage) {
+        if (cpuUsage == "N/A") {
+            0f
+        } else {
+            cpuUsage.replace("%", "").toFloatOrNull()?.div(100f) ?: 0f
+        }
+    }
+    val animatedCpuUsageProgress by animateFloatAsState(
+        targetValue = cpuUsageProgress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+    )
+
     val cpuTemp by viewModel.cpuTemp.collectAsState()
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val cpuTempValue = cpuTemp.toIntOrNull() ?: 0
+    val isCpuTempHigh = cpuTempValue > 60
+
+    val cpu0State by viewModel.cpu0State.collectAsState()
     val bigClusterState by viewModel.bigClusterState.collectAsState()
-    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
     val primeClusterState by viewModel.primeClusterState.collectAsState()
-    val gpuState by viewModel.gpuState.collectAsState()
-    val gpuTemp by viewModel.gpuTemp.collectAsState()
-    val gpuUsage by viewModel.gpuUsage.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
+
+    OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        CustomListItem(
-            title = "SoC Monitor",
-            titleLarge = true,
-            icon = Icons.AutoMirrored.Default.Dvr,
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
         Column(
             modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp,
-                ),
-                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
             ) {
-                CustomListItem(
-                    title = "CPU",
-                    titleLarge = true,
-                    icon = painterResource(R.drawable.ic_cpu),
-                )
-
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                Column(
-                    modifier = Modifier.padding(16.dp),
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    MonitorListItem(
-                        title = "Usage",
-                        summary = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
+                    Icon(
+                        painter = painterResource(R.drawable.ic_dvr),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
                     )
-
-                    Spacer(Modifier.height(8.dp))
-                    MonitorListItem(
-                        title = "Temperature",
-                        summary = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                    Text(
+                        text = "CPU Monitor",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
+                }
+            }
 
-                    Spacer(Modifier.height(8.dp))
-                    MonitorListItem(
-                        title = if (hasBigCluster) "Little cluster" else "Current freq",
-                        summary = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
-                    )
-
-                    if (hasBigCluster) {
-                        Spacer(Modifier.height(8.dp))
-                        MonitorListItem(
-                            title = "Big cluster",
-                            summary = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
-                        )
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_usage),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                                Column {
+                                    Text(
+                                        text = "Usage",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    )
+                                    Text(
+                                        text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        modifier = Modifier.padding(bottom = 8.dp),
+                                    )
+                                }
+                            }
+                            LinearWavyProgressIndicator(
+                                progress = { animatedCpuUsageProgress },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                trackColor = MaterialTheme.colorScheme.background,
+                            )
+                        }
                     }
+                }
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Crossfade(
+                                targetState = isCpuTempHigh,
+                                animationSpec = tween(durationMillis = 500),
+                            ) { isHigh ->
+                                if (isHigh) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_heat),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_cool),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                            Text(
+                                text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+            }
 
-                    if (hasPrimeCluster) {
-                        Spacer(Modifier.height(8.dp))
-                        MonitorListItem(
-                            title = "Prime cluster",
-                            summary = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
+            Card(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_speed),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    if (!hasBigCluster) {
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Current frequencies",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                            Text(
+                                text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = "Current frequencies",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
                         )
                     }
                 }
             }
-            Spacer(Modifier.height(16.dp))
 
-            Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp,
-                ),
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.extraLarge,
-            ) {
-                CustomListItem(
-                    title = "GPU",
-                    titleLarge = true,
-                    icon = painterResource(R.drawable.ic_video_card),
-                )
-
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                ) {
-                    MonitorListItem(
-                        title = "Usage",
-                        summary = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-                    MonitorListItem(
-                        title = "Temperature",
-                        summary = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
-                    )
-
-                    Spacer(Modifier.height(8.dp))
-                    MonitorListItem(
-                        title = "Current freq",
-                        summary = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
-                    )
+            if (hasBigCluster) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            ),
+                        ) {
+                            CustomListItem(
+                                title = "Little cluster",
+                                titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                summary = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                                summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            ),
+                        ) {
+                            CustomListItem(
+                                title = "Big cluster",
+                                titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                summary = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
+                                summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+                if (hasPrimeCluster) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                    ) {
+                        CustomListItem(
+                            title = "Prime cluster",
+                            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            summary = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
+                            summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
                 }
             }
         }
@@ -264,8 +384,179 @@ fun SoCMonitorCard(viewModel: SoCViewModel) {
 }
 
 @Composable
-fun LittleClusterCard(viewModel: SoCViewModel) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+fun GPUMonitorCard(viewModel: SoCViewModel) {
+    val gpuUsage by viewModel.gpuUsage.collectAsState()
+    val gpuUsageProgress = remember(gpuUsage) {
+        if (gpuUsage == "N/A") {
+            0f
+        } else {
+            gpuUsage.replace("%", "").toFloatOrNull()?.div(100f) ?: 0f
+        }
+    }
+    val animatedGpuUsageProgress by animateFloatAsState(
+        targetValue = gpuUsageProgress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+    )
+
+    val gpuTemp by viewModel.gpuTemp.collectAsState()
+    val gpuTempValue = gpuTemp.toIntOrNull() ?: 0
+    val isGpuTempHigh = gpuTempValue > 60
+
+    val gpuState by viewModel.gpuState.collectAsState()
+
+    OutlinedCard(
+        shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Card(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_dvr),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "GPU Monitor",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                }
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_usage),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                                Column {
+                                    Text(
+                                        text = "Usage",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    )
+                                    Text(
+                                        text = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        modifier = Modifier.padding(bottom = 8.dp),
+                                    )
+                                }
+                            }
+                            LinearWavyProgressIndicator(
+                                progress = { animatedGpuUsageProgress },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                trackColor = MaterialTheme.colorScheme.background,
+                            )
+                        }
+                    }
+                }
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Crossfade(
+                                targetState = isGpuTempHigh,
+                                animationSpec = tween(durationMillis = 500),
+                            ) { isHigh ->
+                                if (isHigh) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_heat),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_cool),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                            Text(
+                                text = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+            }
+
+            Card(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_speed),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "Current frequencies",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Text(
+                            text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CPULittleClusterCard(viewModel: SoCViewModel) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // AMXF = Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -275,153 +566,258 @@ fun LittleClusterCard(viewModel: SoCViewModel) {
     val openACG = rememberDialogState(initiallyVisible = false)
 
     val cpu0State by viewModel.cpu0State.collectAsState()
+    val minFreq = cpu0State.minFreq
+    val maxFreq = cpu0State.maxFreq
     val hasBigCluster by viewModel.hasBigCluster.collectAsState()
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        TitleExpandable(
-            leadingIcon = painterResource(R.drawable.ic_cpu),
-            text = if (hasBigCluster) "Little Cluster" else "CPU",
-            titleLarge = true,
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-            onClick = { isExpanded = !isExpanded },
-        )
-
-        AnimatedVisibility(isExpanded) {
-            Column {
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                ButtonListItem(
-                    title = "Minimum frequency",
-                    summary = if (hasBigCluster)
-                        "The lowest speed the Little Cluster can run at"
-                    else
-                        "The lowest speed the CPU can run at",
-                    value = cpu0State.minFreq,
-                    isFreq = true,
-                    onClick = { openAMNF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Maximum frequency",
-                    summary = if (hasBigCluster)
-                        "The highest speed the Little Cluster can run at"
-                    else
-                        "The highest speed the CPU can run at",
-                    value = cpu0State.maxFreq,
-                    isFreq = true,
-                    onClick = { openAMXF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Governor",
-                    summary = if (hasBigCluster)
-                        "Controls how the Little Cluster scales between min and max frequencies"
-                    else
-                        "Controls how the CPU scales between min and max frequencies",
-                    value = cpu0State.gov,
-                    onClick = { openACG.visible = true },
-                )
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_cpu),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = if (hasBigCluster) "Little Cluster" else "CPU",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Crossfade(
+                targetState = expanded,
+                animationSpec = tween(durationMillis = 300),
+            ) { isExpanded ->
+                if (isExpanded) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                }
             }
         }
 
-        DialogUnstyled(
-            state = openAMNF,
-            title = "Available frequencies",
-            text = {
-                if (cpu0State.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("min", freq, "little")
-                                    openAMNF.visible = false
-                                },
-                            )
+        AnimatedVisibility(expanded) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMNF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Min freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$minFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMNF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openAMXF,
-            title = "Available frequencies",
-            text = {
-                if (cpu0State.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("max", freq, "little")
-                                    openAMXF.visible = false
-                                },
-                            )
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMXF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Max freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$maxFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMXF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openACG,
-            title = "Available governor",
-            text = {
-                if (cpu0State.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableGov) { gov ->
-                            DialogTextButton(
-                                text = gov,
-                                onClick = {
-                                    viewModel.updateGov(gov, "little")
-                                    openACG.visible = false
-                                },
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    onClick = { openACG.visible = true },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Governor",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = cpu0State.gov,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     }
-                } else {
-                    Text("No available governor found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openACG.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
+            }
+        }
     }
+
+    DialogUnstyled(
+        state = openAMNF,
+        title = "Available frequencies",
+        text = {
+            if (cpu0State.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(cpu0State.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("min", freq, "little")
+                                openAMNF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMNF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openAMXF,
+        title = "Available frequencies",
+        text = {
+            if (cpu0State.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(cpu0State.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("max", freq, "little")
+                                openAMXF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMXF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openACG,
+        title = "Available governor",
+        text = {
+            if (cpu0State.availableGov.isNotEmpty()) {
+                LazyColumn {
+                    items(cpu0State.availableGov) { gov ->
+                        DialogTextButton(
+                            text = gov,
+                            onClick = {
+                                viewModel.updateGov(gov, "little")
+                                openACG.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available governor found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openACG.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
 }
 
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -431,143 +827,257 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     val openACG = rememberDialogState(initiallyVisible = false)
 
     val bigClusterState by viewModel.bigClusterState.collectAsState()
+    val minFreq = bigClusterState.minFreq
+    val maxFreq = bigClusterState.maxFreq
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        TitleExpandable(
-            leadingIcon = painterResource(R.drawable.ic_cpu),
-            text = "Big Cluster",
-            titleLarge = true,
-            onClick = { isExpanded = !isExpanded },
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-        )
-
-        AnimatedVisibility(isExpanded) {
-            Column {
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                ButtonListItem(
-                    title = "Minimum frequency",
-                    summary = "The lowest speed the Big Cluster can run at",
-                    value = bigClusterState.minFreq,
-                    isFreq = true,
-                    onClick = { openAMNF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Maximum frequency",
-                    summary = "The highest speed the Big Cluster can run at",
-                    value = bigClusterState.maxFreq,
-                    isFreq = true,
-                    onClick = { openAMXF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Governor",
-                    summary = "Controls how the Big Cluster scales between min and max frequencies",
-                    value = bigClusterState.gov,
-                    onClick = { openACG.visible = true },
-                )
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_cpu),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "Big Cluster",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Crossfade(
+                targetState = expanded,
+                animationSpec = tween(durationMillis = 250),
+            ) { isExpanded ->
+                if (isExpanded) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                }
             }
         }
 
-        DialogUnstyled(
-            state = openAMNF,
-            title = "Available frequencies",
-            text = {
-                if (bigClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("min", freq, "big")
-                                    openAMNF.visible = false
-                                },
-                            )
+        AnimatedVisibility(expanded) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMNF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Min freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$minFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMNF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openAMXF,
-            title = "Available frequencies",
-            text = {
-                if (bigClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("max", freq, "big")
-                                    openAMXF.visible = false
-                                },
-                            )
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMXF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Max freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$maxFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMXF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openACG,
-            title = "Available governor",
-            text = {
-                if (bigClusterState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableGov) { gov ->
-                            DialogTextButton(
-                                text = gov,
-                                onClick = {
-                                    viewModel.updateGov(gov, "big")
-                                    openACG.visible = false
-                                },
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    onClick = { openACG.visible = true },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Governor",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = bigClusterState.gov,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     }
-                } else {
-                    Text("No available governor found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openACG.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
+            }
+        }
     }
+
+    DialogUnstyled(
+        state = openAMNF,
+        title = "Available frequencies",
+        text = {
+            if (bigClusterState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(bigClusterState.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("min", freq, "big")
+                                openAMNF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMNF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openAMXF,
+        title = "Available frequencies",
+        text = {
+            if (bigClusterState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(bigClusterState.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("max", freq, "big")
+                                openAMXF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMXF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openACG,
+        title = "Available governor",
+        text = {
+            if (bigClusterState.availableGov.isNotEmpty()) {
+                LazyColumn {
+                    items(bigClusterState.availableGov) { gov ->
+                        DialogTextButton(
+                            text = gov,
+                            onClick = {
+                                viewModel.updateGov(gov, "big")
+                                openACG.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available governor found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openACG.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
 }
 
 @Composable
 fun PrimeClusterCard(viewModel: SoCViewModel) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -577,143 +1087,257 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     val openACG = rememberDialogState(initiallyVisible = false)
 
     val primeClusterState by viewModel.primeClusterState.collectAsState()
+    val minFreq = primeClusterState.minFreq
+    val maxFreq = primeClusterState.maxFreq
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        TitleExpandable(
-            leadingIcon = painterResource(R.drawable.ic_cpu),
-            text = "Prime Cluster",
-            titleLarge = true,
-            onClick = { isExpanded = !isExpanded },
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-        )
-
-        AnimatedVisibility(isExpanded) {
-            Column {
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                ButtonListItem(
-                    title = "Minimum frequency",
-                    summary = "The lowest speed the Prime Cluster can run at",
-                    value = primeClusterState.minFreq,
-                    isFreq = true,
-                    onClick = { openAMNF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Maximum frequency",
-                    summary = "The highest speed the Prime Cluster can run at",
-                    value = primeClusterState.maxFreq,
-                    isFreq = true,
-                    onClick = { openAMXF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Governor",
-                    summary = "Controls how the Prime Cluster scales between min and max frequencies",
-                    value = primeClusterState.gov,
-                    onClick = { openACG.visible = true },
-                )
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_cpu),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "Prime Cluster",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Crossfade(
+                targetState = expanded,
+                animationSpec = tween(durationMillis = 250),
+            ) { isExpanded ->
+                if (isExpanded) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                }
             }
         }
 
-        DialogUnstyled(
-            state = openAMNF,
-            title = "Available frequencies",
-            text = {
-                if (primeClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("min", freq, "prime")
-                                    openAMNF.visible = false
-                                },
-                            )
+        AnimatedVisibility(expanded) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMNF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Min freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$minFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMNF.visible = true },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openAMXF,
-            title = "Available frequencies",
-            text = {
-                if (primeClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableFreq) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("max", freq, "prime")
-                                    openAMXF.visible = false
-                                },
-                            )
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMXF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Max freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$maxFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMXF.visible = true },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openACG,
-            title = "Available governor",
-            text = {
-                if (primeClusterState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableGov) { gov ->
-                            DialogTextButton(
-                                text = gov,
-                                onClick = {
-                                    viewModel.updateGov(gov, "prime")
-                                    openACG.visible = false
-                                },
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    onClick = { openACG.visible = true },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Governor",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = primeClusterState.gov,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
                     }
-                } else {
-                    Text("No available governor found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openACG.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
+            }
+        }
     }
+
+    DialogUnstyled(
+        state = openAMNF,
+        title = "Available frequencies",
+        text = {
+            if (primeClusterState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(primeClusterState.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("min", freq, "prime")
+                                openAMNF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMNF.visible = true },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openAMXF,
+        title = "Available frequencies",
+        text = {
+            if (primeClusterState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(primeClusterState.availableFreq) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("max", freq, "prime")
+                                openAMXF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMXF.visible = true },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openACG,
+        title = "Available governor",
+        text = {
+            if (primeClusterState.availableGov.isNotEmpty()) {
+                LazyColumn {
+                    items(primeClusterState.availableGov) { gov ->
+                        DialogTextButton(
+                            text = gov,
+                            onClick = {
+                                viewModel.updateGov(gov, "prime")
+                                openACG.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available governor found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openACG.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
 }
 
 @Composable
 fun CPUBoostCard(viewModel: SoCViewModel) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // CPU Input Boost Dialog
     val openCIBD = rememberDialogState(initiallyVisible = false)
@@ -727,37 +1351,132 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        TitleExpandable(
-            leadingIcon = painterResource(R.drawable.ic_cpu),
-            text = "CPU Boost",
-            titleLarge = true,
-            onClick = { isExpanded = !isExpanded },
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-        )
-
-        AnimatedVisibility(isExpanded) {
-            Column {
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                if (hasCpuInputBoostMs) {
-                    ButtonListItem(
-                        title = "Input boost ms",
-                        summary = "Time boost is held after input",
-                        value = "$cpuInputBoostMs ms",
-                        onClick = { openCIBD.visible = true },
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_rocket_launch),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "CPU Boost",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Crossfade(
+                targetState = expanded,
+                animationSpec = tween(durationMillis = 250),
+            ) { isExpanded ->
+                if (isExpanded) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
                     )
                 }
+            }
+        }
 
-                if (hasCpuSchedBoostOnInput) {
-                    SwitchListItem(
-                        title = "Sched boost on input",
-                        summary = "Boost scheduler when receiving user input",
-                        checked = cpuSchedBoostOnInputChecked,
-                        onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) },
-                    )
+        AnimatedVisibility(expanded) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                AnimatedVisibility(hasCpuInputBoostMs) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        onClick = { openCIBD.visible = true },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_timer),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Input boost ms",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = "$cpuInputBoostMs ms",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+
+                AnimatedVisibility(hasCpuSchedBoostOnInput) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                        onClick = { viewModel.updateCpuSchedBoostOnInput(!cpuSchedBoostOnInputChecked) },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_touch_app),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = null,
+                            )
+                            Text(
+                                text = "Sched boost on input",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Switch(
+                                checked = cpuSchedBoostOnInputChecked,
+                                onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) },
+                                thumbContent = {
+                                    Crossfade(
+                                        targetState = cpuSchedBoostOnInputChecked,
+                                        animationSpec = tween(durationMillis = 500),
+                                    ) { isChecked ->
+                                        if (isChecked) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_check),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -769,7 +1488,6 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
             OutlinedTextField(
                 value = cpuInputBoostMsValue,
                 onValueChange = { cpuInputBoostMsValue = it },
-                label = { Text(text = "Input boost ms") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -807,7 +1525,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
 
 @Composable
 fun GPUCard(viewModel: SoCViewModel) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -827,264 +1545,541 @@ fun GPUCard(viewModel: SoCViewModel) {
     val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
     val gpuThrottlingStatus = remember(gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
 
+    val minFreq = gpuState.minFreq
+    val maxFreq = gpuState.maxFreq
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        TitleExpandable(
-            leadingIcon = painterResource(R.drawable.ic_video_card),
-            text = "GPU",
-            titleLarge = true,
-            onClick = { isExpanded = !isExpanded },
-            trailingIcon = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-        )
-
-        AnimatedVisibility(isExpanded) {
-            Column {
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-                ButtonListItem(
-                    title = "Minimum frequency",
-                    summary = "The lowest speed the GPU can run at",
-                    value = gpuState.minFreq,
-                    isFreq = true,
-                    onClick = { openAMNF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Maximum frequency",
-                    summary = "The highest speed the GPU can run at",
-                    value = gpuState.maxFreq,
-                    isFreq = true,
-                    onClick = { openAMXF.visible = true },
-                )
-
-                ButtonListItem(
-                    title = "Governor",
-                    summary = "Controls how the CPU scales between min and max frequencies",
-                    value = gpuState.gov,
-                    onClick = { openAGG.visible = true },
-                )
-
-                if (hasDefaultPwrlevel) {
-                    AnimatedVisibility(hasDefaultPwrlevel) {
-                        ButtonListItem(
-                            title = "Default pwrlevel",
-                            summary = "The lower the level, the higher the performance. Set it to 0 for the highest performance",
-                            value = gpuState.defaultPwrlevel,
-                            onClick = { openDPD.visible = true },
-                        )
-                    }
-                }
-
-                if (hasAdrenoBoost) {
-                    AnimatedVisibility(hasAdrenoBoost) {
-                        ButtonListItem(
-                            title = "Adreno boost",
-                            summary = "Boosts GPU performance for a short period",
-                            value = remember(gpuState.adrenoBoost) {
-                                when (gpuState.adrenoBoost) {
-                                    "0" -> "Off"
-                                    "1" -> "Low"
-                                    "2" -> "Medium"
-                                    "3" -> "High"
-                                    else -> "Unknown"
-                                }
-                            },
-                            onClick = { openABD.visible = true },
-                        )
-                    }
-                }
-
-                if (hasGPUThrottling) {
-                    AnimatedVisibility(hasGPUThrottling) {
-                        SwitchListItem(
-                            title = "GPU throttling",
-                            summary = "Reduces GPU performance to prevent overheating",
-                            checked = gpuThrottlingStatus,
-                            onCheckedChange = { isChecked ->
-                                viewModel.updateGPUThrottling(isChecked)
-                            },
-                        )
-                    }
+        Row(
+            modifier = Modifier
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_video_card),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "GPU",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Crossfade(
+                targetState = expanded,
+                animationSpec = tween(durationMillis = 250),
+            ) { isExpanded ->
+                if (isExpanded) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_up),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
                 }
             }
         }
 
-        DialogUnstyled(
-            state = openAMNF,
-            title = "Available frequencies",
-            text = {
-                if (gpuState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("min", freq, "gpu")
-                                    openAMNF.visible = false
-                                },
-                            )
+        AnimatedVisibility(expanded) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMNF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Min freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$minFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMNF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openAMXF,
-            title = "Available frequencies",
-            text = {
-                if (gpuState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                            DialogTextButton(
-                                text = "$freq MHz",
-                                onClick = {
-                                    viewModel.updateFreq("max", freq, "gpu")
-                                    openAMXF.visible = false
-                                },
-                            )
+                    Box(Modifier.weight(1f)) {
+                        Card(
+                            shape = CircleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openAMXF.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_speed),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Max freq",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "$maxFreq MHz",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
                         }
                     }
-                } else {
-                    Text("No available frequencies found.")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openAMXF.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
 
-        DialogUnstyled(
-            state = openAGG,
-            title = "Available governor",
-            text = {
-                if (gpuState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableGov) { gov ->
-                            DialogTextButton(
-                                text = gov,
-                                onClick = {
-                                    viewModel.updateGov(gov, "gpu")
-                                    openAGG.visible = false
-                                },
-                            )
-                        }
-                    }
-                } else {
-                    Text("No available governor found.")
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openAGG.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
-
-        DialogUnstyled(
-            state = openDPD,
-            text = {
-                OutlinedTextField(
-                    value = defaultPwrlevel,
-                    onValueChange = { defaultPwrlevel = it },
-                    label = { Text("Default pwrlevel") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.updateDefaultPwrlevel(defaultPwrlevel)
-                            openDPD.visible = false
-                        },
-                    ),
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
+                    onClick = { openAGG.visible = true },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Governor",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = gpuState.gov,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+
+                if (hasAdrenoBoost && hasDefaultPwrlevel) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Card(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openDPD.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp).fillMaxSize(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_tune),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Default pwrlevel",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = gpuState.defaultPwrlevel,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+                        Card(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            onClick = { openABD.visible = true },
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_rocket_launch),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    contentDescription = null,
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(
+                                        text = "Adreno boost",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = remember(gpuState.adrenoBoost) {
+                                            when (gpuState.adrenoBoost) {
+                                                "0" -> "Off"
+                                                "1" -> "Low"
+                                                "2" -> "Medium"
+                                                "3" -> "High"
+                                                else -> gpuState.adrenoBoost
+                                            }
+                                        },
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } else if (hasDefaultPwrlevel) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        onClick = { openDPD.visible = true },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_tune),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Default pwrlevel",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = gpuState.defaultPwrlevel,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                } else if (hasAdrenoBoost) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        onClick = { openABD.visible = true },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_rocket_launch),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Adreno boost",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = remember(gpuState.adrenoBoost) {
+                                        when (gpuState.adrenoBoost) {
+                                            "0" -> "Off"
+                                            "1" -> "Low"
+                                            "2" -> "Medium"
+                                            "3" -> "High"
+                                            else -> gpuState.adrenoBoost
+                                        }
+                                    },
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+                AnimatedVisibility(hasGPUThrottling) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                        onClick = { viewModel.updateGPUThrottling(!gpuThrottlingStatus) },
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            Crossfade(
+                                targetState = gpuThrottlingStatus,
+                                animationSpec = tween(durationMillis = 500),
+                            ) { isChecked ->
+                                if (isChecked) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_cool),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = null,
+                                    )
+                                } else {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_heat),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                            Text(
+                                text = "GPU Throttling",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Switch(
+                                checked = gpuThrottlingStatus,
+                                onCheckedChange = { isChecked -> viewModel.updateGPUThrottling(isChecked) },
+                                thumbContent = {
+                                    Crossfade(
+                                        targetState = gpuThrottlingStatus,
+                                        animationSpec = tween(durationMillis = 500),
+                                    ) { isChecked ->
+                                        if (isChecked) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_check),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    DialogUnstyled(
+        state = openAMNF,
+        title = "Available frequencies",
+        text = {
+            if (gpuState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("min", freq, "gpu")
+                                openAMNF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMNF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openAMXF,
+        title = "Available frequencies",
+        text = {
+            if (gpuState.availableFreq.isNotEmpty()) {
+                LazyColumn {
+                    items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                        DialogTextButton(
+                            text = "$freq MHz",
+                            onClick = {
+                                viewModel.updateFreq("max", freq, "gpu")
+                                openAMXF.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available frequencies found.")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openAMXF.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openAGG,
+        title = "Available governor",
+        text = {
+            if (gpuState.availableGov.isNotEmpty()) {
+                LazyColumn {
+                    items(gpuState.availableGov) { gov ->
+                        DialogTextButton(
+                            text = gov,
+                            onClick = {
+                                viewModel.updateGov(gov, "gpu")
+                                openAGG.visible = false
+                            },
+                        )
+                    }
+                }
+            } else {
+                Text("No available governor found.")
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { openAGG.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openDPD,
+        text = {
+            OutlinedTextField(
+                value = defaultPwrlevel,
+                onValueChange = { defaultPwrlevel = it },
+                label = { Text("Default pwrlevel") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
                         viewModel.updateDefaultPwrlevel(defaultPwrlevel)
                         openDPD.visible = false
                     },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Change")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openDPD.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Cancel")
-                }
-            },
-        )
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateDefaultPwrlevel(defaultPwrlevel)
+                    openDPD.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openDPD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
 
-        DialogUnstyled(
-            state = openABD,
-            title = "Adreno boost",
-            text = {
-                Column {
-                    DialogTextButton(
-                        text = "Off",
-                        onClick = {
-                            viewModel.updateAdrenoBoost("0")
-                            openABD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        text = "Low",
-                        onClick = {
-                            viewModel.updateAdrenoBoost("1")
-                            openABD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        text = "Medium",
-                        onClick = {
-                            viewModel.updateAdrenoBoost("2")
-                            openABD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        text = "High",
-                        onClick = {
-                            viewModel.updateAdrenoBoost("3")
-                            openABD.visible = false
-                        },
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openABD.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
-    }
+    DialogUnstyled(
+        state = openABD,
+        title = "Adreno boost",
+        text = {
+            Column {
+                DialogTextButton(
+                    text = "Off",
+                    onClick = {
+                        viewModel.updateAdrenoBoost("0")
+                        openABD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    text = "Low",
+                    onClick = {
+                        viewModel.updateAdrenoBoost("1")
+                        openABD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    text = "Medium",
+                    onClick = {
+                        viewModel.updateAdrenoBoost("2")
+                        openABD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    text = "High",
+                    onClick = {
+                        viewModel.updateAdrenoBoost("3")
+                        openABD.visible = false
+                    },
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openABD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
 }
