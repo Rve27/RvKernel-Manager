@@ -6,30 +6,45 @@
 
 package com.rve.rvkernelmanager.ui.battery
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Dvr
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -41,7 +56,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -55,13 +72,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.ButtonListItem
-import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
-import com.rve.rvkernelmanager.ui.components.MonitorListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
@@ -106,12 +119,12 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(innerPadding),
             state = rememberLazyListState(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                Spacer(Modifier.height(16.dp))
                 BatteryMonitorCard(viewModel)
             }
             item {
@@ -124,11 +137,8 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
             }
             if (chargingState.hasFastCharging) {
                 item {
-                    ChargingCard(viewModel)
+                    ForceFastChargingCard(viewModel)
                 }
-            }
-            item {
-                Spacer(Modifier)
             }
         }
     }
@@ -136,46 +146,298 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
 
 @Composable
 fun BatteryMonitorCard(viewModel: BatteryViewModel) {
+    val clipboardManager = LocalClipboardManager.current
+
     val batteryInfo by viewModel.batteryInfo.collectAsState()
     val uptime by viewModel.uptime.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+    val batteryLevelProgress = remember(batteryInfo.level) {
+        batteryInfo.level.removeSuffix("%").toFloatOrNull()?.div(100f) ?: 0f
+    }
+
+    val animatedBatteryLevelProgress by animateFloatAsState(
+        targetValue = batteryLevelProgress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+    )
+
+    val batteryTemp = batteryInfo.temp.toIntOrNull() ?: 0
+
+    OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        CustomListItem(
-            title = "Battery Monitor",
-            titleLarge = true,
-            icon = Icons.AutoMirrored.Default.Dvr,
-        )
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Card(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_dvr),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "Battery Monitor",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                }
+            }
 
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                        modifier = Modifier.clip(CircleShape).combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.voltage)) },
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_bolt),
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                contentDescription = null,
+                            )
+                            Text(
+                                text = batteryInfo.voltage,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                        modifier = Modifier.clip(CircleShape).combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.temp)) },
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Crossfade(
+                                targetState = batteryTemp,
+                                animationSpec = tween(durationMillis = 500),
+                            ) {
+                                if (batteryTemp <= 45) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_cool),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                } else if (batteryTemp >= 45) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_heat),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                } else if (batteryTemp >= 55) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_emergency_heat),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                            Text(
+                                text = batteryInfo.temp,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+            }
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            MonitorListItem(
-                title = "Level",
-                summary = batteryInfo.level,
-            )
-            Spacer(Modifier.height(8.dp))
-            MonitorListItem(
-                title = "Voltage",
-                summary = batteryInfo.voltage,
-            )
-            Spacer(Modifier.height(8.dp))
-            MonitorListItem(
-                title = "Temperature",
-                summary = batteryInfo.temp,
-            )
-            Spacer(Modifier.height(8.dp))
-            MonitorListItem(
-                title = "Uptime",
-                summary = uptime,
-            )
-            Spacer(Modifier.height(8.dp))
-            MonitorListItem(
-                title = "Deep sleep",
-                summary = batteryInfo.deepSleep,
-            )
+            Card(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).combinedClickable(
+                    onClick = { /* do nothing */ },
+                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.level)) },
+                ),
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Crossfade(
+                            targetState = batteryLevelProgress,
+                            animationSpec = tween(durationMillis = 500),
+                        ) { batteryLevel ->
+                            if (batteryLevel == 0f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_alert),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.15f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_1),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.30f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_2),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.45f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_3),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.60f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_4),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.75f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_5),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 0.90f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_6),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            } else if (batteryLevel <= 1f) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_battery_android_frame_full),
+                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                        Column {
+                            Text(
+                                text = "Battery level",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                            Text(
+                                text = batteryInfo.level,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                modifier = Modifier.padding(bottom = 8.dp),
+                            )
+                        }
+                    }
+                    LinearWavyProgressIndicator(
+                        progress = { animatedBatteryLevelProgress },
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        trackColor = MaterialTheme.colorScheme.background,
+                    )
+                }
+            }
+
+            Card(
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                modifier = Modifier.clip(CircleShape).combinedClickable(
+                    onClick = { /* do nothing */ },
+                    onLongClick = { clipboardManager.setText(AnnotatedString(uptime)) },
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_history),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "Uptime",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Text(
+                            text = uptime,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
+
+            Card(
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                modifier = Modifier.clip(CircleShape).combinedClickable(
+                    onClick = { /* do nothing */ },
+                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.deepSleep)) },
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_nightlight),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "Deep sleep",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Text(
+                            text = batteryInfo.deepSleep,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -186,52 +448,170 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
     val batteryInfo by viewModel.batteryInfo.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
+    OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        CustomListItem(
-            title = "Battery Information",
-            titleLarge = true,
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-        CustomListItem(
-            title = "Technology",
-            summary = batteryInfo.tech,
-            icon = painterResource(R.drawable.ic_technology),
-            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) },
-        )
-
-        CustomListItem(
-            title = "Health",
-            summary = batteryInfo.health,
-            icon = painterResource(R.drawable.ic_health),
-            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) },
-        )
-
         Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Card(
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 16.dp,
-                ),
-                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
             ) {
-                CustomListItem(
-                    title = "Design capacity",
-                    summary = batteryInfo.designCapacity,
-                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) },
-                )
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_battery_android_frame_alert),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "Battery Information",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                }
+            }
 
-                CustomListItem(
-                    title = "Maximum capacity",
-                    summary = batteryInfo.maximumCapacity,
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                        modifier = Modifier.clip(CircleShape).combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) },
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_biotech),
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                contentDescription = null,
+                            )
+                            Text(
+                                text = batteryInfo.tech,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+                Box(Modifier.weight(1f)) {
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        ),
+                        modifier = Modifier.clip(CircleShape).combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) },
+                        ),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_heart_plus),
+                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                contentDescription = null,
+                            )
+                            Text(
+                                text = batteryInfo.health,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                        }
+                    }
+                }
+            }
+
+            Card(
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                modifier = Modifier.clip(CircleShape).combinedClickable(
+                    onClick = { /* do nothing */ },
+                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) },
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_battery_android_frame_full),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "Design capacity",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Text(
+                            text = batteryInfo.designCapacity,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
+            }
+
+            Card(
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                modifier = Modifier.clip(CircleShape).combinedClickable(
+                    onClick = { /* do nothing */ },
                     onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.maximumCapacity)) },
-                )
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp).fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_battery_android_frame_full),
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        contentDescription = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "Maximum capacity",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Text(
+                            text = batteryInfo.maximumCapacity,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                    }
+                }
             }
         }
     }
@@ -244,124 +624,169 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
+    Button(
+        onClick = { openTPD.visible = true },
+        shapes = ButtonDefaults.shapes(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        contentPadding = PaddingValues(16.dp),
     ) {
-        ButtonListItem(
-            title = "Thermal profiles",
-            summary = "Adjust thermal profiles for optimum performance",
-            value = remember(thermalSconfig) {
-                when (thermalSconfig) {
-                    "0" -> "Default"
-                    "10" -> "Benchmark"
-                    "11" -> "Browser"
-                    "12" -> "Camera"
-                    "8" -> "Dialer"
-                    "13" -> "Gaming"
-                    "14" -> "Streaming"
-                    else -> "Unknown"
-                }
-            },
-            onClick = { openTPD.visible = true },
-        )
-
-        DialogUnstyled(
-            state = openTPD,
-            title = "Thermal profiles",
-            text = {
-                Column {
-                    DialogTextButton(
-                        icon = painterResource(R.drawable.ic_cool),
-                        text = "Default",
-                        onClick = {
-                            viewModel.updateThermalSconfig("0")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.Speed,
-                        text = "Benchmark",
-                        onClick = {
-                            viewModel.updateThermalSconfig("10")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.Language,
-                        text = "Browser",
-                        onClick = {
-                            viewModel.updateThermalSconfig("11")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.PhotoCamera,
-                        text = "Camera",
-                        onClick = {
-                            viewModel.updateThermalSconfig("12")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.Call,
-                        text = "Dialer",
-                        onClick = {
-                            viewModel.updateThermalSconfig("8")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.SportsEsports,
-                        text = "Gaming",
-                        onClick = {
-                            viewModel.updateThermalSconfig("13")
-                            openTPD.visible = false
-                        },
-                    )
-                    DialogTextButton(
-                        icon = Icons.Default.Videocam,
-                        text = "Streaming",
-                        onClick = {
-                            viewModel.updateThermalSconfig("14")
-                            openTPD.visible = false
-                        },
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { openTPD.visible = false },
-                    shapes = ButtonDefaults.shapes(),
-                ) {
-                    Text("Close")
-                }
-            },
-        )
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_battery_profile),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Column {
+                Text(
+                    text = "Thermal profiles",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+                Text(
+                    text = remember(thermalSconfig) {
+                        when (thermalSconfig) {
+                            "0" -> "Default"
+                            "10" -> "Benchmark"
+                            "11" -> "Browser"
+                            "12" -> "Camera"
+                            "8" -> "Dialer"
+                            "13" -> "Gaming"
+                            "14" -> "Streaming"
+                            else -> "Unknown"
+                        }
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
+        }
     }
+
+    DialogUnstyled(
+        state = openTPD,
+        title = "Thermal profiles",
+        text = {
+            Column {
+                DialogTextButton(
+                    icon = painterResource(R.drawable.ic_cool),
+                    text = "Default",
+                    onClick = {
+                        viewModel.updateThermalSconfig("0")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.Speed,
+                    text = "Benchmark",
+                    onClick = {
+                        viewModel.updateThermalSconfig("10")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.Language,
+                    text = "Browser",
+                    onClick = {
+                        viewModel.updateThermalSconfig("11")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.PhotoCamera,
+                    text = "Camera",
+                    onClick = {
+                        viewModel.updateThermalSconfig("12")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.Call,
+                    text = "Dialer",
+                    onClick = {
+                        viewModel.updateThermalSconfig("8")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.SportsEsports,
+                    text = "Gaming",
+                    onClick = {
+                        viewModel.updateThermalSconfig("13")
+                        openTPD.visible = false
+                    },
+                )
+                DialogTextButton(
+                    icon = Icons.Default.Videocam,
+                    text = "Streaming",
+                    onClick = {
+                        viewModel.updateThermalSconfig("14")
+                        openTPD.visible = false
+                    },
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { openTPD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Close")
+            }
+        },
+    )
 }
 
 @Composable
-fun ChargingCard(viewModel: BatteryViewModel) {
+fun ForceFastChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsState()
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.extraLarge,
+    Button(
+        onClick = { viewModel.toggleFastCharging(!chargingState.isFastChargingChecked) },
+        shapes = ButtonDefaults.shapes(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        contentPadding = PaddingValues(16.dp),
     ) {
-        CustomListItem(
-            title = "Charging",
-            titleLarge = true,
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-
-        if (chargingState.hasFastCharging) {
-            SwitchListItem(
-                title = "Fast charging",
-                summary = "Enable force fast charging",
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_electric_bolt),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "Force fast charging",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
                 checked = chargingState.isFastChargingChecked,
                 onCheckedChange = { viewModel.toggleFastCharging(it) },
+                thumbContent = {
+                    Crossfade(
+                        targetState = chargingState.isFastChargingChecked,
+                        animationSpec = tween(durationMillis = 500),
+                    ) { isChecked ->
+                        if (isChecked) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    }
+                },
             )
         }
     }
