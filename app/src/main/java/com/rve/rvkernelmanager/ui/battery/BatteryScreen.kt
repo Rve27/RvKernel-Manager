@@ -6,6 +6,7 @@
 
 package com.rve.rvkernelmanager.ui.battery
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -24,6 +25,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Language
@@ -41,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -64,6 +68,8 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -445,8 +451,15 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 @Composable
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    // MDC = Manual Design Capacity
+    val openMDC = rememberDialogState(initiallyVisible = false)
 
     val batteryInfo by viewModel.batteryInfo.collectAsState()
+    val manualDesignCapacity = batteryInfo.manualDesignCapacity.toString()
+    var visible: Boolean = manualDesignCapacity == "0"
+    var value by remember { mutableStateOf(batteryInfo.manualDesignCapacity.toString()) }
 
     OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
@@ -550,7 +563,11 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
-                    onClick = { /* do nothing */ },
+                    onClick = {
+                        if (batteryInfo.designCapacity == "N/A") {
+                            openMDC.visible = true
+                        }
+                    },
                     onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) },
                 ),
             ) {
@@ -571,10 +588,23 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                         )
                         Text(
-                            text = batteryInfo.designCapacity,
+                            text = if (batteryInfo.designCapacity == "N/A") {
+                                "$manualDesignCapacity mAh"
+                            } else {
+                                batteryInfo.designCapacity
+                            },
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                         )
+                        if (batteryInfo.designCapacity == "N/A") {
+                            AnimatedVisibility(visible) {
+                                Text(
+                                    text = "(Tap to set design capacity manually)",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -615,6 +645,42 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             }
         }
     }
+
+    DialogUnstyled(
+        state = openMDC,
+        title = "Set manual design capacity",
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = { Text("Design capacity (mAh)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setManualDesignCapacity(context, value.toInt())
+                            openMDC.visible = false
+                        },
+                    ),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.setManualDesignCapacity(context, value.toInt())
+                    openMDC.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Apply")
+            }
+        },
+    )
 }
 
 @Composable

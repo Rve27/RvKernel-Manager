@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.SystemClock
 import android.util.Log
+import com.rve.rvkernelmanager.ui.battery.BatteryPreference
 import com.topjohnwu.superuser.Shell
 import kotlin.math.roundToInt
 
@@ -60,7 +61,7 @@ object BatteryUtils {
         val result = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
         if (result.isSuccess && result.out.isNotEmpty()) {
             val mAh = result.out.firstOrNull()?.trim()?.toIntOrNull()?.div(1000) ?: 0
-            "$mAh mAh"
+            return "$mAh mAh"
         } else {
             Log.w(TAG, "Failed to read design capacity: ${result.err}")
             "N/A"
@@ -70,14 +71,36 @@ object BatteryUtils {
         "N/A"
     }
 
-    fun getBatteryMaximumCapacity(): String = runCatching {
-        val result = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY $BATTERY_DESIGN_CAPACITY").exec()
-        if (result.isSuccess && result.out.size >= 2) {
-            val maxCapacity = result.out[0].trim().toIntOrNull() ?: 0
-            val designCapacity = result.out[1].trim().toIntOrNull() ?: 0
-            val percentage = if (designCapacity > 0) (maxCapacity / designCapacity.toDouble() * 100).roundToInt() else 0
+    fun getBatteryMaximumCapacity(context: Context): String = runCatching {
+        val maxCapacityResult = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY").exec()
+        if (!maxCapacityResult.isSuccess || maxCapacityResult.out.isEmpty()) {
+            return "N/A"
+        }
+
+        val maxCapacity = maxCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
+        if (maxCapacity <= 0) return "N/A"
+
+        var designCapacity = 0
+
+        val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
+        if (designCapacityResult.isSuccess && designCapacityResult.out.isNotEmpty()) {
+            designCapacity = designCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
+        }
+
+        if (designCapacity == 0) {
+            val batteryPreference = BatteryPreference.getInstance(context)
+            val manualCapacity = batteryPreference.getManualDesignCapacity()
+            if (manualCapacity > 0) {
+                designCapacity = manualCapacity * 1000
+            }
+        }
+
+        if (designCapacity > 0) {
+            val percentage = (maxCapacity / designCapacity.toDouble() * 100).roundToInt()
             "${maxCapacity / 1000} mAh ($percentage%)"
-        } else "N/A"
+        } else {
+            "${maxCapacity / 1000} mAh (N/A%)"
+        }
     }.getOrElse {
         Log.e(TAG, "Error reading maximum capacity", it)
         "N/A"
@@ -150,6 +173,6 @@ object BatteryUtils {
 
     fun registerBatteryCapacityListener(context: Context, callback: (String) -> Unit): BroadcastReceiver =
         registerBatteryListener(context) {
-            callback(getBatteryMaximumCapacity())
+            callback(getBatteryMaximumCapacity(context))
         }
 }

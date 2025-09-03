@@ -29,6 +29,7 @@ class BatteryViewModel : ViewModel() {
         val voltage: String = "N/A",
         val deepSleep: String = "N/A",
         val designCapacity: String = "N/A",
+        val manualDesignCapacity: Int = 0,
         val maximumCapacity: String = "N/A",
     )
 
@@ -66,10 +67,13 @@ class BatteryViewModel : ViewModel() {
     fun loadBatteryInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                val batteryPreference = BatteryPreference.getInstance(context)
+
                 val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
                 val designCapacity = BatteryUtils.getBatteryDesignCapacity()
+                val manualDesignCapacity = batteryPreference.getManualDesignCapacity().toString()
                 val deepSleep = BatteryUtils.getDeepSleep()
 
                 _batteryInfo.value = _batteryInfo.value.copy(
@@ -77,11 +81,23 @@ class BatteryViewModel : ViewModel() {
                     tech = tech,
                     health = health,
                     designCapacity = designCapacity,
+                    manualDesignCapacity = manualDesignCapacity.toInt(),
                     deepSleep = deepSleep,
                 )
             } catch (e: Exception) {
                 Log.e("BatteryVM", "Error loading battery info", e)
             }
+        }
+    }
+
+    fun setManualDesignCapacity(context: Context, value: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val batteryPreference = BatteryPreference.getInstance(context)
+            batteryPreference.setManualDesignCapacity(value)
+
+            _batteryInfo.value = _batteryInfo.value.copy(
+                manualDesignCapacity = value,
+            )
         }
     }
 
