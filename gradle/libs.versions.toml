@@ -1,6 +1,6 @@
 [versions]
-androidGradlePlugin = "8.12.2"
-kotlin = "2.2.10"
+androidGradlePlugin = "8.13.0"
+kotlin = "2.2.20"
 spotless = "7.2.1"
 androidxCore = "1.17.0"
 androidxActivity = "1.10.1"
