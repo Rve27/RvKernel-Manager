@@ -7,34 +7,46 @@
 package com.rve.rvkernelmanager.ui.kernelParameter
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -69,12 +81,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.ButtonListItem
-import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
-import com.rve.rvkernelmanager.ui.components.SwitchListItem
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.KernelUtils
@@ -150,12 +159,12 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
             },
         ) {
             LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                state = rememberLazyListState(),
+                contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
-                        Spacer(Modifier.height(16.dp))
                         KernelParameterCard(viewModel)
                     }
                 }
@@ -168,9 +177,6 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                     item {
                         MemoryCard(viewModel)
                     }
-                }
-                item {
-                    Spacer(Modifier)
                 }
             }
         }
@@ -189,45 +195,140 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val openTCD = rememberDialogState(initiallyVisible = false)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        CustomListItem(
-            icon = painterResource(R.drawable.ic_linux),
-            title = "Kernel Parameter",
-            titleLarge = true,
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_linux),
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    contentDescription = null,
+                )
+                Text(
+                    text = "Kernel Parameter",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
 
-        if (kernelParameters.hasSchedAutogroup) {
-            SwitchListItem(
-                titleSmall = true,
-                title = "Sched auto group",
-                bodySmall = true,
-                summary = "Automatically groups related tasks for better CPU scheduling",
-                checked = schedAutogroupStatus,
-                onCheckedChange = { isChecked ->
-                    viewModel.updateSchedAutogroup(isChecked)
-                },
-            )
-        }
+            AnimatedVisibility(kernelParameters.hasSchedAutogroup) {
+                Card(
+                    shape = CircleShape,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                    onClick = { viewModel.updateSchedAutogroup(!schedAutogroupStatus) },
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_account_tree),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null,
+                        )
+                        Text(
+                            text = "Sched auto group",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Switch(
+                            checked = schedAutogroupStatus,
+                            onCheckedChange = { isChecked -> viewModel.updateSchedAutogroup(isChecked) },
+                            thumbContent = {
+                                Crossfade(
+                                    targetState = schedAutogroupStatus,
+                                    animationSpec = tween(durationMillis = 500),
+                                ) { isChecked ->
+                                    if (isChecked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
+                                }
+                            },
+                        )
+                    }
+                }
+            }
 
-        if (kernelParameters.hasPrintk) {
-            ButtonListItem(
-                title = "printk",
-                summary = "Controls kernel message logging level",
-                value = kernelParameters.printk,
-                onClick = { openPD.visible = true },
-            )
-        }
+            AnimatedVisibility(kernelParameters.hasPrintk) {
+                Button(
+                    onClick = { openPD.visible = true },
+                    shapes = ButtonDefaults.shapes(),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_speaker_notes),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column {
+                            Text(
+                                text = "printk",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = kernelParameters.printk,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+            }
 
-        if (kernelParameters.hasTcpCongestionAlgorithm && kernelParameters.availableTcpCongestionAlgorithm.isNotEmpty()) {
-            ButtonListItem(
-                title = "TCP congestion algorithm",
-                summary = "TCP is a core protocol of the Internet protocol suite, often referred to as TCP/IP.",
-                value = kernelParameters.tcpCongestionAlgorithm,
-                onClick = { openTCD.visible = true },
-            )
+            AnimatedVisibility(kernelParameters.hasTcpCongestionAlgorithm) {
+                Button(
+                    onClick = { openTCD.visible = true },
+                    shapes = ButtonDefaults.shapes(),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_sync_alt),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column {
+                            Text(
+                                text = "TCP congestion algorithm",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = kernelParameters.tcpCongestionAlgorithm,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -314,40 +415,103 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
     val openUMRT = rememberDialogState(initiallyVisible = false)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
     ) {
-        CustomListItem(
-            title = "Uclamp",
-            titleLarge = true,
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_tune),
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    contentDescription = null,
+                )
+                Text(
+                    text = "Uclamp",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
+            if (uclamp.hasUclampMax || uclamp.hasUclampMin) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    AnimatedVisibility(
+                        visible = uclamp.hasUclampMax,
+                        modifier = if (uclamp.hasUclampMin) Modifier.weight(1f) else Modifier,
+                    ) {
+                        Button(
+                            onClick = { openUMX.visible = true },
+                            shapes = ButtonDefaults.shapes(),
+                            contentPadding = PaddingValues(16.dp),
+                        ) {
+                            Column(Modifier.fillMaxSize()) {
+                                Text(
+                                    text = "Uclamp max",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = uclamp.uclampMax,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = uclamp.hasUclampMin,
+                        modifier = if (uclamp.hasUclampMax) Modifier.weight(1f) else Modifier,
+                    ) {
+                        Button(
+                            onClick = { openUMN.visible = true },
+                            shapes = ButtonDefaults.shapes(),
+                            contentPadding = PaddingValues(16.dp),
+                        ) {
+                            Column(Modifier.fillMaxSize()) {
+                                Text(
+                                    text = "Uclamp min",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = uclamp.uclampMin,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
-        if (uclamp.hasUclampMax) {
-            ButtonListItem(
-                title = "Uclamp max",
-                summary = "Upper performance limit for CPU tasks.",
-                value = uclamp.uclampMax,
-                onClick = { openUMX.visible = true },
-            )
-        }
-
-        if (uclamp.hasUclampMin) {
-            ButtonListItem(
-                title = "Uclamp min",
-                summary = "Lower performance limit to keep CPU tasks above this level.",
-                value = uclamp.uclampMin,
-                onClick = { openUMN.visible = true },
-            )
-        }
-
-        if (uclamp.hasUclampMinRt) {
-            ButtonListItem(
-                title = "Uclamp min RT default",
-                summary = "Default lower performace limit for real-time (RT) tasks.",
-                value = uclamp.uclampMinRt,
-                onClick = { openUMRT.visible = true },
-            )
+            AnimatedVisibility(uclamp.hasUclampMinRt) {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    onClick = { openUMRT.visible = true },
+                ) {
+                    Column(Modifier.padding(16.dp).fillMaxSize()) {
+                        Text(
+                            text = "Uclamp min RT default",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        Text(
+                            text = uclamp.uclampMinRt,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -494,55 +658,161 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     val openDR = rememberDialogState(initiallyVisible = false)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
-        CustomListItem(
-            icon = painterResource(R.drawable.ic_ram),
-            title = "Memory",
-            titleLarge = true,
-        )
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_memory_alt),
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    contentDescription = null,
+                )
+                Text(
+                    text = "Memory",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
 
-        if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
-            CustomListItem(
-                summary = "NOTE: It may take a few minutes to change the ZRAM size, etc.",
-            )
-        }
+            OutlinedCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                ),
+                border = BorderStroke(
+                    width = 2.0.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_exclamation),
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = "It may take a few minutes to change the ZRAM parameters",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
 
-        if (memory.hasZramSize) {
-            ButtonListItem(
-                title = "ZRAM size",
-                summary = "Change the ZRAM size",
-                value = memory.zramSize,
-                onClick = { openZD.visible = true },
-            )
-        }
+            if (memory.hasZramSize || memory.hasSwappiness) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    AnimatedVisibility(
+                        visible = memory.hasZramSize,
+                        modifier = if (memory.hasSwappiness) Modifier.weight(1f) else Modifier,
+                    ) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openZD.visible = true },
+                        ) {
+                            Column(Modifier.padding(16.dp).fillMaxSize()) {
+                                Text(
+                                    text = "ZRAM size",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = memory.zramSize,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = memory.hasSwappiness,
+                        modifier = if (memory.hasZramSize) Modifier.weight(1f) else Modifier,
+                    ) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openSD.visible = true },
+                        ) {
+                            Column(Modifier.padding(16.dp).fillMaxSize()) {
+                                Text(
+                                    text = "Swappiness",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = "${memory.swappiness}%",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
-        if (memory.hasZramCompAlgorithm && memory.availableZramCompAlgorithms.isNotEmpty()) {
-            ButtonListItem(
-                title = "ZRAM compression algorithm",
-                summary = "Different algorithms offer different compression ratios and performance",
-                value = memory.zramCompAlgorithm,
-                onClick = { openZCD.visible = true },
-            )
-        }
+            AnimatedVisibility(memory.availableZramCompAlgorithms.isNotEmpty()) {
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                    onClick = { openZCD.visible = true },
+                ) {
+                    Column(Modifier.padding(16.dp).fillMaxSize()) {
+                        Text(
+                            text = "ZRAM compression algorithm",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        Text(
+                            text = memory.zramCompAlgorithm,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                }
+            }
 
-        if (memory.hasSwappiness) {
-            ButtonListItem(
-                title = "Swappiness",
-                summary = "Controls how aggressively the system uses swap memory",
-                value = "${memory.swappiness}%",
-                onClick = { openSD.visible = true },
-            )
-        }
-
-        AnimatedVisibility(expanded) {
-            ButtonListItem(
-                title = "dirty ratio",
-                value = memory.dirtyRatio,
-                onClick = { openDR.visible = true },
-            )
+            AnimatedVisibility(expanded) {
+                AnimatedVisibility(memory.hasDirtyRatio) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        onClick = { openDR.visible = true },
+                    ) {
+                        Column(Modifier.padding(16.dp).fillMaxSize()) {
+                            Text(
+                                text = "dirty ratio",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = memory.dirtyRatio,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         Box(
