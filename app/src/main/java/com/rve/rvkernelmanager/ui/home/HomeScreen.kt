@@ -238,6 +238,7 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
             title = item.title,
             titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
             summary = item.summary,
+            summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
             animateContentSize = item.animateContentSize,
         )
     }
