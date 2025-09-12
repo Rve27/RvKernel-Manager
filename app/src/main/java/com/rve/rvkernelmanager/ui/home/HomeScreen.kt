@@ -8,10 +8,6 @@ package com.rve.rvkernelmanager.ui.home
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -174,11 +170,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             }
 
             item {
-                AnimatedVisibility(
-                    visible = deviceInfo.hasWireGuard,
-                    enter = fadeIn() + slideInVertically { it / 2 },
-                    exit = fadeOut() + slideOutVertically { it / 2 },
-                ) {
+                AnimatedVisibility(deviceInfo.hasWireGuard) {
                     DeviceInfoItemCard(item = wireGuardInfo)
                 }
             }
