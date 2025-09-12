@@ -165,8 +165,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
     )
 
     val cpuTemp by viewModel.cpuTemp.collectAsState()
-    val cpuTempValue = cpuTemp.toIntOrNull() ?: 0
-    val isCpuTempHigh = cpuTempValue > 60
 
     val cpu0State by viewModel.cpu0State.collectAsState()
     val bigClusterState by viewModel.bigClusterState.collectAsState()
@@ -264,10 +262,10 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Crossfade(
-                                targetState = isCpuTempHigh,
+                                targetState = cpuTemp.toIntOrNull() ?: 0,
                                 animationSpec = tween(durationMillis = 500),
-                            ) { isHigh ->
-                                if (isHigh) {
+                            ) { temp ->
+                                if (temp >= 60) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
