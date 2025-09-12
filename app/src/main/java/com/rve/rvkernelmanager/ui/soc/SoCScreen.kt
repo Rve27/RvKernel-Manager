@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,6 +41,8 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -1530,8 +1533,6 @@ fun GPUCard(viewModel: SoCViewModel) {
     val openAGG = rememberDialogState(initiallyVisible = false)
     // ABD = Adreno Boost Dialog
     val openABD = rememberDialogState(initiallyVisible = false)
-    // DPD = Default Pwrlevel Dialog
-    val openDPD = rememberDialogState(initiallyVisible = false)
 
     val gpuState by viewModel.gpuState.collectAsState()
     val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsState()
@@ -1542,6 +1543,9 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     val minFreq = gpuState.minFreq
     val maxFreq = gpuState.maxFreq
+
+    val minPwrlevel = gpuState.minPwrlevel.toFloatOrNull() ?: 0f
+    val maxPwrlevel = gpuState.maxPwrlevel.toFloatOrNull() ?: 0f
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -1694,112 +1698,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
 
-                if (hasAdrenoBoost && hasDefaultPwrlevel) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Card(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openDPD.visible = true },
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_tune),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
-                                )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Default pwrlevel",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = gpuState.defaultPwrlevel,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
-                            }
-                        }
-                        Card(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openABD.visible = true },
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_rocket_launch),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
-                                )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Adreno boost",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = remember(gpuState.adrenoBoost) {
-                                            when (gpuState.adrenoBoost) {
-                                                "0" -> "Off"
-                                                "1" -> "Low"
-                                                "2" -> "Medium"
-                                                "3" -> "High"
-                                                else -> gpuState.adrenoBoost
-                                            }
-                                        },
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                } else if (hasDefaultPwrlevel) {
-                    Card(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        onClick = { openDPD.visible = true },
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp).fillMaxSize(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_tune),
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = null,
-                            )
-                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(
-                                    text = "Default pwrlevel",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = gpuState.defaultPwrlevel,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                } else if (hasAdrenoBoost) {
+                AnimatedVisibility(hasAdrenoBoost) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(
@@ -1840,6 +1739,52 @@ fun GPUCard(viewModel: SoCViewModel) {
                         }
                     }
                 }
+
+                AnimatedVisibility(hasDefaultPwrlevel) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_tune),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    contentDescription = null,
+                                )
+                                Column {
+                                    Text(
+                                        text = "Default pwrlevel",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                    Text(
+                                        text = defaultPwrlevel,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                }
+                            }
+                            Slider(
+                                value = defaultPwrlevel.toFloatOrNull() ?: 0f,
+                                onValueChange = { newValue ->
+                                    defaultPwrlevel = newValue.toInt().toString()
+                                },
+                                onValueChangeFinished = { viewModel.updateDefaultPwrlevel(defaultPwrlevel) },
+                                valueRange = maxPwrlevel..minPwrlevel,
+                                colors = SliderDefaults.colors(
+                                    inactiveTrackColor = MaterialTheme.colorScheme.background,
+                                ),
+                            )
+                        }
+                    }
+                }
+
                 AnimatedVisibility(hasGPUThrottling) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
@@ -1988,47 +1933,6 @@ fun GPUCard(viewModel: SoCViewModel) {
                 shapes = ButtonDefaults.shapes(),
             ) {
                 Text("Close")
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openDPD,
-        text = {
-            OutlinedTextField(
-                value = defaultPwrlevel,
-                onValueChange = { defaultPwrlevel = it },
-                label = { Text("Default pwrlevel") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        viewModel.updateDefaultPwrlevel(defaultPwrlevel)
-                        openDPD.visible = false
-                    },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.updateDefaultPwrlevel(defaultPwrlevel)
-                    openDPD.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text("Change")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openDPD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text("Cancel")
             }
         },
     )

@@ -39,6 +39,8 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val maxFreq: String,
         val currentFreq: String,
         val gov: String,
+        val maxPwrlevel: String,
+        val minPwrlevel: String,
         val defaultPwrlevel: String,
         val adrenoBoost: String,
         val gpuThrottling: String,
@@ -46,7 +48,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val availableGov: List<String>,
     ) {
         companion object {
-            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0", emptyList(), emptyList())
+            val EMPTY = GPUState("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0", emptyList(), emptyList())
         }
     }
 
@@ -205,6 +207,8 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
             currentFreq = SoCUtils.readFreqGPU(SoCUtils.CURRENT_FREQ_GPU),
             gov = Utils.readFile(SoCUtils.GOV_GPU),
+            maxPwrlevel = Utils.readFile(SoCUtils.MAX_PWRLEVEL),
+            minPwrlevel = Utils.readFile(SoCUtils.MIN_PWRLEVEL),
             defaultPwrlevel = Utils.readFile(SoCUtils.DEFAULT_PWRLEVEL),
             adrenoBoost = Utils.readFile(SoCUtils.ADRENO_BOOST),
             gpuThrottling = Utils.readFile(SoCUtils.GPU_THROTTLING),
