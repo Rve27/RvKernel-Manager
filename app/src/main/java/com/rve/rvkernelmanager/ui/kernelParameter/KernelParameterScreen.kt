@@ -227,6 +227,10 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                     ),
                     onClick = { viewModel.updateSchedAutogroup(!schedAutogroupStatus) },
+                    border = BorderStroke(
+                        width = 2.0.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                    ),
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),

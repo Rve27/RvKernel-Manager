@@ -1438,6 +1438,10 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
                         onClick = { viewModel.updateCpuSchedBoostOnInput(!cpuSchedBoostOnInputChecked) },
+                        border = BorderStroke(
+                            width = 2.0.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
@@ -1746,6 +1750,10 @@ fun GPUCard(viewModel: SoCViewModel) {
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
+                        border = BorderStroke(
+                            width = 2.0.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
                     ) {
                         Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
                             Row(
@@ -1792,6 +1800,10 @@ fun GPUCard(viewModel: SoCViewModel) {
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
                         onClick = { viewModel.updateGPUThrottling(!gpuThrottlingStatus) },
+                        border = BorderStroke(
+                            width = 2.0.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
                     ) {
                         Row(
                             modifier = Modifier.padding(16.dp),
