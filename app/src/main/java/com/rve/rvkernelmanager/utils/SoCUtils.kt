@@ -51,8 +51,6 @@ object SoCUtils {
     const val CPU_INPUT_BOOST_MS = "/sys/devices/system/cpu/cpu_boost/input_boost_ms"
     const val CPU_SCHED_BOOST_ON_INPUT = "/sys/devices/system/cpu/cpu_boost/sched_boost_on_input"
 
-    const val GPU_MODEL = "/sys/class/kgsl/kgsl-3d0/gpu_model"
-
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
     const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpuclk"
@@ -147,10 +145,32 @@ object SoCUtils {
         }
     }
 
-    fun getGPUModel(): String = Shell.cmd("cat $GPU_MODEL").exec()
-        .takeIf { it.isSuccess }?.out?.firstOrNull()?.let { raw ->
-            raw.replace("Adreno", "Adreno (TM) ").replace(Regex("v\\d+"), "").trim()
-        }?.takeIf { it.isNotBlank() } ?: "Unknown"
+    fun getGPUModel(): String {
+        return try {
+            val result = Shell.cmd("dumpsys SurfaceFlinger | grep \"GLES:\"").exec()
+            if (result.isSuccess && result.out.isNotEmpty()) {
+                val glesLine = result.out.firstOrNull()?.trim()
+                if (!glesLine.isNullOrBlank()) {
+                    val regex = Regex("GLES:\\s*[^,]+,\\s*(.+)")
+                    val matchResult = regex.find(glesLine)
+                    if (matchResult != null) {
+                        val gpuInfo = matchResult.groupValues[1].trim()
+                        return gpuInfo
+                    } else {
+                        val commaIndex = glesLine.indexOf(',')
+                        if (commaIndex != -1 && commaIndex < glesLine.length - 1) {
+                            return glesLine.substring(commaIndex + 1).trim()
+                        }
+                    }
+                }
+            }
+
+            "N/A"
+        } catch (e: Exception) {
+            Log.e("getGPUModel", "Error getting GPU model: ${e.message}", e)
+            "N/A"
+        }
+    }
 
     fun writeFreqGPU(filePath: String, frequency: String) {
         try {
