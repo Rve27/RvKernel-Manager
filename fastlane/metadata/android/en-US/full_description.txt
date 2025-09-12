@@ -1,11 +1,11 @@
-<p>Unlock the true potential of your Android device with RvKernel Manager, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides comprehensive control over your device's kernel parameters.</p>
+<p>Unlock the true potential of your Android device with RvKernel Manager, a powerful and user-friendly open-source tool for managing your kernel settings. This app provides comprehensive control over your device's kernel parameters.</p>
 
 <p>Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.</p>
 
 <h3>Features:</h3>
 
 <h4>Device Information Dashboard</h4>
-Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.</p>
+Monitor critical device information including CPU model, GPU model, RAM, kernel version, Android version, and more.</p>
 
 <h4>Battery Monitoring & Control</h4>
 <ul>
@@ -25,10 +25,8 @@ Monitor critical device information including CPU model, GPU model, RAM, kernel 
 <h4>Kernel Parameter Tuning</h4>
 <p>Fine-tune kernel settings for optimal performance:</p>
 <ul>
-  <li><strong>Scheduler configuration</strong>: Auto group and task scheduling</li>
-  <li><strong>Memory management</strong>: Swappiness settings</li>
+  <li><strong>Memory management</strong>: Swappiness settings and others</li>
   <li><strong>ZRAM optimization</strong>: Size allocation and compression algorithms</li>
-  <li><strong>Logging control</strong>: Kernel printk levels</li>
   <li><strong>Network tuning</strong>: TCP congestion control</li>
   <li><strong>And many more advanced parameters!</strong></li>
 </ul>
@@ -37,7 +35,6 @@ Monitor critical device information including CPU model, GPU model, RAM, kernel 
 <ul>
   <li><strong>Modern interface</strong>: Clean, intuitive Material 3 design</li>
   <li><strong>Dynamic theming</strong>: Adapts to your system colors</li>
-  <li><strong>Blur effects</strong>: Beautiful visual enhancements</li>
   <li><strong>Dark/Light modes</strong>: Full theme support</li>
 </ul>
 

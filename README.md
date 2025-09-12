@@ -10,7 +10,7 @@
 
 <p><strong>Take full control of your device's kernel. Tune performance, battery life, and more!</strong></p>
 <br>
-<p>Unlock the true potential of your Android device with <strong>RvKernel Manager</strong>, a powerful and user-friendly open-source tool for managing your kernel settings. Designed for advanced users, this app provides a clean interface to tweak and monitor a wide range of kernel parameters without needing to use a terminal.</p>
+<p>Unlock the true potential of your Android device with <strong>RvKernel Manager</strong>, a powerful and user-friendly open-source tool for managing your kernel settings. This app provides a clean interface to tweak and monitor a wide range of kernel parameters.</p>
 <br>
 <p>Fine-tune your device for peak performance, maximum battery life, or a perfect balance between the two.</p>
 
@@ -23,7 +23,7 @@
 ## ✨ Features
 
 ### 📊 Device Information Dashboard
-Monitor critical device information including CPU model, GPU model, RAM, kernel version, and Android version details.
+Monitor critical device information including CPU model, GPU model, RAM, kernel version, Android version, and more.
 
 ### 🔋 Battery Monitoring & Control
 - **Real-time monitoring**: Voltage, temperature, and charging level
@@ -39,17 +39,14 @@ Advanced CPU & GPU control with comprehensive support for:
 
 ### 🛠️ Kernel Parameter Tuning
 Fine-tune kernel settings for optimal performance:
-- **Scheduler configuration**: Auto group and task scheduling
-- **Memory management**: Swappiness settings
+- **Memory management**: Swappiness settings and others
 - **ZRAM optimization**: Size allocation and compression algorithms
-- **Logging control**: Kernel printk levels
 - **Network tuning**: TCP congestion control
 - **And many more advanced parameters!**
 
 ### 🎨 Material 3 Expressive Design
 - **Modern interface**: Clean, intuitive Material 3 design
 - **Dynamic theming**: Adapts to your system colors
-- **Blur effects**: Beautiful visual enhancements
 - **Dark/Light modes**: Full theme support
 
 ## 📱 Screenshots
