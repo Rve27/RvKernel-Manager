@@ -110,13 +110,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
             ),
             DeviceInfoItem(
-                title = "CPU",
-                summary = deviceInfo.cpu,
-                icon = painterResource(R.drawable.ic_cpu),
-                onClick = { /* do nothing */ },
-                onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.cpu)) },
-            ),
-            DeviceInfoItem(
                 title = "RAM",
                 summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
                 icon = painterResource(R.drawable.ic_ram),
@@ -131,6 +124,14 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             icon = painterResource(R.drawable.ic_shield),
             onClick = { /* do nothing */ },
             onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.wireGuard)) },
+        )
+
+        val cpuInfo = DeviceInfoItem(
+            title = "CPU",
+            summary = deviceInfo.cpu,
+            icon = painterResource(R.drawable.ic_cpu),
+            onClick = { /* do nothing */ },
+            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.cpu)) },
         )
 
         val gpuInfo = DeviceInfoItem(
@@ -173,6 +174,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 AnimatedVisibility(deviceInfo.hasWireGuard) {
                     DeviceInfoItemCard(item = wireGuardInfo)
                 }
+            }
+
+            item(span = StaggeredGridItemSpan.FullLine) {
+                DeviceInfoItemCard(item = cpuInfo)
             }
 
             item(span = StaggeredGridItemSpan.FullLine) {
