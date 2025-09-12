@@ -14,6 +14,8 @@
 /bin/
 /gen/
 /out/
+/app/build/
+.kotlin/
 #  Uncomment the following line in case you need and you don't have the release build type files in your app
 # Gradle files
 .gradle/
@@ -82,5 +84,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-.kotlin/
+# Signing properties
 signing.properties
