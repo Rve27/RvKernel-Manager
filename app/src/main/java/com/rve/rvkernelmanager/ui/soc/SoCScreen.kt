@@ -399,9 +399,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
     )
 
     val gpuTemp by viewModel.gpuTemp.collectAsState()
-    val gpuTempValue = gpuTemp.toIntOrNull() ?: 0
-    val isGpuTempHigh = gpuTempValue > 60
-
     val gpuState by viewModel.gpuState.collectAsState()
 
     OutlinedCard(
@@ -493,10 +490,10 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Crossfade(
-                                targetState = isGpuTempHigh,
+                                targetState = gpuTemp.toIntOrNull() ?: 0,
                                 animationSpec = tween(durationMillis = 500),
-                            ) { isHigh ->
-                                if (isHigh) {
+                            ) { temp ->
+                                if (temp >= 60) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
