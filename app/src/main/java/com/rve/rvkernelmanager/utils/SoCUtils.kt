@@ -14,7 +14,6 @@ import kotlin.math.ceil
 
 object SoCUtils {
 
-    const val CPU_INFO = "/proc/cpuinfo"
     const val CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp"
 
     const val MIN_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
@@ -67,18 +66,24 @@ object SoCUtils {
     private var sPrevTotal: Long = -1
     private var sPrevIdle: Long = -1
 
-    fun getCPUInfo(): String = Shell.cmd("cat $CPU_INFO | grep 'Hardware' | head -n 1").exec()
-        .takeIf { it.isSuccess }?.out?.firstOrNull()
-        ?.replace("Hardware\t: ", "")?.trim()?.takeIf { it.isNotBlank() } ?: "Unknown"
+    fun getCpuInfo(): String {
+        return try {
+            val hardware = Utils.getSystemProperty("ro.hardware")
+            val manufacturer = Utils.getSystemProperty("ro.soc.manufacturer")
+            val model = Utils.getSystemProperty("ro.soc.model")
 
-    fun getExtendCPUInfo(): String {
-        val hardware = getCPUInfo()
-        val cores = Shell.cmd("cat $CPU_INFO | grep 'processor' | wc -l").exec()
-            .takeIf { it.isSuccess }?.out?.firstOrNull() ?: "0"
-        val archLine = Shell.cmd("cat $CPU_INFO | grep 'Processor' | head -n 1").exec()
-            .takeIf { it.isSuccess }?.out?.firstOrNull()
-        val arch = if (archLine?.contains("AArch64") == true) "AArch64" else "Unknown"
-        return "$hardware\n$cores Cores ($arch)"
+            if (hardware.contains("qcom", ignoreCase = true) && model.isNotEmpty()) {
+                "Qualcomm Technologies, Inc $model"
+            } else if (manufacturer.contains("QTI", ignoreCase = true) && model.isNotEmpty()) {
+                "Qualcomm Technologies, Inc $model"
+            } else {
+                "Unknown"
+            }
+        } catch (securityException: SecurityException) {
+            "Unknown"
+        } catch (exception: Exception) {
+            "Unknown"
+        }
     }
 
     fun readFreqCPU(filePath: String): String {
