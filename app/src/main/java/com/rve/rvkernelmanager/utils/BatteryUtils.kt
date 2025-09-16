@@ -42,19 +42,9 @@ object BatteryUtils {
         }
     }
 
-    fun getBatteryTemperature(context: Context): String {
-        val temp = context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) ?: -1
-        return if (temp != -1) "%.1f °C".format(temp / 10.0) else "N/A"
-    }
-
     fun getBatteryLevel(context: Context): String {
         val level = context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
         return if (level != -1) "$level%" else "N/A"
-    }
-
-    fun getBatteryVoltage(context: Context): String {
-        val voltage = context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1) ?: -1
-        return if (voltage != -1) "%.3f V".format(voltage / 1000.0) else "N/A"
     }
 
     fun getBatteryDesignCapacity(): String = runCatching {
