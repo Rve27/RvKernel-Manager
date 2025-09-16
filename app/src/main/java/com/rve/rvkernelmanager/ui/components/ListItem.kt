@@ -15,17 +15,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -109,93 +103,6 @@ fun CustomListItem(
                     modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier,
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun SwitchListItem(
-    icon: Any? = null,
-    title: String,
-    titleSmall: Boolean = false,
-    titleLarge: Boolean = false,
-    summary: String? = null,
-    bodySmall: Boolean = false,
-    bodyLarge: Boolean = false,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Row(
-        modifier = Modifier
-            .toggleable(
-                value = checked,
-                interactionSource = interactionSource,
-                role = Role.Switch,
-                indication = LocalIndication.current,
-                onValueChange = onCheckedChange,
-            )
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (icon != null) {
-            when (icon) {
-                is ImageVector -> Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp),
-                )
-                is Painter -> Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp),
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = title,
-                style = when {
-                    titleSmall -> MaterialTheme.typography.titleSmall
-                    titleLarge -> MaterialTheme.typography.titleLarge
-                    else -> MaterialTheme.typography.titleMedium
-                },
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            if (summary != null) {
-                Text(
-                    text = summary,
-                    style = when {
-                        bodySmall -> MaterialTheme.typography.bodySmall
-                        bodyLarge -> MaterialTheme.typography.bodyLarge
-                        else -> MaterialTheme.typography.bodyMedium
-                    },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.padding(start = 16.dp),
-        ) {
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                interactionSource = interactionSource,
-                thumbContent = {
-                    if (checked) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                    }
-                },
-            )
         }
     }
 }
