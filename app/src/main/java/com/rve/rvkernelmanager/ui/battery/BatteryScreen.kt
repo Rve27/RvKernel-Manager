@@ -81,21 +81,16 @@ import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable
 fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavController) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val settingsPreference = remember { SettingsPreference.getInstance(context) }
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val chargingState by viewModel.chargingState.collectAsState()
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
-
-    var isDialogOpen by remember { mutableStateOf(false) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
