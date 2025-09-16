@@ -5,7 +5,6 @@
 package com.rve.rvkernelmanager.utils
 
 import android.system.Os
-import com.rve.rvkernelmanager.utils.Utils
 import com.topjohnwu.superuser.Shell
 
 object KernelUtils {

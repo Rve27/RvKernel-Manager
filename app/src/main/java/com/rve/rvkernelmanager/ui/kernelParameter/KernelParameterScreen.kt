@@ -14,7 +14,6 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,7 +68,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -85,15 +83,11 @@ import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 import com.rve.rvkernelmanager.utils.KernelUtils
 
 @Composable
 fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), navController: NavController) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    val settingsPreference = remember { SettingsPreference.getInstance(context) }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
