@@ -48,7 +48,7 @@ class HomeViewModel : ViewModel() {
                 androidVersion = Utils.getAndroidVersion(),
                 sdkVersion = Utils.getSdkVersion(),
                 cpu = SoCUtils.getCpuInfo(),
-                hasWireGuard = Utils.testFile(KernelUtils.WireGuard),
+                hasWireGuard = Utils.testFile(KernelUtils.WIREGUARD_VERSION),
                 wireGuard = KernelUtils.getWireGuardVersion(),
                 kernelVersion = KernelUtils.getKernelVersion(),
                 fullKernelVersion = KernelUtils.getFullKernelVersion(),

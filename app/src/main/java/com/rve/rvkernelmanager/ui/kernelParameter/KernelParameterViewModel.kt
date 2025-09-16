@@ -91,12 +91,12 @@ class KernelParameterViewModel : ViewModel() {
     fun loadKernelParameter() {
         viewModelScope.launch(Dispatchers.IO) {
             _kernelParameters.value = KernelParameters(
-                schedAutogroup = Utils.readFile(KernelUtils.SchedAutoGroup),
-                hasSchedAutogroup = Utils.testFile(KernelUtils.SchedAutoGroup),
-                printk = Utils.readFile(KernelUtils.Printk),
-                hasPrintk = Utils.testFile(KernelUtils.Printk),
+                schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTO_GROUP),
+                hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTO_GROUP),
+                printk = Utils.readFile(KernelUtils.PRINTK),
+                hasPrintk = Utils.testFile(KernelUtils.PRINTK),
                 tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
-                hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TcpCongestionAlgorithm),
+                hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
                 availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm(),
             )
         }
@@ -105,12 +105,12 @@ class KernelParameterViewModel : ViewModel() {
     fun loadUclamp() {
         viewModelScope.launch(Dispatchers.IO) {
             _uclamp.value = Uclamp(
-                hasUclampMax = Utils.testFile(KernelUtils.SchedUtilClampMax),
-                uclampMax = Utils.readFile(KernelUtils.SchedUtilClampMax),
-                hasUclampMin = Utils.testFile(KernelUtils.SchedUtilClampMin),
-                uclampMin = Utils.readFile(KernelUtils.SchedUtilClampMin),
-                hasUclampMinRt = Utils.testFile(KernelUtils.SchedUtilClampMinRtDefault),
-                uclampMinRt = Utils.readFile(KernelUtils.SchedUtilClampMinRtDefault),
+                hasUclampMax = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                hasUclampMin = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                hasUclampMinRt = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
+                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
             )
         }
     }
@@ -119,14 +119,14 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             _memory.value = Memory(
                 zramSize = KernelUtils.getZramSize(),
-                hasZramSize = Utils.testFile(KernelUtils.ZramSize),
+                hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
                 zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
-                hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZramCompAlgorithm),
+                hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM),
                 availableZramCompAlgorithms = KernelUtils.getAvailableZramCompAlgorithms(),
-                swappiness = Utils.readFile(KernelUtils.Swappiness),
-                hasSwappiness = Utils.testFile(KernelUtils.Swappiness),
-                hasDirtyRatio = Utils.testFile(KernelUtils.DirtyRatio),
-                dirtyRatio = Utils.readFile(KernelUtils.DirtyRatio),
+                swappiness = Utils.readFile(KernelUtils.SWAPPINESS),
+                hasSwappiness = Utils.testFile(KernelUtils.SWAPPINESS),
+                hasDirtyRatio = Utils.testFile(KernelUtils.DIRTY_RATIO),
+                dirtyRatio = Utils.readFile(KernelUtils.DIRTY_RATIO),
             )
         }
     }
@@ -134,7 +134,7 @@ class KernelParameterViewModel : ViewModel() {
     fun updateSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = if (isChecked) "1" else "0"
-            Utils.writeFile(KernelUtils.SchedAutoGroup, value)
+            Utils.writeFile(KernelUtils.SCHED_AUTO_GROUP, value)
             _kernelParameters.value = _kernelParameters.value.copy(
                 schedAutogroup = value,
             )
@@ -143,7 +143,7 @@ class KernelParameterViewModel : ViewModel() {
 
     fun updateSwappiness(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.Swappiness, value)
+            Utils.writeFile(KernelUtils.SWAPPINESS, value)
             _memory.value = _memory.value.copy(
                 swappiness = value,
             )
@@ -152,7 +152,7 @@ class KernelParameterViewModel : ViewModel() {
 
     fun updatePrintk(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.Printk, value)
+            Utils.writeFile(KernelUtils.PRINTK, value)
             _kernelParameters.value = _kernelParameters.value.copy(
                 printk = value,
             )
@@ -176,7 +176,7 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.swapoffZram()
             KernelUtils.resetZram()
-            Utils.writeFile(KernelUtils.ZramSize, sizeInBytes)
+            Utils.writeFile(KernelUtils.ZRAM_SIZE, sizeInBytes)
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _memory.value = _memory.value.copy(
@@ -186,12 +186,12 @@ class KernelParameterViewModel : ViewModel() {
     }
 
     fun updateZramCompAlgorithm(algorithm: String) {
-        val currentSize = Utils.readFile(KernelUtils.ZramSize)
+        val currentSize = Utils.readFile(KernelUtils.ZRAM_SIZE)
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.swapoffZram()
             KernelUtils.resetZram()
             KernelUtils.setZramCompAlgorithm(algorithm)
-            Utils.writeFile(KernelUtils.ZramSize, currentSize)
+            Utils.writeFile(KernelUtils.ZRAM_SIZE, currentSize)
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _memory.value = _memory.value.copy(
@@ -211,10 +211,10 @@ class KernelParameterViewModel : ViewModel() {
 
     fun updateDirtyRatio(value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, KernelUtils.DirtyRatio)
-            Utils.writeFile(KernelUtils.DirtyRatio, value)
+            Utils.setPermissions(644, KernelUtils.DIRTY_RATIO)
+            Utils.writeFile(KernelUtils.DIRTY_RATIO, value)
             _memory.value = _memory.value.copy(
-                dirtyRatio = Utils.readFile(KernelUtils.DirtyRatio),
+                dirtyRatio = Utils.readFile(KernelUtils.DIRTY_RATIO),
             )
         }
     }

@@ -8,43 +8,43 @@ import android.system.Os
 import com.topjohnwu.superuser.Shell
 
 object KernelUtils {
-    const val FullKernelVersion = "/proc/version"
+    const val FULL_KERNEL_VERSION = "/proc/version"
 
-    const val SchedAutoGroup = "/proc/sys/kernel/sched_autogroup_enabled"
-    const val Printk = "/proc/sys/kernel/printk"
+    const val SCHED_AUTO_GROUP = "/proc/sys/kernel/sched_autogroup_enabled"
+    const val PRINTK = "/proc/sys/kernel/printk"
 
-    const val SchedUtilClampMax = "/proc/sys/kernel/sched_util_clamp_max"
-    const val SchedUtilClampMin = "/proc/sys/kernel/sched_util_clamp_min"
-    const val SchedUtilClampMinRtDefault = "/proc/sys/kernel/sched_util_clamp_min_rt_default"
+    const val SCHED_UTIL_CLAMP_MAX = "/proc/sys/kernel/sched_util_clamp_max"
+    const val SCHED_UTIL_CLAMP_MIN = "/proc/sys/kernel/sched_util_clamp_min"
+    const val SCHED_UTIL_CLAMP_MIN_RT_DEFAULT = "/proc/sys/kernel/sched_util_clamp_min_rt_default"
 
-    const val Zram = "/dev/block/zram0"
-    const val ZramReset = "/sys/block/zram0/reset"
-    const val ZramSize = "/sys/block/zram0/disksize"
-    const val ZramCompAlgorithm = "/sys/block/zram0/comp_algorithm"
-    const val Swappiness = "/proc/sys/vm/swappiness"
-    const val DirtyRatio = "/proc/sys/vm/dirty_ratio"
+    const val ZRAM = "/dev/block/zram0"
+    const val ZRAM_RESET = "/sys/block/zram0/reset"
+    const val ZRAM_SIZE = "/sys/block/zram0/disksize"
+    const val ZRAM_COMP_ALGORITHM = "/sys/block/zram0/comp_algorithm"
+    const val SWAPPINESS = "/proc/sys/vm/swappiness"
+    const val DIRTY_RATIO = "/proc/sys/vm/dirty_ratio"
 
-    const val TcpCongestionAlgorithm = "/proc/sys/net/ipv4/tcp_congestion_control"
-    const val TcpAvailableCongestionAlgorithm = "/proc/sys/net/ipv4/tcp_available_congestion_control"
+    const val TCP_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_congestion_control"
+    const val TCP_AVAILABLE_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_available_congestion_control"
 
-    const val WireGuard = "/sys/module/wireguard/version"
+    const val WIREGUARD_VERSION = "/sys/module/wireguard/version"
 
     fun getKernelVersion(): String {
         return Os.uname().release
     }
 
     fun getFullKernelVersion(): String {
-        return Utils.readFile(FullKernelVersion)
+        return Utils.readFile(FULL_KERNEL_VERSION)
     }
 
     fun getZramSize(): String {
-        val sizeInBytes = Utils.readFile(ZramSize).toLongOrNull() ?: 0L
+        val sizeInBytes = Utils.readFile(ZRAM_SIZE).toLongOrNull() ?: 0L
         val sizeInGb = sizeInBytes / 1073741824.0
         return if (sizeInGb == 0.0) "Unknown" else "${sizeInGb.toInt()} GB"
     }
 
     fun getZramCompAlgorithm(): String {
-        val algorithms = Utils.readFile(ZramCompAlgorithm)
+        val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
         return if (algorithms.isNotEmpty()) {
             val regex = "\\[([^\\]]+)\\]".toRegex()
             val match = regex.find(algorithms)
@@ -55,7 +55,7 @@ object KernelUtils {
     }
 
     fun getAvailableZramCompAlgorithms(): List<String> {
-        val algorithms = Utils.readFile(ZramCompAlgorithm)
+        val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
         return if (algorithms.isNotEmpty()) {
             algorithms.replace("[", "").replace("]", "")
                 .split("\\s+".toRegex())
@@ -66,31 +66,31 @@ object KernelUtils {
     }
 
     fun swapoffZram() {
-        Shell.cmd("swapoff $Zram").exec()
+        Shell.cmd("swapoff $ZRAM").exec()
     }
 
     fun swaponZram() {
-        Shell.cmd("swapon $Zram").exec()
+        Shell.cmd("swapon $ZRAM").exec()
     }
 
     fun mkswapZram() {
-        Shell.cmd("mkswap $Zram").exec()
+        Shell.cmd("mkswap $ZRAM").exec()
     }
 
     fun resetZram() {
-        Shell.cmd("echo 1 > $ZramReset").exec()
+        Shell.cmd("echo 1 > $ZRAM_RESET").exec()
     }
 
     fun setZramCompAlgorithm(algorithm: String) {
-        Shell.cmd("echo $algorithm > $ZramCompAlgorithm").exec()
+        Shell.cmd("echo $algorithm > $ZRAM_COMP_ALGORITHM").exec()
     }
 
     fun getTcpCongestionAlgorithm(): String {
-        return Utils.readFile(TcpCongestionAlgorithm).trim().takeIf { it.isNotEmpty() } ?: "Unknown"
+        return Utils.readFile(TCP_CONGESTION_ALGORITHM).trim().takeIf { it.isNotEmpty() } ?: "Unknown"
     }
 
     fun getAvailableTcpCongestionAlgorithm(): List<String> {
-        val algorithms = Utils.readFile(TcpAvailableCongestionAlgorithm)
+        val algorithms = Utils.readFile(TCP_AVAILABLE_CONGESTION_ALGORITHM)
         return if (algorithms.isNotEmpty()) {
             algorithms.trim()
                 .split("\\s+".toRegex())
@@ -101,10 +101,10 @@ object KernelUtils {
     }
 
     fun setTcpCongestionAlgorithm(algorithm: String) {
-        Utils.writeFile(TcpCongestionAlgorithm, algorithm)
+        Utils.writeFile(TCP_CONGESTION_ALGORITHM, algorithm)
     }
 
     fun getWireGuardVersion(): String {
-        return Utils.readFile(WireGuard)
+        return Utils.readFile(WIREGUARD_VERSION)
     }
 }

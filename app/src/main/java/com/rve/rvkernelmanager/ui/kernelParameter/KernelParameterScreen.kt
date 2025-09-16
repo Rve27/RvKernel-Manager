@@ -527,7 +527,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("max", KernelUtils.SchedUtilClampMax, value = uclampMax)
+                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
                         openUMX.visible = false
                     },
                 ),
@@ -536,7 +536,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("max", KernelUtils.SchedUtilClampMax, value = uclampMax)
+                    viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
                     openUMX.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -568,7 +568,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min", KernelUtils.SchedUtilClampMin, value = uclampMin)
+                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
                         openUMX.visible = false
                     },
                 ),
@@ -577,7 +577,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min", KernelUtils.SchedUtilClampMin, value = uclampMin)
+                    viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
                     openUMN.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -609,7 +609,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min_rt", KernelUtils.SchedUtilClampMinRtDefault, value = uclampMinRt)
+                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
                         openUMRT.visible = false
                     },
                 ),
@@ -618,7 +618,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min_rt", KernelUtils.SchedUtilClampMinRtDefault, value = uclampMinRt)
+                    viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
                     openUMRT.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
