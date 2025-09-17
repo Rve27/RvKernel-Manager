@@ -180,7 +180,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun loadCPUData() {
+    private fun loadCPUData() {
         _cpu0State.value = loadClusterState(ClusterConfig.Little)
 
         detectedBigClusterConfig = detectBigClusterConfig()
@@ -201,7 +201,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         _cpuSchedBoostOnInput.value = Utils.readFile(SoCUtils.CPU_SCHED_BOOST_ON_INPUT)
     }
 
-    private suspend fun loadGPUData() {
+    private fun loadGPUData() {
         val gpuState = GPUState(
             minFreq = Utils.readFile(SoCUtils.MIN_FREQ_GPU),
             maxFreq = Utils.readFile(SoCUtils.MAX_FREQ_GPU),
@@ -222,7 +222,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
     }
 
-    private suspend fun loadTemperatureAndUsageData() {
+    private fun loadTemperatureAndUsageData() {
         _cpuUsage.value = SoCUtils.getCpuUsage()
         _cpuTemp.value = Utils.getTemp(SoCUtils.CPU_TEMP)
         _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
@@ -277,7 +277,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun updateLittleClusterFreq(target: String, selectedFreq: String) {
+    private fun updateLittleClusterFreq(target: String, selectedFreq: String) {
         val config = ClusterConfig.Little
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
@@ -288,7 +288,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    private suspend fun updateBigClusterFreq(target: String, selectedFreq: String) {
+    private fun updateBigClusterFreq(target: String, selectedFreq: String) {
         val config = detectedBigClusterConfig ?: return
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
@@ -299,7 +299,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    private suspend fun updatePrimeClusterFreq(target: String, selectedFreq: String) {
+    private fun updatePrimeClusterFreq(target: String, selectedFreq: String) {
         val config = ClusterConfig.Prime
         val path = if (target == "min") config.minFreqPath else config.maxFreqPath
         SoCUtils.writeFreqCPU(path, selectedFreq)
@@ -310,7 +310,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    private suspend fun updateGPUFreq(target: String, selectedFreq: String) {
+    private fun updateGPUFreq(target: String, selectedFreq: String) {
         val path = if (target == "min") SoCUtils.MIN_FREQ_GPU else SoCUtils.MAX_FREQ_GPU
         SoCUtils.writeFreqGPU(path, selectedFreq)
 
@@ -338,7 +338,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private suspend fun updateClusterGovernorState(cluster: String, governorPath: String) {
+    private fun updateClusterGovernorState(cluster: String, governorPath: String) {
         val newGovernor = Utils.readFile(governorPath)
         when (cluster) {
             ClusterConfig.Little.name -> {
