@@ -25,6 +25,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
     private var isRoot = false
@@ -82,7 +83,7 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        System.exit(0)
+                        exitProcess(0)
                     },
                     shapes = ButtonDefaults.shapes(),
                 ) {
