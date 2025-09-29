@@ -6,6 +6,7 @@ package com.rve.rvkernelmanager.ui.battery
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 class BatteryPreference(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("battery_prefs", Context.MODE_PRIVATE)
@@ -24,7 +25,7 @@ class BatteryPreference(context: Context) {
     }
 
     fun setManualDesignCapacity(value: Int) {
-        prefs.edit().putInt(KEY_MANUAL_DESIGN_CAPACITY, value).apply()
+        prefs.edit { putInt(KEY_MANUAL_DESIGN_CAPACITY, value) }
     }
 
     fun getManualDesignCapacity(): Int {
