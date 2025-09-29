@@ -20,6 +20,7 @@ object BatteryUtils {
     const val FAST_CHARGING = "/sys/kernel/fast_charge/force_fast_charge"
     const val BATTERY_DESIGN_CAPACITY = "/sys/class/power_supply/battery/charge_full_design"
     const val BATTERY_MAXIMUM_CAPACITY = "/sys/class/power_supply/battery/charge_full"
+    const val BATTERY_TECHNOLOGY = "/sys/class/power_supply/battery/technology"
 
     const val THERMAL_SCONFIG = "/sys/class/thermal/thermal_message/sconfig"
 
@@ -27,8 +28,17 @@ object BatteryUtils {
 
     private fun Context.getBatteryIntent(): Intent? = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 
-    fun getBatteryTechnology(context: Context): String =
+    fun getBatteryTechnology(context: Context): String = runCatching {
+        val result = Shell.cmd("cat $BATTERY_TECHNOLOGY").exec()
+        if (result.isSuccess && result.out.isNotEmpty()) {
+            result.out.firstOrNull()?.trim() ?: "N/A"
+        } else {
+            context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
+        }
+    }.getOrElse {
+        Log.e(TAG, "Error reading battery technology", it)
         context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
+    }
 
     fun getBatteryHealth(context: Context): String {
         return when (context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
