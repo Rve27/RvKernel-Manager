@@ -10,10 +10,7 @@ This directory contains template scripts for different kernel performance profil
 
 ## Usage
 
-- The RvKernel Manager app will load these profiles and apply the selected configuration
-- Each profile contains specific kernel parameter adjustments
-- Users can select profiles through the app interface
-- Changes take effect immediately after profile application
+- Move all profiles (powersave.sh, balance.sh, performance.sh) to Internal-storage/RvKernel-Manager/kernel-profile/ and then RvKernel Manager app will load these profiles.
 
 ## Customization
 
