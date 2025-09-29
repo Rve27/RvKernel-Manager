@@ -246,20 +246,20 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                             Crossfade(
                                 targetState = batteryTemp,
                                 animationSpec = tween(durationMillis = 500),
-                            ) {
-                                if (batteryTemp <= 45) {
+                            ) { temp ->
+                                if (temp <= 45) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_cool),
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
                                         contentDescription = null,
                                     )
-                                } else if (batteryTemp >= 45) {
+                                } else if (temp >= 45) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
                                         contentDescription = null,
                                     )
-                                } else if (batteryTemp >= 55) {
+                                } else if (temp >= 55) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_emergency_heat),
                                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
