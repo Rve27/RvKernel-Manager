@@ -4,10 +4,18 @@
  */
 package com.rve.rvkernelmanager.utils
 
+import android.annotation.SuppressLint
 import android.system.Os
 import com.topjohnwu.superuser.Shell
 
 object KernelUtils {
+    @SuppressLint("SdCardPath")
+    const val KERNEL_PROFILE_PATH = "/sdcard/RvKernel-Manager/kernel-profile"
+    const val KERNEL_PROFILE_CURRENT = "$KERNEL_PROFILE_PATH/current_profile"
+    const val KERNEL_PROFILE_POWERSAVE = "$KERNEL_PROFILE_PATH/powersave.sh"
+    const val KERNEL_PROFILE_BALANCE = "$KERNEL_PROFILE_PATH/balance.sh"
+    const val KERNEL_PROFILE_PERFORMANCE = "$KERNEL_PROFILE_PATH/performance.sh"
+
     const val FULL_KERNEL_VERSION = "/proc/version"
 
     const val SCHED_AUTO_GROUP = "/proc/sys/kernel/sched_autogroup_enabled"
@@ -28,6 +36,27 @@ object KernelUtils {
     const val TCP_AVAILABLE_CONGESTION_ALGORITHM = "/proc/sys/net/ipv4/tcp_available_congestion_control"
 
     const val WIREGUARD_VERSION = "/sys/module/wireguard/version"
+
+    fun getKernelProfile(): Int {
+        return Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
+    }
+
+    fun setKernelProfile(profile: Int) {
+        when (profile) {
+            0 -> {
+                Shell.cmd("su -c sh $KERNEL_PROFILE_POWERSAVE").exec()
+                Utils.writeFile(KERNEL_PROFILE_CURRENT, "0")
+            }
+            1 -> {
+                Shell.cmd("su -c sh $KERNEL_PROFILE_BALANCE").exec()
+                Utils.writeFile(KERNEL_PROFILE_CURRENT, "1")
+            }
+            2 -> {
+                Shell.cmd("su -c sh $KERNEL_PROFILE_PERFORMANCE").exec()
+                Utils.writeFile(KERNEL_PROFILE_CURRENT, "2")
+            }
+        }
+    }
 
     fun getKernelVersion(): String {
         return Os.uname().release

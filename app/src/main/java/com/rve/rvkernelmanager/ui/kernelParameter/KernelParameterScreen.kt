@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
@@ -61,6 +64,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -157,6 +161,9 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                item {
+                    KernelProfileCard()
+                }
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
                         KernelParameterCard(viewModel)
@@ -170,6 +177,69 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
                     item {
                         MemoryCard(viewModel)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
+    val kernelProfile by viewModel.kernelProfile.collectAsState()
+
+    val options = listOf("Powersave", "Balance", "Performance")
+
+    val icons = listOf(
+        painterResource(R.drawable.ic_battery_android_frame_plus),
+        painterResource(R.drawable.ic_balance),
+        painterResource(R.drawable.ic_speed),
+    )
+
+    var selectedIndex by remember { mutableIntStateOf(kernelProfile.currentProfile) }
+
+    Card(
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_tune),
+                    contentDescription = null,
+                )
+                Text(
+                    text = "Kernel Profiles",
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                options.forEachIndexed { index, label ->
+                    ToggleButton(
+                        modifier = Modifier.fillMaxSize(),
+                        enabled =
+                        kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
+                        checked = selectedIndex == index,
+                        onCheckedChange = {
+                            selectedIndex = index
+                            viewModel.updateProfile(index)
+                        },
+                    ) {
+                        Icon(
+                            painter = icons[index],
+                            contentDescription = null,
+                        )
+                        Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+                        Text(label)
                     }
                 }
             }
@@ -195,7 +265,9 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -419,7 +491,9 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -496,7 +570,11 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     shape = MaterialTheme.shapes.extraLarge,
                     onClick = { openUMRT.visible = true },
                 ) {
-                    Column(Modifier.padding(16.dp).fillMaxSize()) {
+                    Column(
+                        Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                    ) {
                         Text(
                             text = "Uclamp min RT default",
                             style = MaterialTheme.typography.titleMedium,
@@ -662,7 +740,9 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -722,7 +802,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             shape = MaterialTheme.shapes.extraLarge,
                             onClick = { openZD.visible = true },
                         ) {
-                            Column(Modifier.padding(16.dp).fillMaxSize()) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
                                 Text(
                                     text = "ZRAM size",
                                     style = MaterialTheme.typography.titleMedium,
@@ -747,7 +831,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             shape = MaterialTheme.shapes.extraLarge,
                             onClick = { openSD.visible = true },
                         ) {
-                            Column(Modifier.padding(16.dp).fillMaxSize()) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
                                 Text(
                                     text = "Swappiness",
                                     style = MaterialTheme.typography.titleMedium,
@@ -772,7 +860,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                     ),
                     onClick = { openZCD.visible = true },
                 ) {
-                    Column(Modifier.padding(16.dp).fillMaxSize()) {
+                    Column(
+                        Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                    ) {
                         Text(
                             text = "ZRAM compression algorithm",
                             style = MaterialTheme.typography.titleMedium,
@@ -796,7 +888,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                         shape = MaterialTheme.shapes.extraLarge,
                         onClick = { openDR.visible = true },
                     ) {
-                        Column(Modifier.padding(16.dp).fillMaxSize()) {
+                        Column(
+                            Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                        ) {
                             Text(
                                 text = "dirty ratio",
                                 style = MaterialTheme.typography.titleMedium,

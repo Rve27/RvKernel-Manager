@@ -20,6 +20,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class KernelParameterViewModel : ViewModel() {
+    data class KernelProfile(
+        val currentProfile: Int = 1,
+        val hasCurrentProfile: Boolean = false,
+        val hasProfilePowersave: Boolean = false,
+        val hasProfileBalance: Boolean = false,
+        val hasProfilePerformance: Boolean = false,
+    )
+
     data class KernelParameters(
         val schedAutogroup: String = "N/A",
         val hasSchedAutogroup: Boolean = false,
@@ -51,6 +59,9 @@ class KernelParameterViewModel : ViewModel() {
         val dirtyRatio: String = "N/A",
     )
 
+    private val _kernelProfile = MutableStateFlow(KernelProfile())
+    val kernelProfile: StateFlow<KernelProfile> = _kernelProfile
+
     private val _kernelParameters = MutableStateFlow(KernelParameters())
     val kernelParameters: StateFlow<KernelParameters> = _kernelParameters
 
@@ -66,6 +77,7 @@ class KernelParameterViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            loadKernelProfile()
             loadKernelParameter()
             loadUclamp()
             loadMemory()
@@ -83,9 +95,26 @@ class KernelParameterViewModel : ViewModel() {
 
     fun refresh() {
         refreshRequests.trySend(Unit)
+        loadKernelProfile()
         loadKernelParameter()
         loadUclamp()
         loadMemory()
+    }
+
+    fun loadKernelProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _kernelProfile.value = KernelProfile(
+                currentProfile = KernelUtils.getKernelProfile(),
+                hasCurrentProfile = Utils.testFile(KernelUtils.KERNEL_PROFILE_CURRENT),
+                hasProfilePowersave = Utils.testFile(KernelUtils.KERNEL_PROFILE_POWERSAVE),
+                hasProfileBalance = Utils.testFile(KernelUtils.KERNEL_PROFILE_BALANCE),
+                hasProfilePerformance = Utils.testFile(KernelUtils.KERNEL_PROFILE_PERFORMANCE),
+            )
+        }
+
+        if (!_kernelProfile.value.hasCurrentProfile) {
+            Utils.writeFile(KernelUtils.KERNEL_PROFILE_CURRENT, "1")
+        }
     }
 
     fun loadKernelParameter() {
@@ -128,6 +157,12 @@ class KernelParameterViewModel : ViewModel() {
                 hasDirtyRatio = Utils.testFile(KernelUtils.DIRTY_RATIO),
                 dirtyRatio = Utils.readFile(KernelUtils.DIRTY_RATIO),
             )
+        }
+    }
+
+    fun updateProfile(profile: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            KernelUtils.setKernelProfile(profile)
         }
     }
 
