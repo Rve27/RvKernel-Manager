@@ -37,6 +37,14 @@ object KernelUtils {
 
     const val WIREGUARD_VERSION = "/sys/module/wireguard/version"
 
+    const val BORE = "/proc/sys/kernel/sched_bore"
+    const val BURST_SMOOTHNESS_LONG = "/proc/sys/kernel/sched_burst_smoothness_long"
+    const val BURST_SMOOTHNESS_SHORT = "/proc/sys/kernel/sched_burst_smoothness_short"
+    const val BURST_FORK_ATAVISTIC = "/proc/sys/kernel/sched_burst_fork_atavistic"
+    const val BURST_PENALTY_OFFSET = "/proc/sys/kernel/sched_burst_penalty_offset"
+    const val BURST_PENALTY_SCALE = "/proc/sys/kernel/sched_burst_penalty_scale"
+    const val BURST_CACHE_LIFETIME = "/proc/sys/kernel/sched_burst_cache_lifetime"
+
     fun getKernelProfile(): Int {
         return Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
     }

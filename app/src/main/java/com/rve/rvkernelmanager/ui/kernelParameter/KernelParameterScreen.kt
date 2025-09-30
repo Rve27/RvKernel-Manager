@@ -98,6 +98,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
     val kernelParameters by viewModel.kernelParameters.collectAsState()
     val uclamp by viewModel.uclamp.collectAsState()
     val memory by viewModel.memory.collectAsState()
+    val bore by viewModel.boreScheduler.collectAsState()
 
     val pullToRefreshState = remember {
         object : PullToRefreshState {
@@ -177,6 +178,11 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
                     item {
                         MemoryCard(viewModel)
+                    }
+                }
+                if (bore.hasBore) {
+                    item {
+                        BoreSchedulerCard(viewModel)
                     }
                 }
             }
@@ -1060,6 +1066,542 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         dismissButton = {
             TextButton(
                 onClick = { openDR.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+}
+
+@Composable
+fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    val boreScheduler by viewModel.boreScheduler.collectAsState()
+    var bore by remember { mutableStateOf(boreScheduler.bore == 1) }
+    var burstSmoothnessLong by remember { mutableIntStateOf(boreScheduler.burstSmoothnessLong) }
+    var burstSmoothnessShort by remember { mutableIntStateOf(boreScheduler.burstSmoothnessShort) }
+    var burstForkAtavistic by remember { mutableIntStateOf(boreScheduler.burstForkAtavistic) }
+    var burstPenaltyOffset by remember { mutableIntStateOf(boreScheduler.burstPenaltyOffset) }
+    var burstPenaltyScale by remember { mutableIntStateOf(boreScheduler.burstPenaltyScale) }
+    var burstCacheLifetime by remember { mutableIntStateOf(boreScheduler.burstCacheLifetime) }
+
+    // BSL = Burst Smoothness Long
+    val openBSL = rememberDialogState(initiallyVisible = false)
+    // BSS = Burst Smoothness Short
+    val openBSS = rememberDialogState(initiallyVisible = false)
+    // BFA = Burst Fork Atavistic
+    val openBFA = rememberDialogState(initiallyVisible = false)
+    // BPO = Burst Penalty Offset
+    val openBPO = rememberDialogState(initiallyVisible = false)
+    // BPS = Burst Penalty Scale
+    val openBPS = rememberDialogState(initiallyVisible = false)
+    // BCL = Burst Cache Lifetime
+    val openBCL = rememberDialogState(initiallyVisible = false)
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        shape = MaterialTheme.shapes.extraLarge,
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_account_tree),
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    contentDescription = null,
+                )
+                Text(
+                    text = "BORE Scheduler",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                )
+            }
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
+                shape = MaterialTheme.shapes.extraLarge,
+                border = BorderStroke(
+                    width = 2.0.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                ),
+                onClick = { viewModel.updateBoreStatus(!bore)}
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Enabled",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Switch(
+                        checked = bore,
+                        onCheckedChange = { isChecked ->
+                            bore = isChecked
+                            viewModel.updateBoreStatus(isChecked)
+                        },
+                        thumbContent = {
+                            Crossfade(
+                                targetState = bore,
+                                animationSpec = tween(durationMillis = 500),
+                            ) { isChecked ->
+                                if (isChecked) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_check),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                    )
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+            AnimatedVisibility(expanded) {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    AnimatedVisibility(boreScheduler.hasBurstSmoothnessLong) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBSL.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst smoothness long",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstSmoothnessLong.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(boreScheduler.hasBurstSmoothnessShort) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBSS.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst smoothness short",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstSmoothnessShort.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(boreScheduler.hasBurstForkAtavistic) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBFA.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst fork atavistic",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstForkAtavistic.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(boreScheduler.hasBurstPenaltyOffset) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBPO.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst penalty offset",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstPenaltyOffset.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(boreScheduler.hasBurstPenaltyScale) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBPS.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst penalty scale",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstPenaltyScale.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                    AnimatedVisibility(boreScheduler.hasBurstCacheLifetime) {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            onClick = { openBCL.visible = true },
+                        ) {
+                            Column(
+                                Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                            ) {
+                                Text(
+                                    text = "Burst cache lifetime",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Text(
+                                    text = burstCacheLifetime.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center,
+        ) {
+            TooltipBox(
+                positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(
+                    TooltipAnchorPosition.Above,
+                ),
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("More Bore parameters") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(
+                        if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        contentDescription = "More BORE parameters",
+                    )
+                }
+            }
+        }
+    }
+
+    DialogUnstyled(
+        state = openBSL,
+        text = {
+            OutlinedTextField(
+                value = burstSmoothnessLong.toString(),
+                onValueChange = { value ->
+                    burstSmoothnessLong = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst smoothness long") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_smoothness_long", burstSmoothnessLong)
+                        openBSL.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_smoothness_long", burstSmoothnessLong)
+                    openBSL.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBSL.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+    DialogUnstyled(
+        state = openBSS,
+        text = {
+            OutlinedTextField(
+                value = burstSmoothnessShort.toString(),
+                onValueChange = { value ->
+                    burstSmoothnessShort = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst smoothness short") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_smoothness_short", burstSmoothnessShort)
+                        openBSS.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_smoothness_short", burstSmoothnessShort)
+                    openBSS.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBSS.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+    DialogUnstyled(
+        state = openBFA,
+        text = {
+            OutlinedTextField(
+                value = burstForkAtavistic.toString(),
+                onValueChange = { value ->
+                    burstForkAtavistic = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst fork atavistic") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_fork_atavistic", burstForkAtavistic)
+                        openBFA.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_fork_atavistic", burstForkAtavistic)
+                    openBFA.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBFA.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+    DialogUnstyled(
+        state = openBPO,
+        text = {
+            OutlinedTextField(
+                value = burstPenaltyOffset.toString(),
+                onValueChange = { value ->
+                    burstPenaltyOffset = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst penalty offset") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_penalty_offset", burstPenaltyOffset)
+                        openBPO.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_penalty_offset", burstPenaltyOffset)
+                    openBPO.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBPO.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+    DialogUnstyled(
+        state = openBPS,
+        text = {
+            OutlinedTextField(
+                value = burstPenaltyScale.toString(),
+                onValueChange = { value ->
+                    burstPenaltyScale = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst penalty scale") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_penalty_scale", burstPenaltyScale)
+                        openBPS.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_penalty_scale", burstPenaltyScale)
+                    openBPS.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBPS.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+    DialogUnstyled(
+        state = openBCL,
+        text = {
+            OutlinedTextField(
+                value = burstCacheLifetime.toString(),
+                onValueChange = { value ->
+                    burstCacheLifetime = value.filter { it.isDigit() }.toIntOrNull() ?: 0
+                },
+                label = { Text("Burst cache lifetime") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateBoreParameter("burst_cache_lifetime", burstCacheLifetime)
+                        openBCL.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    viewModel.updateBoreParameter("burst_cache_lifetime", burstCacheLifetime)
+                    openBCL.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openBCL.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
                 Text("Cancel")
