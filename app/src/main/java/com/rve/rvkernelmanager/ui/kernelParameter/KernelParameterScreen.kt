@@ -87,6 +87,7 @@ import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.utils.BetaFeatures
 import com.rve.rvkernelmanager.utils.KernelUtils
 
 @Composable
@@ -162,8 +163,10 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item {
-                    KernelProfileCard()
+                if (BetaFeatures.isBetaFeaturesEnabled) {
+                    item {
+                        KernelProfileCard()
+                    }
                 }
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
@@ -1136,7 +1139,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     width = 2.0.dp,
                     color = MaterialTheme.colorScheme.primary,
                 ),
-                onClick = { viewModel.updateBoreStatus(!bore)}
+                onClick = { viewModel.updateBoreStatus(!bore) },
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize().padding(16.dp),

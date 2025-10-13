@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rve.rvkernelmanager.utils.BetaFeatures
 import com.rve.rvkernelmanager.utils.KernelUtils
 import com.rve.rvkernelmanager.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -97,7 +98,9 @@ class KernelParameterViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            loadKernelProfile()
+            if (BetaFeatures.isBetaFeaturesEnabled) {
+                loadKernelProfile()
+            }
             loadKernelParameter()
             loadUclamp()
             loadMemory()
@@ -116,7 +119,9 @@ class KernelParameterViewModel : ViewModel() {
 
     fun refresh() {
         refreshRequests.trySend(Unit)
-        loadKernelProfile()
+        if (BetaFeatures.isBetaFeaturesEnabled) {
+            loadKernelProfile()
+        }
         loadKernelParameter()
         loadUclamp()
         loadMemory()

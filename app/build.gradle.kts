@@ -76,11 +76,26 @@ android {
             isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("Boolean", "ENABLE_BETA_FEATURES", "false")
+        }
+
+        debug {
+            isDebuggable = true
+            buildConfigField("Boolean", "ENABLE_BETA_FEATURES", "false")
+        }
+
+        create("beta") {
+            initWith(getByName("debug"))
+            isDebuggable = true
+            applicationIdSuffix = ".beta"
+            versionNameSuffix = "-beta"
+            buildConfigField("Boolean", "ENABLE_BETA_FEATURES", "true")
         }
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
