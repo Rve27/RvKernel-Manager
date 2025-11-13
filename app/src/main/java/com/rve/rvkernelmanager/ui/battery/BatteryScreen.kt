@@ -81,6 +81,7 @@ import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
+import com.rve.rvkernelmanager.utils.BatteryUtils
 
 @Composable
 fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavController) {
@@ -90,6 +91,9 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val chargingState by viewModel.chargingState.collectAsState()
+    val rvkernels = listOf(
+        "RvKernel-Alioth-v1.2",
+    )
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
 
     DisposableEffect(lifecycleOwner) {
@@ -140,6 +144,10 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
                     ForceFastChargingCard(viewModel)
                 }
             }
+            if (rvkernels.any { chargingState.kernelVersion.contains(it) })
+                item {
+                    BypassChargingCard(viewModel)
+                }
         }
     }
 }
@@ -807,7 +815,7 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsState()
 
     Button(
-        onClick = { viewModel.toggleFastCharging(!chargingState.isFastChargingChecked) },
+        onClick = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = !chargingState.isFastChargingChecked) },
         shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -832,10 +840,60 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
             )
             Switch(
                 checked = chargingState.isFastChargingChecked,
-                onCheckedChange = { viewModel.toggleFastCharging(it) },
+                onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = it) },
                 thumbContent = {
                     Crossfade(
                         targetState = chargingState.isFastChargingChecked,
+                        animationSpec = tween(durationMillis = 500),
+                    ) { isChecked ->
+                        if (isChecked) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+fun BypassChargingCard(viewModel: BatteryViewModel) {
+    val chargingState by viewModel.chargingState.collectAsState()
+
+    Button(
+        onClick = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = !chargingState.isBypassChargingChecked) },
+        shapes = ButtonDefaults.shapes(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        contentPadding = PaddingValues(16.dp),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_battery_android_frame_shield),
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                contentDescription = null,
+            )
+            Text(
+                text = "Bypass charging",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = chargingState.isBypassChargingChecked,
+                onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = it) },
+                thumbContent = {
+                    Crossfade(
+                        targetState = chargingState.isBypassChargingChecked,
                         animationSpec = tween(durationMillis = 500),
                     ) { isChecked ->
                         if (isChecked) {

@@ -18,6 +18,7 @@ import kotlin.math.roundToInt
 object BatteryUtils {
 
     const val FAST_CHARGING = "/sys/kernel/fast_charge/force_fast_charge"
+    const val BYPASS_CHARGING = "/sys/class/power_supply/battery/input_suspend"
     const val BATTERY_DESIGN_CAPACITY = "/sys/class/power_supply/battery/charge_full_design"
     const val BATTERY_MAXIMUM_CAPACITY = "/sys/class/power_supply/battery/charge_full"
     const val BATTERY_TECHNOLOGY = "/sys/class/power_supply/battery/technology"

@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.utils.BatteryUtils
+import com.rve.rvkernelmanager.utils.KernelUtils
 import com.rve.rvkernelmanager.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -33,7 +34,12 @@ class BatteryViewModel : ViewModel() {
         val maximumCapacity: String = "N/A",
     )
 
-    data class ChargingState(val hasFastCharging: Boolean = false, val isFastChargingChecked: Boolean = false)
+    data class ChargingState(
+        val hasFastCharging: Boolean = false,
+        val isFastChargingChecked: Boolean = false,
+        val kernelVersion: String = "N/A",
+        val isBypassChargingChecked: Boolean = false,
+    )
 
     private val _batteryInfo = MutableStateFlow(BatteryInfo())
     val batteryInfo: StateFlow<BatteryInfo> = _batteryInfo
@@ -168,24 +174,36 @@ class BatteryViewModel : ViewModel() {
     fun checkChargingFiles() {
         viewModelScope.launch(Dispatchers.IO) {
             val hasFastCharging = Utils.testFile(BatteryUtils.FAST_CHARGING)
-
             val isFastChargingChecked = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
+            val kernelVersion = KernelUtils.getKernelVersion()
+            val isBypassChargingChecked = Utils.readFile(BatteryUtils.BYPASS_CHARGING) == "1"
 
             _chargingState.value = ChargingState(
                 hasFastCharging = hasFastCharging,
                 isFastChargingChecked = isFastChargingChecked,
+                kernelVersion = kernelVersion,
+                isBypassChargingChecked = isBypassChargingChecked,
             )
         }
     }
 
-    fun toggleFastCharging(checked: Boolean) {
+    fun updateCharging(filePath: String, checked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val success = Utils.writeFile(BatteryUtils.FAST_CHARGING, if (checked) "1" else "0")
+            val success = Utils.writeFile(filePath, if (checked) "1" else "0")
 
             if (success) {
-                _chargingState.value = _chargingState.value.copy(
-                    isFastChargingChecked = checked,
-                )
+                when (filePath) {
+                    BatteryUtils.FAST_CHARGING -> {
+                        _chargingState.value = _chargingState.value.copy(
+                            isFastChargingChecked = checked,
+                        )
+                    }
+                    BatteryUtils.BYPASS_CHARGING -> {
+                        _chargingState.value = _chargingState.value.copy(
+                            isBypassChargingChecked = checked,
+                        )
+                    }
+                }
             }
         }
     }
