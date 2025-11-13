@@ -49,7 +49,7 @@ Fine-tune kernel settings for optimal performance:
 - **Dynamic theming**: Adapts to your system colors
 - **Dark/Light modes**: Full theme support
 
-## 📱 Screenshots
+## 📱 Screenshots (v1.2.5)
 
 <p><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" width="32%" />
 <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/05.png" width="32%" /> <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/06.png" width="32%" /></p>
