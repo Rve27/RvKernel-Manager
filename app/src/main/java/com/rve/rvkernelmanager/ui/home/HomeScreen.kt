@@ -257,11 +257,11 @@ fun DonateCard() {
 
     val summary =
         "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
-    val kofiLink = "https://ko-fi.com/rve27"
+    val donateLink = "https://t.me/rve_enterprises/33652/90188"
 
     TooltipBox(
         positionProvider = positionProvider,
-        tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(kofiLink) } },
+        tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(donateLink) } },
         state = tooltipState,
     ) {
         Card(
@@ -270,7 +270,7 @@ fun DonateCard() {
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
             onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, kofiLink.toUri()))
+                context.startActivity(Intent(Intent.ACTION_VIEW, donateLink.toUri()))
             },
         ) {
             CustomListItem(
