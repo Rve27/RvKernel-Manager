@@ -98,13 +98,15 @@ class KernelParameterViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            if (BetaFeatures.isBetaFeaturesEnabled) {
+            if (BetaFeatures.isBetaFeaturesEnabled && KernelUtils.checkKernelTuning()) {
                 loadKernelProfile()
             }
             loadKernelParameter()
             loadUclamp()
             loadMemory()
-            loadBoreScheduler()
+            if (KernelUtils.checkBore()) {
+                loadBoreScheduler()
+            }
 
             for (r in refreshRequests) {
                 isRefreshing = true
