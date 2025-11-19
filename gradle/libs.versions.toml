@@ -1,7 +1,7 @@
 [versions]
 androidGradlePlugin = "8.13.1"
 kotlin = "2.2.21"
-spotless = "8.0.0"
+spotless = "8.1.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 androidxCore = "1.17.0"
@@ -18,7 +18,7 @@ kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
 coil3 = "3.3.0"
 libsuVersion = "6.0.0"
-composables = "1.48.3"
+composables = "1.49.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
