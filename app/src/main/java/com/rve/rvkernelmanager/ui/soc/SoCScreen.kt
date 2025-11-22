@@ -1469,6 +1469,12 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
+                                        } else {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_close),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
                                         }
                                     }
                                 },
@@ -1841,6 +1847,12 @@ fun GPUCard(viewModel: SoCViewModel) {
                                         if (isChecked) {
                                             Icon(
                                                 painter = painterResource(R.drawable.ic_check),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        } else {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_close),
                                                 contentDescription = null,
                                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                                             )
