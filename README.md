@@ -26,28 +26,37 @@
 Monitor critical device information including CPU model, GPU model, RAM, kernel version, Android version, and more.
 
 ### 🔋 Battery Monitoring & Control
-- **Real-time monitoring**: Voltage, temperature, and charging level
-- **Thermal profile management**: Optimize temperature thresholds
+- **Real-time monitoring**: Voltage, temperature, charging level, and deep sleep time
 - **Fast charging control**: Enable/disable for supported devices
-- **Battery health tracking**: Monitor degradation over time
+- **Bypass charging mode**: Supported on compatible kernels
+- **Battery health tracking**: Monitor current health and capacity
+- **Thermal configuration**: Manage thermal profiles for optimal performance
 
 ### ⚡ SoC (System on Chip) Management
 Advanced CPU & GPU control with comprehensive support for:
 - **Multi-cluster CPU support**: Little, Big, and Prime core clusters
 - **Governor selection**: Choose optimal CPU & GPU scheduling policies
 - **Frequency scaling**: Set custom min/max frequencies
+- **GPU tuning**: Power level control, Adreno boost, and throttling settings
 
 ### 🛠️ Kernel Parameter Tuning
 Fine-tune kernel settings for optimal performance:
-- **Memory management**: Swappiness settings and others
-- **ZRAM optimization**: Size allocation and compression algorithms
-- **Network tuning**: TCP congestion control
+- **Memory management**: Swappiness, dirty ratio, and ZRAM configuration
+- **ZRAM optimization**: Size allocation and compression algorithm selection
+- **Network tuning**: TCP congestion control algorithm selection
+- **Scheduling**: Kernel task scheduler tuning with BORE scheduler support
+- **Kernel profiles**: Pre-configured profiles (Performance, Balance, Powersave)
+- **CPU tuning**: Uclamp settings for fine-grained CPU performance control
 - **And many more advanced parameters!**
 
 ### 🎨 Material 3 Expressive Design
 - **Modern interface**: Clean, intuitive Material 3 design
 - **Dynamic theming**: Adapts to your system colors
 - **Dark/Light modes**: Full theme support
+
+### 🔒 System Integration
+- **WireGuard support**: Monitor WireGuard kernel module status
+- **Real-time monitoring**: CPU usage, uptime, and system metrics
 
 ## 📱 Screenshots (v1.2.5)
 

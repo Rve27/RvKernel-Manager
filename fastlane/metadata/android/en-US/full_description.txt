@@ -9,10 +9,11 @@ Monitor critical device information including CPU model, GPU model, RAM, kernel 
 
 <h4>Battery Monitoring & Control</h4>
 <ul>
-  <li><strong>Real-time monitoring</strong>: Voltage, temperature, and charging level</li>
-  <li><strong>Thermal profile management</strong>: Optimize temperature thresholds</li>
+  <li><strong>Real-time monitoring</strong>: Voltage, temperature, charging level, and deep sleep time</li>
   <li><strong>Fast charging control</strong>: Enable/disable for supported devices</li>
-  <li><strong>Battery health tracking</strong>: Monitor degradation over time</li>
+  <li><strong>Bypass charging mode</strong>: Supported on compatible kernels</li>
+  <li><strong>Battery health tracking</strong>: Monitor current health and capacity</li>
+  <li><strong>Thermal configuration</strong>: Manage thermal profiles for optimal performance</li>
 </ul>
 
 <h4>Advanced CPU & GPU control</h4>
@@ -20,14 +21,18 @@ Monitor critical device information including CPU model, GPU model, RAM, kernel 
   <li><strong>Multi-cluster CPU support</strong>: Little, Big, and Prime core clusters</li>
   <li><strong>Governor selection</strong>: Choose optimal CPU & GPU scheduling policies</li>
   <li><strong>Frequency scaling</strong>: Set custom min/max frequencies</li>
+  <li><strong>GPU tuning</strong>: Power level control, Adreno boost, and throttling settings</li>
 </ul>
 
 <h4>Kernel Parameter Tuning</h4>
 <p>Fine-tune kernel settings for optimal performance:</p>
 <ul>
-  <li><strong>Memory management</strong>: Swappiness settings and others</li>
-  <li><strong>ZRAM optimization</strong>: Size allocation and compression algorithms</li>
-  <li><strong>Network tuning</strong>: TCP congestion control</li>
+  <li><strong>Memory management</strong>: Swappiness, dirty ratio, and ZRAM configuration</li>
+  <li><strong>ZRAM optimization</strong>: Size allocation and compression algorithm selection</li>
+  <li><strong>Network tuning</strong>: TCP congestion control algorithm selection</li>
+  <li><strong>Scheduling</strong>: Kernel task scheduler tuning with BORE scheduler support</li>
+  <li><strong>Kernel profiles</strong>: Pre-configured profiles (Performance, Balance, Powersave)</li>
+  <li><strong>CPU tuning</strong>: Uclamp settings for fine-grained CPU performance control</li>
   <li><strong>And many more advanced parameters!</strong></li>
 </ul>
 
@@ -36,6 +41,12 @@ Monitor critical device information including CPU model, GPU model, RAM, kernel 
   <li><strong>Modern interface</strong>: Clean, intuitive Material 3 design</li>
   <li><strong>Dynamic theming</strong>: Adapts to your system colors</li>
   <li><strong>Dark/Light modes</strong>: Full theme support</li>
+</ul>
+
+<h4>System Integration</h4>
+<ul>
+  <li><strong>WireGuard support</strong>: Monitor WireGuard kernel module status</li>
+  <li><strong>Real-time monitoring</strong>: CPU usage, uptime, and system metrics</li>
 </ul>
 
 <h4>Requirements</h4>
