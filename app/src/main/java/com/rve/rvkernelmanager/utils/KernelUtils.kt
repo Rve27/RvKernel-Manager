@@ -144,12 +144,4 @@ object KernelUtils {
     fun getWireGuardVersion(): String {
         return Utils.readFile(WIREGUARD_VERSION)
     }
-
-    fun checkBore(): Boolean {
-        return Utils.testFile(BORE)
-    }
-
-    fun checkKernelTuning(): Boolean {
-        return Utils.testFile(KERNEL_PROFILE_CURRENT)
-    }
 }
