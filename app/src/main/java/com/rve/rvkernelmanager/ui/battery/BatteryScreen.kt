@@ -852,6 +852,12 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
                                 contentDescription = null,
                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                             )
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_close),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
                         }
                     }
                 },
@@ -899,6 +905,12 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
                         if (isChecked) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_check),
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_close),
                                 contentDescription = null,
                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                             )
