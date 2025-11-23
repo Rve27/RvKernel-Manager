@@ -45,8 +45,8 @@ object KernelUtils {
     const val BURST_PENALTY_SCALE = "/proc/sys/kernel/sched_burst_penalty_scale"
     const val BURST_CACHE_LIFETIME = "/proc/sys/kernel/sched_burst_cache_lifetime"
 
-    fun getKernelProfile(): Int {
-        return Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
+    fun getKernelProfile(): String {
+        return Utils.readFile(KERNEL_PROFILE_CURRENT)
     }
 
     fun setKernelProfile(profile: Int) {
