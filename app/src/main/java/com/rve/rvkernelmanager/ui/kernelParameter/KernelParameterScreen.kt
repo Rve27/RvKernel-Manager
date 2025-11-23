@@ -64,7 +64,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -205,7 +204,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
         painterResource(R.drawable.ic_speed),
     )
 
-    var selectedIndex by remember { mutableIntStateOf(kernelProfile.currentProfile) }
+    var selectedIndex by remember { mutableStateOf(kernelProfile.currentProfile) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -237,9 +236,9 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                         modifier = Modifier.fillMaxSize(),
                         enabled =
                         kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
-                        checked = selectedIndex == index,
+                        checked = selectedIndex == index.toString(),
                         onCheckedChange = {
-                            selectedIndex = index
+                            selectedIndex = index.toString()
                             viewModel.updateProfile(index)
                         },
                     ) {
@@ -1088,13 +1087,13 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     val boreScheduler by viewModel.boreScheduler.collectAsState()
-    var bore by remember { mutableStateOf(boreScheduler.bore == 1) }
-    var burstSmoothnessLong by remember { mutableIntStateOf(boreScheduler.burstSmoothnessLong) }
-    var burstSmoothnessShort by remember { mutableIntStateOf(boreScheduler.burstSmoothnessShort) }
-    var burstForkAtavistic by remember { mutableIntStateOf(boreScheduler.burstForkAtavistic) }
-    var burstPenaltyOffset by remember { mutableIntStateOf(boreScheduler.burstPenaltyOffset) }
-    var burstPenaltyScale by remember { mutableIntStateOf(boreScheduler.burstPenaltyScale) }
-    var burstCacheLifetime by remember { mutableIntStateOf(boreScheduler.burstCacheLifetime) }
+    var bore by remember { mutableStateOf(boreScheduler.bore == "1") }
+    var burstSmoothnessLong by remember { mutableStateOf(boreScheduler.burstSmoothnessLong) }
+    var burstSmoothnessShort by remember { mutableStateOf(boreScheduler.burstSmoothnessShort) }
+    var burstForkAtavistic by remember { mutableStateOf(boreScheduler.burstForkAtavistic) }
+    var burstPenaltyOffset by remember { mutableStateOf(boreScheduler.burstPenaltyOffset) }
+    var burstPenaltyScale by remember { mutableStateOf(boreScheduler.burstPenaltyScale) }
+    var burstCacheLifetime by remember { mutableStateOf(boreScheduler.burstCacheLifetime) }
 
     // BSL = Burst Smoothness Long
     val openBSL = rememberDialogState(initiallyVisible = false)
@@ -1208,7 +1207,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstSmoothnessLong.toString(),
+                                    text = burstSmoothnessLong,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1234,7 +1233,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstSmoothnessShort.toString(),
+                                    text = burstSmoothnessShort,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1260,7 +1259,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstForkAtavistic.toString(),
+                                    text = burstForkAtavistic,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1286,7 +1285,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstPenaltyOffset.toString(),
+                                    text = burstPenaltyOffset,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1312,7 +1311,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstPenaltyScale.toString(),
+                                    text = burstPenaltyScale,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1338,7 +1337,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = burstCacheLifetime.toString(),
+                                    text = burstCacheLifetime,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1375,10 +1374,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBSL,
         text = {
             OutlinedTextField(
-                value = burstSmoothnessLong.toString(),
-                onValueChange = { value ->
-                    burstSmoothnessLong = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstSmoothnessLong,
+                onValueChange = { burstSmoothnessLong = it },
                 label = { Text("Burst smoothness long") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -1417,10 +1414,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBSS,
         text = {
             OutlinedTextField(
-                value = burstSmoothnessShort.toString(),
-                onValueChange = { value ->
-                    burstSmoothnessShort = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstSmoothnessShort,
+                onValueChange = { burstSmoothnessShort = it },
                 label = { Text("Burst smoothness short") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -1459,10 +1454,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBFA,
         text = {
             OutlinedTextField(
-                value = burstForkAtavistic.toString(),
-                onValueChange = { value ->
-                    burstForkAtavistic = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstForkAtavistic,
+                onValueChange = { burstForkAtavistic = it },
                 label = { Text("Burst fork atavistic") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -1501,10 +1494,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBPO,
         text = {
             OutlinedTextField(
-                value = burstPenaltyOffset.toString(),
-                onValueChange = { value ->
-                    burstPenaltyOffset = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstPenaltyOffset,
+                onValueChange = { burstPenaltyOffset = it },
                 label = { Text("Burst penalty offset") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -1543,10 +1534,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBPS,
         text = {
             OutlinedTextField(
-                value = burstPenaltyScale.toString(),
-                onValueChange = { value ->
-                    burstPenaltyScale = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstPenaltyScale,
+                onValueChange = { burstPenaltyScale = it },
                 label = { Text("Burst penalty scale") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -1585,10 +1574,8 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         state = openBCL,
         text = {
             OutlinedTextField(
-                value = burstCacheLifetime.toString(),
-                onValueChange = { value ->
-                    burstCacheLifetime = value.filter { it.isDigit() }.toIntOrNull() ?: 0
-                },
+                value = burstCacheLifetime,
+                onValueChange = { burstCacheLifetime = it },
                 label = { Text("Burst cache lifetime") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(

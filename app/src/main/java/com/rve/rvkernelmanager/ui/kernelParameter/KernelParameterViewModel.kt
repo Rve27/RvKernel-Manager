@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class KernelParameterViewModel : ViewModel() {
     data class KernelProfile(
-        val currentProfile: Int = 1,
+        val currentProfile: String = "",
         val hasCurrentProfile: Boolean = false,
         val hasProfilePowersave: Boolean = false,
         val hasProfileBalance: Boolean = false,
@@ -62,19 +62,19 @@ class KernelParameterViewModel : ViewModel() {
 
     data class BoreScheduler(
         val hasBore: Boolean = false,
-        val bore: Int = 0,
+        val bore: String = "",
         val hasBurstSmoothnessLong: Boolean = false,
-        val burstSmoothnessLong: Int = 0,
+        val burstSmoothnessLong: String = "",
         val hasBurstSmoothnessShort: Boolean = false,
-        val burstSmoothnessShort: Int = 0,
+        val burstSmoothnessShort: String = "",
         val hasBurstForkAtavistic: Boolean = false,
-        val burstForkAtavistic: Int = 0,
+        val burstForkAtavistic: String = "",
         val hasBurstPenaltyOffset: Boolean = false,
-        val burstPenaltyOffset: Int = 0,
+        val burstPenaltyOffset: String = "",
         val hasBurstPenaltyScale: Boolean = false,
-        val burstPenaltyScale: Int = 0,
+        val burstPenaltyScale: String = "",
         val hasBurstCacheLifetime: Boolean = false,
-        val burstCacheLifetime: Int = 0,
+        val burstCacheLifetime: String = "",
     )
 
     private val _kernelProfile = MutableStateFlow(KernelProfile())
@@ -193,19 +193,19 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             _boreScheduler.value = BoreScheduler(
                 hasBore = Utils.testFile(KernelUtils.BORE),
-                bore = Utils.readFile(KernelUtils.BORE).toInt(),
+                bore = Utils.readFile(KernelUtils.BORE),
                 hasBurstSmoothnessLong = Utils.testFile(KernelUtils.BURST_SMOOTHNESS_LONG),
-                burstSmoothnessLong = Utils.readFile(KernelUtils.BURST_SMOOTHNESS_LONG).toInt(),
+                burstSmoothnessLong = Utils.readFile(KernelUtils.BURST_SMOOTHNESS_LONG),
                 hasBurstSmoothnessShort = Utils.testFile(KernelUtils.BURST_SMOOTHNESS_SHORT),
-                burstSmoothnessShort = Utils.readFile(KernelUtils.BURST_SMOOTHNESS_SHORT).toInt(),
+                burstSmoothnessShort = Utils.readFile(KernelUtils.BURST_SMOOTHNESS_SHORT),
                 hasBurstForkAtavistic = Utils.testFile(KernelUtils.BURST_FORK_ATAVISTIC),
-                burstForkAtavistic = Utils.readFile(KernelUtils.BURST_FORK_ATAVISTIC).toInt(),
+                burstForkAtavistic = Utils.readFile(KernelUtils.BURST_FORK_ATAVISTIC),
                 hasBurstPenaltyOffset = Utils.testFile(KernelUtils.BURST_PENALTY_OFFSET),
-                burstPenaltyOffset = Utils.readFile(KernelUtils.BURST_PENALTY_OFFSET).toInt(),
+                burstPenaltyOffset = Utils.readFile(KernelUtils.BURST_PENALTY_OFFSET),
                 hasBurstPenaltyScale = Utils.testFile(KernelUtils.BURST_PENALTY_SCALE),
-                burstPenaltyScale = Utils.readFile(KernelUtils.BURST_PENALTY_SCALE).toInt(),
+                burstPenaltyScale = Utils.readFile(KernelUtils.BURST_PENALTY_SCALE),
                 hasBurstCacheLifetime = Utils.testFile(KernelUtils.BURST_CACHE_LIFETIME),
-                burstCacheLifetime = Utils.readFile(KernelUtils.BURST_CACHE_LIFETIME).toInt(),
+                burstCacheLifetime = Utils.readFile(KernelUtils.BURST_CACHE_LIFETIME),
             )
         }
     }
@@ -305,16 +305,16 @@ class KernelParameterViewModel : ViewModel() {
     }
 
     fun updateBoreStatus(isEnabled: Boolean) {
-        val value = if (isEnabled) 1 else 0
+        val value = if (isEnabled) "1" else "0"
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.BORE, value.toString())
+            Utils.writeFile(KernelUtils.BORE, value)
             _boreScheduler.value = _boreScheduler.value.copy(
                 bore = value,
             )
         }
     }
 
-    fun updateBoreParameter(parameter: String, value: Int) {
+    fun updateBoreParameter(parameter: String, value: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val path = when (parameter) {
                 "burst_smoothness_long" -> KernelUtils.BURST_SMOOTHNESS_LONG
@@ -326,7 +326,7 @@ class KernelParameterViewModel : ViewModel() {
                 else -> null
             }
             path?.let {
-                Utils.writeFile(it, value.toString())
+                Utils.writeFile(it, value)
                 _boreScheduler.value = when (parameter) {
                     "burst_smoothness_long" -> _boreScheduler.value.copy(burstSmoothnessLong = value)
                     "burst_smoothness_short" -> _boreScheduler.value.copy(burstSmoothnessShort = value)
