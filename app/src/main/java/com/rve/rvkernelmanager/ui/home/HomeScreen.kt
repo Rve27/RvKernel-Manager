@@ -6,6 +6,7 @@
 
 package com.rve.rvkernelmanager.ui.home
 
+import android.content.ClipData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.combinedClickable
@@ -36,16 +37,17 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -57,6 +59,7 @@ import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavController) {
@@ -84,7 +87,8 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        val clipboardManager = LocalClipboardManager.current
+        val clipboard = LocalClipboard.current
+        val coroutineScope = rememberCoroutineScope()
 
         var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
@@ -97,9 +101,16 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 icon = painterResource(R.drawable.ic_smartphone),
                 onClick = { /* do nothing */ },
                 onLongClick = {
-                    clipboardManager.setText(
-                        AnnotatedString("${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})"),
-                    )
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    "Device",
+                                    "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
+                                ),
+                            ),
+                        )
+                    }
                 },
             ),
             DeviceInfoItem(
@@ -107,14 +118,36 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 summary = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
                 icon = painterResource(R.drawable.ic_android),
                 onClick = { /* do nothing */ },
-                onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})")) },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    "Android",
+                                    "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
+                                ),
+                            ),
+                        )
+                    }
+                },
             ),
             DeviceInfoItem(
                 title = "RAM",
                 summary = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
                 icon = painterResource(R.drawable.ic_ram),
                 onClick = { /* do nothing */ },
-                onLongClick = { clipboardManager.setText(AnnotatedString("${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)")) },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    "RAM",
+                                    "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
+                                ),
+                            ),
+                        )
+                    }
+                },
             ),
         )
 
@@ -123,7 +156,18 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             summary = deviceInfo.wireGuard,
             icon = painterResource(R.drawable.ic_shield),
             onClick = { /* do nothing */ },
-            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.wireGuard)) },
+            onLongClick = {
+                coroutineScope.launch {
+                    clipboard.setClipEntry(
+                        ClipEntry(
+                            ClipData.newPlainText(
+                                "WireGuard",
+                                deviceInfo.wireGuard,
+                            ),
+                        ),
+                    )
+                }
+            },
         )
 
         val cpuInfo = DeviceInfoItem(
@@ -131,7 +175,18 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             summary = deviceInfo.cpu,
             icon = painterResource(R.drawable.ic_cpu),
             onClick = { /* do nothing */ },
-            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.cpu)) },
+            onLongClick = {
+                coroutineScope.launch {
+                    clipboard.setClipEntry(
+                        ClipEntry(
+                            ClipData.newPlainText(
+                                "CPU",
+                                deviceInfo.cpu,
+                            ),
+                        ),
+                    )
+                }
+            },
         )
 
         val gpuInfo = DeviceInfoItem(
@@ -139,7 +194,18 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             summary = deviceInfo.gpuModel,
             icon = painterResource(R.drawable.ic_video_card),
             onClick = { /* do nothing */ },
-            onLongClick = { clipboardManager.setText(AnnotatedString(deviceInfo.gpuModel)) },
+            onLongClick = {
+                coroutineScope.launch {
+                    clipboard.setClipEntry(
+                        ClipEntry(
+                            ClipData.newPlainText(
+                                "GPU",
+                                deviceInfo.gpuModel,
+                            ),
+                        ),
+                    )
+                }
+            },
         )
 
         val kernelInfo = DeviceInfoItem(
@@ -148,9 +214,16 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             icon = painterResource(R.drawable.ic_linux),
             onClick = { isFullKernelVersion = !isFullKernelVersion },
             onLongClick = {
-                clipboardManager.setText(
-                    AnnotatedString(if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion),
-                )
+                coroutineScope.launch {
+                    clipboard.setClipEntry(
+                        ClipEntry(
+                            ClipData.newPlainText(
+                                "Kernel",
+                                if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
+                            ),
+                        ),
+                    )
+                }
             },
             animateContentSize = true,
         )
