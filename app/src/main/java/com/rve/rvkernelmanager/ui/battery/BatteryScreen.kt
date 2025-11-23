@@ -6,6 +6,7 @@
 
 package com.rve.rvkernelmanager.ui.battery
 
+import android.content.ClipData
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
@@ -58,15 +59,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -82,6 +84,7 @@ import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.BatteryUtils
+import kotlinx.coroutines.launch
 
 @Composable
 fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavController) {
@@ -154,7 +157,8 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
 
 @Composable
 fun BatteryMonitorCard(viewModel: BatteryViewModel) {
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
 
     val batteryInfo by viewModel.batteryInfo.collectAsState()
     val uptime by viewModel.uptime.collectAsState()
@@ -214,7 +218,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
-                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.voltage)) },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Battery voltage",
+                                                batteryInfo.voltage,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
                         ),
                     ) {
                         Column(
@@ -243,7 +258,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
-                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.temp)) },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Battery temperature",
+                                                batteryInfo.temp,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
                         ),
                     ) {
                         Column(
@@ -292,7 +318,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 ),
                 modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).combinedClickable(
                     onClick = { /* do nothing */ },
-                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.level)) },
+                    onLongClick = {
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Battery level",
+                                        batteryInfo.level,
+                                    ),
+                                ),
+                            )
+                        }
+                    },
                 ),
             ) {
                 Column(Modifier.padding(16.dp)) {
@@ -384,7 +421,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = { /* do nothing */ },
-                    onLongClick = { clipboardManager.setText(AnnotatedString(uptime)) },
+                    onLongClick = {
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Device uptime",
+                                        uptime,
+                                    ),
+                                ),
+                            )
+                        }
+                    },
                 ),
             ) {
                 Row(
@@ -419,7 +467,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = { /* do nothing */ },
-                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.deepSleep)) },
+                    onLongClick = {
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Deep sleep",
+                                        batteryInfo.deepSleep,
+                                    ),
+                                ),
+                            )
+                        }
+                    },
                 ),
             ) {
                 Row(
@@ -452,8 +511,9 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
 @Composable
 fun BatteryInfoCard(viewModel: BatteryViewModel) {
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     // MDC = Manual Design Capacity
     val openMDC = rememberDialogState(initiallyVisible = false)
@@ -507,7 +567,18 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
-                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.tech)) },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Battery technology",
+                                                batteryInfo.tech,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
                         ),
                     ) {
                         Column(
@@ -536,7 +607,18 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
-                            onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.health)) },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Battery health",
+                                                batteryInfo.health,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
                         ),
                     ) {
                         Column(
@@ -570,7 +652,18 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                             openMDC.visible = true
                         }
                     },
-                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.designCapacity)) },
+                    onLongClick = {
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Battery design capacity",
+                                        batteryInfo.designCapacity,
+                                    ),
+                                ),
+                            )
+                        }
+                    },
                 ),
             ) {
                 Row(
@@ -618,7 +711,18 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = { /* do nothing */ },
-                    onLongClick = { clipboardManager.setText(AnnotatedString(batteryInfo.maximumCapacity)) },
+                    onLongClick = {
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(
+                                ClipEntry(
+                                    ClipData.newPlainText(
+                                        "Battery maximum capacity",
+                                        batteryInfo.maximumCapacity,
+                                    ),
+                                ),
+                            )
+                        }
+                    },
                 ),
             ) {
                 Row(
