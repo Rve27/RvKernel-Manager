@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rve.rvkernelmanager.utils.BetaFeatures
 import com.rve.rvkernelmanager.utils.KernelUtils
 import com.rve.rvkernelmanager.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +21,7 @@ import kotlinx.coroutines.launch
 
 class KernelParameterViewModel : ViewModel() {
     data class KernelProfile(
-        val currentProfile: String = "",
-        val hasCurrentProfile: Boolean = false,
+        val currentProfile: Int = 1,
         val hasProfilePowersave: Boolean = false,
         val hasProfileBalance: Boolean = false,
         val hasProfilePerformance: Boolean = false,
@@ -98,9 +96,7 @@ class KernelParameterViewModel : ViewModel() {
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            if (BetaFeatures.isBetaFeaturesEnabled) {
-                loadKernelProfile()
-            }
+            loadKernelProfile()
             loadKernelParameter()
             loadUclamp()
             loadMemory()
@@ -119,9 +115,7 @@ class KernelParameterViewModel : ViewModel() {
 
     fun refresh() {
         refreshRequests.trySend(Unit)
-        if (BetaFeatures.isBetaFeaturesEnabled) {
-            loadKernelProfile()
-        }
+        loadKernelProfile()
         loadKernelParameter()
         loadUclamp()
         loadMemory()
@@ -130,17 +124,20 @@ class KernelParameterViewModel : ViewModel() {
 
     fun loadKernelProfile() {
         viewModelScope.launch(Dispatchers.IO) {
+            if (!Utils.testFile(KernelUtils.KERNEL_PROFILE_PATH)) {
+                KernelUtils.mkdirKernelProfilePath()
+            }
+
+            if (!Utils.testFile(KernelUtils.KERNEL_PROFILE_CURRENT)) {
+                KernelUtils.createCurrentKernelProfileNode()
+            }
+
             _kernelProfile.value = KernelProfile(
                 currentProfile = KernelUtils.getKernelProfile(),
-                hasCurrentProfile = Utils.testFile(KernelUtils.KERNEL_PROFILE_CURRENT),
                 hasProfilePowersave = Utils.testFile(KernelUtils.KERNEL_PROFILE_POWERSAVE),
                 hasProfileBalance = Utils.testFile(KernelUtils.KERNEL_PROFILE_BALANCE),
                 hasProfilePerformance = Utils.testFile(KernelUtils.KERNEL_PROFILE_PERFORMANCE),
             )
-        }
-
-        if (!_kernelProfile.value.hasCurrentProfile) {
-            Utils.writeFile(KernelUtils.KERNEL_PROFILE_CURRENT, "1")
         }
     }
 
