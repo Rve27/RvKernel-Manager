@@ -6,6 +6,7 @@
 
 package com.rve.rvkernelmanager.ui.kernelParameter
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -71,10 +72,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -86,7 +89,6 @@ import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import com.rve.rvkernelmanager.utils.BetaFeatures
 import com.rve.rvkernelmanager.utils.KernelUtils
 
 @Composable
@@ -162,10 +164,8 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                if (BetaFeatures.isBetaFeaturesEnabled) {
-                    item {
-                        KernelProfileCard()
-                    }
+                item {
+                    KernelProfileCard()
                 }
                 if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
                     item {
@@ -194,7 +194,10 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
 
 @Composable
 fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
+    val context = LocalContext.current
+
     val kernelProfile by viewModel.kernelProfile.collectAsState()
+    val kernelProfileLink = "https://github.com/Rve27/RvKernel-Manager/tree/main/kernel-profile-template"
 
     val options = listOf("Powersave", "Balance", "Performance")
 
@@ -236,9 +239,9 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                         modifier = Modifier.fillMaxSize(),
                         enabled =
                         kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
-                        checked = selectedIndex == index.toString(),
+                        checked = selectedIndex == index,
                         onCheckedChange = {
-                            selectedIndex = index.toString()
+                            selectedIndex = index
                             viewModel.updateProfile(index)
                         },
                     ) {
@@ -248,6 +251,22 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                         )
                         Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
                         Text(label)
+                    }
+                }
+                if (!kernelProfile.hasProfilePowersave && !kernelProfile.hasProfileBalance && !kernelProfile.hasProfilePerformance) {
+                    Button(
+                        modifier = Modifier.fillMaxSize(),
+                        onClick = {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, kernelProfileLink.toUri()))
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Text(
+                            text = "Get kernel profiles templates",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
                     }
                 }
             }

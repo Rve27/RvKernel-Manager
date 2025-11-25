@@ -45,8 +45,8 @@ object KernelUtils {
     const val BURST_PENALTY_SCALE = "/proc/sys/kernel/sched_burst_penalty_scale"
     const val BURST_CACHE_LIFETIME = "/proc/sys/kernel/sched_burst_cache_lifetime"
 
-    fun getKernelProfile(): String {
-        return Utils.readFile(KERNEL_PROFILE_CURRENT)
+    fun getKernelProfile(): Int {
+        return Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
     }
 
     fun setKernelProfile(profile: Int) {
@@ -143,5 +143,13 @@ object KernelUtils {
 
     fun getWireGuardVersion(): String {
         return Utils.readFile(WIREGUARD_VERSION)
+    }
+
+    fun mkdirKernelProfilePath() {
+        Shell.cmd("mkdir -p $KERNEL_PROFILE_PATH").exec()
+    }
+
+    fun createCurrentKernelProfileNode() {
+        Shell.cmd("echo 1 > $KERNEL_PROFILE_CURRENT")
     }
 }
