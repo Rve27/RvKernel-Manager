@@ -15,7 +15,7 @@ plugins {
 android {
     namespace = "com.rve.rvkernelmanager"
     compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    buildToolsVersion = "36.1.0"
     ndkVersion = "29.0.14206865"
 
     signingConfigs {
