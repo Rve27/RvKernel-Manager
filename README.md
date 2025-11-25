@@ -16,8 +16,9 @@
 
 ## Download
 
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.rve.rvkernelmanager)
-[<img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" alt="" height="80">](https://github.com/Rve27/RvKernel-Manager/releases)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.rve.rvkernelmanager)
+[<img src="https://raw.githubusercontent.com/andOTP/andOTP/master/assets/badges/get-it-on-github.png" alt="Get it on GitHub" height="80">](https://github.com/Rve27/RvKernel-Manager/releases)
+[<img src="https://www.openapk.net/images/openapk-badge.png" alt="Get it on OpenAPK" height="80">](https://www.openapk.net/rvkernel-manager/com.rve.rvkernelmanager/)
 </div>
 
 ## ✨ Features
