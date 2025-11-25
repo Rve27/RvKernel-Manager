@@ -87,3 +87,5 @@ lint/tmp/
 
 # Signing properties
 signing.properties
+*.keystore
+*.jks
