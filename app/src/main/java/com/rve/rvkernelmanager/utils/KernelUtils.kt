@@ -150,6 +150,6 @@ object KernelUtils {
     }
 
     fun createCurrentKernelProfileNode() {
-        Shell.cmd("echo 1 > $KERNEL_PROFILE_CURRENT")
+        Shell.cmd("echo 1 > $KERNEL_PROFILE_CURRENT").exec()
     }
 }
