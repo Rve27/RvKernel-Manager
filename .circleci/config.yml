@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+    - image: cimg/openjdk:21.0
+    steps:
+    - checkout
+    - run:
+        name: Grant execute permission for gradlew
+        command: chmod +x gradlew
+    - run:
+        name: Build Debug
+        command: ./gradlew assembleDebug
+    - store_artifacts:
+        path: app/build/outputs/apk/debug/app-debug.apk
+workflows:
+  Android_CI:
+    jobs:
+    - build

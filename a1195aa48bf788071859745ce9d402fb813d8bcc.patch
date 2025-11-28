@@ -1,0 +1,87 @@
+From a1195aa48bf788071859745ce9d402fb813d8bcc Mon Sep 17 00:00:00 2001
+From: Rve27 <rve27github@gmail.com>
+Date: Sat, 29 Nov 2025 00:16:11 +0700
+Subject: [PATCH] Convert GitHub Actions workflows to Circle CI Orbs
+
+Signed-off-by: Rve27 <rve27github@gmail.com>
+---
+ .circleci/config.yml          | 22 +++++++++++++++++++
+ .github/workflows/android.yml | 40 -----------------------------------
+ 2 files changed, 22 insertions(+), 40 deletions(-)
+ create mode 100644 .circleci/config.yml
+ delete mode 100644 .github/workflows/android.yml
+
+diff --git a/.circleci/config.yml b/.circleci/config.yml
+new file mode 100644
+index 0000000..a1ec61c
+--- /dev/null
++++ b/.circleci/config.yml
+@@ -0,0 +1,22 @@
++version: 2.1
++jobs:
++  build:
++    docker:
++    - image: cimg/openjdk:21.0
++    steps:
++    - checkout
++    - run:
++        name: Setup NDK r29
++        command: sdkmanager "ndk;29.0.14206865"
++    - run:
++        name: Grant execute permission for gradlew
++        command: chmod +x gradlew
++    - run:
++        name: Build Debug
++        command: ./gradlew assembleDebug
++    - store_artifacts:
++        path: app/build/outputs/apk/debug/app-debug.apk
++workflows:
++  Android_CI:
++    jobs:
++    - build
+diff --git a/.github/workflows/android.yml b/.github/workflows/android.yml
+deleted file mode 100644
+index a7ef190..0000000
+--- a/.github/workflows/android.yml
++++ /dev/null
+@@ -1,40 +0,0 @@
+-name: Android CI
+-
+-on: [push]
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-    - uses: actions/checkout@v6
+-
+-    - name: Setup Java
+-      uses: actions/setup-java@v5
+-      with:
+-        java-version: '21'
+-        distribution: 'temurin'
+-
+-    - name: Setup Gradle
+-      uses: gradle/actions/setup-gradle@v5
+-
+-    - name: Setup Android SDK
+-      uses: android-actions/setup-android@v3
+-
+-    - name: Setup NDK r29
+-      run: sdkmanager "ndk;29.0.14206865"
+-
+-    - name: Grant execute permission for gradlew
+-      run: chmod +x gradlew
+-
+-    - name: Build Debug
+-      run: ./gradlew assembleDebug
+-
+-    - name: Upload artifact
+-      uses: actions/upload-artifact@v5
+-      with:
+-        name: app-debug
+-        path: app/build/outputs/apk/debug/app-debug.apk
