@@ -14,6 +14,9 @@ jobs:
           command: |
             export TERM=dumb
             ./gradlew assembleDebug
+      - store_artifacts:
+          path: app/build/outputs/apk/debug/
+          destination: apk-debug
       - run:
           name: Generate cache key
           command: |
