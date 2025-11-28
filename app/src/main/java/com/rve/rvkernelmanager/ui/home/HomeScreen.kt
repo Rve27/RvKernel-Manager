@@ -9,9 +9,12 @@ package com.rve.rvkernelmanager.ui.home
 import android.content.ClipData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -22,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -40,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
@@ -307,15 +312,30 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
                 onLongClick = item.onLongClick,
             ),
     ) {
-        CustomListItem(
-            icon = item.icon,
-            iconColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            title = item.title,
-            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            summary = item.summary,
-            summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            animateContentSize = item.animateContentSize,
-        )
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = item.icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                modifier = Modifier.padding(end = 16.dp),
+            )
+            Column {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = item.summary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.then(
+                        if (item.animateContentSize) Modifier.animateContentSize() else Modifier
+                    )
+                )
+            }
+        }
     }
 }
 

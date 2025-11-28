@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -35,6 +37,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -234,8 +237,20 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 options.forEachIndexed { index, label ->
+                    val shape =
+                        when (index) {
+                            0 ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(topStart = CornerSize(100), topEnd = CornerSize(100))
+                            options.lastIndex ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(bottomStart = CornerSize(100), bottomEnd = CornerSize(100))
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                        }
                     ToggleButton(
                         modifier = Modifier.fillMaxSize(),
                         enabled =
@@ -245,6 +260,20 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                             selectedIndex = index
                             viewModel.updateProfile(index)
                         },
+                        shapes =
+                            ToggleButtonDefaults.shapes(
+                                shape = shape,
+                                checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                            ),
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        border = BorderStroke(
+                            width = 1.0.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                        ),
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Icon(
                             painter = icons[index],
@@ -958,7 +987,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = "More VM parameters",
                     )
                 }
@@ -1382,7 +1411,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = MaterialTheme.colorScheme.primary,
                         contentDescription = "More BORE parameters",
                     )
                 }
