@@ -53,6 +53,7 @@ android {
         }
 
         ndk {
+            //noinspection ChromeOsAbiSupport
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
     }
@@ -126,6 +127,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        disable += "ChromeOsAbiSupport"
     }
 }
 
