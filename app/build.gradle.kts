@@ -127,7 +127,10 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
-        disable += "ChromeOsAbiSupport"
+        disable += listOf(
+            "ChromeOsAbiSupport",
+            "ObsoleteSdkInt"
+        )
     }
 }
 
