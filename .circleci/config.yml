@@ -1,19 +1,32 @@
 version: 2.1
 jobs:
   build:
-    docker:
-    - image: cimg/openjdk:21.0
+    machine:
+      image: android:default
+    resource_class: large
     steps:
-    - checkout
-    - run:
-        name: Grant execute permission for gradlew
-        command: chmod +x gradlew
-    - run:
-        name: Build Debug
-        command: ./gradlew assembleDebug
-    - store_artifacts:
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - checkout
+      - run:
+          name: Setup Android NDK
+          command: sdkmanager "ndk;29.0.14206865"
+      - run:
+          name: Build apk debug
+          command: |
+            export TERM=dumb
+            ./gradlew assembleDebug
+      - run:
+          name: Generate cache key
+          command: |
+            find . -name 'build.gradle.kts' | sort | xargs cat |
+            shasum | awk '{print $1}' > /tmp/gradle_cache_seed
+      - restore_cache:
+          key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+      - save_cache:
+          key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
 workflows:
-  Android_CI:
+  build:
     jobs:
-    - build
+      - build
