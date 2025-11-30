@@ -6,9 +6,12 @@ package com.rve.rvkernelmanager.utils
 
 import android.annotation.SuppressLint
 import android.system.Os
+import android.util.Log
 import com.topjohnwu.superuser.Shell
 
 object KernelUtils {
+    const val TAG = "KernelUtils"
+
     @SuppressLint("SdCardPath")
     const val KERNEL_PROFILE_PATH = "/sdcard/RvKernel-Manager/kernel-profile"
     const val KERNEL_PROFILE_CURRENT = "$KERNEL_PROFILE_PATH/current_profile"
@@ -45,53 +48,74 @@ object KernelUtils {
     const val BURST_PENALTY_SCALE = "/proc/sys/kernel/sched_burst_penalty_scale"
     const val BURST_CACHE_LIFETIME = "/proc/sys/kernel/sched_burst_cache_lifetime"
 
-    fun getKernelProfile(): Int {
-        return Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
+    fun getKernelProfile(): Int = runCatching {
+        Utils.readFile(KERNEL_PROFILE_CURRENT).toInt()
+    }.getOrElse {
+        Log.e(TAG, "getKernelProfile: ${it.message}", it)
+        0
     }
 
     fun setKernelProfile(profile: Int) {
-        when (profile) {
-            0 -> {
-                Shell.cmd("su -c sh $KERNEL_PROFILE_POWERSAVE").exec()
-                Utils.writeFile(KERNEL_PROFILE_CURRENT, "0")
+        runCatching {
+            when (profile) {
+                0 -> {
+                    Shell.cmd("su -c sh $KERNEL_PROFILE_POWERSAVE").exec()
+                    Utils.writeFile(KERNEL_PROFILE_CURRENT, "0")
+                }
+
+                1 -> {
+                    Shell.cmd("su -c sh $KERNEL_PROFILE_BALANCE").exec()
+                    Utils.writeFile(KERNEL_PROFILE_CURRENT, "1")
+                }
+
+                2 -> {
+                    Shell.cmd("su -c sh $KERNEL_PROFILE_PERFORMANCE").exec()
+                    Utils.writeFile(KERNEL_PROFILE_CURRENT, "2")
+                }
             }
-            1 -> {
-                Shell.cmd("su -c sh $KERNEL_PROFILE_BALANCE").exec()
-                Utils.writeFile(KERNEL_PROFILE_CURRENT, "1")
-            }
-            2 -> {
-                Shell.cmd("su -c sh $KERNEL_PROFILE_PERFORMANCE").exec()
-                Utils.writeFile(KERNEL_PROFILE_CURRENT, "2")
-            }
+        }.onFailure {
+            Log.e(TAG, "setKernelProfile: ${it.message}", it)
         }
     }
 
-    fun getKernelVersion(): String {
-        return Os.uname().release
+    fun getKernelVersion(): String = runCatching {
+        Os.uname().release
+    }.getOrElse {
+        Log.e(TAG, "getKernelVersion: ${it.message}", it)
+        "unknown"
     }
 
-    fun getFullKernelVersion(): String {
-        return Utils.readFile(FULL_KERNEL_VERSION)
+    fun getFullKernelVersion(): String = runCatching {
+        Utils.readFile(FULL_KERNEL_VERSION)
+    }.getOrElse {
+        Log.e(TAG, "getFullKernelVersion: ${it.message}", it)
+        "unknown"
     }
 
-    fun getZramSize(): String {
+    fun getZramSize(): String = runCatching {
         val sizeInBytes = Utils.readFile(ZRAM_SIZE).toLongOrNull() ?: 0L
         val sizeInGb = sizeInBytes / 1073741824.0
-        return if (sizeInGb == 0.0) "Unknown" else "${sizeInGb.toInt()} GB"
+        "${sizeInGb.toInt()} GB"
+    }.getOrElse {
+        Log.e(TAG, "getZramSize: ${it.message}", it)
+        "unknown"
     }
 
-    fun getZramCompAlgorithm(): String {
+    fun getZramCompAlgorithm(): String = runCatching {
         val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
-        return if (algorithms.isNotEmpty()) {
+        if (algorithms.isNotEmpty()) {
             val regex = "\\[([^\\]]+)\\]".toRegex()
             val match = regex.find(algorithms)
-            match?.groupValues?.get(1) ?: "Unknown"
+            match?.groupValues?.get(1) ?: "unknown"
         } else {
-            "Unknown"
+            "unknown"
         }
+    }.getOrElse {
+        Log.e(TAG, "getZramCompAlgorithm: ${it.message}", it)
+        "unknown"
     }
 
-    fun getAvailableZramCompAlgorithms(): List<String> {
+    fun getAvailableZramCompAlgorithms(): List<String> = runCatching {
         val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
         return if (algorithms.isNotEmpty()) {
             algorithms.replace("[", "").replace("]", "")
@@ -100,56 +124,100 @@ object KernelUtils {
         } else {
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "getAvailableZramCompAlgorithms: ${it.message}", it)
+        emptyList()
     }
 
     fun swapoffZram() {
-        Shell.cmd("swapoff $ZRAM").exec()
+        runCatching {
+            Shell.cmd("swapoff $ZRAM").exec()
+        }.onFailure {
+            Log.e(TAG, "swapoffZram: ${it.message}", it)
+        }
     }
 
     fun swaponZram() {
-        Shell.cmd("swapon $ZRAM").exec()
+        runCatching {
+            Shell.cmd("swapon $ZRAM").exec()
+        }.onFailure {
+            Log.e(TAG, "swaponZram: ${it.message}", it)
+        }
     }
 
     fun mkswapZram() {
-        Shell.cmd("mkswap $ZRAM").exec()
+        runCatching {
+            Shell.cmd("mkswap $ZRAM").exec()
+        }.onFailure {
+            Log.e(TAG, "mkswapZram: ${it.message}", it)
+        }
     }
 
     fun resetZram() {
-        Shell.cmd("echo 1 > $ZRAM_RESET").exec()
+        runCatching {
+            Shell.cmd("echo 1 > $ZRAM_RESET").exec()
+        }.onFailure {
+            Log.e(TAG, "resetZram: ${it.message}", it)
+        }
     }
 
     fun setZramCompAlgorithm(algorithm: String) {
-        Shell.cmd("echo $algorithm > $ZRAM_COMP_ALGORITHM").exec()
+        runCatching {
+            Shell.cmd("echo $algorithm > $ZRAM_COMP_ALGORITHM").exec()
+        }.onFailure {
+            Log.e(TAG, "setZramCompAlgorithm: ${it.message}", it)
+        }
     }
 
-    fun getTcpCongestionAlgorithm(): String {
-        return Utils.readFile(TCP_CONGESTION_ALGORITHM).trim().takeIf { it.isNotEmpty() } ?: "Unknown"
+    fun getTcpCongestionAlgorithm(): String = runCatching {
+        Utils.readFile(TCP_CONGESTION_ALGORITHM)
+    }.getOrElse {
+        Log.e(TAG, "getTcpCongestionAlgorithm: ${it.message}", it)
+        "unknown"
     }
 
-    fun getAvailableTcpCongestionAlgorithm(): List<String> {
+    fun getAvailableTcpCongestionAlgorithm(): List<String> = runCatching {
         val algorithms = Utils.readFile(TCP_AVAILABLE_CONGESTION_ALGORITHM)
-        return if (algorithms.isNotEmpty()) {
+        if (algorithms.isNotEmpty()) {
             algorithms.trim()
                 .split("\\s+".toRegex())
                 .filter { it.isNotBlank() }
         } else {
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "getAvailableTcpCongestionAlgorithm: ${it.message}", it)
+        emptyList()
     }
 
     fun setTcpCongestionAlgorithm(algorithm: String) {
-        Utils.writeFile(TCP_CONGESTION_ALGORITHM, algorithm)
+        runCatching {
+            Utils.writeFile(TCP_CONGESTION_ALGORITHM, algorithm)
+        }.onFailure {
+            Log.e(TAG, "setTcpCongestionAlgorithm: ${it.message}", it)
+        }
     }
 
-    fun getWireGuardVersion(): String {
-        return Utils.readFile(WIREGUARD_VERSION)
+    fun getWireGuardVersion(): String = runCatching {
+        Utils.readFile(WIREGUARD_VERSION)
+    }.getOrElse {
+        Log.e(TAG, "getWireGuardVersion: ${it.message}", it)
+        "unknown"
     }
 
     fun mkdirKernelProfilePath() {
-        Shell.cmd("mkdir -p $KERNEL_PROFILE_PATH").exec()
+        runCatching {
+            Shell.cmd("mkdir -p $KERNEL_PROFILE_PATH").exec()
+        }.onFailure {
+            Log.e(TAG, "mkdirKernelProfilePath: ${it.message}", it)
+        }
     }
 
     fun createCurrentKernelProfileNode() {
-        Shell.cmd("echo 1 > $KERNEL_PROFILE_CURRENT").exec()
+        runCatching {
+            Shell.cmd("echo 1 > $KERNEL_PROFILE_CURRENT").exec()
+        }.onFailure {
+            Log.e(TAG, "createCurrentKernelProfileNode: ${it.message}", it)
+        }
     }
 }

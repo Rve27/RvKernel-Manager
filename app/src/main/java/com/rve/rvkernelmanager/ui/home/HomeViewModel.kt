@@ -44,7 +44,7 @@ class HomeViewModel : ViewModel() {
                 manufacturer = Utils.getManufacturer(),
                 ramInfo = SoCUtils.getTotalRam(context),
                 zram = KernelUtils.getZramSize(),
-                gpuModel = SoCUtils.getGPUModel(),
+                gpuModel = SoCUtils.getOpenGL(),
                 androidVersion = Utils.getAndroidVersion(),
                 sdkVersion = Utils.getSdkVersion(),
                 cpu = SoCUtils.getCpuInfo(),

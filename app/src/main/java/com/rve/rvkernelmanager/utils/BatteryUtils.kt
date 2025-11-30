@@ -32,30 +32,36 @@ object BatteryUtils {
     fun getBatteryTechnology(context: Context): String = runCatching {
         val result = Shell.cmd("cat $BATTERY_TECHNOLOGY").exec()
         if (result.isSuccess && result.out.isNotEmpty()) {
-            result.out.firstOrNull()?.trim() ?: "N/A"
+            result.out.firstOrNull()?.trim() ?: "unknown"
         } else {
-            context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
+            context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "unknown"
         }
     }.getOrElse {
-        Log.e(TAG, "Error reading battery technology", it)
-        context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "N/A"
+        Log.e(TAG, "getBatteryTechnology: ${it.message}", it)
+        context.getBatteryIntent()?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY) ?: "unknown"
     }
 
-    fun getBatteryHealth(context: Context): String {
-        return when (context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
+    fun getBatteryHealth(context: Context): String = runCatching {
+        when (context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_HEALTH, -1)) {
             BatteryManager.BATTERY_HEALTH_GOOD -> "Good"
             BatteryManager.BATTERY_HEALTH_OVERHEAT -> "Overheat"
             BatteryManager.BATTERY_HEALTH_DEAD -> "Dead"
             BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> "Over Voltage"
             BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> "Unspecified Failure"
             BatteryManager.BATTERY_HEALTH_COLD -> "Cold"
-            else -> "N/A"
+            else -> "unknown"
         }
+    }.getOrElse {
+        Log.e(TAG, "getBatteryHealth: ${it.message}", it)
+        "unknown"
     }
 
-    fun getBatteryLevel(context: Context): String {
+    fun getBatteryLevel(context: Context): String = runCatching {
         val level = context.getBatteryIntent()?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-        return if (level != -1) "$level%" else "N/A"
+        if (level != -1) "$level%" else "unknown"
+    }.getOrElse {
+        Log.e(TAG, "getBatteryLevel: ${it.message}", it)
+        "unknown"
     }
 
     fun getBatteryDesignCapacity(): String = runCatching {
@@ -64,22 +70,21 @@ object BatteryUtils {
             val mAh = result.out.firstOrNull()?.trim()?.toIntOrNull()?.div(1000) ?: 0
             return "$mAh mAh"
         } else {
-            Log.w(TAG, "Failed to read design capacity: ${result.err}")
-            "N/A"
+            "unknown"
         }
     }.getOrElse {
-        Log.e(TAG, "Error reading design capacity", it)
+        Log.e(TAG, "getBatteryDesignCapacity: ${it.message}", it)
         "N/A"
     }
 
     fun getBatteryMaximumCapacity(context: Context): String = runCatching {
         val maxCapacityResult = Shell.cmd("cat $BATTERY_MAXIMUM_CAPACITY").exec()
         if (!maxCapacityResult.isSuccess || maxCapacityResult.out.isEmpty()) {
-            return "N/A"
+            return "unknown"
         }
 
         val maxCapacity = maxCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
-        if (maxCapacity <= 0) return "N/A"
+        if (maxCapacity <= 0) return "unknown"
 
         var designCapacity = 0
 
@@ -100,14 +105,14 @@ object BatteryUtils {
             val percentage = (maxCapacity / designCapacity.toDouble() * 100).roundToInt()
             "${maxCapacity / 1000} mAh ($percentage%)"
         } else {
-            "${maxCapacity / 1000} mAh (N/A%)"
+            "${maxCapacity / 1000} mAh (%)"
         }
     }.getOrElse {
-        Log.e(TAG, "Error reading maximum capacity", it)
+        Log.e(TAG, "getBatteryMaximumCapacity: ${it.message}", it)
         "N/A"
     }
 
-    fun getUptime(): String {
+    fun getUptime(): String = runCatching {
         val uptimeMillis = SystemClock.elapsedRealtime()
         val seconds = (uptimeMillis / 1000) % 60
         val minutes = (uptimeMillis / (1000 * 60)) % 60
@@ -120,9 +125,12 @@ object BatteryUtils {
             if (minutes > 0 || hours > 0 || days > 0) append("${minutes}m ")
             append("${seconds}s")
         }.trim()
+    }.getOrElse {
+        Log.e(TAG, "getUptime: ${it.message}", it)
+        "unknown"
     }
 
-    fun getDeepSleep(): String {
+    fun getDeepSleep(): String = runCatching {
         val deepSleepMillis = SystemClock.elapsedRealtime() - SystemClock.uptimeMillis()
         val seconds = (deepSleepMillis / 1000) % 60
         val minutes = (deepSleepMillis / (1000 * 60)) % 60
@@ -142,6 +150,9 @@ object BatteryUtils {
             append("${seconds}s")
             append(" ($percentage%)")
         }.trim()
+    }.getOrElse {
+        Log.e(TAG, "getDeepSleep: ${it.message}", it)
+        "unknown"
     }
 
     private fun registerBatteryListener(context: Context, onReceive: (Intent) -> Unit): BroadcastReceiver {
@@ -157,19 +168,19 @@ object BatteryUtils {
     fun registerBatteryLevelListener(context: Context, callback: (String) -> Unit): BroadcastReceiver =
         registerBatteryListener(context) { intent ->
             val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-            callback(if (level != -1) "$level%" else "N/A")
+            callback(if (level != -1) "$level%" else "unknown")
         }
 
     fun registerBatteryTemperatureListener(context: Context, callback: (String) -> Unit): BroadcastReceiver =
         registerBatteryListener(context) { intent ->
             val temp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
-            callback(if (temp != -1) "%.1f °C".format(temp / 10.0) else "N/A")
+            callback(if (temp != -1) "%.1f °C".format(temp / 10.0) else "unknown")
         }
 
     fun registerBatteryVoltageListener(context: Context, callback: (String) -> Unit): BroadcastReceiver =
         registerBatteryListener(context) { intent ->
             val voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)
-            callback(if (voltage != -1) "%.3f V".format(voltage / 1000.0) else "N/A")
+            callback(if (voltage != -1) "%.3f V".format(voltage / 1000.0) else "unknown")
         }
 
     fun registerBatteryCapacityListener(context: Context, callback: (String) -> Unit): BroadcastReceiver =
