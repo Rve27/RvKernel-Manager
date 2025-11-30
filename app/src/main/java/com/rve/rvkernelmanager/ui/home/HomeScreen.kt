@@ -331,8 +331,8 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
                     text = item.summary,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.then(
-                        if (item.animateContentSize) Modifier.animateContentSize() else Modifier
-                    )
+                        if (item.animateContentSize) Modifier.animateContentSize() else Modifier,
+                    ),
                 )
             }
         }

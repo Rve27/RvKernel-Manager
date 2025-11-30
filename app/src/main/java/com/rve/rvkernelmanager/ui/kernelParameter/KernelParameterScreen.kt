@@ -242,12 +242,16 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     val shape =
                         when (index) {
                             0 ->
-                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
-                                        as RoundedCornerShape)
+                                (
+                                    ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape
+                                    )
                                     .copy(topStart = CornerSize(100), topEnd = CornerSize(100))
                             options.lastIndex ->
-                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
-                                        as RoundedCornerShape)
+                                (
+                                    ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape
+                                    )
                                     .copy(bottomStart = CornerSize(100), bottomEnd = CornerSize(100))
                             else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
                         }
@@ -261,13 +265,13 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                             viewModel.updateProfile(index)
                         },
                         shapes =
-                            ToggleButtonDefaults.shapes(
-                                shape = shape,
-                                checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
-                            ),
+                        ToggleButtonDefaults.shapes(
+                            shape = shape,
+                            checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                        ),
                         colors = ToggleButtonDefaults.toggleButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                         border = BorderStroke(
                             width = 1.0.dp,

@@ -7,12 +7,12 @@ package com.rve.rvkernelmanager.utils
 import android.app.ActivityManager
 import android.content.Context
 import android.util.Log
-import com.rve.rvkernelmanager.utils.Utils
 import com.topjohnwu.superuser.Shell
 import java.io.File
 import kotlin.math.ceil
 
 object SoCUtils {
+    const val TAG = "SoCUtils"
 
     const val CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp"
 
@@ -43,7 +43,6 @@ object SoCUtils {
     const val MAX_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
     const val CURRENT_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_frequencies"
-    const val AVAILABLE_BOOST_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_boost_frequencies"
     const val GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
     const val AVAILABLE_GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
 
@@ -66,237 +65,220 @@ object SoCUtils {
     private var sPrevTotal: Long = -1
     private var sPrevIdle: Long = -1
 
-    fun getCpuInfo(): String {
-        return try {
-            val hardware = Utils.getSystemProperty("ro.hardware")
-            val manufacturer = Utils.getSystemProperty("ro.soc.manufacturer")
-            val model = Utils.getSystemProperty("ro.soc.model")
+    fun getCpuInfo(): String = runCatching {
+        val hardware = Utils.getSystemProperty("ro.hardware")
+        val manufacturer = Utils.getSystemProperty("ro.soc.manufacturer")
+        val model = Utils.getSystemProperty("ro.soc.model")
 
-            if (hardware.contains("qcom", ignoreCase = true) && model.isNotEmpty()) {
-                "Qualcomm Technologies, Inc $model"
-            } else if (manufacturer.contains("QTI", ignoreCase = true) && model.isNotEmpty()) {
-                "Qualcomm Technologies, Inc $model"
-            } else {
-                "Unknown"
-            }
-        } catch (securityException: SecurityException) {
-            "Unknown"
-        } catch (exception: Exception) {
-            "Unknown"
+        if (hardware.contains("qcom", ignoreCase = true) && model.isNotEmpty()) {
+            "Qualcomm Technologies, Inc $model"
+        } else if (manufacturer.contains("QTI", ignoreCase = true) && model.isNotEmpty()) {
+            "Qualcomm Technologies, Inc $model"
+        } else {
+            "unknown"
         }
+    }.getOrElse {
+        Log.e(TAG, "getCpuInfo: ${it.message}", it)
+        "unknown"
     }
 
-    fun readFreqCPU(filePath: String): String {
-        return try {
-            val file = File(filePath)
-            if (file.exists()) {
-                val freq = file.readText().trim()
-                (freq.toInt() / 1000).toString()
-            } else {
-                ""
-            }
-        } catch (e: Exception) {
-            Log.e("readFreqCPU", "Error reading file $filePath: ${e.message}", e)
-            ""
+    fun readFreqCPU(filePath: String): String = runCatching {
+        val file = File(filePath)
+        if (file.exists()) {
+            val freq = file.readText().trim()
+            (freq.toInt() / 1000).toString()
+        } else {
+            "0"
         }
+    }.getOrElse {
+        Log.e(TAG, "readFreqCPU: ${it.message}", it)
+        "0"
     }
 
     fun writeFreqCPU(filePath: String, frequency: String) {
-        try {
+        runCatching {
             val freqInKHz = (frequency.toInt() * 1000).toString()
             val command = "echo $freqInKHz > $filePath"
             Shell.cmd(command).exec()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure {
+            Log.e(TAG, "writeFreqCPU: ${it.message}", it)
         }
     }
 
-    fun readAvailableFreqCPU(filePath: String): List<String> {
-        return try {
-            val file = File("$filePath")
-            if (file.exists()) {
-                file.readText()
-                    .trim()
-                    .split(" ")
-                    .map { (it.toInt() / 1000).toString() }
-            } else {
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.e("readAvailableFreqCPU", "Error reading file $filePath: ${e.message}", e)
+    fun readAvailableFreqCPU(filePath: String): List<String> = runCatching {
+        val file = File(filePath)
+        if (file.exists()) {
+            file.readText()
+                .trim()
+                .split(" ")
+                .map { (it.toInt() / 1000).toString() }
+        } else {
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "readAvailableFreqCPU: ${it.message}", it)
+        emptyList()
     }
 
-    fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> {
+    fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> = runCatching {
         val regularFreq = readAvailableFreqCPU(freqPath)
         val boostFreq = readAvailableFreqCPU(boostPath)
-        return (regularFreq + boostFreq)
+        (regularFreq + boostFreq)
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
+    }.getOrElse {
+        Log.e(TAG, "readAvailableFreqBoost: ${it.message}", it)
+        emptyList()
     }
 
-    fun readAvailableGovCPU(filePath: String): List<String> {
-        return try {
-            val file = File("$filePath")
-            if (file.exists()) {
-                file.readText()
-                    .trim()
-                    .split(" ")
-            } else {
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.e("readAvailableGov", "Error reading file $filePath: ${e.message}", e)
+    fun readAvailableGovCPU(filePath: String): List<String> = runCatching {
+        val file = File(filePath)
+        if (file.exists()) {
+            file.readText()
+                .trim()
+                .split(" ")
+        } else {
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "readAvailableGovCPU: ${it.message}", it)
+        emptyList()
     }
 
-    fun getGPUModel(): String {
-        return try {
-            val result = Shell.cmd("dumpsys SurfaceFlinger | grep \"GLES:\"").exec()
-            if (result.isSuccess && result.out.isNotEmpty()) {
-                val glesLine = result.out.firstOrNull()?.trim()
-                if (!glesLine.isNullOrBlank()) {
-                    val regex = Regex("GLES:\\s*[^,]+,\\s*(.+)")
-                    val matchResult = regex.find(glesLine)
-                    if (matchResult != null) {
-                        val gpuInfo = matchResult.groupValues[1].trim()
-                        return gpuInfo
-                    } else {
-                        val commaIndex = glesLine.indexOf(',')
-                        if (commaIndex != -1 && commaIndex < glesLine.length - 1) {
-                            return glesLine.substring(commaIndex + 1).trim()
-                        }
+    fun getOpenGL(): String = runCatching {
+        val result = Shell.cmd("dumpsys SurfaceFlinger | grep \"GLES:\"").exec()
+        if (result.isSuccess && result.out.isNotEmpty()) {
+            val glesLine = result.out.firstOrNull()?.trim()
+            if (!glesLine.isNullOrBlank()) {
+                val regex = Regex("GLES:\\s*[^,]+,\\s*(.+)")
+                val matchResult = regex.find(glesLine)
+                if (matchResult != null) {
+                    val gpuInfo = matchResult.groupValues[1].trim()
+                    return gpuInfo
+                } else {
+                    val commaIndex = glesLine.indexOf(',')
+                    if (commaIndex != -1 && commaIndex < glesLine.length - 1) {
+                        return glesLine.substring(commaIndex + 1).trim()
                     }
                 }
             }
-
-            "N/A"
-        } catch (e: Exception) {
-            Log.e("getGPUModel", "Error getting GPU model: ${e.message}", e)
-            "N/A"
         }
+        "unknown"
+    }.getOrElse {
+        Log.e(TAG, "getOpenGL: ${it.message}", it)
+        "unknown"
     }
 
     fun writeFreqGPU(filePath: String, frequency: String) {
-        try {
+        runCatching {
             Shell.cmd("echo $frequency > $filePath").exec()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure {
+            Log.e(TAG, "writeFreqGPU: ${it.message}", it)
         }
     }
 
-    fun readAvailableFreqGPU(filePath: String): List<String> {
-        return try {
-            val result = Shell.cmd("cat $filePath").exec()
-            if (result.isSuccess) {
-                result.out.firstOrNull()
-                    ?.trim()
-                    ?.split(" ")
-                    ?: emptyList()
-            } else {
-                Log.e("readAvailableFreqGPU", "Command execution failed: ${result.err}")
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.e("readAvailableFreqGPU", "Error reading file $filePath: ${e.message}", e)
+    fun readAvailableFreqGPU(filePath: String): List<String> = runCatching {
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()
+                ?.trim()
+                ?.split(" ")
+                ?: emptyList()
+        } else {
+            Log.e("readAvailableFreqGPU", "Command execution failed: ${result.err}")
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "readAvailableFreqGPU: ${it.message}", it)
+        emptyList()
     }
 
-    fun readAvailableGovGPU(filePath: String): List<String> {
-        return try {
-            val result = Shell.cmd("cat $filePath").exec()
-            if (result.isSuccess) {
-                result.out.firstOrNull()
-                    ?.trim()
-                    ?.split(" ")
-                    ?: emptyList()
-            } else {
-                Log.e("readAvailableGovGPU", "Command execution failed: ${result.err}")
-                emptyList()
-            }
-        } catch (e: Exception) {
-            Log.e("readAvailableGovGPU", "Error reading file $filePath: ${e.message}", e)
+    fun readAvailableGovGPU(filePath: String): List<String> = runCatching {
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()
+                ?.trim()
+                ?.split(" ")
+                ?: emptyList()
+        } else {
             emptyList()
         }
+    }.getOrElse {
+        Log.e(TAG, "readAvailableGovGPU: ${it.message}", it)
+        emptyList()
     }
 
-    fun readFreqGPU(filePath: String): String {
-        return try {
-            val result = Shell.cmd("cat $filePath").exec()
-            if (result.isSuccess) {
-                result.out.firstOrNull()
-                    ?.trim()
-                    ?.let { (it.toLong() / 1000000).toString() }
-                    ?: ""
-            } else {
-                Log.e("readCurrentGPUFreq", "Command execution failed: ${result.err}")
-                ""
-            }
-        } catch (e: Exception) {
-            Log.e("readCurrentGPUFreq", "Error reading file $filePath: ${e.message}", e)
-            ""
+    fun readFreqGPU(filePath: String): String = runCatching {
+        val result = Shell.cmd("cat $filePath").exec()
+        if (result.isSuccess) {
+            result.out.firstOrNull()
+                ?.trim()
+                ?.let { (it.toLong() / 1000000).toString() }
+                ?: "0"
+        } else {
+            "0"
         }
+    }.getOrElse {
+        Log.e(TAG, "readCurrentGPUFreq: ${it.message}", it)
+        "0"
     }
 
-    fun getCpuUsage(): String {
-        val stat = Utils.readFile("/proc/stat") ?: return "N/A"
+    fun getCpuUsage(): String = runCatching {
+        val stat = Utils.readFile("/proc/stat")
         val trimmedStat = stat.trim()
 
-        if (!trimmedStat.startsWith("cpu")) return "N/A"
+        if (!trimmedStat.startsWith("cpu")) return "unknown"
 
         val parts = trimmedStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
-        if (parts.size < 8) return "N/A"
+        if (parts.size < 8) return "unknown"
 
-        try {
-            val user = parts[1].toLong()
-            val nice = parts[2].toLong()
-            val system = parts[3].toLong()
-            val idle = parts[4].toLong()
-            val iowait = parts[5].toLong()
-            val irq = parts[6].toLong()
-            val softirq = parts[7].toLong()
-            val steal = if (parts.size > 8) parts[8].toLong() else 0
+        val user = parts[1].toLong()
+        val nice = parts[2].toLong()
+        val system = parts[3].toLong()
+        val idle = parts[4].toLong()
+        val iowait = parts[5].toLong()
+        val irq = parts[6].toLong()
+        val softirq = parts[7].toLong()
+        val steal = if (parts.size > 8) parts[8].toLong() else 0
 
-            val total = user + nice + system + idle + iowait + irq + softirq + steal
+        val total = user + nice + system + idle + iowait + irq + softirq + steal
 
-            if (sPrevTotal != -1L && total > sPrevTotal) {
-                val diffTotal = total - sPrevTotal
-                val diffIdle = idle - sPrevIdle
-                val usage = 100 * (diffTotal - diffIdle) / diffTotal
-                sPrevTotal = total
-                sPrevIdle = idle
-                return usage.toString()
-            } else {
-                sPrevTotal = total
-                sPrevIdle = idle
-                return "N/A"
-            }
-        } catch (e: NumberFormatException) {
-            Log.e("SoCUtils", "Error parsing CPU stats: ${e.message}")
-            return "N/A"
+        if (sPrevTotal != -1L && total > sPrevTotal) {
+            val diffTotal = total - sPrevTotal
+            val diffIdle = idle - sPrevIdle
+            val usage = 100 * (diffTotal - diffIdle) / diffTotal
+            sPrevTotal = total
+            sPrevIdle = idle
+            return usage.toString()
+        } else {
+            sPrevTotal = total
+            sPrevIdle = idle
+            return "unknown"
         }
+    }.getOrElse {
+        Log.e(TAG, "getCpuUsage: ${it.message}", it)
+        return "unknown"
     }
 
-    fun getGpuUsage(): String {
+    fun getGpuUsage(): String = runCatching {
         val usage = Utils.readFile("/sys/class/kgsl/kgsl-3d0/gpu_busy_percentage")
-        if (usage.isEmpty()) return "N/A"
+        if (usage.isEmpty()) return "unknown"
         val cleanedUsage = usage.replace("%", "").trim()
-        return try {
-            val value = cleanedUsage.toInt()
-            value.toString()
-        } catch (e: NumberFormatException) {
-            "N/A"
-        }
+        val value = cleanedUsage.toInt()
+        value.toString()
+    }.getOrElse {
+        Log.e(TAG, "getGpuUsage: ${it.message}", it)
+        "unknown"
     }
 
-    fun getTotalRam(context: Context): String {
+    fun getTotalRam(context: Context): String = runCatching {
         val memoryInfo = ActivityManager.MemoryInfo().apply {
             (context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(this)
         }
         val sizeInGb = memoryInfo.totalMem / (1024.0 * 1024 * 1024)
         return "${ceil(sizeInGb).toInt()} GB"
+    }.getOrElse {
+        Log.e(TAG, "getTotalRam: ${it.message}", it)
+        "unknown"
     }
 }
