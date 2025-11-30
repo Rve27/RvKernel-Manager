@@ -53,7 +53,7 @@ object SoCUtils {
     const val MIN_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/min_clock_mhz"
     const val MAX_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/max_clock_mhz"
     const val CURRENT_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpuclk"
-    const val AVAILABLE_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/gpu_available_frequencies"
+    const val AVAILABLE_FREQ_GPU = "/sys/class/kgsl/kgsl-3d0/freq_table_mhz"
     const val GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/governor"
     const val AVAILABLE_GOV_GPU = "/sys/class/kgsl/kgsl-3d0/devfreq/available_governors"
     const val MAX_PWRLEVEL = "/sys/class/kgsl/kgsl-3d0/max_pwrlevel"
@@ -181,9 +181,7 @@ object SoCUtils {
 
     fun writeFreqGPU(filePath: String, frequency: String) {
         try {
-            val freqInKHz = frequency.replace("000000", "")
-            val command = "echo $freqInKHz > $filePath"
-            Shell.cmd(command).exec()
+            Shell.cmd("echo $frequency > $filePath").exec()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -196,7 +194,6 @@ object SoCUtils {
                 result.out.firstOrNull()
                     ?.trim()
                     ?.split(" ")
-                    ?.map { (it.toInt() / 1000000).toString() }
                     ?: emptyList()
             } else {
                 Log.e("readAvailableFreqGPU", "Command execution failed: ${result.err}")
