@@ -12,6 +12,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -125,32 +127,39 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            state = rememberLazyListState(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
-            item {
-                BatteryMonitorCard(viewModel)
-            }
-            item {
-                BatteryInfoCard(viewModel)
-            }
-            if (hasThermalSconfig) {
+            LazyColumn(
+                state = rememberLazyListState(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 item {
-                    ThermalProfilesCard(viewModel)
+                    BatteryMonitorCard(viewModel)
                 }
-            }
-            if (chargingState.hasFastCharging) {
                 item {
-                    ForceFastChargingCard(viewModel)
+                    BatteryInfoCard(viewModel)
                 }
+                if (hasThermalSconfig) {
+                    item {
+                        ThermalProfilesCard(viewModel)
+                    }
+                }
+                if (chargingState.hasFastCharging) {
+                    item {
+                        ForceFastChargingCard(viewModel)
+                    }
+                }
+                if (rvkernels.any { chargingState.kernelVersion.contains(it) })
+                    item {
+                        BypassChargingCard(viewModel)
+                    }
             }
-            if (rvkernels.any { chargingState.kernelVersion.contains(it) })
-                item {
-                    BypassChargingCard(viewModel)
-                }
         }
     }
 }

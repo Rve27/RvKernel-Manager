@@ -15,6 +15,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,6 +76,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -150,45 +152,52 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        PullToRefreshBox(
-            modifier = Modifier.padding(innerPadding),
-            isRefreshing = viewModel.isRefreshing,
-            onRefresh = { viewModel.refresh() },
-            state = pullToRefreshState,
-            indicator = {
-                PullToRefreshDefaults.LoadingIndicator(
-                    state = pullToRefreshState,
-                    isRefreshing = viewModel.isRefreshing,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                )
-            },
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
-            LazyColumn(
-                state = rememberLazyListState(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+            PullToRefreshBox(
+                isRefreshing = viewModel.isRefreshing,
+                onRefresh = { viewModel.refresh() },
+                state = pullToRefreshState,
+                indicator = {
+                    PullToRefreshDefaults.LoadingIndicator(
+                        state = pullToRefreshState,
+                        isRefreshing = viewModel.isRefreshing,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                    )
+                },
             ) {
-                item {
-                    KernelProfileCard()
-                }
-                if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
                     item {
-                        KernelParameterCard(viewModel)
+                        KernelProfileCard()
                     }
-                }
-                if (uclamp.hasUclampMax || uclamp.hasUclampMin || uclamp.hasUclampMinRt) {
-                    item {
-                        UclampCard(viewModel)
+                    if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
+                        item {
+                            KernelParameterCard(viewModel)
+                        }
                     }
-                }
-                if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
-                    item {
-                        MemoryCard(viewModel)
+                    if (uclamp.hasUclampMax || uclamp.hasUclampMin || uclamp.hasUclampMinRt) {
+                        item {
+                            UclampCard(viewModel)
+                        }
                     }
-                }
-                if (bore.hasBore) {
-                    item {
-                        BoreSchedulerCard(viewModel)
+                    if (memory.hasZramSize || memory.hasZramCompAlgorithm) {
+                        item {
+                            MemoryCard(viewModel)
+                        }
+                    }
+                    if (bore.hasBore) {
+                        item {
+                            BoreSchedulerCard(viewModel)
+                        }
                     }
                 }
             }
