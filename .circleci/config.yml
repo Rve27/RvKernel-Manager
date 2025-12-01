@@ -15,7 +15,9 @@ jobs:
             find . -name 'build.gradle.kts' | sort | xargs cat |
             shasum | awk '{print $1}' > /tmp/gradle_cache_seed
       - restore_cache:
-          key: gradle-v1-{{ checksum "/tmp/gradle_cache_seed" }}
+          keys:
+            - gradle-v1-{{ checksum "/tmp/gradle_cache_seed" }}
+            - gradle-v1-
       - run:
           name: Build apk debug
           command: |
