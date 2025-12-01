@@ -49,12 +49,15 @@ object Utils {
     }
 
     fun getSystemProperty(key: String): String = runCatching {
-        Shell.cmd("getprop $key").exec()
-            .takeIf { it.isSuccess }?.out?.firstOrNull()?.trim()
-    }.getOrElse {
+        Shell.cmd("getprop $key").exec().let {
+            if (!it.isSuccess) {
+                Log.e(TAG, "getSystemProperty: ${it.err}")
+            }
+            it.out.firstOrNull()?.trim().orEmpty()
+        }
+    }.onFailure {
         Log.e(TAG, "getSystemProperty: ${it.message}", it)
-        ""
-    }
+    }.getOrDefault("")
 
     fun getTemp(filePath: String): String = runCatching {
         val value = readFile(filePath).trim()
