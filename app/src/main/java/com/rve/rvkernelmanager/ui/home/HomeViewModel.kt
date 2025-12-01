@@ -26,7 +26,7 @@ class HomeViewModel : ViewModel() {
         val cpu: String = "N/A",
         val gpuModel: String = "N/A",
         val androidVersion: String = "N/A",
-        val sdkVersion: String = "N/A",
+        val sdkVersion: Int = 0,
         val hasWireGuard: Boolean = false,
         val wireGuard: String = "N/A",
         val kernelVersion: String = "N/A",
