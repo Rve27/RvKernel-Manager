@@ -15,7 +15,7 @@ jobs:
             find . -name 'build.gradle.kts' | sort | xargs cat |
             shasum | awk '{print $1}' > /tmp/gradle_cache_seed
       - restore_cache:
-          key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+          key: gradle-v1-{{ checksum "/tmp/gradle_cache_seed" }}
       - run:
           name: Build apk debug
           command: |
@@ -25,7 +25,7 @@ jobs:
           path: app/build/outputs/apk/debug/
           destination: apk-debug
       - save_cache:
-          key: gradle-v1-{{ arch }}-{{ checksum "/tmp/gradle_cache_seed" }}
+          key: gradle-v1-{{ checksum "/tmp/gradle_cache_seed" }}
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
