@@ -65,7 +65,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import kotlinx.coroutines.launch
 
@@ -91,7 +91,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
     }
 
     Scaffold(
-        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        topBar = { SimpleTopAppBar() },
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
