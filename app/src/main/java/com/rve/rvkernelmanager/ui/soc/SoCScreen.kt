@@ -11,6 +11,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -57,6 +59,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -111,38 +114,45 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            state = rememberLazyListState(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
-            item {
-                CPUMonitorCard(viewModel)
-            }
-            item {
-                GPUMonitorCard(viewModel)
-            }
-            item {
-                CPULittleClusterCard(viewModel)
-            }
-            if (hasBigCluster) {
+            LazyColumn(
+                state = rememberLazyListState(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
                 item {
-                    BigClusterCard(viewModel)
+                    CPUMonitorCard(viewModel)
                 }
-            }
-            if (hasPrimeCluster) {
                 item {
-                    PrimeClusterCard(viewModel)
+                    GPUMonitorCard(viewModel)
                 }
-            }
-            if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
                 item {
-                    CPUBoostCard(viewModel)
+                    CPULittleClusterCard(viewModel)
                 }
-            }
-            item {
-                GPUCard(viewModel)
+                if (hasBigCluster) {
+                    item {
+                        BigClusterCard(viewModel)
+                    }
+                }
+                if (hasPrimeCluster) {
+                    item {
+                        PrimeClusterCard(viewModel)
+                    }
+                }
+                if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
+                    item {
+                        CPUBoostCard(viewModel)
+                    }
+                }
+                item {
+                    GPUCard(viewModel)
+                }
             }
         }
     }

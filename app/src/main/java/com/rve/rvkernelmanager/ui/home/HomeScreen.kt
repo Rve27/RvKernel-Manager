@@ -10,8 +10,10 @@ import android.content.ClipData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +23,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -233,41 +236,49 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             animateContentSize = true,
         )
 
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalItemSpacing = 16.dp,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                DeviceInfoTitle()
-            }
-
-            items(deviceInfoList) { item ->
-                DeviceInfoItemCard(item = item)
-            }
-
-            item {
-                AnimatedVisibility(deviceInfo.hasWireGuard) {
-                    DeviceInfoItemCard(item = wireGuardInfo)
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(2),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalItemSpacing = 16.dp,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    DeviceInfoTitle()
                 }
-            }
 
-            item(span = StaggeredGridItemSpan.FullLine) {
-                DeviceInfoItemCard(item = cpuInfo)
-            }
+                items(deviceInfoList) { item ->
+                    DeviceInfoItemCard(item = item)
+                }
 
-            item(span = StaggeredGridItemSpan.FullLine) {
-                DeviceInfoItemCard(item = gpuInfo)
-            }
+                item {
+                    AnimatedVisibility(deviceInfo.hasWireGuard) {
+                        DeviceInfoItemCard(item = wireGuardInfo)
+                    }
+                }
 
-            item(span = StaggeredGridItemSpan.FullLine) {
-                DeviceInfoItemCard(item = kernelInfo)
-            }
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    DeviceInfoItemCard(item = cpuInfo)
+                }
 
-            item(span = StaggeredGridItemSpan.FullLine) {
-                DonateCard()
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    DeviceInfoItemCard(item = gpuInfo)
+                }
+
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    DeviceInfoItemCard(item = kernelInfo)
+                }
+
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    DonateCard()
+                }
             }
         }
     }
