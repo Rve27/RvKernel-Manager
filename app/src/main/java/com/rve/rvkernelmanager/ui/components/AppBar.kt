@@ -44,7 +44,7 @@ import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
 
 @Composable
-fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
+fun SimpleTopAppBar() {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -134,7 +134,6 @@ fun PinnedTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                 )
             }
         },
-        scrollBehavior = scrollBehavior,
     )
 }
 

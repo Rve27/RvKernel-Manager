@@ -83,7 +83,7 @@ import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
-import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.BatteryUtils
 import kotlinx.coroutines.launch
@@ -123,7 +123,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
     }
 
     Scaffold(
-        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        topBar = { SimpleTopAppBar() },
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->

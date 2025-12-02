@@ -75,7 +75,7 @@ import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
-import com.rve.rvkernelmanager.ui.components.PinnedTopAppBar
+import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
 @Composable
@@ -110,7 +110,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
     }
 
     Scaffold(
-        topBar = { PinnedTopAppBar(scrollBehavior = scrollBehavior) },
+        topBar = { SimpleTopAppBar() },
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
