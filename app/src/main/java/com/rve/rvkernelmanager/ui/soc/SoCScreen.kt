@@ -162,7 +162,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
 fun CPUMonitorCard(viewModel: SoCViewModel) {
     val cpuUsage by viewModel.cpuUsage.collectAsState()
     val cpuUsageProgress = remember(cpuUsage) {
-        if (cpuUsage == "N/A") {
+        if (cpuUsage == "unknown") {
             0f
         } else {
             cpuUsage.replace("%", "").toFloatOrNull()?.div(100f) ?: 0f
@@ -187,6 +187,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         border = BorderStroke(
             width = 2.0.dp,
             color = MaterialTheme.colorScheme.tertiaryContainer,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ),
     ) {
         Column(
@@ -253,7 +256,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                 progress = { animatedCpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
                                 color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                trackColor = MaterialTheme.colorScheme.background,
+                                trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             )
                         }
                     }
@@ -414,6 +417,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
             width = 2.0.dp,
             color = MaterialTheme.colorScheme.tertiaryContainer,
         ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -479,7 +485,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                 progress = { animatedGpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
                                 color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                trackColor = MaterialTheme.colorScheme.background,
+                                trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             )
                         }
                     }

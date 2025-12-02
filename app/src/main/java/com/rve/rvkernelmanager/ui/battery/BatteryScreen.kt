@@ -189,6 +189,9 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
             width = 2.0.dp,
             color = MaterialTheme.colorScheme.tertiaryContainer,
         ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -418,7 +421,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         progress = { animatedBatteryLevelProgress },
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        trackColor = MaterialTheme.colorScheme.background,
+                        trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     )
                 }
             }
