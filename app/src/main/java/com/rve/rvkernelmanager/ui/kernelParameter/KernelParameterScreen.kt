@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -80,6 +78,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -246,26 +247,12 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            ) {
                 options.forEachIndexed { index, label ->
-                    val shape =
-                        when (index) {
-                            0 ->
-                                (
-                                    ButtonGroupDefaults.connectedMiddleButtonShapes().shape
-                                        as RoundedCornerShape
-                                    )
-                                    .copy(topStart = CornerSize(100), topEnd = CornerSize(100))
-                            options.lastIndex ->
-                                (
-                                    ButtonGroupDefaults.connectedMiddleButtonShapes().shape
-                                        as RoundedCornerShape
-                                    )
-                                    .copy(bottomStart = CornerSize(100), bottomEnd = CornerSize(100))
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
-                        }
                     ToggleButton(
-                        modifier = Modifier.fillMaxSize(),
                         enabled =
                         kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
                         checked = selectedIndex == index,
@@ -274,26 +261,45 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                             viewModel.updateProfile(index)
                         },
                         shapes =
-                        ToggleButtonDefaults.shapes(
-                            shape = shape,
-                            checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
-                        ),
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                shape = RoundedCornerShape(
+                                    topStart = 28.dp,
+                                    bottomStart = 28.dp,
+                                    topEnd = 8.dp,
+                                    bottomEnd = 8.dp,
+                                ),
+                                checkedShape = RoundedCornerShape(28.dp),
+                            )
+                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
+                                shape = RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    bottomStart = 8.dp,
+                                    topEnd = 28.dp,
+                                    bottomEnd = 28.dp,
+                                ),
+                                checkedShape = RoundedCornerShape(28.dp),
+                            )
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                checkedShape = RoundedCornerShape(28.dp),
+                            )
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics { role = Role.RadioButton },
                         colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
                         ),
-                        border = BorderStroke(
-                            width = 1.0.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                        ),
-                        contentPadding = PaddingValues(16.dp),
+                        contentPadding = PaddingValues(8.dp),
                     ) {
-                        Icon(
-                            painter = icons[index],
-                            contentDescription = null,
-                        )
-                        Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
-                        Text(label)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(
+                                painter = icons[index],
+                                contentDescription = null,
+                            )
+                            Text(label)
+                        }
                     }
                 }
                 if (!kernelProfile.hasProfilePowersave && !kernelProfile.hasProfileBalance && !kernelProfile.hasProfilePerformance) {
