@@ -541,6 +541,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             width = 2.0.dp,
             color = MaterialTheme.colorScheme.tertiaryContainer,
         ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
