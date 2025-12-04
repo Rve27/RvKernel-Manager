@@ -98,6 +98,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
     val chargingState by viewModel.chargingState.collectAsState()
     val rvkernels = listOf(
         "RvKernel-Alioth-v1.2",
+        "RvKernel-Alioth-v1.3",
     )
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
 
