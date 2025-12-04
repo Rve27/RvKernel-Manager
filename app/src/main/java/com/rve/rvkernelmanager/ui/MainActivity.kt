@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
@@ -29,21 +30,18 @@ import com.topjohnwu.superuser.Shell
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
-  
-    private var isRoot = false
-    
+    private var isRoot by mutableStateOf(false)
+    private var rootGranted by mutableStateOf(false)
     private var showRootDialog by mutableStateOf(false)
     
-    private var isChecking by mutableStateOf(true)
-
     private val checkRoot = Runnable {
         Shell.getShell { shell ->
             isRoot = shell.isRoot
             if (!isRoot) {
                 showRootDialog = true
+            } else {
+                rootGranted = true
             }
-          
-            isChecking = false
         }
     }
 
@@ -51,7 +49,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        splashScreen.setKeepOnScreenCondition { isChecking }
+        splashScreen.setKeepOnScreenCondition { rootGranted }
         
         enableEdgeToEdge()
         Thread(checkRoot).start()
@@ -65,7 +63,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         init {
-        
             @Suppress("DEPRECATION")
             if (Shell.getCachedShell() == null) {
                 Shell.setDefaultBuilder(
@@ -78,38 +75,38 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun RvKernelManagerApp(showRootDialog: Boolean = false) {
-    
     if (showRootDialog) {
-        AlertDialog(
-            onDismissRequest = { 
-                
-            },
-            title = { Text("Root Access Missing") },
-            text = {
-                Text(
-                    text = "RvKernel Manager requires root access to function properly.",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        exitProcess(0)
-                    },
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.error
+        Surface {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text("No Root Access") },
+                text = {
+                    Text(
+                        text = "RvKernel Manager requires root access",
+                        style = MaterialTheme.typography.bodyLarge,
                     )
-                ) {
-                    Text("Exit")
-                }
-            },
-        )
-    }
-    
-    // Content utama tetap dirender di belakang dialog
-    Surface {
-        RvKernelManagerNavHost()
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            exitProcess(0)
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Exit")
+                    }
+                },
+            )
+        }
+    } else {
+        Surface {
+            RvKernelManagerNavHost()
+        }
     }
 }
