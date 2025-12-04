@@ -5,6 +5,7 @@
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.rve.rvkernelmanager.ui
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,8 +29,12 @@ import com.topjohnwu.superuser.Shell
 import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
+  
     private var isRoot = false
+    
     private var showRootDialog by mutableStateOf(false)
+    
+    private var isChecking by mutableStateOf(true)
 
     private val checkRoot = Runnable {
         Shell.getShell { shell ->
@@ -37,6 +42,8 @@ class MainActivity : ComponentActivity() {
             if (!isRoot) {
                 showRootDialog = true
             }
+          
+            isChecking = false
         }
     }
 
@@ -44,7 +51,8 @@ class MainActivity : ComponentActivity() {
         val splashScreen: SplashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        splashScreen.setKeepOnScreenCondition { !isRoot }
+        splashScreen.setKeepOnScreenCondition { isChecking }
+        
         enableEdgeToEdge()
         Thread(checkRoot).start()
 
@@ -57,6 +65,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         init {
+        
             @Suppress("DEPRECATION")
             if (Shell.getCachedShell() == null) {
                 Shell.setDefaultBuilder(
@@ -71,12 +80,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun RvKernelManagerApp(showRootDialog: Boolean = false) {
+    
     if (showRootDialog) {
         AlertDialog(
-            onDismissRequest = {},
+            onDismissRequest = { 
+                
+            },
+            title = { Text("Root Access Missing") },
             text = {
                 Text(
-                    text = "RvKernel Manager requires root access!",
+                    text = "RvKernel Manager requires root access to function properly.",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             },
@@ -85,13 +98,17 @@ fun RvKernelManagerApp(showRootDialog: Boolean = false) {
                     onClick = {
                         exitProcess(0)
                     },
-                    shapes = ButtonDefaults.shapes(),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
                 ) {
                     Text("Exit")
                 }
             },
         )
     }
+    
+    // Content utama tetap dirender di belakang dialog
     Surface {
         RvKernelManagerNavHost()
     }
