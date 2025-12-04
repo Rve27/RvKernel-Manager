@@ -94,7 +94,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.battery.BatteryScreen
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
@@ -855,7 +854,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 ),
                 border = BorderStroke(
                     width = 2.0.dp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
                 ),
             ) {
                 Row(
@@ -865,13 +864,13 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_exclamation),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
                         contentDescription = null,
                     )
                     Text(
                         text = "It may take a few minutes to change the ZRAM parameters",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
                     )
                 }
             }
