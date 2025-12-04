@@ -83,6 +83,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -90,8 +91,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.battery.BatteryScreen
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
@@ -247,58 +250,62 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            ) {
-                options.forEachIndexed { index, label ->
-                    ToggleButton(
-                        enabled =
-                        kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
-                        checked = selectedIndex == index,
-                        onCheckedChange = {
-                            selectedIndex = index
-                            viewModel.updateProfile(index)
-                        },
-                        shapes =
-                        when (index) {
-                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
-                                shape = RoundedCornerShape(
-                                    topStart = 28.dp,
-                                    bottomStart = 28.dp,
-                                    topEnd = 8.dp,
-                                    bottomEnd = 8.dp,
-                                ),
-                                checkedShape = RoundedCornerShape(28.dp),
-                            )
-                            options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
-                                shape = RoundedCornerShape(
-                                    topStart = 8.dp,
-                                    bottomStart = 8.dp,
-                                    topEnd = 28.dp,
-                                    bottomEnd = 28.dp,
-                                ),
-                                checkedShape = RoundedCornerShape(28.dp),
-                            )
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
-                                checkedShape = RoundedCornerShape(28.dp),
-                            )
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .semantics { role = Role.RadioButton },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                        ),
-                        contentPadding = PaddingValues(8.dp),
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                painter = icons[index],
-                                contentDescription = null,
-                            )
-                            Text(label)
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    options.forEachIndexed { index, label ->
+                        ToggleButton(
+                            enabled =
+                                kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
+                            checked = selectedIndex == index,
+                            onCheckedChange = {
+                                selectedIndex = index
+                                viewModel.updateProfile(index)
+                            },
+                            shapes =
+                                when (index) {
+                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                        shape = RoundedCornerShape(
+                                            topStart = 28.dp,
+                                            bottomStart = 28.dp,
+                                            topEnd = 8.dp,
+                                            bottomEnd = 8.dp,
+                                        ),
+                                        checkedShape = RoundedCornerShape(28.dp),
+                                    )
+
+                                    options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
+                                        shape = RoundedCornerShape(
+                                            topStart = 8.dp,
+                                            bottomStart = 8.dp,
+                                            topEnd = 28.dp,
+                                            bottomEnd = 28.dp,
+                                        ),
+                                        checkedShape = RoundedCornerShape(28.dp),
+                                    )
+
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                        checkedShape = RoundedCornerShape(28.dp),
+                                    )
+                                },
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics { role = Role.RadioButton },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                            ),
+                            contentPadding = PaddingValues(8.dp),
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    painter = icons[index],
+                                    contentDescription = null,
+                                )
+                                Text(label)
+                            }
                         }
                     }
                 }
@@ -1666,4 +1673,11 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             }
         },
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun KernelParameterScreenPreview() {
+    val navController = rememberNavController()
+    KernelParameterScreen(navController = navController)
 }
