@@ -602,7 +602,9 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Button(
                             onClick = { openUMX.visible = true },
-                            shapes = ButtonDefaults.shapes(),
+                            shapes = ButtonDefaults.shapes(
+                                shape = RoundedCornerShape(28.dp)
+                            ),
                             contentPadding = PaddingValues(16.dp),
                         ) {
                             Column(Modifier.fillMaxSize()) {
@@ -625,7 +627,9 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Button(
                             onClick = { openUMN.visible = true },
-                            shapes = ButtonDefaults.shapes(),
+                            shapes = ButtonDefaults.shapes(
+                                shape = RoundedCornerShape(28.dp)
+                            ),
                             contentPadding = PaddingValues(16.dp),
                         ) {
                             Column(Modifier.fillMaxSize()) {
