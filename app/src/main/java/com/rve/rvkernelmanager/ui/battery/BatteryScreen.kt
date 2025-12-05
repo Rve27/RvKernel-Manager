@@ -775,7 +775,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             Text(
                 text = "Set manual design capacity",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -869,7 +869,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
             Text(
                 text = "Thermal profiles",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {

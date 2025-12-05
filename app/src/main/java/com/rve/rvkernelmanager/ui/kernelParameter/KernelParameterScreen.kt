@@ -260,38 +260,38 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     options.forEachIndexed { index, label ->
                         ToggleButton(
                             enabled =
-                                kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
+                            kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
                             checked = selectedIndex == index,
                             onCheckedChange = {
                                 selectedIndex = index
                                 viewModel.updateProfile(index)
                             },
                             shapes =
-                                when (index) {
-                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
-                                        shape = RoundedCornerShape(
-                                            topStart = 28.dp,
-                                            bottomStart = 28.dp,
-                                            topEnd = 8.dp,
-                                            bottomEnd = 8.dp,
-                                        ),
-                                        checkedShape = RoundedCornerShape(28.dp),
-                                    )
+                            when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                    shape = RoundedCornerShape(
+                                        topStart = 28.dp,
+                                        bottomStart = 28.dp,
+                                        topEnd = 8.dp,
+                                        bottomEnd = 8.dp,
+                                    ),
+                                    checkedShape = RoundedCornerShape(28.dp),
+                                )
 
-                                    options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
-                                        shape = RoundedCornerShape(
-                                            topStart = 8.dp,
-                                            bottomStart = 8.dp,
-                                            topEnd = 28.dp,
-                                            bottomEnd = 28.dp,
-                                        ),
-                                        checkedShape = RoundedCornerShape(28.dp),
-                                    )
+                                options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes(
+                                    shape = RoundedCornerShape(
+                                        topStart = 8.dp,
+                                        bottomStart = 8.dp,
+                                        topEnd = 28.dp,
+                                        bottomEnd = 28.dp,
+                                    ),
+                                    checkedShape = RoundedCornerShape(28.dp),
+                                )
 
-                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
-                                        checkedShape = RoundedCornerShape(28.dp),
-                                    )
-                                },
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                    checkedShape = RoundedCornerShape(28.dp),
+                                )
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .semantics { role = Role.RadioButton },
@@ -532,9 +532,9 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         state = openTCD,
         title = {
             Text(
-                text ="TCP congestion algorithm",
+                text = "TCP congestion algorithm",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -611,7 +611,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         Button(
                             onClick = { openUMX.visible = true },
                             shapes = ButtonDefaults.shapes(
-                                shape = RoundedCornerShape(28.dp)
+                                shape = RoundedCornerShape(28.dp),
                             ),
                             contentPadding = PaddingValues(16.dp),
                         ) {
@@ -636,7 +636,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         Button(
                             onClick = { openUMN.visible = true },
                             shapes = ButtonDefaults.shapes(
-                                shape = RoundedCornerShape(28.dp)
+                                shape = RoundedCornerShape(28.dp),
                             ),
                             contentPadding = PaddingValues(16.dp),
                         ) {
@@ -1033,7 +1033,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
             Text(
                 text = "ZRAM size",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1066,7 +1066,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
             Text(
                 text = "ZRAM compression algorithm",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {

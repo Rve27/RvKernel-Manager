@@ -741,7 +741,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -777,7 +777,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -813,7 +813,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available governor",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1019,7 +1019,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1055,7 +1055,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1091,7 +1091,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available governor",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1297,7 +1297,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1333,7 +1333,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1369,7 +1369,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available governor",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1932,7 +1932,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -1968,7 +1968,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available frequencies",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -2004,7 +2004,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = "Available governor",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -2040,7 +2040,7 @@ fun GPUCard(viewModel: SoCViewModel) {
             Text(
                 text = "Adreno boost",
                 style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
