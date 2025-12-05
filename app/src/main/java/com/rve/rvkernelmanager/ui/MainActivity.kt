@@ -10,14 +10,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -27,22 +24,16 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.splashscreen.SplashScreen
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.delay
-import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
     var isRoot by mutableStateOf(false)
@@ -86,18 +77,18 @@ class MainActivity : ComponentActivity() {
         } else {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainerLow
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     ContainedLoadingIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "waiting for root access to be granted...",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
                 DialogUnstyled(
@@ -105,18 +96,18 @@ class MainActivity : ComponentActivity() {
                     title = {
                         Text(
                             text = "Root access required",
-                            style = MaterialTheme.typography.titleMedium
+                            style = MaterialTheme.typography.titleMedium,
                         )
                     },
                     text = {
                         Text(
                             text = "RvKernel Manager requires root access",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
                         )
                     },
                     confirmButton = {
                         TextButton(
-                            onClick = { showRootDialog.visible = false }
+                            onClick = { showRootDialog.visible = false },
                         ) {
                             Text(text = "Close")
                         }

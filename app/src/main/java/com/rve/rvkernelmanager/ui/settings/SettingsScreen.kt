@@ -133,7 +133,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
             Text(
                 text = "Select theme",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
@@ -180,7 +180,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
             Text(
                 text = "SoC polling interval",
                 style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor
+                color = AlertDialogDefaults.titleContentColor,
             )
         },
         text = {
