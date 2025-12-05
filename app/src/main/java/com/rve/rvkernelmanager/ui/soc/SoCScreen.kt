@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -736,7 +737,13 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMNF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (cpu0State.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -766,7 +773,13 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMXF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (cpu0State.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -796,7 +809,13 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openACG,
-        title = "Available governor",
+        title = {
+            Text(
+                text = "Available governor",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (cpu0State.availableGov.isNotEmpty()) {
                 LazyColumn {
@@ -996,7 +1015,13 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMNF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (bigClusterState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1026,7 +1051,13 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMXF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (bigClusterState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1056,7 +1087,13 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openACG,
-        title = "Available governor",
+        title = {
+            Text(
+                text = "Available governor",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (bigClusterState.availableGov.isNotEmpty()) {
                 LazyColumn {
@@ -1256,7 +1293,13 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMNF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (primeClusterState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1286,7 +1329,13 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMXF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (primeClusterState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1316,7 +1365,13 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openACG,
-        title = "Available governor",
+        title = {
+            Text(
+                text = "Available governor",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (primeClusterState.availableGov.isNotEmpty()) {
                 LazyColumn {
@@ -1873,7 +1928,13 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMNF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (gpuState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1903,7 +1964,13 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAMXF,
-        title = "Available frequencies",
+        title = {
+            Text(
+                text = "Available frequencies",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (gpuState.availableFreq.isNotEmpty()) {
                 LazyColumn {
@@ -1933,7 +2000,13 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openAGG,
-        title = "Available governor",
+        title = {
+            Text(
+                text = "Available governor",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             if (gpuState.availableGov.isNotEmpty()) {
                 LazyColumn {
@@ -1963,7 +2036,13 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     DialogUnstyled(
         state = openABD,
-        title = "Adreno boost",
+        title = {
+            Text(
+                text = "Adreno boost",
+                style = MaterialTheme.typography.titleLarge,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 DialogTextButton(

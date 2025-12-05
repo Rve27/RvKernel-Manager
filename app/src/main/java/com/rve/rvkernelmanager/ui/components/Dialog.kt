@@ -44,7 +44,7 @@ import com.composables.core.Scrim
 @Composable
 fun DialogUnstyled(
     state: DialogState,
-    title: String? = null,
+    title: @Composable (() -> Unit)? = null,
     text: @Composable (() -> Unit)? = null,
     confirmButton: @Composable (() -> Unit)? = null,
     dismissButton: @Composable (() -> Unit)? = null,
@@ -81,11 +81,7 @@ fun DialogUnstyled(
                                 .padding(bottom = 16.dp)
                                 .align(Alignment.Start),
                         ) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = AlertDialogDefaults.titleContentColor,
-                            )
+                            title()
                         }
                     }
                     text?.let {
