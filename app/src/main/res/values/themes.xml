@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="RvTheme" parent="android:Theme.Material.Light.NoActionBar" />
-
-    <style name="Theme.RvTheme.SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">?android:attr/colorBackground</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_splash</item>
-        <item name="postSplashScreenTheme">@style/RvTheme</item>
-    </style>
+    <style name="Theme.RvTheme" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

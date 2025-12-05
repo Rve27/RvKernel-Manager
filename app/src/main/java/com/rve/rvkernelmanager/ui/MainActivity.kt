@@ -73,7 +73,12 @@ class MainActivity : ComponentActivity() {
         val showRootDialog = rememberDialogState(initiallyVisible = true)
 
         if (isRoot) {
-            RvKernelManagerNavHost()
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.surfaceContainerLow
+            ) {
+                RvKernelManagerNavHost()
+            }
         } else {
             Surface(
                 modifier = Modifier.fillMaxSize(),
