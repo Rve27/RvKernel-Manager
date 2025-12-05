@@ -34,6 +34,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
@@ -232,7 +233,9 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
         ),
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
@@ -527,7 +530,13 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 
     DialogUnstyled(
         state = openTCD,
-        title = "TCP congestion algorithm",
+        title = {
+            Text(
+                text ="TCP congestion algorithm",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
@@ -1020,7 +1029,13 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
 
     DialogUnstyled(
         state = openZD,
-        title = "ZRAM size",
+        title = {
+            Text(
+                text = "ZRAM size",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 zramSizeOptions.forEach { size ->
@@ -1047,7 +1062,13 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
 
     DialogUnstyled(
         state = openZCD,
-        title = "ZRAM compression algorithm",
+        title = {
+            Text(
+                text = "ZRAM compression algorithm",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 memory.availableZramCompAlgorithms.forEach { algorithm ->
@@ -1219,7 +1240,9 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { viewModel.updateBoreStatus(!bore) },
             ) {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

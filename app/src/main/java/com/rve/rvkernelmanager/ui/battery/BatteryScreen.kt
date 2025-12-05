@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -770,7 +771,13 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
     DialogUnstyled(
         state = openMDC,
-        title = "Set manual design capacity",
+        title = {
+            Text(
+                text = "Set manual design capacity",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(
@@ -858,7 +865,13 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 
     DialogUnstyled(
         state = openTPD,
-        title = "Thermal profiles",
+        title = {
+            Text(
+                text = "Thermal profiles",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 DialogTextButton(

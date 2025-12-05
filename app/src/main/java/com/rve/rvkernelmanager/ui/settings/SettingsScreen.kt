@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -128,7 +129,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
 
     DialogUnstyled(
         state = openThemeDialog,
-        title = "Select theme",
+        title = {
+            Text(
+                text = "Select theme",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 DialogTextButton(
@@ -169,7 +176,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
 
     DialogUnstyled(
         state = openPollingDialog,
-        title = "SoC polling interval",
+        title = {
+            Text(
+                text = "SoC polling interval",
+                style = MaterialTheme.typography.titleMedium,
+                color = AlertDialogDefaults.titleContentColor
+            )
+        },
         text = {
             Column {
                 Text(
