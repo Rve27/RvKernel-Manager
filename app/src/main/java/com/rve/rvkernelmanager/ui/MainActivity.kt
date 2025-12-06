@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +24,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,68 +38,85 @@ import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity() {
-    var isRoot by mutableStateOf(false)
-    val checkRoot = Runnable {
-        Shell.getShell { shell ->
-            isRoot = shell.isRoot
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         enableEdgeToEdge()
-        Thread(checkRoot).start()
+        
+        actionBar?.hide()
+
+        Shell.enableVerboseLogging = true
+        if (Shell.getCachedShell() == null) {
+            Shell.setDefaultBuilder(
+                Shell.Builder.create()
+                    .setFlags(Shell.FLAG_MOUNT_MASTER) 
+                    .setTimeout(20),
+            )
+        }
+
         setContent {
             RvKernelManagerTheme {
                 RvKernelManagerApp()
             }
         }
     }
+}
 
-    companion object {
-        init {
-            @Suppress("DEPRECATION")
-            if (Shell.getCachedShell() == null) {
-                Shell.setDefaultBuilder(
-                    Shell.Builder.create()
-                        .setFlags(Shell.FLAG_MOUNT_MASTER or Shell.FLAG_REDIRECT_STDERR)
-                        .setTimeout(20),
-                )
+@Preview(showBackground = true)
+@Composable
+fun RvKernelManagerApp() {
+    var isRoot by remember { mutableStateOf(false) }
+    var isChecking by remember { mutableStateOf(true) }
+    
+    val showRootDialog = rememberDialogState(initiallyVisible = true)
+
+    LaunchedEffect(Unit) {
+        Shell.getShell { shell ->
+            isRoot = shell.isRoot
+            isChecking = false
+            if (shell.isRoot) {
+                showRootDialog.visible = false
             }
         }
     }
 
-    @Preview(showBackground = true)
-    @Composable
-    fun RvKernelManagerApp() {
-        val showRootDialog = rememberDialogState(initiallyVisible = true)
-
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding() 
+            .imePadding(), 
+        color = MaterialTheme.colorScheme.surfaceContainerLow
+    ) {
         if (isRoot) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainerLow
-            ) {
-                RvKernelManagerNavHost()
-            }
+            RvKernelManagerNavHost()
         } else {
-            Surface(
+            Column(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
+                if (isChecking) {
                     ContainedLoadingIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "waiting for root access to be granted...",
+                        text = "Checking root access...",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
+                } else {
+                    Text(
+                        text = "Root access denied.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
+            }
+
+            if (!isChecking && !isRoot) {
                 DialogUnstyled(
                     state = showRootDialog,
                     title = {
@@ -106,15 +127,15 @@ class MainActivity : ComponentActivity() {
                     },
                     text = {
                         Text(
-                            text = "RvKernel Manager requires root access",
+                            text = "RvKernel Manager requires root access to function properly.",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     },
                     confirmButton = {
                         TextButton(
-                            onClick = { showRootDialog.visible = false },
+                            onClick = { exitProcess(0) },
                         ) {
-                            Text(text = "Close")
+                            Text(text = "Exit App")
                         }
                     },
                 )
