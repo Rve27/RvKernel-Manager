@@ -173,4 +173,6 @@ dependencies {
     implementation(libs.topjohnwu.libsu.core)
 
     implementation(libs.composables.core)
+    implementation(libs.androidx.ui.tooling.preview)
+    debugImplementation(libs.androidx.ui.tooling)
 }

@@ -19,6 +19,8 @@ kotlinx-serialization = "1.9.0"
 coil3 = "3.3.0"
 libsuVersion = "6.0.0"
 composables = "1.49.3"
+uiToolingPreview = "1.9.5"
+uiTooling = "1.9.5"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -61,3 +63,5 @@ io-coil-kt-coil3-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okht
 topjohnwu-libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsuVersion" }
 
 composables-core = { module = "com.composables:core", version.ref = "composables" }
+androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "uiToolingPreview" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
