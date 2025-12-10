@@ -426,7 +426,9 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(kernelParameters.hasPrintk) {
                 Button(
                     onClick = { openPD.visible = true },
-                    shapes = ButtonDefaults.shapes(),
+                    shapes = ButtonDefaults.shapes(
+                        shape = RoundedCornerShape(28.dp),
+                    ),
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     Row(
@@ -458,7 +460,9 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(kernelParameters.hasSchedLibName) {
                 Button(
                     onClick = { openSLND.visible = true },
-                    shapes = ButtonDefaults.shapes(),
+                    shapes = ButtonDefaults.shapes(
+                        shape = RoundedCornerShape(28.dp),
+                    ),
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     Row(
@@ -478,7 +482,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                             Text(
-                                text = kernelParameters.schedLibName,
+                                text = "Add apps packages into sched_lib_name list to report max frequency to unity task",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -490,7 +494,9 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(kernelParameters.hasTcpCongestionAlgorithm) {
                 Button(
                     onClick = { openTCD.visible = true },
-                    shapes = ButtonDefaults.shapes(),
+                    shapes = ButtonDefaults.shapes(
+                        shape = RoundedCornerShape(28.dp),
+                    ),
                     contentPadding = PaddingValues(16.dp),
                 ) {
                     Row(
