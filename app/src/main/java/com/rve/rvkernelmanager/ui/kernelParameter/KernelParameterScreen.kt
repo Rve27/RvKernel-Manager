@@ -342,6 +342,8 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val openPD = rememberDialogState(initiallyVisible = false)
     // TCD = TCP Congestion Dialog
     val openTCD = rememberDialogState(initiallyVisible = false)
+    // SLND = Sched Lib Name Dialog
+    val openSLND = rememberDialogState(initiallyVisible = false)
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -445,6 +447,38 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                             )
                             Text(
                                 text = kernelParameters.printk,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+            }
+
+            AnimatedVisibility(kernelParameters.hasSchedLibName) {
+                Button(
+                    onClick = { openSLND.visible = true },
+                    shapes = ButtonDefaults.shapes(),
+                    contentPadding = PaddingValues(16.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_speed),
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            contentDescription = null,
+                        )
+                        Column {
+                            Text(
+                                text = "Sched lib name",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = kernelParameters.schedLibName,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )

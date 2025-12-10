@@ -35,6 +35,8 @@ class KernelParameterViewModel : ViewModel() {
         val tcpCongestionAlgorithm: String = "N/A",
         val hasTcpCongestionAlgorithm: Boolean = false,
         val availableTcpCongestionAlgorithm: List<String> = emptyList(),
+        val hasSchedLibName: Boolean = false,
+        val schedLibName: String = "",
     )
 
     data class Uclamp(
@@ -151,6 +153,8 @@ class KernelParameterViewModel : ViewModel() {
                 tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
                 hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
                 availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm(),
+                hasSchedLibName = Utils.testFile(KernelUtils.SCHED_LIB_NAME),
+                schedLibName = Utils.readFile(KernelUtils.SCHED_LIB_NAME),
             )
         }
     }
