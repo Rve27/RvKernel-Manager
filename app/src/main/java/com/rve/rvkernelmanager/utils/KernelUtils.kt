@@ -23,6 +23,7 @@ object KernelUtils {
 
     const val SCHED_AUTO_GROUP = "/proc/sys/kernel/sched_autogroup_enabled"
     const val PRINTK = "/proc/sys/kernel/printk"
+    const val SCHED_LIB_NAME = "/proc/sys/kernel/sched_lib_name"
 
     const val SCHED_UTIL_CLAMP_MAX = "/proc/sys/kernel/sched_util_clamp_max"
     const val SCHED_UTIL_CLAMP_MIN = "/proc/sys/kernel/sched_util_clamp_min"
