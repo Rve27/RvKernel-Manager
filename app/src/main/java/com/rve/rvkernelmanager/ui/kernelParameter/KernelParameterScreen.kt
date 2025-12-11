@@ -1100,7 +1100,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = "More VM parameters",
                     )
                 }
@@ -1532,7 +1532,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = "More BORE parameters",
                     )
                 }
