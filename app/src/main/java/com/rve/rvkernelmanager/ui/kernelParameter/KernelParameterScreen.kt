@@ -542,7 +542,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updatePrintk(printk)
+                        viewModel.setValue(KernelUtils.PRINTK, printk)
                         openPD.visible = false
                     },
                 ),
@@ -551,7 +551,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updatePrintk(printk)
+                    viewModel.setValue(KernelUtils.PRINTK, printk)
                     openPD.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -622,7 +622,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     DialogTextButton(
                         text = algorithm,
                         onClick = {
-                            viewModel.updateTcpCongestionAlgorithm(algorithm)
+                            viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
                             openTCD.visible = false
                         },
                     )
@@ -779,7 +779,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                        viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MAX, uclampMax)
                         openUMX.visible = false
                     },
                 ),
@@ -788,7 +788,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("max", KernelUtils.SCHED_UTIL_CLAMP_MAX, value = uclampMax)
+                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MAX, uclampMax)
                     openUMX.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -820,7 +820,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                        viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN, uclampMin)
                         openUMX.visible = false
                     },
                 ),
@@ -829,7 +829,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min", KernelUtils.SCHED_UTIL_CLAMP_MIN, value = uclampMin)
+                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN, uclampMin)
                     openUMN.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -861,7 +861,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                        viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, uclampMinRt)
                         openUMRT.visible = false
                     },
                 ),
@@ -870,7 +870,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateUclamp("min_rt", KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, value = uclampMinRt)
+                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, uclampMinRt)
                     openUMRT.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1185,7 +1185,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateSwappiness(swappiness)
+                        viewModel.setValue(KernelUtils.SWAPPINESS, swappiness)
                         openSD.visible = false
                     },
                 ),
@@ -1194,7 +1194,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateSwappiness(swappiness)
+                    viewModel.setValue(KernelUtils.SWAPPINESS, swappiness)
                     openSD.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1226,7 +1226,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateDirtyRatio(dirtyRatio)
+                        viewModel.setValue(KernelUtils.DIRTY_RATIO, dirtyRatio)
                         openDR.visible = false
                     },
                 ),
@@ -1235,7 +1235,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateDirtyRatio(dirtyRatio)
+                    viewModel.setValue(KernelUtils.DIRTY_RATIO, dirtyRatio)
                     openDR.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1552,7 +1552,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_smoothness_long", burstSmoothnessLong)
+                        viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_LONG, burstSmoothnessLong)
                         openBSL.visible = false
                     },
                 ),
@@ -1561,7 +1561,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_smoothness_long", burstSmoothnessLong)
+                    viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_LONG, burstSmoothnessLong)
                     openBSL.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1592,7 +1592,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_smoothness_short", burstSmoothnessShort)
+                        viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_SHORT, burstSmoothnessShort)
                         openBSS.visible = false
                     },
                 ),
@@ -1601,7 +1601,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_smoothness_short", burstSmoothnessShort)
+                    viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_SHORT, burstSmoothnessShort)
                     openBSS.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1632,7 +1632,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_fork_atavistic", burstForkAtavistic)
+                        viewModel.setValue(KernelUtils.BURST_FORK_ATAVISTIC, burstForkAtavistic)
                         openBFA.visible = false
                     },
                 ),
@@ -1641,7 +1641,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_fork_atavistic", burstForkAtavistic)
+                    viewModel.setValue(KernelUtils.BURST_FORK_ATAVISTIC, burstForkAtavistic)
                     openBFA.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1672,7 +1672,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_penalty_offset", burstPenaltyOffset)
+                        viewModel.setValue(KernelUtils.BURST_PENALTY_OFFSET, burstPenaltyOffset)
                         openBPO.visible = false
                     },
                 ),
@@ -1681,7 +1681,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_penalty_offset", burstPenaltyOffset)
+                    viewModel.setValue(KernelUtils.BURST_PENALTY_OFFSET, burstPenaltyOffset)
                     openBPO.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1712,7 +1712,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_penalty_scale", burstPenaltyScale)
+                        viewModel.setValue(KernelUtils.BURST_PENALTY_SCALE, burstPenaltyScale)
                         openBPS.visible = false
                     },
                 ),
@@ -1721,7 +1721,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_penalty_scale", burstPenaltyScale)
+                    viewModel.setValue(KernelUtils.BURST_PENALTY_SCALE, burstPenaltyScale)
                     openBPS.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
@@ -1752,7 +1752,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateBoreParameter("burst_cache_lifetime", burstCacheLifetime)
+                        viewModel.setValue(KernelUtils.BURST_CACHE_LIFETIME, burstCacheLifetime)
                         openBCL.visible = false
                     },
                 ),
@@ -1761,7 +1761,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    viewModel.updateBoreParameter("burst_cache_lifetime", burstCacheLifetime)
+                    viewModel.setValue(KernelUtils.BURST_CACHE_LIFETIME, burstCacheLifetime)
                     openBCL.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
