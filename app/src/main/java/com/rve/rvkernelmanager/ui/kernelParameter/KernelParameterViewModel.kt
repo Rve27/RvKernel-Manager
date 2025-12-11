@@ -225,32 +225,25 @@ class KernelParameterViewModel : ViewModel() {
         }
     }
 
-    fun updateSwappiness(value: String) {
+    fun setValue(filePath: String, value: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.SWAPPINESS, value)
-            _memory.value = _memory.value.copy(
-                swappiness = value,
-            )
-        }
-    }
-
-    fun updatePrintk(value: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(KernelUtils.PRINTK, value)
-            _kernelParameters.value = _kernelParameters.value.copy(
-                printk = value,
-            )
-        }
-    }
-
-    fun updateUclamp(target: String, path: String, value: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.writeFile(path, value)
-            _uclamp.value = when (target) {
-                "max" -> _uclamp.value.copy(uclampMax = value)
-                "min" -> _uclamp.value.copy(uclampMin = value)
-                "min_rt" -> _uclamp.value.copy(uclampMinRt = value)
-                else -> _uclamp.value
+            Utils.writeFile(filePath, value)
+            when (filePath) {
+                KernelUtils.PRINTK -> _kernelParameters.value.copy(printk = value)
+                KernelUtils.SCHED_LIB_NAME -> _kernelParameters.value.copy(schedLibName = value)
+                KernelUtils.TCP_CONGESTION_ALGORITHM -> _kernelParameters.value.copy(tcpCongestionAlgorithm = value)
+                KernelUtils.SWAPPINESS -> _memory.value.copy(swappiness = value)
+                KernelUtils.DIRTY_RATIO -> _memory.value.copy(dirtyRatio = value)
+                KernelUtils.BURST_SMOOTHNESS_LONG -> _boreScheduler.value.copy(burstSmoothnessLong = value)
+                KernelUtils.BURST_SMOOTHNESS_SHORT -> _boreScheduler.value.copy(burstSmoothnessShort = value)
+                KernelUtils.BURST_CACHE_LIFETIME -> _boreScheduler.value.copy(burstCacheLifetime = value)
+                KernelUtils.BURST_FORK_ATAVISTIC -> _boreScheduler.value.copy(burstForkAtavistic = value)
+                KernelUtils.BURST_PENALTY_OFFSET -> _boreScheduler.value.copy(burstPenaltyOffset = value)
+                KernelUtils.BURST_PENALTY_SCALE -> _boreScheduler.value.copy(burstPenaltyScale = value)
+                KernelUtils.SCHED_UTIL_CLAMP_MAX -> _uclamp.value.copy(uclampMax = value)
+                KernelUtils.SCHED_UTIL_CLAMP_MIN -> _uclamp.value.copy(uclampMin = value)
+                KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT -> _uclamp.value.copy(uclampMinRt = value)
+                else -> {}
             }
         }
     }
@@ -284,25 +277,6 @@ class KernelParameterViewModel : ViewModel() {
         }
     }
 
-    fun updateTcpCongestionAlgorithm(algorithm: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            KernelUtils.setTcpCongestionAlgorithm(algorithm)
-            _kernelParameters.value = _kernelParameters.value.copy(
-                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
-            )
-        }
-    }
-
-    fun updateDirtyRatio(value: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.setPermissions(644, KernelUtils.DIRTY_RATIO)
-            Utils.writeFile(KernelUtils.DIRTY_RATIO, value)
-            _memory.value = _memory.value.copy(
-                dirtyRatio = Utils.readFile(KernelUtils.DIRTY_RATIO),
-            )
-        }
-    }
-
     fun updateBoreStatus(isEnabled: Boolean) {
         val value = if (isEnabled) "1" else "0"
         viewModelScope.launch(Dispatchers.IO) {
@@ -310,32 +284,6 @@ class KernelParameterViewModel : ViewModel() {
             _boreScheduler.value = _boreScheduler.value.copy(
                 bore = value,
             )
-        }
-    }
-
-    fun updateBoreParameter(parameter: String, value: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val path = when (parameter) {
-                "burst_smoothness_long" -> KernelUtils.BURST_SMOOTHNESS_LONG
-                "burst_smoothness_short" -> KernelUtils.BURST_SMOOTHNESS_SHORT
-                "burst_fork_atavistic" -> KernelUtils.BURST_FORK_ATAVISTIC
-                "burst_penalty_offset" -> KernelUtils.BURST_PENALTY_OFFSET
-                "burst_penalty_scale" -> KernelUtils.BURST_PENALTY_SCALE
-                "burst_cache_lifetime" -> KernelUtils.BURST_CACHE_LIFETIME
-                else -> null
-            }
-            path?.let {
-                Utils.writeFile(it, value)
-                _boreScheduler.value = when (parameter) {
-                    "burst_smoothness_long" -> _boreScheduler.value.copy(burstSmoothnessLong = value)
-                    "burst_smoothness_short" -> _boreScheduler.value.copy(burstSmoothnessShort = value)
-                    "burst_fork_atavistic" -> _boreScheduler.value.copy(burstForkAtavistic = value)
-                    "burst_penalty_offset" -> _boreScheduler.value.copy(burstPenaltyOffset = value)
-                    "burst_penalty_scale" -> _boreScheduler.value.copy(burstPenaltyScale = value)
-                    "burst_cache_lifetime" -> _boreScheduler.value.copy(burstCacheLifetime = value)
-                    else -> _boreScheduler.value
-                }
-            }
         }
     }
 
