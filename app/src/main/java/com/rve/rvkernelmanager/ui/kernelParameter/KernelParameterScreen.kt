@@ -337,6 +337,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
     var printk by remember { mutableStateOf(kernelParameters.printk) }
     var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName)}
+    var tcpCongestionAlgorithm by remember { mutableStateOf(kernelParameters.tcpCongestionAlgorithm) }
     val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
     // PD = Printk Dialog
@@ -517,7 +518,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                             Text(
-                                text = kernelParameters.tcpCongestionAlgorithm,
+                                text = tcpCongestionAlgorithm,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -625,6 +626,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         text = algorithm,
                         onClick = {
                             viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
+                            tcpCongestionAlgorithm = algorithm
                             openTCD.visible = false
                         },
                     )
