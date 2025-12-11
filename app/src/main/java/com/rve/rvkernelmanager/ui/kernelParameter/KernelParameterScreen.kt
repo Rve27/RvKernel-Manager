@@ -450,7 +450,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                             Text(
-                                text = kernelParameters.printk,
+                                text = printk,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
