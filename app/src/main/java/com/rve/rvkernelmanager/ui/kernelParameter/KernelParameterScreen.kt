@@ -336,6 +336,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
 fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
     var printk by remember { mutableStateOf(kernelParameters.printk) }
+    var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName)}
     val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
     // PD = Printk Dialog
@@ -561,6 +562,44 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         dismissButton = {
             TextButton(
                 onClick = { openPD.visible = false },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Cancel")
+            }
+        },
+    )
+
+    DialogUnstyled(
+        state = openSLND,
+        text = {
+            OutlinedTextField(
+                value = schedLibName,
+                onValueChange = { schedLibName = it },
+                label = { Text("Sched lib name") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        openSLND.visible = false
+                    },
+                ),
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    openSLND.visible = false
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Text("Change")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { openSLND.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
                 Text("Cancel")
