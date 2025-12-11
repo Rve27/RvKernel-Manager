@@ -582,6 +582,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
+                        viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
                         openSLND.visible = false
                     },
                 ),
@@ -590,6 +591,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         confirmButton = {
             TextButton(
                 onClick = {
+                    viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
                     openSLND.visible = false
                 },
                 shapes = ButtonDefaults.shapes(),
