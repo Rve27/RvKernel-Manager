@@ -74,12 +74,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
@@ -428,94 +430,102 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 }
             }
 
-            Card(
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
-                modifier = Modifier.clip(CircleShape).combinedClickable(
-                    onClick = { /* do nothing */ },
-                    onLongClick = {
-                        coroutineScope.launch {
-                            clipboard.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText(
-                                        "Device uptime",
-                                        uptime,
-                                    ),
-                                ),
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    ),
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .weight(1f)
+                        .combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Device uptime",
+                                                uptime,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
+                    ),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_history),
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Uptime",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                            Text(
+                                text = uptime,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
                             )
                         }
-                    },
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_history),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "Uptime",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
-                        Text(
-                            text = uptime,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
                     }
                 }
-            }
 
-            Card(
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
-                modifier = Modifier.clip(CircleShape).combinedClickable(
-                    onClick = { /* do nothing */ },
-                    onLongClick = {
-                        coroutineScope.launch {
-                            clipboard.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText(
-                                        "Deep sleep",
-                                        batteryInfo.deepSleep,
-                                    ),
-                                ),
+                Card(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    ),
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .weight(1f)
+                        .combinedClickable(
+                            onClick = { /* do nothing */ },
+                            onLongClick = {
+                                coroutineScope.launch {
+                                    clipboard.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "Deep sleep",
+                                                batteryInfo.deepSleep,
+                                            ),
+                                        ),
+                                    )
+                                }
+                            },
+                    ),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_nightlight),
+                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            contentDescription = null,
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = "Deep sleep",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
+                            Text(
+                                text = batteryInfo.deepSleep,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
                             )
                         }
-                    },
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_nightlight),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "Deep sleep",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
-                        Text(
-                            text = batteryInfo.deepSleep,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        )
                     }
                 }
             }
@@ -1041,4 +1051,11 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BatteryScreenPreview() {
+    val navController = rememberNavController()
+    BatteryScreen(navController = navController)
 }
