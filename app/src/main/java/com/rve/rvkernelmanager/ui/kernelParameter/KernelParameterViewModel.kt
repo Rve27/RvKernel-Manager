@@ -30,6 +30,8 @@ class KernelParameterViewModel : ViewModel() {
     data class KernelParameters(
         val schedAutogroup: String = "N/A",
         val hasSchedAutogroup: Boolean = false,
+        val hasDmesgRestrict: Boolean = false,
+        val dmesgRestrict: Int? = 0,
         val printk: String = "N/A",
         val hasPrintk: Boolean = false,
         val tcpCongestionAlgorithm: String = "N/A",
@@ -148,6 +150,8 @@ class KernelParameterViewModel : ViewModel() {
             _kernelParameters.value = KernelParameters(
                 schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTO_GROUP),
                 hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTO_GROUP),
+                hasDmesgRestrict = Utils.testFile(KernelUtils.DMESG_RESTRICT),
+                dmesgRestrict = Utils.readFile(KernelUtils.DMESG_RESTRICT).toIntOrNull(),
                 printk = Utils.readFile(KernelUtils.PRINTK),
                 hasPrintk = Utils.testFile(KernelUtils.PRINTK),
                 tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
@@ -212,6 +216,16 @@ class KernelParameterViewModel : ViewModel() {
     fun updateProfile(profile: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.setKernelProfile(profile)
+        }
+    }
+
+    fun setDmesgRestrict(isChecked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val value = if (isChecked) 1 else 0
+            Utils.writeFile(KernelUtils.DMESG_RESTRICT, value.toString())
+            _kernelParameters.value = _kernelParameters.value.copy(
+                dmesgRestrict = value,
+            )
         }
     }
 
