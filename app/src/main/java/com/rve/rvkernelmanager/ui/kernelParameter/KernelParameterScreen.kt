@@ -42,6 +42,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +50,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -335,8 +337,9 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
 @Composable
 fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     val kernelParameters by viewModel.kernelParameters.collectAsState()
+    var dmesgRestrict = remember(kernelParameters.dmesgRestrict) { kernelParameters.dmesgRestrict == 1 }
     var printk by remember { mutableStateOf(kernelParameters.printk) }
-    var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName)}
+    var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName) }
     var tcpCongestionAlgorithm by remember { mutableStateOf(kernelParameters.tcpCongestionAlgorithm) }
     val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
 
@@ -373,6 +376,83 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
                 )
+            }
+
+            AnimatedVisibility(kernelParameters.hasDmesgRestrict) {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Card(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        onClick = { viewModel.setDmesgRestrict(!dmesgRestrict) },
+                        border = BorderStroke(
+                            width = 2.0.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        ),
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_comments_disabled),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    contentDescription = "Restrict dmesg output",
+                                )
+                                Text(
+                                    text = "Restrict dmesg output",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                Switch(
+                                    checked = dmesgRestrict,
+                                    onCheckedChange = { dmesgRestrict = it },
+                                    thumbContent = {
+                                        Crossfade(
+                                            targetState = dmesgRestrict,
+                                            animationSpec = tween(durationMillis = 500),
+                                        ) { dmesgRestrict ->
+                                            if (dmesgRestrict) {
+                                                Icon(
+                                                    painter = painterResource(R.drawable.ic_check),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Text(
+                                    text = "Restrict Dmesg",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+                                Text(
+                                    text = "This toggle indicates whether unprivileged users are prevented" +
+                                            " from using dmesg to view messages from the kernel's log buffer." +
+                                            " When dmesg_restrict is set to inactive (0) there are no restrictions.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             AnimatedVisibility(kernelParameters.hasSchedAutogroup) {
