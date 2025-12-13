@@ -43,11 +43,11 @@ class KernelParameterViewModel : ViewModel() {
 
     data class Uclamp(
         val hasUclampMax: Boolean = false,
-        val uclampMax: String = "N/A",
+        val uclampMax: Int? = 0,
         val hasUclampMin: Boolean = false,
-        val uclampMin: String = "N/A",
+        val uclampMin: Int? = 0,
         val hasUclampMinRt: Boolean = false,
-        val uclampMinRt: String = "N/A",
+        val uclampMinRt: Int? = 0,
     )
 
     data class Memory(
@@ -167,11 +167,11 @@ class KernelParameterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             _uclamp.value = Uclamp(
                 hasUclampMax = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
-                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX),
+                uclampMax = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MAX).toIntOrNull(),
                 hasUclampMin = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
-                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN),
+                uclampMin = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN).toIntOrNull(),
                 hasUclampMinRt = Utils.testFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
-                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT),
+                uclampMinRt = Utils.readFile(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT).toIntOrNull(),
             )
         }
     }
@@ -254,9 +254,6 @@ class KernelParameterViewModel : ViewModel() {
                 KernelUtils.BURST_FORK_ATAVISTIC -> _boreScheduler.value.copy(burstForkAtavistic = value)
                 KernelUtils.BURST_PENALTY_OFFSET -> _boreScheduler.value.copy(burstPenaltyOffset = value)
                 KernelUtils.BURST_PENALTY_SCALE -> _boreScheduler.value.copy(burstPenaltyScale = value)
-                KernelUtils.SCHED_UTIL_CLAMP_MAX -> _uclamp.value.copy(uclampMax = value)
-                KernelUtils.SCHED_UTIL_CLAMP_MIN -> _uclamp.value.copy(uclampMin = value)
-                KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT -> _uclamp.value.copy(uclampMinRt = value)
                 else -> {}
             }
         }

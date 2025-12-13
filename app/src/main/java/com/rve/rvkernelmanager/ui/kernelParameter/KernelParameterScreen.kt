@@ -785,7 +785,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = uclamp.uclampMax,
+                                    text = uclampMax.toString(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -810,7 +810,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 Text(
-                                    text = uclamp.uclampMin,
+                                    text = uclampMin.toString(),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -839,7 +839,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
                         Text(
-                            text = uclamp.uclampMinRt,
+                            text = uclampMinRt.toString(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -853,8 +853,8 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         state = openUMX,
         text = {
             OutlinedTextField(
-                value = uclampMax,
-                onValueChange = { uclampMax = it },
+                value = uclampMax.toString(),
+                onValueChange = { uclampMax = it.toInt() },
                 label = { Text("Uclamp max") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -894,8 +894,8 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         state = openUMN,
         text = {
             OutlinedTextField(
-                value = uclampMin,
-                onValueChange = { uclampMin = it },
+                value = uclampMin.toString(),
+                onValueChange = { uclampMin = it.toInt() },
                 label = { Text("Uclamp min") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -935,8 +935,8 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         state = openUMRT,
         text = {
             OutlinedTextField(
-                value = uclampMinRt,
-                onValueChange = { uclampMinRt = it },
+                value = uclampMinRt.toString(),
+                onValueChange = { uclampMinRt = it.toInt() },
                 label = { Text("Uclamp min RT default") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
