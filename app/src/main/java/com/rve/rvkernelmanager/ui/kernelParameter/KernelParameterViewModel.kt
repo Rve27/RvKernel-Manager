@@ -28,17 +28,17 @@ class KernelParameterViewModel : ViewModel() {
     )
 
     data class KernelParameters(
-        val schedAutogroup: String = "N/A",
+        val schedAutogroup: Int? = 0,
         val hasSchedAutogroup: Boolean = false,
         val hasDmesgRestrict: Boolean = false,
         val dmesgRestrict: Int? = 0,
-        val printk: String = "N/A",
+        val printk: String = "unknown",
         val hasPrintk: Boolean = false,
-        val tcpCongestionAlgorithm: String = "N/A",
+        val tcpCongestionAlgorithm: String = "unknown",
         val hasTcpCongestionAlgorithm: Boolean = false,
         val availableTcpCongestionAlgorithm: List<String> = emptyList(),
         val hasSchedLibName: Boolean = false,
-        val schedLibName: String = "",
+        val schedLibName: String = "unknown",
     )
 
     data class Uclamp(
@@ -148,7 +148,7 @@ class KernelParameterViewModel : ViewModel() {
     fun loadKernelParameter() {
         viewModelScope.launch(Dispatchers.IO) {
             _kernelParameters.value = KernelParameters(
-                schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTO_GROUP),
+                schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTO_GROUP).toIntOrNull(),
                 hasSchedAutogroup = Utils.testFile(KernelUtils.SCHED_AUTO_GROUP),
                 hasDmesgRestrict = Utils.testFile(KernelUtils.DMESG_RESTRICT),
                 dmesgRestrict = Utils.readFile(KernelUtils.DMESG_RESTRICT).toIntOrNull(),
@@ -229,10 +229,10 @@ class KernelParameterViewModel : ViewModel() {
         }
     }
 
-    fun updateSchedAutogroup(isChecked: Boolean) {
+    fun setSchedAutogroup(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            val value = if (isChecked) "1" else "0"
-            Utils.writeFile(KernelUtils.SCHED_AUTO_GROUP, value)
+            val value = if (isChecked) 1 else 0
+            Utils.writeFile(KernelUtils.SCHED_AUTO_GROUP, value.toString())
             _kernelParameters.value = _kernelParameters.value.copy(
                 schedAutogroup = value,
             )

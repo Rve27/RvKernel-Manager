@@ -341,7 +341,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     var printk by remember { mutableStateOf(kernelParameters.printk) }
     var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName) }
     var tcpCongestionAlgorithm by remember { mutableStateOf(kernelParameters.tcpCongestionAlgorithm) }
-    val schedAutogroupStatus = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == "1" }
+    var schedAutogroup = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == 1 }
 
     // PD = Printk Dialog
     val openPD = rememberDialogState(initiallyVisible = false)
@@ -415,8 +415,8 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                         Crossfade(
                                             targetState = dmesgRestrict,
                                             animationSpec = tween(durationMillis = 500),
-                                        ) { dmesgRestrict ->
-                                            if (dmesgRestrict) {
+                                        ) { isChecked ->
+                                            if (isChecked) {
                                                 Icon(
                                                     painter = painterResource(R.drawable.ic_check),
                                                     contentDescription = null,
@@ -461,7 +461,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                     ),
-                    onClick = { viewModel.updateSchedAutogroup(!schedAutogroupStatus) },
+                    onClick = { viewModel.setSchedAutogroup(!schedAutogroup) },
                     border = BorderStroke(
                         width = 2.0.dp,
                         color = MaterialTheme.colorScheme.primary,
@@ -484,11 +484,11 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                             modifier = Modifier.weight(1f),
                         )
                         Switch(
-                            checked = schedAutogroupStatus,
-                            onCheckedChange = { isChecked -> viewModel.updateSchedAutogroup(isChecked) },
+                            checked = schedAutogroup,
+                            onCheckedChange = { schedAutogroup = it },
                             thumbContent = {
                                 Crossfade(
-                                    targetState = schedAutogroupStatus,
+                                    targetState = schedAutogroup,
                                     animationSpec = tween(durationMillis = 500),
                                 ) { isChecked ->
                                     if (isChecked) {
