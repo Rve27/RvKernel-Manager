@@ -4,7 +4,7 @@
  */
 package com.rve.rvkernelmanager.utils
 
-import android.annotation.SuppressLint
+import android.os.Environment
 import android.system.Os
 import android.util.Log
 import com.topjohnwu.superuser.Shell
@@ -12,12 +12,11 @@ import com.topjohnwu.superuser.Shell
 object KernelUtils {
     const val TAG = "KernelUtils"
 
-    @SuppressLint("SdCardPath")
-    const val KERNEL_PROFILE_PATH = "/sdcard/RvKernel-Manager/kernel-profile"
-    const val KERNEL_PROFILE_CURRENT = "$KERNEL_PROFILE_PATH/current_profile"
-    const val KERNEL_PROFILE_POWERSAVE = "$KERNEL_PROFILE_PATH/powersave.sh"
-    const val KERNEL_PROFILE_BALANCE = "$KERNEL_PROFILE_PATH/balance.sh"
-    const val KERNEL_PROFILE_PERFORMANCE = "$KERNEL_PROFILE_PATH/performance.sh"
+    val KERNEL_PROFILE_PATH = "${Environment.getExternalStorageDirectory().path}/RvKernel-Manager/kernel-profile"
+    val KERNEL_PROFILE_CURRENT = "$KERNEL_PROFILE_PATH/current_profile"
+    val KERNEL_PROFILE_POWERSAVE = "$KERNEL_PROFILE_PATH/powersave.sh"
+    val KERNEL_PROFILE_BALANCE = "$KERNEL_PROFILE_PATH/balance.sh"
+    val KERNEL_PROFILE_PERFORMANCE = "$KERNEL_PROFILE_PATH/performance.sh"
 
     const val FULL_KERNEL_VERSION = "/proc/version"
 
