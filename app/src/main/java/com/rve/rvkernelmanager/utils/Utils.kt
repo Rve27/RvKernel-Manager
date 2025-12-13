@@ -91,7 +91,7 @@ object Utils {
         ""
     }
 
-    fun writeFile(filePath: String, value: String): Boolean = runCatching {
+    fun <T : Any> writeFile(filePath: String, value: T): Boolean = runCatching {
         Shell.cmd("echo $value > $filePath").exec().isSuccess
     }.getOrElse {
         Log.e(TAG, "writeFile: ${it.message}", it)
