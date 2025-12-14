@@ -385,7 +385,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer
                         ),
-                        onClick = { viewModel.setDmesgRestrict(!dmesgRestrict) },
+                        onClick = { viewModel.setSwitchValue(KernelUtils.DMESG_RESTRICT, !dmesgRestrict) },
                         border = BorderStroke(
                             width = 2.0.dp,
                             color = MaterialTheme.colorScheme.primary
@@ -461,7 +461,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                     ),
-                    onClick = { viewModel.setSchedAutogroup(!schedAutogroup) },
+                    onClick = { viewModel.setSwitchValue(KernelUtils.SCHED_AUTO_GROUP, !schedAutogroup) },
                     border = BorderStroke(
                         width = 2.0.dp,
                         color = MaterialTheme.colorScheme.primary,
