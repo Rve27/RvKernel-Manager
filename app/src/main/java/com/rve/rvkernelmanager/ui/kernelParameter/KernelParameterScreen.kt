@@ -1402,40 +1402,67 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 ),
                 onClick = { viewModel.updateBoreStatus(!bore) },
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Enabled",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Switch(
-                        checked = bore,
-                        onCheckedChange = { isChecked ->
-                            bore = isChecked
-                            viewModel.updateBoreStatus(isChecked)
-                        },
-                        thumbContent = {
-                            Crossfade(
-                                targetState = bore,
-                                animationSpec = tween(durationMillis = 500),
-                            ) { isChecked ->
-                                if (isChecked) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_check),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                    )
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Enabled",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Switch(
+                            checked = bore,
+                            onCheckedChange = { isChecked ->
+                                bore = isChecked
+                                viewModel.updateBoreStatus(isChecked)
+                            },
+                            thumbContent = {
+                                Crossfade(
+                                    targetState = bore,
+                                    animationSpec = tween(durationMillis = 500),
+                                ) { isChecked ->
+                                    if (isChecked) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_check),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                    )
+                            },
+                        )
+                    }
+                }
+                Surface(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    color = MaterialTheme.colorScheme.primary
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        Text(
+                            text = "BORE Scheduler",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+                        Text(
+                            text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
+                                    " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
+                                    " Developed with the aim of maintaining these schedulers' high performance" +
+                                    " while delivering resilient responsiveness to user" +
+                                    " input under as versatile load scenario as possible.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
             AnimatedVisibility(expanded) {
