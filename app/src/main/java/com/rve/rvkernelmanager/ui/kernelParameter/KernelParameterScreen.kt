@@ -1,6 +1,18 @@
 /*
  * Copyright (c) 2025 Rve <rve27github@gmail.com>
- * All Rights Reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
@@ -383,12 +395,12 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
                         onClick = { viewModel.setSwitchValue(KernelUtils.DMESG_RESTRICT, !dmesgRestrict) },
                         border = BorderStroke(
                             width = 2.0.dp,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         ),
                     ) {
                         Column {
@@ -424,7 +436,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                                 )
                                             }
                                         }
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -434,7 +446,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         ) {
                             Column(
                                 modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 Text(
                                     text = "Restrict Dmesg",
@@ -444,8 +456,8 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                                 Text(
                                     text = "This toggle indicates whether unprivileged users are prevented" +
-                                            " from using dmesg to view messages from the kernel's log buffer." +
-                                            " When dmesg_restrict is set to inactive (0) there are no restrictions.",
+                                        " from using dmesg to view messages from the kernel's log buffer." +
+                                        " When dmesg_restrict is set to inactive (0) there are no restrictions.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1441,7 +1453,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 }
                 Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -1455,10 +1467,10 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                         Text(
                             text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
-                                    " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
-                                    " Developed with the aim of maintaining these schedulers' high performance" +
-                                    " while delivering resilient responsiveness to user" +
-                                    " input under as versatile load scenario as possible.",
+                                " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
+                                " Developed with the aim of maintaining these schedulers' high performance" +
+                                " while delivering resilient responsiveness to user" +
+                                " input under as versatile load scenario as possible.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
