@@ -238,7 +238,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
         painterResource(R.drawable.ic_speed),
     )
 
-    var selectedIndex by remember { mutableIntStateOf(kernelProfile.currentProfile) }
+    var selectedIndex by rememberSaveable { mutableIntStateOf(kernelProfile.currentProfile) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -277,8 +277,8 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                             kernelProfile.hasProfilePowersave && kernelProfile.hasProfileBalance && kernelProfile.hasProfilePerformance,
                             checked = selectedIndex == index,
                             onCheckedChange = {
-                                selectedIndex = index
                                 viewModel.updateProfile(index)
+                                selectedIndex = index
                             },
                             shapes =
                             when (index) {
