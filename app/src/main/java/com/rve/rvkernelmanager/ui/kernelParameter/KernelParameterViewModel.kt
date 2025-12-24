@@ -231,14 +231,23 @@ class KernelParameterViewModel : ViewModel() {
         }
     }
 
-    fun setSwitchValue(filePath: String, isChecked: Boolean) {
+    fun setDmesgRestrict(isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             val value = if (isChecked) 1 else 0
-            Utils.writeFile(filePath, value.toString())
-            when (filePath) {
-                KernelUtils.DMESG_RESTRICT -> _kernelParameters.value.copy(dmesgRestrict = value)
-                KernelUtils.SCHED_AUTO_GROUP -> _kernelParameters.value.copy(schedAutogroup = value)
-            }
+            Utils.writeFile(KernelUtils.DMESG_RESTRICT, value.toString())
+            _kernelParameters.value = _kernelParameters.value.copy(
+                dmesgRestrict = value,
+            )
+        }
+    }
+
+    fun setSchedAutogroup(isChecked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val value = if (isChecked) 1 else 0
+            Utils.writeFile(KernelUtils.SCHED_AUTO_GROUP, value.toString())
+            _kernelParameters.value = _kernelParameters.value.copy(
+                schedAutogroup = value,
+            )
         }
     }
 
