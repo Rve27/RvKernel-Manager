@@ -73,6 +73,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
@@ -112,7 +113,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
 
         var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
-        val deviceInfo by viewModel.deviceInfo.collectAsState()
+        val deviceInfo by viewModel.deviceInfo.collectAsStateWithLifecycle()
 
         val deviceInfoList = listOf(
             DeviceInfoItem(
