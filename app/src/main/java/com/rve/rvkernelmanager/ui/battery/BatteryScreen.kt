@@ -91,6 +91,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -110,12 +111,12 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val chargingState by viewModel.chargingState.collectAsState()
+    val chargingState by viewModel.chargingState.collectAsStateWithLifecycle()
     val rvkernels = listOf(
         "RvKernel-Alioth-v1.2",
         "RvKernel-Alioth-v1.3",
     )
-    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsState()
+    val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsStateWithLifecycle()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -185,8 +186,8 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
     val clipboard = LocalClipboard.current
     val coroutineScope = rememberCoroutineScope()
 
-    val batteryInfo by viewModel.batteryInfo.collectAsState()
-    val uptime by viewModel.uptime.collectAsState()
+    val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
+    val uptime by viewModel.uptime.collectAsStateWithLifecycle()
 
     val batteryLevelProgress = remember(batteryInfo.level) {
         batteryInfo.level.removeSuffix("%").toFloatOrNull()?.div(100f) ?: 0f
@@ -554,7 +555,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     // MDC = Manual Design Capacity
     val openMDC = rememberDialogState(initiallyVisible = false)
 
-    val batteryInfo by viewModel.batteryInfo.collectAsState()
+    val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
     val manualDesignCapacity = batteryInfo.manualDesignCapacity.toString()
     var visible: Boolean = manualDesignCapacity == "0"
     var value by remember { mutableStateOf(batteryInfo.manualDesignCapacity.toString()) }
@@ -839,7 +840,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     // TPD = Thermal Profiles Dialog
     val openTPD = rememberDialogState(initiallyVisible = false)
 
-    val thermalSconfig by viewModel.thermalSconfig.collectAsState()
+    val thermalSconfig by viewModel.thermalSconfig.collectAsStateWithLifecycle()
 
     Button(
         onClick = { openTPD.visible = true },
@@ -967,7 +968,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 
 @Composable
 fun ForceFastChargingCard(viewModel: BatteryViewModel) {
-    val chargingState by viewModel.chargingState.collectAsState()
+    val chargingState by viewModel.chargingState.collectAsStateWithLifecycle()
 
     Button(
         onClick = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = !chargingState.isFastChargingChecked) },
@@ -1017,7 +1018,7 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
 
 @Composable
 fun BypassChargingCard(viewModel: BatteryViewModel) {
-    val chargingState by viewModel.chargingState.collectAsState()
+    val chargingState by viewModel.chargingState.collectAsStateWithLifecycle()
 
     Button(
         onClick = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = !chargingState.isBypassChargingChecked) },
