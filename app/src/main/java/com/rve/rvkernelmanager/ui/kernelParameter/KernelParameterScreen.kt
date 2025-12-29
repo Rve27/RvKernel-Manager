@@ -104,6 +104,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -118,13 +119,12 @@ import com.rve.rvkernelmanager.utils.KernelUtils
 @Composable
 fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), navController: NavController) {
     val lifecycleOwner = LocalLifecycleOwner.current
-
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val kernelParameters by viewModel.kernelParameters.collectAsState()
-    val uclamp by viewModel.uclamp.collectAsState()
-    val memory by viewModel.memory.collectAsState()
-    val bore by viewModel.boreScheduler.collectAsState()
+    val kernelParameters by viewModel.kernelParameters.collectAsStateWithLifecycle()
+    val uclamp by viewModel.uclamp.collectAsStateWithLifecycle()
+    val memory by viewModel.memory.collectAsStateWithLifecycle()
+    val bore by viewModel.boreScheduler.collectAsStateWithLifecycle()
 
     val pullToRefreshState = remember {
         object : PullToRefreshState {
@@ -227,7 +227,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
 fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
     val context = LocalContext.current
 
-    val kernelProfile by viewModel.kernelProfile.collectAsState()
+    val kernelProfile by viewModel.kernelProfile.collectAsStateWithLifecycle()
     val kernelProfileLink = "https://github.com/Rve27/RvKernel-Manager/tree/main/kernel-profile-template"
 
     val options = listOf("Powersave", "Balance", "Performance")
@@ -348,7 +348,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
 
 @Composable
 fun KernelParameterCard(viewModel: KernelParameterViewModel) {
-    val kernelParameters by viewModel.kernelParameters.collectAsState()
+    val kernelParameters by viewModel.kernelParameters.collectAsStateWithLifecycle()
     var dmesgRestrict = remember(kernelParameters.dmesgRestrict) { kernelParameters.dmesgRestrict == 1 }
     var printk by remember { mutableStateOf(kernelParameters.printk) }
     var schedLibName by remember { mutableStateOf(kernelParameters.schedLibName) }
@@ -738,7 +738,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 
 @Composable
 fun UclampCard(viewModel: KernelParameterViewModel) {
-    val uclamp by viewModel.uclamp.collectAsState()
+    val uclamp by viewModel.uclamp.collectAsStateWithLifecycle()
     var uclampMax by remember { mutableStateOf(uclamp.uclampMax) }
     var uclampMin by remember { mutableStateOf(uclamp.uclampMin) }
     var uclampMinRt by remember { mutableStateOf(uclamp.uclampMinRt) }
@@ -989,7 +989,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 fun MemoryCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val memory by viewModel.memory.collectAsState()
+    val memory by viewModel.memory.collectAsStateWithLifecycle()
     val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
     var swappiness by remember { mutableStateOf(memory.swappiness) }
     var dirtyRatio by remember { mutableStateOf(memory.dirtyRatio) }
@@ -1354,7 +1354,8 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
 fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
-    val boreScheduler by viewModel.boreScheduler.collectAsState()
+    val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
+    val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
     var bore by remember { mutableStateOf(boreScheduler.bore == "1") }
     var burstSmoothnessLong by remember { mutableStateOf(boreScheduler.burstSmoothnessLong) }
     var burstSmoothnessShort by remember { mutableStateOf(boreScheduler.burstSmoothnessShort) }
