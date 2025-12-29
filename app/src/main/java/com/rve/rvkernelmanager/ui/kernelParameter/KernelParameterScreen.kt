@@ -1355,7 +1355,6 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
-    val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
     var bore by remember { mutableStateOf(boreScheduler.bore == "1") }
     var burstSmoothnessLong by remember { mutableStateOf(boreScheduler.burstSmoothnessLong) }
     var burstSmoothnessShort by remember { mutableStateOf(boreScheduler.burstSmoothnessShort) }
