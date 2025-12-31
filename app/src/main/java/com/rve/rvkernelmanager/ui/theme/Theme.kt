@@ -33,13 +33,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference
 
 @Composable
 fun RvKernelManagerTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
     val settingsPreference = SettingsPreference.getInstance(context)
-    val themeMode by settingsPreference.themeMode.collectAsState()
+    val themeMode by settingsPreference.themeMode.collectAsStateWithLifecycle()
 
     val isDarkTheme = when (themeMode) {
         ThemeMode.LIGHT -> false
