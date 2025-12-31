@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.core.rememberDialogState
@@ -97,10 +98,10 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
-    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
-    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
+    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsStateWithLifecycle()
+    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsStateWithLifecycle()
+    val hasBigCluster by viewModel.hasBigCluster.collectAsStateWithLifecycle()
+    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsStateWithLifecycle()
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -173,7 +174,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
 
 @Composable
 fun CPUMonitorCard(viewModel: SoCViewModel) {
-    val cpuUsage by viewModel.cpuUsage.collectAsState()
+    val cpuUsage by viewModel.cpuUsage.collectAsStateWithLifecycle()
     val cpuUsageProgress = remember(cpuUsage) {
         if (cpuUsage == "unknown") {
             0f
@@ -186,14 +187,14 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
-    val cpuTemp by viewModel.cpuTemp.collectAsState()
+    val cpuTemp by viewModel.cpuTemp.collectAsStateWithLifecycle()
 
-    val cpu0State by viewModel.cpu0State.collectAsState()
-    val bigClusterState by viewModel.bigClusterState.collectAsState()
-    val primeClusterState by viewModel.primeClusterState.collectAsState()
+    val cpu0State by viewModel.cpu0State.collectAsStateWithLifecycle()
+    val bigClusterState by viewModel.bigClusterState.collectAsStateWithLifecycle()
+    val primeClusterState by viewModel.primeClusterState.collectAsStateWithLifecycle()
 
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
-    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsState()
+    val hasBigCluster by viewModel.hasBigCluster.collectAsStateWithLifecycle()
+    val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsStateWithLifecycle()
 
     OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
@@ -408,7 +409,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
 
 @Composable
 fun GPUMonitorCard(viewModel: SoCViewModel) {
-    val gpuUsage by viewModel.gpuUsage.collectAsState()
+    val gpuUsage by viewModel.gpuUsage.collectAsStateWithLifecycle()
     val gpuUsageProgress = remember(gpuUsage) {
         if (gpuUsage == "N/A") {
             0f
@@ -421,8 +422,8 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
-    val gpuTemp by viewModel.gpuTemp.collectAsState()
-    val gpuState by viewModel.gpuState.collectAsState()
+    val gpuTemp by viewModel.gpuTemp.collectAsStateWithLifecycle()
+    val gpuState by viewModel.gpuState.collectAsStateWithLifecycle()
 
     OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
@@ -588,10 +589,10 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
     // ACG = Available CPU Governor
     val openACG = rememberDialogState(initiallyVisible = false)
 
-    val cpu0State by viewModel.cpu0State.collectAsState()
+    val cpu0State by viewModel.cpu0State.collectAsStateWithLifecycle()
     val minFreq = cpu0State.minFreq
     val maxFreq = cpu0State.maxFreq
-    val hasBigCluster by viewModel.hasBigCluster.collectAsState()
+    val hasBigCluster by viewModel.hasBigCluster.collectAsStateWithLifecycle()
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -867,7 +868,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     // ACG = Available CPU Governor
     val openACG = rememberDialogState(initiallyVisible = false)
 
-    val bigClusterState by viewModel.bigClusterState.collectAsState()
+    val bigClusterState by viewModel.bigClusterState.collectAsStateWithLifecycle()
     val minFreq = bigClusterState.minFreq
     val maxFreq = bigClusterState.maxFreq
 
@@ -1145,7 +1146,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     // ACG = Available CPU Governor
     val openACG = rememberDialogState(initiallyVisible = false)
 
-    val primeClusterState by viewModel.primeClusterState.collectAsState()
+    val primeClusterState by viewModel.primeClusterState.collectAsStateWithLifecycle()
     val minFreq = primeClusterState.minFreq
     val maxFreq = primeClusterState.maxFreq
 
@@ -1419,12 +1420,12 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     // CPU Input Boost Dialog
     val openCIBD = rememberDialogState(initiallyVisible = false)
 
-    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsState()
-    val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsState()
+    val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsStateWithLifecycle()
+    val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsStateWithLifecycle()
     var cpuInputBoostMsValue by remember { mutableStateOf(cpuInputBoostMs) }
 
-    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsState()
-    val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsState()
+    val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsStateWithLifecycle()
+    val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsStateWithLifecycle()
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
     Card(
@@ -1617,11 +1618,11 @@ fun GPUCard(viewModel: SoCViewModel) {
     // ABD = Adreno Boost Dialog
     val openABD = rememberDialogState(initiallyVisible = false)
 
-    val gpuState by viewModel.gpuState.collectAsState()
-    val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsState()
+    val gpuState by viewModel.gpuState.collectAsStateWithLifecycle()
+    val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsStateWithLifecycle()
     var defaultPwrlevel by remember { mutableStateOf(gpuState.defaultPwrlevel) }
-    val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsState()
-    val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsState()
+    val hasAdrenoBoost by viewModel.hasAdrenoBoost.collectAsStateWithLifecycle()
+    val hasGPUThrottling by viewModel.hasGPUThrottling.collectAsStateWithLifecycle()
     val gpuThrottlingStatus = remember(gpuState.gpuThrottling) { gpuState.gpuThrottling == "1" }
 
     val minFreq = gpuState.minFreq
