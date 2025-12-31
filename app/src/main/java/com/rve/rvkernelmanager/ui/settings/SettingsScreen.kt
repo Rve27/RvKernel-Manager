@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.ui.components.CustomListItem
@@ -79,11 +80,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val themeMode by viewModel.themeMode.collectAsState()
-    val pollingInterval by viewModel.pollingInterval.collectAsState()
+    val pollingInterval by viewModel.pollingInterval.collectAsStateWithLifecycle()
     var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
     val intervalSeconds = value.toLongOrNull()
-    val appVersion by viewModel.appVersion.collectAsState()
+    val appVersion by viewModel.appVersion.collectAsStateWithLifecycle()
 
     val openThemeDialog = rememberDialogState(initiallyVisible = false)
     val openPollingDialog = rememberDialogState(initiallyVisible = false)
