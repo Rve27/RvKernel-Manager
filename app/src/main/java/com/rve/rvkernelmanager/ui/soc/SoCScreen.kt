@@ -22,6 +22,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +46,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -64,7 +69,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +77,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -200,7 +205,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -212,9 +217,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -223,13 +225,13 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Text(
                         text = "CPU Monitor",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -238,9 +240,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Row(
@@ -249,19 +248,19 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_usage),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                                 Column {
                                     Text(
                                         text = "Usage",
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     Text(
                                         text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(bottom = 8.dp),
                                     )
                                 }
@@ -269,7 +268,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             LinearWavyProgressIndicator(
                                 progress = { animatedCpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
                                 trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             )
                         }
@@ -278,9 +276,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -294,13 +289,13 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                 if (temp >= 60) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 } else {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 }
@@ -308,7 +303,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             Text(
                                 text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -317,9 +312,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
 
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -328,7 +320,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_speed),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     if (!hasBigCluster) {
@@ -336,19 +328,19 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             Text(
                                 text = "Current frequencies",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     } else {
                         Text(
                             text = "Current frequencies",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -358,31 +350,25 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Box(Modifier.weight(1f)) {
                         Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
                         ) {
                             CustomListItem(
                                 title = "Little cluster",
-                                titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                titleColor = MaterialTheme.colorScheme.onSurface,
                                 summary = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
-                                summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                     Box(Modifier.weight(1f)) {
                         Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            ),
+                            shape = MaterialTheme.shapes.extraLarge,
                         ) {
                             CustomListItem(
                                 title = "Big cluster",
-                                titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                titleColor = MaterialTheme.colorScheme.onSurface,
                                 summary = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
-                                summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -390,15 +376,12 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 if (hasPrimeCluster) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                     ) {
                         CustomListItem(
                             title = "Prime cluster",
-                            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            titleColor = MaterialTheme.colorScheme.onSurface,
                             summary = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
-                            summaryColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -429,7 +412,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -441,9 +424,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -452,13 +432,13 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Text(
                         text = "GPU Monitor",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -467,9 +447,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Row(
@@ -478,19 +455,19 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_usage),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                                 Column {
                                     Text(
                                         text = "Usage",
                                         style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     Text(
                                         text = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(bottom = 8.dp),
                                     )
                                 }
@@ -498,7 +475,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                             LinearWavyProgressIndicator(
                                 progress = { animatedGpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
                                 trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                             )
                         }
@@ -507,9 +483,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -523,13 +496,13 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                 if (temp >= 60) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 } else {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 }
@@ -537,7 +510,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                             Text(
                                 text = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -546,9 +519,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
 
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -557,19 +527,19 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_speed),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             text = "Current frequencies",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -581,6 +551,10 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
 @Composable
 fun CPULittleClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+    )
 
     // AMXF = Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -596,9 +570,6 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Row(
             modifier = Modifier
@@ -609,119 +580,128 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
             Text(
                 text = if (hasBigCluster) "Little Cluster" else "CPU",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
-            Crossfade(
-                targetState = expanded,
-                animationSpec = tween(durationMillis = 300),
-            ) { isExpanded ->
-                if (isExpanded) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
         }
 
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+        ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMNF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        onClick = { openAMNF.visible = true },
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp
+                            )
+                        ),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Min freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Min freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$minFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$minFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
-
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMXF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        onClick = { openAMXF.visible = true },
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp
+                            )
+                        ),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Max freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Max freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$maxFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$maxFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
                 }
-
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ),
+                Button(
+                    contentPadding = PaddingValues(16.dp),
                     onClick = { openACG.visible = true },
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        )
+                    )
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
@@ -860,6 +840,10 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+    )
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -874,9 +858,6 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Row(
             modifier = Modifier
@@ -887,119 +868,128 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
             Text(
                 text = "Big Cluster",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
-            Crossfade(
-                targetState = expanded,
-                animationSpec = tween(durationMillis = 250),
-            ) { isExpanded ->
-                if (isExpanded) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow)
+            )
         }
 
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+        ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMNF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMNF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Min freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Min freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$minFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$minFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
-
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMXF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMXF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Max freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Max freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$maxFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$maxFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
                 }
-
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                Button(
+                    contentPadding = PaddingValues(16.dp),
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        )
                     ),
                     onClick = { openACG.visible = true },
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
@@ -1138,6 +1128,10 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun PrimeClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+    )
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -1152,9 +1146,6 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Row(
             modifier = Modifier
@@ -1165,119 +1156,128 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
             Text(
                 text = "Prime Cluster",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
-            Crossfade(
-                targetState = expanded,
-                animationSpec = tween(durationMillis = 250),
-            ) { isExpanded ->
-                if (isExpanded) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
         }
 
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            )
+        ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMNF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMNF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Min freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Min freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$minFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$minFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
-
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMXF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMXF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Max freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Max freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$maxFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$maxFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
                 }
-
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                Button(
+                    contentPadding = PaddingValues(16.dp),
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        )
                     ),
                     onClick = { openACG.visible = true },
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
@@ -1416,6 +1416,10 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun CPUBoostCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+    )
 
     // CPU Input Boost Dialog
     val openCIBD = rememberDialogState(initiallyVisible = false)
@@ -1430,9 +1434,6 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Row(
             modifier = Modifier
@@ -1443,50 +1444,67 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_rocket_launch),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
             Text(
                 text = "CPU Boost",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
-            Crossfade(
-                targetState = expanded,
-                animationSpec = tween(durationMillis = 250),
-            ) { isExpanded ->
-                if (isExpanded) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
         }
 
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+        ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                AnimatedVisibility(hasCpuInputBoostMs) {
-                    Card(
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                AnimatedVisibility(
+                    visible = hasCpuInputBoostMs,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
                         ),
                         onClick = { openCIBD.visible = true },
                     ) {
                         Row(
-                            modifier = Modifier.padding(16.dp).fillMaxSize(),
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
@@ -1511,9 +1529,26 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                     }
                 }
 
-                AnimatedVisibility(hasCpuSchedBoostOnInput) {
+                AnimatedVisibility(
+                    visible = hasCpuSchedBoostOnInput,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
                     Card(
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        ),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
@@ -1608,6 +1643,10 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
 @Composable
 fun GPUCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+    )
 
     // Available Max Frequencies
     val openAMXF = rememberDialogState(initiallyVisible = false)
@@ -1633,9 +1672,6 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Row(
             modifier = Modifier
@@ -1646,119 +1682,132 @@ fun GPUCard(viewModel: SoCViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_video_card),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
             Text(
                 text = "GPU",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
             )
-            Crossfade(
-                targetState = expanded,
-                animationSpec = tween(durationMillis = 250),
-            ) { isExpanded ->
-                if (isExpanded) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_up),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
         }
 
-        AnimatedVisibility(expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+        ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMNF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 28.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMNF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Min freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Min freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$minFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$minFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
-
-                    Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = CircleShape,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            onClick = { openAMXF.visible = true },
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 28.dp,
+                                bottomStart = 8.dp,
+                                bottomEnd = 8.dp,
+                            )
+                        ),
+                        onClick = { openAMXF.visible = true },
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp).fillMaxSize(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_speed),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    contentDescription = null,
+                            Icon(
+                                painter = painterResource(R.drawable.ic_speed),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                contentDescription = null,
+                            )
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = "Max freq",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                 )
-                                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Text(
-                                        text = "Max freq",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Text(
-                                        text = "$maxFreq MHz",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
+                                Text(
+                                    text = "$maxFreq MHz",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
                             }
                         }
                     }
                 }
-
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                Button(
+                    contentPadding = PaddingValues(16.dp),
+                    shapes = ButtonDefaults.shapes(
+                        if (hasAdrenoBoost || hasDefaultPwrlevel || hasGPUThrottling) {
+                            RoundedCornerShape(8.dp)
+                        } else {
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 28.dp,
+                                bottomEnd = 28.dp,
+                            )
+                        }
                     ),
                     onClick = { openAGG.visible = true },
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
@@ -1782,16 +1831,37 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
 
-                AnimatedVisibility(hasAdrenoBoost) {
-                    Card(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
+                AnimatedVisibility(
+                    visible = hasAdrenoBoost,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        shapes = ButtonDefaults.shapes(
+                            if (hasDefaultPwrlevel || hasGPUThrottling) {
+                                RoundedCornerShape(8.dp)
+                            } else {
+                                RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    topEnd = 8.dp,
+                                    bottomStart = 28.dp,
+                                    bottomEnd = 28.dp,
+                                )
+                            }
                         ),
                         onClick = { openABD.visible = true },
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Row(
-                            modifier = Modifier.padding(16.dp),
+                            modifier = Modifier.fillMaxSize(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
@@ -1824,9 +1894,30 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
 
-                AnimatedVisibility(hasDefaultPwrlevel) {
+                AnimatedVisibility(
+                    visible = hasDefaultPwrlevel,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
                     Card(
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = if (hasGPUThrottling) {
+                            RoundedCornerShape(8.dp)
+                        } else {
+                            RoundedCornerShape(
+                                topStart = 8.dp,
+                                topEnd = 8.dp,
+                                bottomStart = 28.dp,
+                                bottomEnd = 28.dp,
+                            )
+                        },
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
@@ -1866,16 +1957,33 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 onValueChangeFinished = { viewModel.updateDefaultPwrlevel(defaultPwrlevel) },
                                 valueRange = maxPwrlevel..minPwrlevel,
                                 colors = SliderDefaults.colors(
-                                    inactiveTrackColor = MaterialTheme.colorScheme.background,
+                                    inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                                 ),
                             )
                         }
                     }
                 }
 
-                AnimatedVisibility(hasGPUThrottling) {
+                AnimatedVisibility(
+                    visible = hasGPUThrottling,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
                     Card(
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        ),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),

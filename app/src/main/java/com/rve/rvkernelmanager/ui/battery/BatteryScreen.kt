@@ -70,7 +70,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -172,10 +171,11 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
                         ForceFastChargingCard(viewModel)
                     }
                 }
-                if (rvkernels.any { chargingState.kernelVersion.contains(it) })
+                if (rvkernels.any { chargingState.kernelVersion.contains(it) }) {
                     item {
                         BypassChargingCard(viewModel)
                     }
+                }
             }
         }
     }
@@ -204,7 +204,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -216,9 +216,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -227,13 +224,13 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Text(
                         text = "Battery Monitor",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -242,9 +239,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
                             onLongClick = {
@@ -268,13 +262,13 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_bolt),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 contentDescription = null,
                             )
                             Text(
                                 text = batteryInfo.voltage,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -282,9 +276,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
                             onLongClick = {
@@ -308,24 +299,24 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         ) {
                             Crossfade(
                                 targetState = batteryTemp,
-                                animationSpec = tween(durationMillis = 500),
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                             ) { temp ->
                                 if (temp <= 45) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 } else if (temp >= 45) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 } else if (temp >= 55) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_emergency_heat),
-                                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        tint = MaterialTheme.colorScheme.onSurface,
                                         contentDescription = null,
                                     )
                                 }
@@ -333,7 +324,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                             Text(
                                 text = batteryInfo.temp,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -342,9 +333,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
                 modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).combinedClickable(
                     onClick = { /* do nothing */ },
                     onLongClick = {
@@ -368,54 +356,54 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                     ) {
                         Crossfade(
                             targetState = batteryLevelProgress,
-                            animationSpec = tween(durationMillis = 500),
+                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                         ) { batteryLevel ->
                             if (batteryLevel == 0f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_alert),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.15f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_1),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.30f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_2),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.45f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_3),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.60f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_4),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.75f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_5),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 0.90f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_6),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             } else if (batteryLevel <= 1f) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_battery_android_frame_full),
-                                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                     contentDescription = null,
                                 )
                             }
@@ -424,12 +412,12 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                             Text(
                                 text = "Battery level",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 text = batteryInfo.level,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(bottom = 8.dp),
                             )
                         }
@@ -437,7 +425,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                     LinearWavyProgressIndicator(
                         progress = { animatedBatteryLevelProgress },
                         modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
                         trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     )
                 }
@@ -446,9 +433,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Card(
                     shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    ),
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.extraLarge)
                         .weight(1f)
@@ -475,19 +459,19 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_history),
-                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = null,
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
                                 text = "Uptime",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 text = uptime,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -495,9 +479,6 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
                 Card(
                     shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    ),
                     modifier = Modifier
                         .clip(MaterialTheme.shapes.extraLarge)
                         .weight(1f)
@@ -524,19 +505,19 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_nightlight),
-                            tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = null,
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
                                 text = "Deep sleep",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
                                 text = batteryInfo.deepSleep,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -564,7 +545,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
+            color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -576,9 +557,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -587,13 +565,13 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_battery_android_frame_alert),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Text(
                         text = "Battery Information",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -602,9 +580,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
                             onLongClick = {
@@ -628,13 +603,13 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_biotech),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 contentDescription = null,
                             )
                             Text(
                                 text = batteryInfo.tech,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -642,9 +617,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        ),
                         modifier = Modifier.clip(CircleShape).combinedClickable(
                             onClick = { /* do nothing */ },
                             onLongClick = {
@@ -668,13 +640,13 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_heart_plus),
-                                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 contentDescription = null,
                             )
                             Text(
                                 text = batteryInfo.health,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -683,9 +655,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
             Card(
                 shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = {
                         if (batteryInfo.designCapacity == "N/A") {
@@ -713,30 +682,30 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_battery_android_frame_full),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             text = "Design capacity",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
-                            text = if (batteryInfo.designCapacity == "N/A") {
+                             text = if (batteryInfo.designCapacity == "N/A") {
                                 "$manualDesignCapacity mAh"
                             } else {
                                 batteryInfo.designCapacity
                             },
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                        if (batteryInfo.designCapacity == "N/A") {
+                        if (batteryInfo.designCapacity == "unknown") {
                             AnimatedVisibility(visible) {
                                 Text(
                                     text = "(Tap to set design capacity manually)",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
@@ -746,9 +715,6 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
             Card(
                 shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = { /* do nothing */ },
                     onLongClick = {
@@ -772,19 +738,19 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_battery_android_frame_full),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         contentDescription = null,
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             text = "Maximum capacity",
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
                             text = batteryInfo.maximumCapacity,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -845,9 +811,6 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     Button(
         onClick = { openTPD.visible = true },
         shapes = ButtonDefaults.shapes(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
         contentPadding = PaddingValues(16.dp),
     ) {
         Row(
@@ -857,14 +820,14 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_battery_profile),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 contentDescription = null,
             )
             Column {
                 Text(
                     text = "Thermal profiles",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
                 Text(
                     text = remember(thermalSconfig) {
@@ -880,7 +843,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                         }
                     },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
@@ -974,7 +937,11 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
         onClick = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = !chargingState.isFastChargingChecked) },
         shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.primary,
         ),
         contentPadding = PaddingValues(16.dp),
     ) {
@@ -985,13 +952,13 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_electric_bolt),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
             Text(
                 text = "Force fast charging",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f),
             )
             Switch(
@@ -1024,7 +991,11 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
         onClick = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = !chargingState.isBypassChargingChecked) },
         shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        border = BorderStroke(
+            width = 2.0.dp,
+            color = MaterialTheme.colorScheme.primary,
         ),
         contentPadding = PaddingValues(16.dp),
     ) {
@@ -1035,13 +1006,13 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_battery_android_frame_shield),
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
             Text(
                 text = "Bypass charging",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f),
             )
             Switch(
@@ -1066,7 +1037,7 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun BatteryScreenPreview() {
     val navController = rememberNavController()
