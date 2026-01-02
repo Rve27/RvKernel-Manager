@@ -692,7 +692,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
-                             text = if (batteryInfo.designCapacity == "N/A") {
+                            text = if (batteryInfo.designCapacity == "N/A") {
                                 "$manualDesignCapacity mAh"
                             } else {
                                 batteryInfo.designCapacity

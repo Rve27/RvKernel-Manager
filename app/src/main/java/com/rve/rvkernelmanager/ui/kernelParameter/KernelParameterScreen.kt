@@ -194,7 +194,8 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                     }
                     if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk ||
                         kernelParameters.hasTcpCongestionAlgorithm || kernelParameters.hasDmesgRestrict ||
-                        kernelParameters.hasSchedLibName) {
+                        kernelParameters.hasSchedLibName
+                    ) {
                         item {
                             KernelParameterCard(viewModel)
                         }
@@ -381,21 +382,21 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = kernelParameters.hasDmesgRestrict,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     Button(
                         contentPadding = PaddingValues(0.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -463,8 +464,8 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                     HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                                     Text(
                                         text = "This toggle indicates whether unprivileged users are prevented" +
-                                                " from using dmesg to view messages from the kernel's log buffer." +
-                                                " When dmesg_restrict is set to inactive (0) there are no restrictions.",
+                                            " from using dmesg to view messages from the kernel's log buffer." +
+                                            " When dmesg_restrict is set to inactive (0) there are no restrictions.",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
@@ -478,20 +479,20 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = kernelParameters.hasSchedAutogroup,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Button(
                     contentPadding = PaddingValues(16.dp),
                     shapes = ButtonDefaults.shapes(
-                        RoundedCornerShape(28.dp)
+                        RoundedCornerShape(28.dp),
                     ),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -542,14 +543,14 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = kernelParameters.hasPrintk,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Button(
@@ -588,14 +589,14 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = kernelParameters.hasSchedLibName,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Button(
@@ -634,14 +635,14 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = kernelParameters.hasTcpCongestionAlgorithm,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Button(
@@ -852,7 +853,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                                     bottomStart = 28.dp,
                                     bottomEnd = 8.dp,
                                 )
-                            }
+                            },
                         ),
                         contentPadding = PaddingValues(16.dp),
                     ) {
@@ -887,7 +888,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                                     bottomStart = 8.dp,
                                     bottomEnd = 28.dp,
                                 )
-                            }
+                            },
                         ),
                         contentPadding = PaddingValues(16.dp),
                     ) {
@@ -909,14 +910,14 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
             AnimatedVisibility(
                 visible = uclamp.hasUclampMinRt,
                 enter = fadeIn(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + expandVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
                 exit = fadeOut(
-                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                 ) + shrinkVertically(
-                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
                 Button(
@@ -926,7 +927,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
-                        )
+                        ),
                     ),
                     contentPadding = PaddingValues(16.dp),
                     onClick = { openUMRT.visible = true },
@@ -1128,14 +1129,14 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -1175,14 +1176,14 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                         AnimatedVisibility(
                             visible = memory.hasZramSize,
                             enter = fadeIn(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                             ) + expandVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                             ),
                             exit = fadeOut(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                             ) + shrinkVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                             ),
                             modifier = if (memory.hasSwappiness) Modifier.weight(1f) else Modifier,
                         ) {
@@ -1194,11 +1195,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                                             topStart = 28.dp,
                                             topEnd = 8.dp,
                                             bottomStart = 28.dp,
-                                            bottomEnd = 8.dp
+                                            bottomEnd = 8.dp,
                                         )
                                     } else {
                                         RoundedCornerShape(28.dp)
-                                    }
+                                    },
                                 ),
                                 onClick = { openZD.visible = true },
                             ) {
@@ -1219,14 +1220,14 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                         AnimatedVisibility(
                             visible = memory.hasSwappiness,
                             enter = fadeIn(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                             ) + expandVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                             ),
                             exit = fadeOut(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                             ) + shrinkVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                             ),
                             modifier = if (memory.hasZramSize) Modifier.weight(1f) else Modifier,
                         ) {
@@ -1238,11 +1239,11 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                                             topStart = 8.dp,
                                             topEnd = 28.dp,
                                             bottomStart = 8.dp,
-                                            bottomEnd = 28.dp
+                                            bottomEnd = 28.dp,
                                         )
                                     } else {
                                         RoundedCornerShape(28.dp)
-                                    }
+                                    },
                                 ),
                                 onClick = { openSD.visible = true },
                             ) {
@@ -1266,14 +1267,14 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = memory.availableZramCompAlgorithms.isNotEmpty(),
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
@@ -1299,14 +1300,14 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = memory.hasDirtyRatio,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
@@ -1485,7 +1486,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val rotateArrow by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
     val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
@@ -1541,14 +1542,14 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -1561,7 +1562,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                     ),
                     shapes = ButtonDefaults.shapes(
-                        RoundedCornerShape(28.dp)
+                        RoundedCornerShape(28.dp),
                     ),
                     border = BorderStroke(
                         width = 2.0.dp,
@@ -1619,10 +1620,10 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                 HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                                 Text(
                                     text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
-                                            " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
-                                            " Developed with the aim of maintaining these schedulers' high performance" +
-                                            " while delivering resilient responsiveness to user" +
-                                            " input under as versatile load scenario as possible.",
+                                        " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
+                                        " Developed with the aim of maintaining these schedulers' high performance" +
+                                        " while delivering resilient responsiveness to user" +
+                                        " input under as versatile load scenario as possible.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1633,20 +1634,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstSmoothnessLong,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBSL.visible = true },
                     ) {
@@ -1667,20 +1668,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstSmoothnessShort,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBSS.visible = true },
                     ) {
@@ -1701,20 +1702,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstForkAtavistic,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBFA.visible = true },
                     ) {
@@ -1735,20 +1736,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstPenaltyOffset,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBPO.visible = true },
                     ) {
@@ -1769,20 +1770,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstPenaltyScale,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBPS.visible = true },
                     ) {
@@ -1803,20 +1804,20 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 AnimatedVisibility(
                     visible = boreScheduler.hasBurstCacheLifetime,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp)
+                            RoundedCornerShape(28.dp),
                         ),
                         onClick = { openBCL.visible = true },
                     ) {

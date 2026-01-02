@@ -268,14 +268,14 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     AnimatedVisibility(
                         visible = deviceInfo.hasWireGuard,
                         enter = fadeIn(
-                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                         ) + expandVertically(
-                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                         ),
                         exit = fadeOut(
-                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                         ) + shrinkVertically(
-                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                         ),
                     ) {
                         DeviceInfoItemCard(item = wireGuardInfo)
@@ -307,18 +307,12 @@ fun DeviceInfoTitle() {
             text = "Device Information",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
 
-data class DeviceInfoItem(
-    val title: String,
-    val summary: String,
-    val icon: Painter,
-    val onClick: () -> Unit,
-    val onLongClick: () -> Unit,
-)
+data class DeviceInfoItem(val title: String, val summary: String, val icon: Painter, val onClick: () -> Unit, val onLongClick: () -> Unit)
 
 @Composable
 fun DeviceInfoItemCard(item: DeviceInfoItem) {
@@ -343,13 +337,13 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
             )
             Column(
                 modifier = Modifier.animateContentSize(
-                    animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
-                )
+                    animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec(),
+                ),
             ) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
                     text = item.summary,
