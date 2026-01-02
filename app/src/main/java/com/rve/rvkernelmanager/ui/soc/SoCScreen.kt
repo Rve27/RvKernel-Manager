@@ -553,7 +553,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val rotateArrow by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
     // AMXF = Available Max Frequencies
@@ -600,14 +600,14 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -624,8 +624,8 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                                 topStart = 28.dp,
                                 topEnd = 8.dp,
                                 bottomStart = 8.dp,
-                                bottomEnd = 8.dp
-                            )
+                                bottomEnd = 8.dp,
+                            ),
                         ),
                     ) {
                         Row(
@@ -660,8 +660,8 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                                 topStart = 8.dp,
                                 topEnd = 28.dp,
                                 bottomStart = 8.dp,
-                                bottomEnd = 8.dp
-                            )
+                                bottomEnd = 8.dp,
+                            ),
                         ),
                     ) {
                         Row(
@@ -697,8 +697,8 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
-                        )
-                    )
+                        ),
+                    ),
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -842,7 +842,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val rotateArrow by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
     // Available Max Frequencies
@@ -881,21 +881,21 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                 painter = painterResource(R.drawable.ic_arrow_down),
                 tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow)
+                modifier = Modifier.rotate(rotateArrow),
             )
         }
 
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -912,7 +912,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                 topEnd = 8.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMNF.visible = true },
                     ) {
@@ -948,7 +948,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                 topEnd = 28.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMXF.visible = true },
                     ) {
@@ -984,7 +984,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
-                        )
+                        ),
                     ),
                     onClick = { openACG.visible = true },
                 ) {
@@ -1130,7 +1130,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val rotateArrow by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
     )
 
     // Available Max Frequencies
@@ -1176,15 +1176,15 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
-            )
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+            ),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -1200,7 +1200,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                 topEnd = 8.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMNF.visible = true },
                     ) {
@@ -1236,7 +1236,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                 topEnd = 28.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMXF.visible = true },
                     ) {
@@ -1272,7 +1272,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
-                        )
+                        ),
                     ),
                     onClick = { openACG.visible = true },
                 ) {
@@ -1464,14 +1464,14 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -1481,14 +1481,14 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                 AnimatedVisibility(
                     visible = hasCpuInputBoostMs,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
@@ -1499,7 +1499,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                                 topEnd = 28.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openCIBD.visible = true },
                     ) {
@@ -1532,14 +1532,14 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                 AnimatedVisibility(
                     visible = hasCpuSchedBoostOnInput,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Card(
@@ -1702,14 +1702,14 @@ fun GPUCard(viewModel: SoCViewModel) {
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + expandVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
             exit = fadeOut(
-                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
             ) + shrinkVertically(
-                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
             ),
         ) {
             Column(
@@ -1726,7 +1726,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 topEnd = 8.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMNF.visible = true },
                     ) {
@@ -1762,7 +1762,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 topEnd = 28.dp,
                                 bottomStart = 8.dp,
                                 bottomEnd = 8.dp,
-                            )
+                            ),
                         ),
                         onClick = { openAMXF.visible = true },
                     ) {
@@ -1802,7 +1802,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 bottomStart = 28.dp,
                                 bottomEnd = 28.dp,
                             )
-                        }
+                        },
                     ),
                     onClick = { openAGG.visible = true },
                 ) {
@@ -1834,14 +1834,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                 AnimatedVisibility(
                     visible = hasAdrenoBoost,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Button(
@@ -1855,7 +1855,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     bottomStart = 28.dp,
                                     bottomEnd = 28.dp,
                                 )
-                            }
+                            },
                         ),
                         onClick = { openABD.visible = true },
                         contentPadding = PaddingValues(16.dp),
@@ -1897,14 +1897,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                 AnimatedVisibility(
                     visible = hasDefaultPwrlevel,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Card(
@@ -1967,14 +1967,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                 AnimatedVisibility(
                     visible = hasGPUThrottling,
                     enter = fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + expandVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                     exit = fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                     ) + shrinkVertically(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
                     Card(
