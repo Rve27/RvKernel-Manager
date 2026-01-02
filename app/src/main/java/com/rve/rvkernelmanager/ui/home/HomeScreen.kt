@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.ClipData
-import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,23 +40,16 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,7 +65,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -77,7 +72,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import kotlinx.coroutines.launch
@@ -246,7 +240,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     )
                 }
             },
-            animateContentSize = true,
         )
 
         Box(
@@ -272,7 +265,19 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 }
 
                 item {
-                    AnimatedVisibility(deviceInfo.hasWireGuard) {
+                    AnimatedVisibility(
+                        visible = deviceInfo.hasWireGuard,
+                        enter = fadeIn(
+                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        ) + expandVertically(
+                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        ),
+                        exit = fadeOut(
+                            animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                        ) + shrinkVertically(
+                            animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        ),
+                    ) {
                         DeviceInfoItemCard(item = wireGuardInfo)
                     }
                 }
@@ -288,10 +293,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 item(span = StaggeredGridItemSpan.FullLine) {
                     DeviceInfoItemCard(item = kernelInfo)
                 }
-
-                item(span = StaggeredGridItemSpan.FullLine) {
-                    DonateCard()
-                }
             }
         }
     }
@@ -301,14 +302,12 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
 fun DeviceInfoTitle() {
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
-        CustomListItem(
-            title = "Device Information",
-            titleColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            titleLarge = true,
+        Text(
+            text = "Device Information",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
@@ -319,16 +318,12 @@ data class DeviceInfoItem(
     val icon: Painter,
     val onClick: () -> Unit,
     val onLongClick: () -> Unit,
-    val animateContentSize: Boolean = false,
 )
 
 @Composable
 fun DeviceInfoItemCard(item: DeviceInfoItem) {
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraLarge)
             .combinedClickable(
@@ -343,69 +338,25 @@ fun DeviceInfoItemCard(item: DeviceInfoItem) {
             Icon(
                 painter = item.icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(end = 16.dp),
             )
-            Column {
+            Column(
+                modifier = Modifier.animateContentSize(
+                    animationSpec = MaterialTheme.motionScheme.defaultSpatialSpec()
+                )
+            ) {
                 Text(
                     text = item.title,
                     style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = item.summary,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.then(
-                        if (item.animateContentSize) Modifier.animateContentSize() else Modifier,
-                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun DonateCard() {
-    val context = LocalContext.current
-
-    val tooltipState = rememberTooltipState()
-    val positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-        TooltipAnchorPosition.Above,
-    )
-
-    val summary =
-        "I wouldn’t be here without you. Every bit of support helps me keep creating, and I appreciate it more than words can say!"
-    val donateLink = "https://t.me/rve_enterprises/33652/90188"
-
-    TooltipBox(
-        positionProvider = positionProvider,
-        tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(donateLink) } },
-        state = tooltipState,
-    ) {
-        Card(
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            ),
-            onClick = {
-                context.startActivity(Intent(Intent.ACTION_VIEW, donateLink.toUri()))
-            },
-        ) {
-            CustomListItem(
-                icon = painterResource(R.drawable.ic_kofi),
-                iconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                title = "Buy Me a Coffee",
-                titleColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-
-            CustomListItem(
-                summary = summary,
-                summaryColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
         }
     }
 }

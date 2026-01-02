@@ -24,10 +24,16 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,13 +45,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,11 +58,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -68,19 +68,13 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -90,6 +84,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -197,7 +192,9 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                     item {
                         KernelProfileCard()
                     }
-                    if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk || kernelParameters.hasTcpCongestionAlgorithm) {
+                    if (kernelParameters.hasSchedAutogroup || kernelParameters.hasPrintk ||
+                        kernelParameters.hasTcpCongestionAlgorithm || kernelParameters.hasDmesgRestrict ||
+                        kernelParameters.hasSchedLibName) {
                         item {
                             KernelParameterCard(viewModel)
                         }
@@ -242,9 +239,6 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Column(
             modifier = Modifier
@@ -258,11 +252,12 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_tune),
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
                 )
                 Text(
                     text = "Kernel Profiles",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
@@ -309,10 +304,6 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                             modifier = Modifier
                                 .weight(1f)
                                 .semantics { role = Role.RadioButton },
-                            colors = ToggleButtonDefaults.toggleButtonColors(
-                                containerColor = MaterialTheme.colorScheme.secondary,
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                            ),
                             contentPadding = PaddingValues(8.dp),
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -364,9 +355,6 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Column(
             modifier = Modifier
@@ -380,21 +368,36 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_linux),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
                 )
                 Text(
                     text = "Kernel Parameter",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
-            AnimatedVisibility(kernelParameters.hasDmesgRestrict) {
+            AnimatedVisibility(
+                visible = kernelParameters.hasDmesgRestrict,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Card(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
+                    Button(
+                        contentPadding = PaddingValues(0.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
                         ),
                         onClick = { viewModel.setDmesgRestrict(!dmesgRestrict) },
@@ -405,7 +408,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column {
                             Row(
-                                modifier = Modifier.padding(16.dp),
+                                modifier = Modifier.fillMaxSize().padding(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
@@ -439,38 +442,58 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                     },
                                 )
                             }
-                        }
-                        Surface(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                            Surface(
+                                shape = RoundedCornerShape(
+                                    topStart = 28.dp,
+                                    topEnd = 28.dp,
+                                    bottomStart = 8.dp,
+                                    bottomEnd = 8.dp,
+                                ),
+                                color = MaterialTheme.colorScheme.primary,
                             ) {
-                                Text(
-                                    text = "Restrict Dmesg",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
-                                Text(
-                                    text = "This toggle indicates whether unprivileged users are prevented" +
-                                        " from using dmesg to view messages from the kernel's log buffer." +
-                                        " When dmesg_restrict is set to inactive (0) there are no restrictions.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                ) {
+                                    Text(
+                                        text = "Restrict Dmesg",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+                                    Text(
+                                        text = "This toggle indicates whether unprivileged users are prevented" +
+                                                " from using dmesg to view messages from the kernel's log buffer." +
+                                                " When dmesg_restrict is set to inactive (0) there are no restrictions.",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
 
-            AnimatedVisibility(kernelParameters.hasSchedAutogroup) {
-                Card(
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(
+            AnimatedVisibility(
+                visible = kernelParameters.hasSchedAutogroup,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
+                Button(
+                    contentPadding = PaddingValues(16.dp),
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(28.dp)
+                    ),
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                     ),
                     onClick = { viewModel.setSchedAutogroup(!schedAutogroup) },
@@ -480,7 +503,6 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     ),
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
@@ -517,7 +539,19 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 }
             }
 
-            AnimatedVisibility(kernelParameters.hasPrintk) {
+            AnimatedVisibility(
+                visible = kernelParameters.hasPrintk,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
                 Button(
                     onClick = { openPD.visible = true },
                     shapes = ButtonDefaults.shapes(
@@ -551,7 +585,19 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 }
             }
 
-            AnimatedVisibility(kernelParameters.hasSchedLibName) {
+            AnimatedVisibility(
+                visible = kernelParameters.hasSchedLibName,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
                 Button(
                     onClick = { openSLND.visible = true },
                     shapes = ButtonDefaults.shapes(
@@ -585,7 +631,19 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 }
             }
 
-            AnimatedVisibility(kernelParameters.hasTcpCongestionAlgorithm) {
+            AnimatedVisibility(
+                visible = kernelParameters.hasTcpCongestionAlgorithm,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
                 Button(
                     onClick = { openTCD.visible = true },
                     shapes = ButtonDefaults.shapes(
@@ -752,9 +810,6 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
     ) {
         Column(
             modifier = Modifier
@@ -768,82 +823,116 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_tune),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
                 )
                 Text(
                     text = "Uclamp",
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
-            if (uclamp.hasUclampMax || uclamp.hasUclampMin) {
+            if (uclamp.hasUclampMax && uclamp.hasUclampMin) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    AnimatedVisibility(
-                        visible = uclamp.hasUclampMax,
-                        modifier = if (uclamp.hasUclampMin) Modifier.weight(1f) else Modifier,
-                    ) {
-                        Button(
-                            onClick = { openUMX.visible = true },
-                            shapes = ButtonDefaults.shapes(
-                                shape = RoundedCornerShape(28.dp),
-                            ),
-                            contentPadding = PaddingValues(16.dp),
-                        ) {
-                            Column(Modifier.fillMaxSize()) {
-                                Text(
-                                    text = "Uclamp max",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { openUMX.visible = true },
+                        shapes = ButtonDefaults.shapes(
+                            if (uclamp.hasUclampMinRt) {
+                                RoundedCornerShape(
+                                    topStart = 28.dp,
+                                    topEnd = 8.dp,
+                                    bottomStart = 8.dp,
+                                    bottomEnd = 8.dp,
                                 )
-                                Text(
-                                    text = uclamp.uclampMax,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                            } else {
+                                RoundedCornerShape(
+                                    topStart = 28.dp,
+                                    topEnd = 8.dp,
+                                    bottomStart = 28.dp,
+                                    bottomEnd = 8.dp,
                                 )
                             }
+                        ),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Uclamp max",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = uclamp.uclampMax,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
                         }
                     }
-                    AnimatedVisibility(
-                        visible = uclamp.hasUclampMin,
-                        modifier = if (uclamp.hasUclampMax) Modifier.weight(1f) else Modifier,
-                    ) {
-                        Button(
-                            onClick = { openUMN.visible = true },
-                            shapes = ButtonDefaults.shapes(
-                                shape = RoundedCornerShape(28.dp),
-                            ),
-                            contentPadding = PaddingValues(16.dp),
-                        ) {
-                            Column(Modifier.fillMaxSize()) {
-                                Text(
-                                    text = "Uclamp min",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { openUMN.visible = true },
+                        shapes = ButtonDefaults.shapes(
+                            if (uclamp.hasUclampMinRt) {
+                                RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    topEnd = 28.dp,
+                                    bottomStart = 8.dp,
+                                    bottomEnd = 8.dp,
                                 )
-                                Text(
-                                    text = uclamp.uclampMin,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                            } else {
+                                RoundedCornerShape(
+                                    topStart = 8.dp,
+                                    topEnd = 28.dp,
+                                    bottomStart = 8.dp,
+                                    bottomEnd = 28.dp,
                                 )
                             }
+                        ),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Uclamp min",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = uclamp.uclampMin,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
                         }
                     }
                 }
             }
-
-            AnimatedVisibility(uclamp.hasUclampMinRt) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+            AnimatedVisibility(
+                visible = uclamp.hasUclampMinRt,
+                enter = fadeIn(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + expandVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+                exit = fadeOut(
+                    animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                ) + shrinkVertically(
+                    animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                ),
+            ) {
+                Button(
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(
+                            topStart = 8.dp,
+                            topEnd = 8.dp,
+                            bottomStart = 28.dp,
+                            bottomEnd = 28.dp,
+                        )
                     ),
-                    shape = MaterialTheme.shapes.extraLarge,
+                    contentPadding = PaddingValues(16.dp),
                     onClick = { openUMRT.visible = true },
                 ) {
                     Column(
-                        Modifier
-                            .padding(16.dp)
-                            .fillMaxSize(),
+                        Modifier.fillMaxSize(),
                     ) {
                         Text(
                             text = "Uclamp min RT default",
@@ -988,6 +1077,10 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 @Composable
 fun MemoryCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+    )
 
     val memory by viewModel.memory.collectAsStateWithLifecycle()
     val zramSizeOptions = listOf("1 GB", "2 GB", "3 GB", "4 GB", "5 GB", "6 GB")
@@ -1004,165 +1097,224 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     val openDR = rememberDialogState(initiallyVisible = false)
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            Icon(
+                painter = painterResource(R.drawable.ic_memory_alt),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null,
+            )
+            Text(
+                text = "Memory",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
+        }
+
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_memory_alt),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    contentDescription = null,
-                )
-                Text(
-                    text = "Memory",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                )
-            }
-
-            OutlinedCard(
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
-                border = BorderStroke(
-                    width = 2.0.dp,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_exclamation),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = "It may take a few minutes to change the ZRAM parameters",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    )
-                }
-            }
-
-            if (memory.hasZramSize || memory.hasSwappiness) {
-                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    AnimatedVisibility(
-                        visible = memory.hasZramSize,
-                        modifier = if (memory.hasSwappiness) Modifier.weight(1f) else Modifier,
-                    ) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openZD.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "ZRAM size",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = memory.zramSize,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = memory.hasSwappiness,
-                        modifier = if (memory.hasZramSize) Modifier.weight(1f) else Modifier,
-                    ) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openSD.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Swappiness",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = "${memory.swappiness}%",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            AnimatedVisibility(memory.availableZramCompAlgorithms.isNotEmpty()) {
-                Card(
+                OutlinedCard(
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     ),
-                    onClick = { openZCD.visible = true },
+                    border = BorderStroke(
+                        width = 2.0.dp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
                 ) {
-                    Column(
-                        Modifier
-                            .padding(16.dp)
-                            .fillMaxSize(),
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Text(
-                            text = "ZRAM compression algorithm",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                        Icon(
+                            painter = painterResource(R.drawable.ic_exclamation),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = null,
                         )
                         Text(
-                            text = memory.zramCompAlgorithm,
+                            text = "It may take a few minutes to change the ZRAM parameters",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
-            }
 
-            AnimatedVisibility(expanded) {
-                AnimatedVisibility(memory.hasDirtyRatio) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        shape = MaterialTheme.shapes.extraLarge,
+                if (memory.hasZramSize || memory.hasSwappiness) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        AnimatedVisibility(
+                            visible = memory.hasZramSize,
+                            enter = fadeIn(
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            ) + expandVertically(
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            ),
+                            exit = fadeOut(
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            ) + shrinkVertically(
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            ),
+                            modifier = if (memory.hasSwappiness) Modifier.weight(1f) else Modifier,
+                        ) {
+                            Button(
+                                contentPadding = PaddingValues(16.dp),
+                                shapes = ButtonDefaults.shapes(
+                                    if (memory.hasSwappiness) {
+                                        RoundedCornerShape(
+                                            topStart = 28.dp,
+                                            topEnd = 8.dp,
+                                            bottomStart = 28.dp,
+                                            bottomEnd = 8.dp
+                                        )
+                                    } else {
+                                        RoundedCornerShape(28.dp)
+                                    }
+                                ),
+                                onClick = { openZD.visible = true },
+                            ) {
+                                Column(Modifier.fillMaxSize()) {
+                                    Text(
+                                        text = "ZRAM size",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = memory.zramSize,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+                        AnimatedVisibility(
+                            visible = memory.hasSwappiness,
+                            enter = fadeIn(
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            ) + expandVertically(
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            ),
+                            exit = fadeOut(
+                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                            ) + shrinkVertically(
+                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                            ),
+                            modifier = if (memory.hasZramSize) Modifier.weight(1f) else Modifier,
+                        ) {
+                            Button(
+                                contentPadding = PaddingValues(16.dp),
+                                shapes = ButtonDefaults.shapes(
+                                    if (memory.hasSwappiness) {
+                                        RoundedCornerShape(
+                                            topStart = 8.dp,
+                                            topEnd = 28.dp,
+                                            bottomStart = 8.dp,
+                                            bottomEnd = 28.dp
+                                        )
+                                    } else {
+                                        RoundedCornerShape(28.dp)
+                                    }
+                                ),
+                                onClick = { openSD.visible = true },
+                            ) {
+                                Column(Modifier.fillMaxSize()) {
+                                    Text(
+                                        text = "Swappiness",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Text(
+                                        text = "${memory.swappiness}%",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = memory.availableZramCompAlgorithms.isNotEmpty(),
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(RoundedCornerShape(28.dp)),
+                        onClick = { openZCD.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "ZRAM compression algorithm",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = memory.zramCompAlgorithm,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = memory.hasDirtyRatio,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(RoundedCornerShape(28.dp)),
                         onClick = { openDR.visible = true },
                     ) {
-                        Column(
-                            Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                        ) {
+                        Column(Modifier.fillMaxSize()) {
                             Text(
                                 text = "dirty ratio",
                                 style = MaterialTheme.typography.titleMedium,
@@ -1175,28 +1327,6 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             )
                         }
                     }
-                }
-            }
-        }
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
-        ) {
-            TooltipBox(
-                positionProvider =
-                TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Above,
-                ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("More VM parameters") } },
-                state = rememberTooltipState(),
-            ) {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        contentDescription = "More VM parameters",
-                    )
                 }
             }
         }
@@ -1353,6 +1483,10 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
 @Composable
 fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val rotateArrow by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+    )
 
     val boreScheduler by viewModel.boreScheduler.collectAsStateWithLifecycle()
     var bore by remember { mutableStateOf(boreScheduler.bore == "1") }
@@ -1377,285 +1511,328 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     val openBCL = rememberDialogState(initiallyVisible = false)
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .clickable(onClick = { expanded = !expanded })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_account_tree),
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    contentDescription = null,
-                )
-                Text(
-                    text = "BORE Scheduler",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                )
-            }
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
-                shape = MaterialTheme.shapes.extraLarge,
-                border = BorderStroke(
-                    width = 2.0.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                ),
-                onClick = { viewModel.updateBoreStatus(!bore) },
-            ) {
-                Column {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "Enabled",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Switch(
-                            checked = bore,
-                            onCheckedChange = { isChecked ->
-                                bore = isChecked
-                                viewModel.updateBoreStatus(isChecked)
-                            },
-                            thumbContent = {
-                                Crossfade(
-                                    targetState = bore,
-                                    animationSpec = tween(durationMillis = 500),
-                                ) { isChecked ->
-                                    if (isChecked) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                }
-                            },
-                        )
-                    }
-                }
-                Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Text(
-                            text = "BORE Scheduler",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
-                        Text(
-                            text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
-                                " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
-                                " Developed with the aim of maintaining these schedulers' high performance" +
-                                " while delivering resilient responsiveness to user" +
-                                " input under as versatile load scenario as possible.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
-            }
-            AnimatedVisibility(expanded) {
-                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    AnimatedVisibility(boreScheduler.hasBurstSmoothnessLong) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBSL.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst smoothness long",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstSmoothnessLong,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(boreScheduler.hasBurstSmoothnessShort) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBSS.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst smoothness short",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstSmoothnessShort,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(boreScheduler.hasBurstForkAtavistic) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBFA.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst fork atavistic",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstForkAtavistic,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(boreScheduler.hasBurstPenaltyOffset) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBPO.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst penalty offset",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstPenaltyOffset,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(boreScheduler.hasBurstPenaltyScale) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBPS.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst penalty scale",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstPenaltyScale,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                    AnimatedVisibility(boreScheduler.hasBurstCacheLifetime) {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = { openBCL.visible = true },
-                        ) {
-                            Column(
-                                Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize(),
-                            ) {
-                                Text(
-                                    text = "Burst cache lifetime",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Text(
-                                    text = burstCacheLifetime,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_account_tree),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null,
+            )
+            Text(
+                text = "BORE Scheduler",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = if (expanded) "Expanded" else "Collapsed",
+                modifier = Modifier.rotate(rotateArrow),
+            )
         }
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + expandVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
+            exit = fadeOut(
+                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+            ) + shrinkVertically(
+                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+            ),
         ) {
-            TooltipBox(
-                positionProvider =
-                TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Above,
-                ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("More Bore parameters") } },
-                state = rememberTooltipState(),
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        contentDescription = "More BORE parameters",
-                    )
+                Button(
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                    shapes = ButtonDefaults.shapes(
+                        RoundedCornerShape(28.dp)
+                    ),
+                    border = BorderStroke(
+                        width = 2.0.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                    ),
+                    onClick = { viewModel.updateBoreStatus(!bore) },
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxSize().padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Enabled",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Switch(
+                                checked = bore,
+                                onCheckedChange = { isChecked ->
+                                    bore = isChecked
+                                    viewModel.updateBoreStatus(isChecked)
+                                },
+                                thumbContent = {
+                                    Crossfade(
+                                        targetState = bore,
+                                        animationSpec = tween(durationMillis = 500),
+                                    ) { isChecked ->
+                                        if (isChecked) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_check),
+                                                contentDescription = null,
+                                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                                            )
+                                        }
+                                    }
+                                },
+                            )
+                        }
+                        Surface(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                Text(
+                                    text = "BORE Scheduler",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
+                                Text(
+                                    text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
+                                            " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
+                                            " Developed with the aim of maintaining these schedulers' high performance" +
+                                            " while delivering resilient responsiveness to user" +
+                                            " input under as versatile load scenario as possible.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                            }
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstSmoothnessLong,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBSL.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst smoothness long",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstSmoothnessLong,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstSmoothnessShort,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBSS.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst smoothness short",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstSmoothnessShort,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstForkAtavistic,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBFA.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst fork atavistic",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstForkAtavistic,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstPenaltyOffset,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBPO.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst penalty offset",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstPenaltyOffset,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstPenaltyScale,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBPS.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst penalty scale",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstPenaltyScale,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = boreScheduler.hasBurstCacheLifetime,
+                    enter = fadeIn(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + expandVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    exit = fadeOut(
+                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                    ) + shrinkVertically(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                ) {
+                    Button(
+                        contentPadding = PaddingValues(16.dp),
+                        shapes = ButtonDefaults.shapes(
+                            RoundedCornerShape(28.dp)
+                        ),
+                        onClick = { openBCL.visible = true },
+                    ) {
+                        Column(Modifier.fillMaxSize()) {
+                            Text(
+                                text = "Burst cache lifetime",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                            Text(
+                                text = burstCacheLifetime,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                            )
+                        }
+                    }
                 }
             }
         }
