@@ -111,10 +111,6 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
-
     packaging {
         jniLibs {
             useLegacyPackaging = true
@@ -153,9 +149,9 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.junit)
-    implementation(libs.androidx.junit)
-    implementation(libs.androidx.espresso.core)
+    debugImplementation(libs.junit)
+    debugImplementation(libs.androidx.junit)
+    debugImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation)
@@ -165,16 +161,13 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.test.manifest)
-    implementation(libs.androidx.compose.test.junit4)
+    debugImplementation(libs.androidx.compose.test.manifest)
+    debugImplementation(libs.androidx.compose.test.junit4)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
@@ -185,6 +178,4 @@ dependencies {
     implementation(libs.topjohnwu.libsu.core)
 
     implementation(libs.composables.core)
-    implementation(libs.androidx.ui.tooling.preview)
-    debugImplementation(libs.androidx.ui.tooling)
 }
