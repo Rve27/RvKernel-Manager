@@ -178,4 +178,5 @@ dependencies {
     implementation(libs.topjohnwu.libsu.core)
 
     implementation(libs.composables.core)
+    implementation(libs.composables.icons.material.symbols.rounded.filled)
 }

@@ -9,15 +9,16 @@ espressoCore = "3.7.0"
 androidxActivity = "1.12.2"
 androidxComposeBom = "2025.12.01"
 androidxCompose = "1.10.0"
-androidxComposeMaterial3 = "1.5.0-alpha11"
 androidxComposeMaterialIcons = "1.7.8"
+material3 = "1.5.0-alpha11"
 androidxNavigation = "2.9.6"
 androidxLifecycle = "2.10.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
 coil3 = "3.3.0"
 libsuVersion = "6.0.0"
-composables = "1.49.3"
+composables = "1.49.6"
+composables-icons = "2.2.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -36,7 +37,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "androidxCompose" }
-androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidxComposeMaterialIcons" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "androidxCompose" }
@@ -58,4 +59,5 @@ io-coil-kt-coil3-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okht
 
 topjohnwu-libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsuVersion" }
 
-composables-core = { module = "com.composables:core", version.ref = "composables" }
+composables-core = { module = "com.composables:core-android", version.ref = "composables" }
+composables-icons-material-symbols-rounded-filled = { module = "com.composables:icons-material-symbols-rounded-filled-android", version.ref = "composables-icons" }
