@@ -17,6 +17,7 @@
 package com.rve.rvkernelmanager.ui.soc
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.ui.settings.SettingsPreference

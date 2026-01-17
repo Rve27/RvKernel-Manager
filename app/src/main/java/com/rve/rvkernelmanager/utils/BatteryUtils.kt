@@ -125,7 +125,7 @@ object BatteryUtils {
         context.getString(R.string.na)
     }
 
-    fun getUptime(): String = runCatching {
+    fun getUptime(context: Context): String = runCatching {
         val uptimeMillis = SystemClock.elapsedRealtime()
         val seconds = (uptimeMillis / 1000) % 60
         val minutes = (uptimeMillis / (1000 * 60)) % 60
@@ -140,7 +140,7 @@ object BatteryUtils {
         }.trim()
     }.getOrElse {
         Log.e(TAG, "getUptime: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getDeepSleep(context: Context): String = runCatching {

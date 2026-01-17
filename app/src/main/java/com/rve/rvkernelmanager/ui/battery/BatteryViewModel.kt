@@ -16,10 +16,11 @@
  */
 package com.rve.rvkernelmanager.ui.battery
 
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.utils.BatteryUtils
 import com.rve.rvkernelmanager.utils.KernelUtils
@@ -33,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class BatteryViewModel : ViewModel() {
+class BatteryViewModel(application: Application) : AndroidViewModel(application) {
     data class BatteryInfo(
         val level: String = "N/A",
         val tech: String = "N/A",
@@ -128,9 +129,10 @@ class BatteryViewModel : ViewModel() {
 
     fun startJob() {
         job?.cancel()
+        val context = getApplication<Application>()
         job = viewModelScope.launch {
             while (isActive) {
-                _uptime.value = BatteryUtils.getUptime()
+                _uptime.value = BatteryUtils.getUptime(context)
                 delay(1000L)
             }
         }
@@ -187,7 +189,7 @@ class BatteryViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val hasFastCharging = Utils.testFile(BatteryUtils.FAST_CHARGING)
             val isFastChargingChecked = Utils.readFile(BatteryUtils.FAST_CHARGING) == "1"
-            val kernelVersion = KernelUtils.getKernelVersion()
+            val kernelVersion = KernelUtils.getKernelVersion(getApplication())
             val isBypassChargingChecked = Utils.readFile(BatteryUtils.BYPASS_CHARGING) == "1"
 
             _chargingState.value = ChargingState(
