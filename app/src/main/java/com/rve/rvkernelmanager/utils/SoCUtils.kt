@@ -19,6 +19,7 @@ package com.rve.rvkernelmanager.utils
 import android.app.ActivityManager
 import android.content.Context
 import android.util.Log
+import com.rve.rvkernelmanager.R
 import com.topjohnwu.superuser.Shell
 import java.io.File
 import kotlin.math.ceil
@@ -77,7 +78,7 @@ object SoCUtils {
     private var sPrevTotal: Long = -1
     private var sPrevIdle: Long = -1
 
-    fun getCpuInfo(): String = runCatching {
+    fun getCpuInfo(context: Context): String = runCatching {
         val hardware = Utils.getSystemProperty("ro.hardware")
         val manufacturer = Utils.getSystemProperty("ro.soc.manufacturer")
         val model = Utils.getSystemProperty("ro.soc.model")
@@ -87,11 +88,11 @@ object SoCUtils {
         } else if (manufacturer.contains("QTI", ignoreCase = true) && model.isNotEmpty()) {
             "Qualcomm Technologies, Inc $model"
         } else {
-            "unknown"
+            context.getString(R.string.unknown)
         }
     }.getOrElse {
         Log.e(TAG, "getCpuInfo: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun readFreqCPU(filePath: String): String = runCatching {
@@ -157,7 +158,7 @@ object SoCUtils {
         emptyList()
     }
 
-    fun getOpenGL(): String = runCatching {
+    fun getOpenGL(context: Context): String = runCatching {
         val result = Shell.cmd("dumpsys SurfaceFlinger | grep \"GLES:\"").exec()
         if (result.isSuccess && result.out.isNotEmpty()) {
             val glesLine = result.out.firstOrNull()?.trim()
@@ -175,10 +176,10 @@ object SoCUtils {
                 }
             }
         }
-        "unknown"
+        context.getString(R.string.unknown)
     }.getOrElse {
         Log.e(TAG, "getOpenGL: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun writeFreqGPU(filePath: String, frequency: String) {
@@ -235,14 +236,14 @@ object SoCUtils {
         "0"
     }
 
-    fun getCpuUsage(): String = runCatching {
+    fun getCpuUsage(context: Context): String = runCatching {
         val stat = Utils.readFile("/proc/stat")
         val trimmedStat = stat.trim()
 
-        if (!trimmedStat.startsWith("cpu")) return "unknown"
+        if (!trimmedStat.startsWith("cpu")) return context.getString(R.string.unknown)
 
         val parts = trimmedStat.split("\\s+".toRegex()).filter { it.isNotEmpty() }
-        if (parts.size < 8) return "unknown"
+        if (parts.size < 8) return context.getString(R.string.unknown)
 
         val user = parts[1].toLong()
         val nice = parts[2].toLong()
@@ -265,22 +266,22 @@ object SoCUtils {
         } else {
             sPrevTotal = total
             sPrevIdle = idle
-            return "unknown"
+            return context.getString(R.string.unknown)
         }
     }.getOrElse {
         Log.e(TAG, "getCpuUsage: ${it.message}", it)
-        return "unknown"
+        return context.getString(R.string.unknown)
     }
 
-    fun getGpuUsage(): String = runCatching {
+    fun getGpuUsage(context: Context): String = runCatching {
         val usage = Utils.readFile("/sys/class/kgsl/kgsl-3d0/gpu_busy_percentage")
-        if (usage.isEmpty()) return "unknown"
+        if (usage.isEmpty()) return context.getString(R.string.unknown)
         val cleanedUsage = usage.replace("%", "").trim()
         val value = cleanedUsage.toInt()
         value.toString()
     }.getOrElse {
         Log.e(TAG, "getGpuUsage: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getTotalRam(context: Context): String = runCatching {
@@ -291,6 +292,6 @@ object SoCUtils {
         return "${ceil(sizeInGb).toInt()} GB"
     }.getOrElse {
         Log.e(TAG, "getTotalRam: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 }

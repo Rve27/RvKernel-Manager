@@ -80,6 +80,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -229,7 +230,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                         contentDescription = null,
                     )
                     Text(
-                        text = "CPU Monitor",
+                        text = stringResource(R.string.cpu_monitor),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -253,12 +254,12 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                 )
                                 Column {
                                     Text(
-                                        text = "Usage",
+                                        text = stringResource(R.string.usage),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     Text(
-                                        text = if (cpuUsage == "N/A") "N/A" else "$cpuUsage%",
+                                        text = if (cpuUsage == "N/A") stringResource(R.string.na) else "$cpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(bottom = 8.dp),
@@ -301,7 +302,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                 }
                             }
                             Text(
-                                text = if (cpuTemp == "N/A") "N/A" else "$cpuTemp°C",
+                                text = if (cpuTemp == "N/A") stringResource(R.string.na) else "$cpuTemp°C",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
@@ -326,19 +327,19 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     if (!hasBigCluster) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Current frequencies",
+                                text = stringResource(R.string.current_frequencies),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                text = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                                text = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.na) else "${cpu0State.currentFreq} MHz",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     } else {
                         Text(
-                            text = "Current frequencies",
+                            text = stringResource(R.string.current_frequencies),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
@@ -353,9 +354,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             shape = MaterialTheme.shapes.extraLarge,
                         ) {
                             CustomListItem(
-                                title = "Little cluster",
+                                title = stringResource(R.string.little_cluster),
                                 titleColor = MaterialTheme.colorScheme.onSurface,
-                                summary = if (cpu0State.currentFreq.isEmpty()) "N/A" else "${cpu0State.currentFreq} MHz",
+                                summary = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.na) else "${cpu0State.currentFreq} MHz",
                                 summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -365,9 +366,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             shape = MaterialTheme.shapes.extraLarge,
                         ) {
                             CustomListItem(
-                                title = "Big cluster",
+                                title = stringResource(R.string.big_cluster),
                                 titleColor = MaterialTheme.colorScheme.onSurface,
-                                summary = if (bigClusterState.currentFreq.isEmpty()) "N/A" else "${bigClusterState.currentFreq} MHz",
+                                summary = if (bigClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${bigClusterState.currentFreq} MHz",
                                 summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -378,9 +379,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                         shape = MaterialTheme.shapes.extraLarge,
                     ) {
                         CustomListItem(
-                            title = "Prime cluster",
+                            title = stringResource(R.string.prime_cluster),
                             titleColor = MaterialTheme.colorScheme.onSurface,
-                            summary = if (primeClusterState.currentFreq.isEmpty()) "N/A" else "${primeClusterState.currentFreq} MHz",
+                            summary = if (primeClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${primeClusterState.currentFreq} MHz",
                             summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -436,7 +437,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                         contentDescription = null,
                     )
                     Text(
-                        text = "GPU Monitor",
+                        text = stringResource(R.string.gpu_monitor),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -460,12 +461,12 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                 )
                                 Column {
                                     Text(
-                                        text = "Usage",
+                                        text = stringResource(R.string.usage),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onSurface,
                                     )
                                     Text(
-                                        text = if (gpuUsage == "N/A") "N/A" else "$gpuUsage%",
+                                        text = if (gpuUsage == "N/A") stringResource(R.string.na) else "$gpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(bottom = 8.dp),
@@ -508,7 +509,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                 }
                             }
                             Text(
-                                text = if (gpuTemp == "N/A") "N/A" else "$gpuTemp°C",
+                                text = if (gpuTemp == "N/A") stringResource(R.string.na) else "$gpuTemp°C",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
@@ -532,12 +533,12 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            text = "Current frequencies",
+                            text = stringResource(R.string.current_frequencies),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                         Text(
-                            text = if (gpuState.currentFreq.isEmpty()) "N/A" else "${gpuState.currentFreq} MHz",
+                            text = if (gpuState.currentFreq.isEmpty()) stringResource(R.string.na) else "${gpuState.currentFreq} MHz",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -584,7 +585,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = if (hasBigCluster) "Little Cluster" else "CPU",
+                text = if (hasBigCluster) stringResource(R.string.little_cluster) else stringResource(R.string.cpu),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -639,7 +640,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Min freq",
+                                    text = stringResource(R.string.min_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -675,7 +676,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Max freq",
+                                    text = stringResource(R.string.max_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -712,7 +713,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Governor",
+                                text = stringResource(R.string.governor),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -732,7 +733,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         state = openAMNF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -751,7 +752,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -759,7 +760,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMNF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -768,7 +769,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         state = openAMXF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -787,7 +788,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -795,7 +796,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMXF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -804,7 +805,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         state = openACG,
         title = {
             Text(
-                text = "Available governor",
+                text = stringResource(R.string.available_governor),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -823,7 +824,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available governor found.")
+                Text(stringResource(R.string.no_governors))
             }
         },
         dismissButton = {
@@ -831,7 +832,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                 onClick = { openACG.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -872,7 +873,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "Big Cluster",
+                text = stringResource(R.string.big_cluster),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -927,7 +928,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Min freq",
+                                    text = stringResource(R.string.min_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -963,7 +964,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Max freq",
+                                    text = stringResource(R.string.max_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1000,7 +1001,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Governor",
+                                text = stringResource(R.string.governor),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1020,7 +1021,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         state = openAMNF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1039,7 +1040,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -1047,7 +1048,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMNF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1056,7 +1057,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         state = openAMXF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1075,7 +1076,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -1083,7 +1084,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMXF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1092,7 +1093,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         state = openACG,
         title = {
             Text(
-                text = "Available governor",
+                text = stringResource(R.string.available_governor),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1111,7 +1112,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available governor found.")
+                Text(stringResource(R.string.no_governors))
             }
         },
         dismissButton = {
@@ -1119,7 +1120,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                 onClick = { openACG.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1160,7 +1161,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "Prime Cluster",
+                text = stringResource(R.string.prime_cluster),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -1215,7 +1216,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Min freq",
+                                    text = stringResource(R.string.min_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1251,7 +1252,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Max freq",
+                                    text = stringResource(R.string.max_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1288,7 +1289,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Governor",
+                                text = stringResource(R.string.governor),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1308,7 +1309,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         state = openAMNF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1327,7 +1328,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -1335,7 +1336,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMNF.visible = true },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1344,7 +1345,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         state = openAMXF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1363,7 +1364,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -1371,7 +1372,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                 onClick = { openAMXF.visible = true },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1380,7 +1381,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         state = openACG,
         title = {
             Text(
-                text = "Available governor",
+                text = stringResource(R.string.available_governor),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1399,7 +1400,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available governor found.")
+                Text(stringResource(R.string.no_governors))
             }
         },
         dismissButton = {
@@ -1407,7 +1408,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                 onClick = { openACG.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -1448,7 +1449,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "CPU Boost",
+                text = stringResource(R.string.cpu_boost),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -1515,7 +1516,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Input boost ms",
+                                    text = stringResource(R.string.input_boost_ms),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1569,7 +1570,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                                 contentDescription = null,
                             )
                             Text(
-                                text = "Sched boost on input",
+                                text = stringResource(R.string.sched_boost_input),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.weight(1f),
@@ -1626,7 +1627,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1634,7 +1635,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                 onClick = { openCIBD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1686,7 +1687,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "GPU",
+                text = stringResource(R.string.gpu),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -1741,7 +1742,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Min freq",
+                                    text = stringResource(R.string.min_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1777,7 +1778,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Max freq",
+                                    text = stringResource(R.string.max_freq),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1818,7 +1819,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Governor",
+                                text = stringResource(R.string.governor),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1872,7 +1873,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             )
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Adreno boost",
+                                    text = stringResource(R.string.adreno_boost),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1884,6 +1885,14 @@ fun GPUCard(viewModel: SoCViewModel) {
                                             "2" -> "Medium"
                                             "3" -> "High"
                                             else -> gpuState.adrenoBoost
+                                        }
+                                    }.let {
+                                        when(it) {
+                                            "Off" -> stringResource(R.string.off)
+                                            "Low" -> stringResource(R.string.low)
+                                            "Medium" -> stringResource(R.string.medium)
+                                            "High" -> stringResource(R.string.high)
+                                            else -> it
                                         }
                                     },
                                     style = MaterialTheme.typography.bodyMedium,
@@ -1938,7 +1947,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 )
                                 Column {
                                     Text(
-                                        text = "Default pwrlevel",
+                                        text = stringResource(R.string.default_pwrlevel),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     )
@@ -2017,7 +2026,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 }
                             }
                             Text(
-                                text = "GPU Throttling",
+                                text = stringResource(R.string.gpu_throttling),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.weight(1f),
@@ -2051,7 +2060,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         state = openAMNF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -2070,7 +2079,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -2078,7 +2087,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 onClick = { openAMNF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -2087,7 +2096,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         state = openAMXF,
         title = {
             Text(
-                text = "Available frequencies",
+                text = stringResource(R.string.available_frequencies),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -2106,7 +2115,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available frequencies found.")
+                Text(stringResource(R.string.no_frequencies))
             }
         },
         dismissButton = {
@@ -2114,7 +2123,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 onClick = { openAMXF.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -2123,7 +2132,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         state = openAGG,
         title = {
             Text(
-                text = "Available governor",
+                text = stringResource(R.string.available_governor),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -2142,7 +2151,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                     }
                 }
             } else {
-                Text("No available governor found.")
+                Text(stringResource(R.string.no_governors))
             }
         },
         confirmButton = {
@@ -2150,7 +2159,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 onClick = { openAGG.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -2159,7 +2168,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         state = openABD,
         title = {
             Text(
-                text = "Adreno boost",
+                text = stringResource(R.string.adreno_boost),
                 style = MaterialTheme.typography.titleLarge,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -2167,28 +2176,28 @@ fun GPUCard(viewModel: SoCViewModel) {
         text = {
             Column {
                 DialogTextButton(
-                    text = "Off",
+                    text = stringResource(R.string.off),
                     onClick = {
                         viewModel.updateAdrenoBoost("0")
                         openABD.visible = false
                     },
                 )
                 DialogTextButton(
-                    text = "Low",
+                    text = stringResource(R.string.low),
                     onClick = {
                         viewModel.updateAdrenoBoost("1")
                         openABD.visible = false
                     },
                 )
                 DialogTextButton(
-                    text = "Medium",
+                    text = stringResource(R.string.medium),
                     onClick = {
                         viewModel.updateAdrenoBoost("2")
                         openABD.visible = false
                     },
                 )
                 DialogTextButton(
-                    text = "High",
+                    text = stringResource(R.string.high),
                     onClick = {
                         viewModel.updateAdrenoBoost("3")
                         openABD.visible = false
@@ -2201,7 +2210,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                 onClick = { openABD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )

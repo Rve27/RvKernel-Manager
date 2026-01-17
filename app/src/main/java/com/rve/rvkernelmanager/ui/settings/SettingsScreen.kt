@@ -57,6 +57,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -66,6 +67,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.core.rememberDialogState
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.DialogTextButton
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
@@ -107,7 +109,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBarWithBackButton(
-                text = "Settings",
+                text = stringResource(R.string.settings),
                 onBack = { (context as? Activity)?.finish() },
                 scrollBehavior = scrollBehavior,
             )
@@ -116,23 +118,23 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         Column(modifier = Modifier.padding(paddingValues)) {
             CustomListItem(
                 icon = Icons.Default.Palette,
-                title = "App theme",
-                summary = "Choose between light, dark, or system default theme",
+                title = stringResource(R.string.app_theme),
+                summary = stringResource(R.string.theme_summary),
                 onClick = { openThemeDialog.visible = true },
             )
             CustomListItem(
                 icon = Icons.Default.Timer,
-                title = "SoC polling interval",
-                summary = "Set how often SoC data is updated (in seconds)",
+                title = stringResource(R.string.soc_polling),
+                summary = stringResource(R.string.soc_polling_summary),
                 onClick = { openPollingDialog.visible = true },
             )
             CustomListItem(
                 icon = Icons.Default.Info,
-                title = "RvKernel Manager version",
+                title = stringResource(R.string.app_version),
                 summary = appVersion,
                 onLongClick = {
                     coroutineScope.launch {
-                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("RvKernel Manager version", appVersion)))
+                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(context.getString(R.string.app_version), appVersion)))
                     }
                 },
             )
@@ -143,7 +145,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         state = openThemeDialog,
         title = {
             Text(
-                text = "Select theme",
+                text = stringResource(R.string.select_theme),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -152,7 +154,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
             Column {
                 DialogTextButton(
                     icon = Icons.Default.LightMode,
-                    text = "Light mode",
+                    text = stringResource(R.string.theme_light),
                     onClick = {
                         viewModel.setThemeMode(ThemeMode.LIGHT)
                         openThemeDialog.visible = false
@@ -160,7 +162,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 )
                 DialogTextButton(
                     icon = Icons.Default.DarkMode,
-                    text = "Dark mode",
+                    text = stringResource(R.string.theme_dark),
                     onClick = {
                         viewModel.setThemeMode(ThemeMode.DARK)
                         openThemeDialog.visible = false
@@ -168,7 +170,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 )
                 DialogTextButton(
                     icon = Icons.Default.Android,
-                    text = "System default",
+                    text = stringResource(R.string.theme_system),
                     onClick = {
                         viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)
                         openThemeDialog.visible = false
@@ -181,7 +183,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 onClick = { openThemeDialog.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -190,7 +192,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         state = openPollingDialog,
         title = {
             Text(
-                text = "SoC polling interval",
+                text = stringResource(R.string.soc_polling),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -198,7 +200,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         text = {
             Column {
                 Text(
-                    text = "Set the polling interval for SoC data (1-30 seconds)",
+                    text = stringResource(R.string.polling_dialog_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -206,7 +208,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    label = { Text("Interval (seconds)") },
+                    label = { Text(stringResource(R.string.polling_hint)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -234,7 +236,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Apply")
+                Text(stringResource(R.string.apply))
             }
         },
         dismissButton = {
@@ -242,7 +244,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 onClick = { openPollingDialog.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )

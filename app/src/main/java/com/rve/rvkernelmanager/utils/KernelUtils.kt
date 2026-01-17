@@ -16,9 +16,11 @@
  */
 package com.rve.rvkernelmanager.utils
 
+import android.content.Context
 import android.os.Environment
 import android.system.Os
 import android.util.Log
+import com.rve.rvkernelmanager.R
 import com.topjohnwu.superuser.Shell
 
 object KernelUtils {
@@ -91,41 +93,41 @@ object KernelUtils {
         }
     }
 
-    fun getKernelVersion(): String = runCatching {
+    fun getKernelVersion(context: Context): String = runCatching {
         Os.uname().release
     }.getOrElse {
         Log.e(TAG, "getKernelVersion: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
-    fun getFullKernelVersion(): String = runCatching {
+    fun getFullKernelVersion(context: Context): String = runCatching {
         Utils.readFile(FULL_KERNEL_VERSION)
     }.getOrElse {
         Log.e(TAG, "getFullKernelVersion: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
-    fun getZramSize(): String = runCatching {
+    fun getZramSize(context: Context): String = runCatching {
         val sizeInBytes = Utils.readFile(ZRAM_SIZE).toLongOrNull() ?: 0L
         val sizeInGb = sizeInBytes / 1073741824.0
         "${sizeInGb.toInt()} GB"
     }.getOrElse {
         Log.e(TAG, "getZramSize: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
-    fun getZramCompAlgorithm(): String = runCatching {
+    fun getZramCompAlgorithm(context: Context): String = runCatching {
         val algorithms = Utils.readFile(ZRAM_COMP_ALGORITHM)
         if (algorithms.isNotEmpty()) {
             val regex = "\\[([^\\]]+)\\]".toRegex()
             val match = regex.find(algorithms)
-            match?.groupValues?.get(1) ?: "unknown"
+            match?.groupValues?.get(1) ?: context.getString(R.string.unknown)
         } else {
-            "unknown"
+            context.getString(R.string.unknown)
         }
     }.getOrElse {
         Log.e(TAG, "getZramCompAlgorithm: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getAvailableZramCompAlgorithms(): List<String> = runCatching {
@@ -182,11 +184,11 @@ object KernelUtils {
         }
     }
 
-    fun getTcpCongestionAlgorithm(): String = runCatching {
+    fun getTcpCongestionAlgorithm(context: Context): String = runCatching {
         Utils.readFile(TCP_CONGESTION_ALGORITHM)
     }.getOrElse {
         Log.e(TAG, "getTcpCongestionAlgorithm: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getAvailableTcpCongestionAlgorithm(): List<String> = runCatching {
@@ -211,11 +213,11 @@ object KernelUtils {
         }
     }
 
-    fun getWireGuardVersion(): String = runCatching {
+    fun getWireGuardVersion(context: Context): String = runCatching {
         Utils.readFile(WIREGUARD_VERSION)
     }.getOrElse {
         Log.e(TAG, "getWireGuardVersion: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun mkdirKernelProfilePath() {

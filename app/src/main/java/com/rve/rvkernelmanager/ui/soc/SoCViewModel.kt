@@ -185,10 +185,11 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun loadSoCData() {
+        val context = getApplication<Application>()
         viewModelScope.launch(Dispatchers.IO) {
             loadCPUData()
             loadGPUData()
-            loadTemperatureAndUsageData()
+            loadTemperatureAndUsageData(context)
         }
     }
 
@@ -234,11 +235,11 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         _hasGPUThrottling.value = Utils.testFile(SoCUtils.GPU_THROTTLING)
     }
 
-    private fun loadTemperatureAndUsageData() {
-        _cpuUsage.value = SoCUtils.getCpuUsage()
-        _cpuTemp.value = Utils.getTemp(SoCUtils.CPU_TEMP)
-        _gpuTemp.value = Utils.getTemp(SoCUtils.GPU_TEMP)
-        _gpuUsage.value = SoCUtils.getGpuUsage()
+    private fun loadTemperatureAndUsageData(context: Context) {
+        _cpuUsage.value = SoCUtils.getCpuUsage(context)
+        _cpuTemp.value = Utils.getTemp(context, SoCUtils.CPU_TEMP)
+        _gpuTemp.value = Utils.getTemp(context, SoCUtils.GPU_TEMP)
+        _gpuUsage.value = SoCUtils.getGpuUsage(context)
     }
 
     private fun detectBigClusterConfig(): ClusterConfig.Big? {

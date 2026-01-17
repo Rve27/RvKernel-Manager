@@ -1,4 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RvKernel Manager</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_soc">SoC</string>
+    <string name="nav_battery">Battery</string>
+    <string name="nav_kernel">Kernel</string>
+
+    <!-- Common -->
+    <string name="unknown">unknown</string>
+    <string name="na">N/A</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
+    <string name="apply">Apply</string>
+    <string name="menu">Menu</string>
+    <string name="back">Back</string>
+    <string name="off">Off</string>
+    <string name="low">Low</string>
+    <string name="medium">Medium</string>
+    <string name="high">High</string>
+    <string name="enabled">Enabled</string>
+
+    <!-- MainActivity -->
+    <string name="waiting_root">waiting for root access to be granted...</string>
+    <string name="root_required_title">Root access required</string>
+    <string name="root_required_desc">RvKernel Manager requires root access</string>
+
+    <!-- AppBar -->
+    <string name="source_code">Source code</string>
+    <string name="telegram_group">Telegram group</string>
+    <string name="contributors">Contributors</string>
+    <string name="settings">Settings</string>
+
+    <!-- Home Screen -->
+    <string name="device_info_section">Device Information</string>
+    <string name="device">Device</string>
+    <string name="device_codename">Device codename</string>
+    <string name="android">Android</string>
+    <string name="android_version">Android version</string>
+    <string name="ram">RAM</string>
+    <string name="cpu">CPU</string>
+    <string name="gpu">GPU</string>
+    <string name="wireguard">WireGuard</string>
+    <string name="kernel">Kernel</string>
+
+    <!-- Battery Screen -->
+    <string name="battery_monitor">Battery Monitor</string>
+    <string name="voltage">Battery voltage</string>
+    <string name="temperature">Battery temperature</string>
+    <string name="level">Battery level</string>
+    <string name="uptime">Uptime</string>
+    <string name="device_uptime">Device uptime</string>
+    <string name="deep_sleep">Deep sleep</string>
+    <string name="battery_info">Battery Information</string>
+    <string name="tech">Battery technology</string>
+    <string name="health">Battery health</string>
+    <string name="design_capacity">Design capacity</string>
+    <string name="battery_design_capacity">Battery design capacity</string>
+    <string name="tap_to_set_capacity">(Tap to set design capacity manually)</string>
+    <string name="max_capacity">Maximum capacity</string>
+    <string name="battery_max_capacity">Battery maximum capacity</string>
+    <string name="set_manual_capacity">Set manual design capacity</string>
+    <string name="capacity_hint">Design capacity (mAh)</string>
+    <string name="thermal_profiles">Thermal profiles</string>
+    <string name="profile_default">Default</string>
+    <string name="profile_benchmark">Benchmark</string>
+    <string name="profile_browser">Browser</string>
+    <string name="profile_camera">Camera</string>
+    <string name="profile_dialer">Dialer</string>
+    <string name="profile_gaming">Gaming</string>
+    <string name="profile_streaming">Streaming</string>
+    <string name="force_fast_charging">Force fast charging</string>
+    <string name="bypass_charging">Bypass charging</string>
+
+    <!-- Battery Status -->
+    <string name="health_good">Good</string>
+    <string name="health_overheat">Overheat</string>
+    <string name="health_dead">Dead</string>
+    <string name="health_over_voltage">Over Voltage</string>
+    <string name="health_unspecified">Unspecified Failure</string>
+    <string name="health_cold">Cold</string>
+
+    <!-- SoC Screen -->
+    <string name="cpu_monitor">CPU Monitor</string>
+    <string name="usage">Usage</string>
+    <string name="current_frequencies">Current frequencies</string>
+    <string name="little_cluster">Little cluster</string>
+    <string name="big_cluster">Big cluster</string>
+    <string name="prime_cluster">Prime cluster</string>
+    <string name="min_freq">Min freq</string>
+    <string name="max_freq">Max freq</string>
+    <string name="governor">Governor</string>
+    <string name="available_frequencies">Available frequencies</string>
+    <string name="available_governor">Available governor</string>
+    <string name="no_frequencies">No available frequencies found.</string>
+    <string name="no_governors">No available governor found.</string>
+    <string name="cpu_boost">CPU Boost</string>
+    <string name="input_boost_ms">Input boost ms</string>
+    <string name="sched_boost_input">Sched boost on input</string>
+    <string name="gpu_monitor">GPU Monitor</string>
+    <string name="default_pwrlevel">Default pwrlevel</string>
+    <string name="adreno_boost">Adreno boost</string>
+    <string name="gpu_throttling">GPU Throttling</string>
+
+    <!-- Kernel Screen -->
+    <string name="kernel_profiles_title">Kernel Profiles</string>
+    <string name="profile_powersave">Powersave</string>
+    <string name="profile_balance">Balance</string>
+    <string name="profile_performance">Performance</string>
+    <string name="get_templates">Get kernel profiles templates</string>
+    <string name="kernel_parameter_title">Kernel Parameter</string>
+    <string name="restrict_dmesg">Restrict dmesg output</string>
+    <string name="restrict_dmesg_title">Restrict Dmesg</string>
+    <string name="restrict_dmesg_desc">This toggle indicates whether unprivileged users are prevented from using dmesg to view messages from the kernel\'s log buffer. When dmesg_restrict is set to inactive (0) there are no restrictions.</string>
+    <string name="sched_auto_group">Sched auto group</string>
+    <string name="printk">printk</string>
+    <string name="sched_lib_name">Sched lib name</string>
+    <string name="sched_lib_name_desc">Add apps packages into sched_lib_name list to report max frequency to unity task</string>
+    <string name="tcp_congestion">TCP congestion algorithm</string>
+    <string name="uclamp">Uclamp</string>
+    <string name="uclamp_max">Uclamp max</string>
+    <string name="uclamp_min">Uclamp min</string>
+    <string name="uclamp_min_rt">Uclamp min RT default</string>
+    <string name="memory">Memory</string>
+    <string name="zram_warning">It may take a few minutes to change the ZRAM parameters</string>
+    <string name="zram_size">ZRAM size</string>
+    <string name="swappiness">Swappiness</string>
+    <string name="zram_comp_algo">ZRAM compression algorithm</string>
+    <string name="dirty_ratio">dirty ratio</string>
+    <string name="bore_scheduler">BORE Scheduler</string>
+    <string name="bore_desc">BORE (Burst-Oriented Response Enhancer) is an enhanced versions of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers. Developed with the aim of maintaining these schedulers\' high performance while delivering resilient responsiveness to user input under as versatile load scenario as possible.</string>
+    <string name="burst_smooth_long">Burst smoothness long</string>
+    <string name="burst_smooth_short">Burst smoothness short</string>
+    <string name="burst_fork">Burst fork atavistic</string>
+    <string name="burst_penalty_offset">Burst penalty offset</string>
+    <string name="burst_penalty_scale">Burst penalty scale</string>
+    <string name="burst_cache">Burst cache lifetime</string>
+
+    <!-- Settings Screen -->
+    <string name="app_theme">App theme</string>
+    <string name="theme_summary">Choose between light, dark, or system default theme</string>
+    <string name="select_theme">Select theme</string>
+    <string name="theme_light">Light mode</string>
+    <string name="theme_dark">Dark mode</string>
+    <string name="theme_system">System default</string>
+    <string name="soc_polling">SoC polling interval</string>
+    <string name="soc_polling_summary">Set how often SoC data is updated (in seconds)</string>
+    <string name="polling_dialog_desc">Set the polling interval for SoC data (1-30 seconds)</string>
+    <string name="polling_hint">Interval (seconds)</string>
+    <string name="app_version">RvKernel Manager version</string>
+
+    <!-- Contributor Screen -->
+    <string name="contributions">contributions</string>
+    <string name="error_prefix">Error:</string>
+    <string name="no_contributors">No contributors found</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="timeout">Connection timeout</string>
+    <string name="network_error">Network error</string>
+    <string name="server_error">Server error</string>
+    <string name="avatar_desc">avatar</string>
 </resources>

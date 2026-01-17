@@ -40,10 +40,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.BuildConfig
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
@@ -108,7 +110,7 @@ class MainActivity : ComponentActivity() {
                     ContainedLoadingIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "waiting for root access to be granted...",
+                        text = stringResource(R.string.waiting_root),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -117,13 +119,13 @@ class MainActivity : ComponentActivity() {
                     state = showRootDialog,
                     title = {
                         Text(
-                            text = "Root access required",
+                            text = stringResource(R.string.root_required_title),
                             style = MaterialTheme.typography.titleMedium,
                         )
                     },
                     text = {
                         Text(
-                            text = "RvKernel Manager requires root access",
+                            text = stringResource(R.string.root_required_desc),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     },
@@ -131,7 +133,7 @@ class MainActivity : ComponentActivity() {
                         TextButton(
                             onClick = { showRootDialog.visible = false },
                         ) {
-                            Text(text = "Close")
+                            Text(text = stringResource(R.string.close))
                         }
                     },
                 )

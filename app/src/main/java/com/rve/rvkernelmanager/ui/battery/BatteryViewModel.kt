@@ -90,9 +90,9 @@ class BatteryViewModel : ViewModel() {
                 val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
-                val designCapacity = BatteryUtils.getBatteryDesignCapacity()
+                val designCapacity = BatteryUtils.getBatteryDesignCapacity(context)
                 val manualDesignCapacity = batteryPreference.getManualDesignCapacity().toString()
-                val deepSleep = BatteryUtils.getDeepSleep()
+                val deepSleep = BatteryUtils.getDeepSleep(context)
 
                 _batteryInfo.value = _batteryInfo.value.copy(
                     level = level,
