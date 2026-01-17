@@ -30,36 +30,37 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.battery.BatteryScreen
 import com.rve.rvkernelmanager.ui.home.HomeScreen
 import com.rve.rvkernelmanager.ui.kernelParameter.KernelParameterScreen
 import com.rve.rvkernelmanager.ui.soc.SoCScreen
 
-sealed class NavigationRoute(val route: String, val title: String, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
+sealed class NavigationRoute(val route: String, val titleRes: Int, val selectedIcon: ImageVector, val unselectedIcon: ImageVector) {
     object Home : NavigationRoute(
         route = "home",
-        title = "Home",
+        titleRes = R.string.nav_home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home,
     )
 
     object SoC : NavigationRoute(
         route = "soc",
-        title = "SoC",
+        titleRes = R.string.nav_soc,
         selectedIcon = Icons.Filled.Memory,
         unselectedIcon = Icons.Outlined.Memory,
     )
 
     object Battery : NavigationRoute(
         route = "battery",
-        title = "Battery",
+        titleRes = R.string.nav_battery,
         selectedIcon = Icons.Filled.BatteryFull,
         unselectedIcon = Icons.Outlined.Battery0Bar,
     )
 
     object KernelParameter : NavigationRoute(
         route = "kernel",
-        title = "Kernel",
+        titleRes = R.string.nav_kernel,
         selectedIcon = Icons.Filled.Storage,
         unselectedIcon = Icons.Outlined.Storage,
     )

@@ -83,6 +83,7 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -184,6 +185,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
 @Composable
 fun BatteryMonitorCard(viewModel: BatteryViewModel) {
     val clipboard = LocalClipboard.current
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
@@ -228,7 +230,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         contentDescription = null,
                     )
                     Text(
-                        text = "Battery Monitor",
+                        text = stringResource(R.string.battery_monitor),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -246,7 +248,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Battery voltage",
+                                                context.getString(R.string.voltage),
                                                 batteryInfo.voltage,
                                             ),
                                         ),
@@ -283,7 +285,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Battery temperature",
+                                                context.getString(R.string.temperature),
                                                 batteryInfo.temp,
                                             ),
                                         ),
@@ -340,7 +342,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                             clipboard.setClipEntry(
                                 ClipEntry(
                                     ClipData.newPlainText(
-                                        "Battery level",
+                                        context.getString(R.string.level),
                                         batteryInfo.level,
                                     ),
                                 ),
@@ -410,7 +412,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         }
                         Column {
                             Text(
-                                text = "Battery level",
+                                text = stringResource(R.string.level),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
@@ -443,7 +445,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Device uptime",
+                                                context.getString(R.string.device_uptime),
                                                 uptime,
                                             ),
                                         ),
@@ -464,7 +466,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Uptime",
+                                text = stringResource(R.string.uptime),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
@@ -489,7 +491,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Deep sleep",
+                                                context.getString(R.string.deep_sleep),
                                                 batteryInfo.deepSleep,
                                             ),
                                         ),
@@ -510,7 +512,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                         )
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Deep sleep",
+                                text = stringResource(R.string.deep_sleep),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                             )
@@ -569,7 +571,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         contentDescription = null,
                     )
                     Text(
-                        text = "Battery Information",
+                        text = stringResource(R.string.battery_info),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -587,7 +589,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Battery technology",
+                                                context.getString(R.string.tech),
                                                 batteryInfo.tech,
                                             ),
                                         ),
@@ -624,7 +626,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Battery health",
+                                                context.getString(R.string.health),
                                                 batteryInfo.health,
                                             ),
                                         ),
@@ -666,7 +668,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                             clipboard.setClipEntry(
                                 ClipEntry(
                                     ClipData.newPlainText(
-                                        "Battery design capacity",
+                                        context.getString(R.string.battery_design_capacity),
                                         batteryInfo.designCapacity,
                                     ),
                                 ),
@@ -687,7 +689,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            text = "Design capacity",
+                            text = stringResource(R.string.design_capacity),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
@@ -703,7 +705,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         if (batteryInfo.designCapacity == "unknown") {
                             AnimatedVisibility(visible) {
                                 Text(
-                                    text = "(Tap to set design capacity manually)",
+                                    text = stringResource(R.string.tap_to_set_capacity),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -722,7 +724,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                             clipboard.setClipEntry(
                                 ClipEntry(
                                     ClipData.newPlainText(
-                                        "Battery maximum capacity",
+                                        context.getString(R.string.battery_max_capacity),
                                         batteryInfo.maximumCapacity,
                                     ),
                                 ),
@@ -743,7 +745,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            text = "Maximum capacity",
+                            text = stringResource(R.string.max_capacity),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
@@ -762,7 +764,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         state = openMDC,
         title = {
             Text(
-                text = "Set manual design capacity",
+                text = stringResource(R.string.set_manual_capacity),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -772,7 +774,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    label = { Text("Design capacity (mAh)") },
+                    label = { Text(stringResource(R.string.capacity_hint)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
@@ -795,7 +797,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Apply")
+                Text(stringResource(R.string.apply))
             }
         },
     )
@@ -825,7 +827,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
             )
             Column {
                 Text(
-                    text = "Thermal profiles",
+                    text = stringResource(R.string.thermal_profiles),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -841,6 +843,17 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                             "14" -> "Streaming"
                             else -> "Unknown"
                         }
+                    }.let {
+                        when(it) {
+                            "Default" -> stringResource(R.string.profile_default)
+                            "Benchmark" -> stringResource(R.string.profile_benchmark)
+                            "Browser" -> stringResource(R.string.profile_browser)
+                            "Camera" -> stringResource(R.string.profile_camera)
+                            "Dialer" -> stringResource(R.string.profile_dialer)
+                            "Gaming" -> stringResource(R.string.profile_gaming)
+                            "Streaming" -> stringResource(R.string.profile_streaming)
+                            else -> stringResource(R.string.unknown)
+                        }
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary,
@@ -853,7 +866,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
         state = openTPD,
         title = {
             Text(
-                text = "Thermal profiles",
+                text = stringResource(R.string.thermal_profiles),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -862,7 +875,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
             Column {
                 DialogTextButton(
                     icon = painterResource(R.drawable.ic_cool),
-                    text = "Default",
+                    text = stringResource(R.string.profile_default),
                     onClick = {
                         viewModel.updateThermalSconfig("0")
                         openTPD.visible = false
@@ -870,7 +883,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.Speed,
-                    text = "Benchmark",
+                    text = stringResource(R.string.profile_benchmark),
                     onClick = {
                         viewModel.updateThermalSconfig("10")
                         openTPD.visible = false
@@ -878,7 +891,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.Language,
-                    text = "Browser",
+                    text = stringResource(R.string.profile_browser),
                     onClick = {
                         viewModel.updateThermalSconfig("11")
                         openTPD.visible = false
@@ -886,7 +899,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.PhotoCamera,
-                    text = "Camera",
+                    text = stringResource(R.string.profile_camera),
                     onClick = {
                         viewModel.updateThermalSconfig("12")
                         openTPD.visible = false
@@ -894,7 +907,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.Call,
-                    text = "Dialer",
+                    text = stringResource(R.string.profile_dialer),
                     onClick = {
                         viewModel.updateThermalSconfig("8")
                         openTPD.visible = false
@@ -902,7 +915,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.SportsEsports,
-                    text = "Gaming",
+                    text = stringResource(R.string.profile_gaming),
                     onClick = {
                         viewModel.updateThermalSconfig("13")
                         openTPD.visible = false
@@ -910,7 +923,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 )
                 DialogTextButton(
                     icon = Icons.Default.Videocam,
-                    text = "Streaming",
+                    text = stringResource(R.string.profile_streaming),
                     onClick = {
                         viewModel.updateThermalSconfig("14")
                         openTPD.visible = false
@@ -923,7 +936,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                 onClick = { openTPD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -956,7 +969,7 @@ fun ForceFastChargingCard(viewModel: BatteryViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "Force fast charging",
+                text = stringResource(R.string.force_fast_charging),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f),
@@ -1010,7 +1023,7 @@ fun BypassChargingCard(viewModel: BatteryViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "Bypass charging",
+                text = stringResource(R.string.bypass_charging),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f),

@@ -49,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.net.toUri
 import com.rve.rvkernelmanager.R
@@ -61,20 +62,20 @@ fun SimpleTopAppBar() {
     val context = LocalContext.current
 
     TopAppBar(
-        title = { Text("RvKernel Manager", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { Text(stringResource(R.string.app_name), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         actions = {
             TooltipBox(
                 positionProvider =
                 TooltipDefaults.rememberTooltipPositionProvider(
                     TooltipAnchorPosition.Left,
                 ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("Menu") } },
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.menu)) } },
                 state = rememberTooltipState(),
             ) {
                 IconButton(onClick = { expanded = true }) {
                     Icon(
                         imageVector = Icons.Filled.MoreVert,
-                        contentDescription = "More",
+                        contentDescription = stringResource(R.string.menu),
                     )
                 }
             }
@@ -85,7 +86,7 @@ fun SimpleTopAppBar() {
             ) {
                 DropdownMenuItem(
                     text = {
-                        Text("Source code")
+                        Text(stringResource(R.string.source_code))
                     },
                     onClick = {
                         context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri()))
@@ -100,7 +101,7 @@ fun SimpleTopAppBar() {
                 )
                 DropdownMenuItem(
                     text = {
-                        Text("Telegram group")
+                        Text(stringResource(R.string.telegram_group))
                     },
                     onClick = {
                         context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri()))
@@ -115,7 +116,7 @@ fun SimpleTopAppBar() {
                 )
                 DropdownMenuItem(
                     text = {
-                        Text("Contributors")
+                        Text(stringResource(R.string.contributors))
                     },
                     onClick = {
                         context.startActivity(Intent(context, ContributorActivity::class.java))
@@ -124,14 +125,14 @@ fun SimpleTopAppBar() {
                     leadingIcon = {
                         Icon(
                             Icons.Filled.People,
-                            contentDescription = "Contributors",
+                            contentDescription = stringResource(R.string.contributors),
                         )
                     },
                 )
                 HorizontalDivider()
                 DropdownMenuItem(
                     text = {
-                        Text("Settings")
+                        Text(stringResource(R.string.settings))
                     },
                     onClick = {
                         context.startActivity(Intent(context, SettingsActivity::class.java))
@@ -165,11 +166,11 @@ fun TopAppBarWithBackButton(text: String, onBack: () -> Unit, scrollBehavior: To
                 TooltipDefaults.rememberTooltipPositionProvider(
                     TooltipAnchorPosition.Below,
                 ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text("Back") } },
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.back)) } },
                 state = rememberTooltipState(),
             ) {
                 IconButton(onClick = onBack) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                 }
             }
         },

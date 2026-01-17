@@ -19,31 +19,32 @@ package com.rve.rvkernelmanager.utils
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import com.rve.rvkernelmanager.R
 import com.topjohnwu.superuser.Shell
 import java.io.File
 
 object Utils {
     const val TAG = "Utils"
 
-    fun getDeviceName(): String = runCatching {
+    fun getDeviceName(context: Context): String = runCatching {
         Build.MODEL
     }.getOrElse {
         Log.e(TAG, "getDeviceName: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
-    fun getDeviceCodename(): String = runCatching {
+    fun getDeviceCodename(context: Context): String = runCatching {
         Build.DEVICE
     }.getOrElse {
         Log.e(TAG, "getDeviceCodename: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
-    fun getAndroidVersion(): String = runCatching {
+    fun getAndroidVersion(context: Context): String = runCatching {
         Build.VERSION.RELEASE
     }.getOrElse {
         Log.e(TAG, "getAndroidVersion: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getSdkVersion(): Int = runCatching {
@@ -53,11 +54,11 @@ object Utils {
         0
     }
 
-    fun getManufacturer(): String = runCatching {
+    fun getManufacturer(context: Context): String = runCatching {
         Build.MANUFACTURER
     }.getOrElse {
         Log.e(TAG, "getManufacturer: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun getSystemProperty(key: String): String = runCatching {
@@ -71,12 +72,12 @@ object Utils {
         Log.e(TAG, "getSystemProperty: ${it.message}", it)
     }.getOrDefault("")
 
-    fun getTemp(filePath: String): String = runCatching {
+    fun getTemp(context: Context, filePath: String): String = runCatching {
         val value = readFile(filePath).trim()
-        value.toFloatOrNull()?.div(1000)?.let { "%.1f".format(it) } ?: "unknown"
+        value.toFloatOrNull()?.div(1000)?.let { "%.1f".format(it) } ?: context.getString(R.string.unknown)
     }.getOrElse {
         Log.e(TAG, "getTemp: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 
     fun testFile(filePath: String): Boolean = runCatching {
@@ -115,6 +116,6 @@ object Utils {
         "${packageInfo.versionName} (${packageInfo.longVersionCode})"
     }.getOrElse {
         Log.e(TAG, "getAppVersion: ${it.message}", it)
-        "unknown"
+        context.getString(R.string.unknown)
     }
 }

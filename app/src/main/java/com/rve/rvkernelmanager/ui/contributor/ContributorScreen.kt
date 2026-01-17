@@ -56,11 +56,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.components.shimmerEffect
 
@@ -80,7 +82,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBarWithBackButton(
-                text = "Contributors",
+                text = stringResource(R.string.contributors),
                 onBack = { (context as? Activity)?.finish() },
                 scrollBehavior = scrollBehavior,
             )
@@ -127,7 +129,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "Error: $error",
+                                text = "${stringResource(R.string.error_prefix)} $error",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.error,
                             )
@@ -139,7 +141,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
-                                text = "No contributors found",
+                                text = stringResource(R.string.no_contributors),
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                         }
@@ -190,7 +192,7 @@ fun ContributorItem(contributor: Contributor, onClick: () -> Unit) {
         ) {
             AsyncImage(
                 model = contributor.avatarUrl,
-                contentDescription = "${contributor.login} avatar",
+                contentDescription = "${contributor.login} ${stringResource(R.string.avatar_desc)}",
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape),
@@ -206,7 +208,7 @@ fun ContributorItem(contributor: Contributor, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "${contributor.contributions} contributions",
+                    text = "${contributor.contributions} ${stringResource(R.string.contributions)}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

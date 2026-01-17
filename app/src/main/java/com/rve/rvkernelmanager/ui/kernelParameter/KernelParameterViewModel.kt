@@ -16,22 +16,22 @@
  */
 package com.rve.rvkernelmanager.ui.kernelParameter
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.utils.KernelUtils
 import com.rve.rvkernelmanager.utils.Utils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class KernelParameterViewModel : ViewModel() {
+class KernelParameterViewModel(application: Application) : AndroidViewModel(application) {
     data class KernelProfile(
         val currentProfile: Int = 1,
         val hasProfilePowersave: Boolean = false,
@@ -158,6 +158,7 @@ class KernelParameterViewModel : ViewModel() {
     }
 
     fun loadKernelParameter() {
+        val context = getApplication<Application>()
         viewModelScope.launch(Dispatchers.IO) {
             _kernelParameters.value = KernelParameters(
                 schedAutogroup = Utils.readFile(KernelUtils.SCHED_AUTO_GROUP).toIntOrNull(),
@@ -166,7 +167,7 @@ class KernelParameterViewModel : ViewModel() {
                 dmesgRestrict = Utils.readFile(KernelUtils.DMESG_RESTRICT).toIntOrNull(),
                 printk = Utils.readFile(KernelUtils.PRINTK),
                 hasPrintk = Utils.testFile(KernelUtils.PRINTK),
-                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(),
+                tcpCongestionAlgorithm = KernelUtils.getTcpCongestionAlgorithm(context),
                 hasTcpCongestionAlgorithm = Utils.testFile(KernelUtils.TCP_CONGESTION_ALGORITHM),
                 availableTcpCongestionAlgorithm = KernelUtils.getAvailableTcpCongestionAlgorithm(),
                 hasSchedLibName = Utils.testFile(KernelUtils.SCHED_LIB_NAME),
@@ -189,11 +190,12 @@ class KernelParameterViewModel : ViewModel() {
     }
 
     fun loadMemory() {
+        val context = getApplication<Application>()
         viewModelScope.launch(Dispatchers.IO) {
             _memory.value = Memory(
-                zramSize = KernelUtils.getZramSize(),
+                zramSize = KernelUtils.getZramSize(context),
                 hasZramSize = Utils.testFile(KernelUtils.ZRAM_SIZE),
-                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(context),
                 hasZramCompAlgorithm = Utils.testFile(KernelUtils.ZRAM_COMP_ALGORITHM),
                 availableZramCompAlgorithms = KernelUtils.getAvailableZramCompAlgorithms(),
                 swappiness = Utils.readFile(KernelUtils.SWAPPINESS),
@@ -276,6 +278,7 @@ class KernelParameterViewModel : ViewModel() {
 
     fun updateZramSize(sizeInGb: Int) {
         val sizeInBytes = (sizeInGb * 1073741824L).toString()
+        val context = getApplication<Application>()
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.swapoffZram()
             KernelUtils.resetZram()
@@ -283,13 +286,14 @@ class KernelParameterViewModel : ViewModel() {
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _memory.value = _memory.value.copy(
-                zramSize = KernelUtils.getZramSize(),
+                zramSize = KernelUtils.getZramSize(context),
             )
         }
     }
 
     fun updateZramCompAlgorithm(algorithm: String) {
         val currentSize = Utils.readFile(KernelUtils.ZRAM_SIZE)
+        val context = getApplication<Application>()
         viewModelScope.launch(Dispatchers.IO) {
             KernelUtils.swapoffZram()
             KernelUtils.resetZram()
@@ -298,7 +302,7 @@ class KernelParameterViewModel : ViewModel() {
             KernelUtils.mkswapZram()
             KernelUtils.swaponZram()
             _memory.value = _memory.value.copy(
-                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(),
+                zramCompAlgorithm = KernelUtils.getZramCompAlgorithm(context),
             )
         }
     }
@@ -311,10 +315,5 @@ class KernelParameterViewModel : ViewModel() {
                 bore = value,
             )
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
     }
 }

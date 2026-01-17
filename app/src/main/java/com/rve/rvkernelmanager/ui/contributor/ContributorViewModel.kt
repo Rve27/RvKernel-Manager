@@ -16,8 +16,10 @@
  */
 package com.rve.rvkernelmanager.ui.contributor
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.rve.rvkernelmanager.R
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
@@ -39,7 +41,7 @@ data class Contributor(val login: String, val id: Int, val avatar_url: String, v
     val htmlUrl: String get() = html_url
 }
 
-class ContributorViewModel : ViewModel() {
+class ContributorViewModel(application: Application) : AndroidViewModel(application) {
     private val _contributors = MutableStateFlow<List<Contributor>>(emptyList())
     val contributors: StateFlow<List<Contributor>> = _contributors.asStateFlow()
 
@@ -55,27 +57,28 @@ class ContributorViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+            val context = getApplication<Application>()
 
             try {
                 val contributorsList = withContext(Dispatchers.IO) {
-                    fetchContributors()
+                    fetchContributors(context)
                 }
                 _contributors.value = contributorsList
             } catch (e: UnknownHostException) {
-                _error.value = "No internet connection"
+                _error.value = context.getString(R.string.no_internet)
             } catch (e: SocketTimeoutException) {
-                _error.value = "Connection timeout"
+                _error.value = context.getString(R.string.timeout)
             } catch (e: IOException) {
-                _error.value = "Network error: ${e.message}"
+                _error.value = "${context.getString(R.string.network_error)}: ${e.message}"
             } catch (e: Exception) {
-                _error.value = "Error: ${e.message}"
+                _error.value = "${context.getString(R.string.error_prefix)} ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    private suspend fun fetchContributors(): List<Contributor> {
+    private suspend fun fetchContributors(application: Application): List<Contributor> {
         val url = URL("https://api.github.com/repos/Rve27/RvKernel-Manager/contributors")
         val connection = url.openConnection() as HttpURLConnection
 
@@ -99,7 +102,7 @@ class ContributorViewModel : ViewModel() {
                 } catch (e: Exception) {
                     "HTTP $responseCode"
                 }
-                throw IOException("Server error: $errorMessage")
+                throw IOException("${application.getString(R.string.server_error)}: $errorMessage")
             }
         } finally {
             connection.disconnect()

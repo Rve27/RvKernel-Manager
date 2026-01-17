@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -60,6 +61,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.icons.materialsymbols.roundedfilled.R
 import com.rve.rvkernelmanager.R.drawable.ic_linux
+import com.rve.rvkernelmanager.R.string
 import com.rve.rvkernelmanager.ui.components.ListItemCard
 import com.rve.rvkernelmanager.ui.components.Section
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
@@ -110,10 +112,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 contentPadding = PaddingValues(16.dp),
             ) {
                 item {
-                    Section("Device Information") {
+                    Section(stringResource(string.device_info_section)) {
                         ListItemCard(
                             icon = painterResource(R.drawable.materialsymbols_ic_mobile_info_rounded_filled),
-                            title = "Device",
+                            title = stringResource(string.device),
                             body = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
                             onClick = { /* Nothing */ },
                             onLongClick = {
@@ -121,7 +123,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Device codename",
+                                                context.getString(string.device_codename),
                                                 "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
                                             ),
                                         ),
@@ -131,7 +133,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         )
                         ListItemCard(
                             icon = painterResource(R.drawable.materialsymbols_ic_android_rounded_filled),
-                            title = "Android",
+                            title = stringResource(string.android),
                             body = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
                             onClick = { /* Nothing */ },
                             onLongClick = {
@@ -139,7 +141,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Android version",
+                                                context.getString(string.android_version),
                                                 "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
                                             ),
                                         ),
@@ -149,7 +151,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         )
                         ListItemCard(
                             icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = "RAM",
+                            title = stringResource(string.ram),
                             body = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
                             onClick = { /* Nothing */ },
                             onLongClick = {
@@ -157,7 +159,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "RAM",
+                                                context.getString(string.ram),
                                                 "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
                                             ),
                                         ),
@@ -167,7 +169,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         )
                         ListItemCard(
                             icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = "CPU",
+                            title = stringResource(string.cpu),
                             body = deviceInfo.cpu,
                             onClick = { /* Nothing */ },
                             onLongClick = {
@@ -175,7 +177,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "CPU",
+                                                context.getString(string.cpu),
                                                 deviceInfo.cpu,
                                             ),
                                         ),
@@ -185,7 +187,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         )
                         ListItemCard(
                             icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = "GPU",
+                            title = stringResource(string.gpu),
                             body = deviceInfo.gpuModel,
                             onClick = { /* Nothing */ },
                             onLongClick = {
@@ -193,7 +195,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "GPU",
+                                                context.getString(string.gpu),
                                                 deviceInfo.gpuModel,
                                             ),
                                         ),
@@ -216,7 +218,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         ) {
                             ListItemCard(
                                 icon = painterResource(R.drawable.materialsymbols_ic_shield_rounded_filled),
-                                title = "WireGuard",
+                                title = stringResource(string.wireguard),
                                 body = deviceInfo.wireGuard,
                                 onClick = { /* Nothing */ },
                                 onLongClick = {
@@ -224,7 +226,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                         clipboard.setClipEntry(
                                             ClipEntry(
                                                 ClipData.newPlainText(
-                                                    "WireGuard",
+                                                    context.getString(string.wireguard),
                                                     deviceInfo.wireGuard,
                                                 ),
                                             ),
@@ -235,7 +237,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         }
                         ListItemCard(
                             icon = painterResource(ic_linux),
-                            title = "Kernel",
+                            title = stringResource(string.kernel),
                             body = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
                             onClick = { isFullKernelVersion = !isFullKernelVersion },
                             onLongClick = {
@@ -243,7 +245,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                                     clipboard.setClipEntry(
                                         ClipEntry(
                                             ClipData.newPlainText(
-                                                "Kernel",
+                                                context.getString(string.kernel),
                                                 if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
                                             ),
                                         ),

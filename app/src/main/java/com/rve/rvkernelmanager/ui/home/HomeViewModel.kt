@@ -51,19 +51,19 @@ class HomeViewModel : ViewModel() {
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _deviceInfo.value = DeviceInfo(
-                deviceName = Utils.getDeviceName(),
-                deviceCodename = Utils.getDeviceCodename(),
-                manufacturer = Utils.getManufacturer(),
+                deviceName = Utils.getDeviceName(context),
+                deviceCodename = Utils.getDeviceCodename(context),
+                manufacturer = Utils.getManufacturer(context),
                 ramInfo = SoCUtils.getTotalRam(context),
-                zram = KernelUtils.getZramSize(),
-                gpuModel = SoCUtils.getOpenGL(),
-                androidVersion = Utils.getAndroidVersion(),
+                zram = KernelUtils.getZramSize(context),
+                gpuModel = SoCUtils.getOpenGL(context),
+                androidVersion = Utils.getAndroidVersion(context),
                 sdkVersion = Utils.getSdkVersion(),
-                cpu = SoCUtils.getCpuInfo(),
+                cpu = SoCUtils.getCpuInfo(context),
                 hasWireGuard = Utils.testFile(KernelUtils.WIREGUARD_VERSION),
-                wireGuard = KernelUtils.getWireGuardVersion(),
-                kernelVersion = KernelUtils.getKernelVersion(),
-                fullKernelVersion = KernelUtils.getFullKernelVersion(),
+                wireGuard = KernelUtils.getWireGuardVersion(context),
+                kernelVersion = KernelUtils.getKernelVersion(context),
+                fullKernelVersion = KernelUtils.getFullKernelVersion(context),
             )
         }
     }

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navigation -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_battery">Батарея</string>
+    <string name="nav_kernel">Ядро</string>
+
+    <!-- Common -->
+    <string name="unknown">неизвестно</string>
+    <string name="na">Н/Д</string>
+    <string name="close">Закрыть</string>
+    <string name="cancel">Отмена</string>
+    <string name="change">Изменить</string>
+    <string name="apply">Применить</string>
+    <string name="menu">Меню</string>
+    <string name="back">Назад</string>
+    <string name="off">Выкл</string>
+    <string name="low">Низкий</string>
+    <string name="medium">Средний</string>
+    <string name="high">Высокий</string>
+    <string name="enabled">Включено</string>
+
+    <!-- MainActivity -->
+    <string name="waiting_root">ожидание предоставления root-прав...</string>
+    <string name="root_required_title">Требуются Root права</string>
+    <string name="root_required_desc">RvKernel Manager требуются права суперпользователя</string>
+
+    <!-- AppBar -->
+    <string name="source_code">Исходный код</string>
+    <string name="telegram_group">Группа Telegram</string>
+    <string name="contributors">Участники</string>
+    <string name="settings">Настройки</string>
+
+    <!-- Home Screen -->
+    <string name="device_info_section">Информация об устройстве</string>
+    <string name="device">Устройство</string>
+    <string name="device_codename">Кодовое имя устройства</string>
+    <string name="android_version">Версия Android</string>
+    <string name="ram">ОЗУ</string>
+    <string name="cpu">ЦП</string>
+    <string name="gpu">ГП</string>
+    <string name="kernel">Ядро</string>
+
+    <!-- Battery Screen -->
+    <string name="battery_monitor">Мониторинг батареи</string>
+    <string name="voltage">Напряжение батареи</string>
+    <string name="temperature">Температура батареи</string>
+    <string name="level">Уровень заряда</string>
+    <string name="uptime">Время работы</string>
+    <string name="device_uptime">Время работы устройства</string>
+    <string name="deep_sleep">Глубокий сон</string>
+    <string name="battery_info">Информация о батарее</string>
+    <string name="tech">Технология батареи</string>
+    <string name="health">Здоровье батареи</string>
+    <string name="design_capacity">Проектная емкость</string>
+    <string name="battery_design_capacity">Проектная емкость батареи</string>
+    <string name="tap_to_set_capacity">(Нажмите, чтобы задать проектную емкость вручную)</string>
+    <string name="max_capacity">Максимальная емкость</string>
+    <string name="battery_max_capacity">Максимальная емкость батареи</string>
+    <string name="set_manual_capacity">Задать проектную емкость вручную</string>
+    <string name="capacity_hint">Проектная емкость (мАч)</string>
+    <string name="thermal_profiles">Тепловые профили</string>
+    <string name="profile_default">По умолчанию</string>
+    <string name="profile_benchmark">Бенчмарк</string>
+    <string name="profile_browser">Браузер</string>
+    <string name="profile_camera">Камера</string>
+    <string name="profile_dialer">Звонилка</string>
+    <string name="profile_gaming">Игры</string>
+    <string name="profile_streaming">Стриминг</string>
+    <string name="force_fast_charging">Принудительная быстрая зарядка</string>
+    <string name="bypass_charging">Обход зарядки</string>
+
+    <!-- Battery Status -->
+    <string name="health_good">Хорошее</string>
+    <string name="health_overheat">Перегрев</string>
+    <string name="health_dead">Мертвая</string>
+    <string name="health_over_voltage">Перенапряжение</string>
+    <string name="health_unspecified">Неопределенный сбой</string>
+    <string name="health_cold">Холодная</string>
+
+    <!-- SoC Screen -->
+    <string name="cpu_monitor">Мониторинг ЦП</string>
+    <string name="usage">Использование</string>
+    <string name="current_frequencies">Текущие частоты</string>
+    <string name="little_cluster">Малый кластер</string>
+    <string name="big_cluster">Большой кластер</string>
+    <string name="prime_cluster">Prime кластер</string>
+    <string name="min_freq">Мин. частота</string>
+    <string name="max_freq">Макс. частота</string>
+    <string name="governor">Регулятор</string>
+    <string name="available_frequencies">Доступные частоты</string>
+    <string name="available_governor">Доступные регуляторы</string>
+    <string name="no_frequencies">Доступные частоты не найдены.</string>
+    <string name="no_governors">Доступные регуляторы не найдены.</string>
+    <string name="sched_boost_input">Sched boost при вводе</string>
+    <string name="gpu_monitor">Мониторинг ГП</string>
+    <string name="default_pwrlevel">Pwrlevel по умолчанию</string>
+    <string name="gpu_throttling">Троттлинг ГП</string>
+
+    <!-- Kernel Screen -->
+    <string name="kernel_profiles_title">Профили ядра</string>
+    <string name="profile_powersave">Энергосбережение</string>
+    <string name="profile_balance">Баланс</string>
+    <string name="profile_performance">Производительность</string>
+    <string name="get_templates">Получить шаблоны профилей ядра</string>
+    <string name="kernel_parameter_title">Параметры ядра</string>
+    <string name="restrict_dmesg">Ограничить вывод dmesg</string>
+    <string name="restrict_dmesg_title">Ограничение Dmesg</string>
+    <string name="restrict_dmesg_desc">Этот переключатель определяет, запрещено ли непривилегированным пользователям использовать dmesg для просмотра сообщений из буфера журнала ядра. Когда dmesg_restrict установлен в неактивное состояние (0), ограничений нет.</string>
+    <string name="sched_auto_group">Автогруппировка планировщика</string>
+    <string name="sched_lib_name_desc">Добавьте пакеты приложений в список sched_lib_name, чтобы сообщать о максимальной частоте для задачи unity</string>
+    <string name="tcp_congestion">Алгоритм перегрузки TCP</string>
+    <string name="uclamp_max">Uclamp макс.</string>
+    <string name="uclamp_min">Uclamp мин.</string>
+    <string name="uclamp_min_rt">Uclamp мин. RT по умолчанию</string>
+    <string name="memory">Память</string>
+    <string name="zram_warning">Изменение параметров ZRAM может занять несколько минут</string>
+    <string name="zram_size">Размер ZRAM</string>
+    <string name="zram_comp_algo">Алгоритм сжатия ZRAM</string>
+    <string name="bore_scheduler">Планировщик BORE</string>
+    <string name="bore_desc">BORE (Burst-Oriented Response Enhancer) — это улучшенная версия планировщиков Linux EEVDF. Разработан с целью сохранения высокой производительности этих планировщиков при обеспечении устойчивой отзывчивости на ввод пользователя при максимально разнообразных сценариях нагрузки.</string>
+
+    <!-- Settings Screen -->
+    <string name="app_theme">Тема приложения</string>
+    <string name="theme_summary">Выберите между светлой, темной или системной темой по умолчанию</string>
+    <string name="select_theme">Выберите тему</string>
+    <string name="theme_light">Светлый режим</string>
+    <string name="theme_dark">Темный режим</string>
+    <string name="theme_system">Системная по умолчанию</string>
+    <string name="soc_polling">Интервал опроса SoC</string>
+    <string name="soc_polling_summary">Установите, как часто обновляются данные SoC (в секундах)</string>
+    <string name="polling_dialog_desc">Установите интервал опроса для данных SoC (1-30 секунд)</string>
+    <string name="polling_hint">Интервал (секунды)</string>
+    <string name="app_version">Версия RvKernel Manager</string>
+
+    <!-- Contributor Screen -->
+    <string name="contributions">вкладов</string>
+    <string name="error_prefix">Ошибка:</string>
+    <string name="no_contributors">Участники не найдены</string>
+    <string name="no_internet">Нет подключения к интернету</string>
+    <string name="timeout">Тайм-аут соединения</string>
+    <string name="network_error">Ошибка сети</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="avatar_desc">аватар</string>
+</resources>

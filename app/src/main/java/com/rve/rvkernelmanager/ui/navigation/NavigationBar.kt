@@ -24,6 +24,7 @@ import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
@@ -41,14 +42,15 @@ fun BottomNavigationBar(navController: NavController) {
 
     ShortNavigationBar {
         items.forEach { item ->
+            val title = stringResource(item.titleRes)
             ShortNavigationBarItem(
                 icon = {
                     Icon(
                         if (currentDestination?.route == item.route) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.title,
+                        contentDescription = title,
                     )
                 },
-                label = { Text(item.title) },
+                label = { Text(title) },
                 selected = currentDestination?.route == item.route,
                 onClick = {
                     navController.navigate(item.route) {

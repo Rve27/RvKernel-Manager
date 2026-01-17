@@ -88,6 +88,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -228,7 +229,11 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
     val kernelProfile by viewModel.kernelProfile.collectAsStateWithLifecycle()
     val kernelProfileLink = "https://github.com/Rve27/RvKernel-Manager/tree/main/kernel-profile-template"
 
-    val options = listOf("Powersave", "Balance", "Performance")
+    val options = listOf(
+        stringResource(R.string.profile_powersave),
+        stringResource(R.string.profile_balance),
+        stringResource(R.string.profile_performance)
+    )
 
     val icons = listOf(
         painterResource(R.drawable.ic_battery_android_frame_plus),
@@ -257,7 +262,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                     contentDescription = null,
                 )
                 Text(
-                    text = "Kernel Profiles",
+                    text = stringResource(R.string.kernel_profiles_title),
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.titleLarge,
                 )
@@ -327,7 +332,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                         contentPadding = PaddingValues(16.dp),
                     ) {
                         Text(
-                            text = "Get kernel profiles templates",
+                            text = stringResource(R.string.get_templates),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -373,7 +378,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     contentDescription = null,
                 )
                 Text(
-                    text = "Kernel Parameter",
+                    text = stringResource(R.string.kernel_parameter_title),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -416,10 +421,10 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_comments_disabled),
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    contentDescription = "Restrict dmesg output",
+                                    contentDescription = stringResource(R.string.restrict_dmesg),
                                 )
                                 Text(
-                                    text = "Restrict dmesg output",
+                                    text = stringResource(R.string.restrict_dmesg),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.weight(1f),
@@ -457,15 +462,13 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                     verticalArrangement = Arrangement.spacedBy(16.dp),
                                 ) {
                                     Text(
-                                        text = "Restrict Dmesg",
+                                        text = stringResource(R.string.restrict_dmesg_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
                                     HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                                     Text(
-                                        text = "This toggle indicates whether unprivileged users are prevented" +
-                                            " from using dmesg to view messages from the kernel's log buffer." +
-                                            " When dmesg_restrict is set to inactive (0) there are no restrictions.",
+                                        text = stringResource(R.string.restrict_dmesg_desc),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
@@ -513,7 +516,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                             contentDescription = null,
                         )
                         Text(
-                            text = "Sched auto group",
+                            text = stringResource(R.string.sched_auto_group),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.weight(1f),
@@ -572,7 +575,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         )
                         Column {
                             Text(
-                                text = "printk",
+                                text = stringResource(R.string.printk),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -618,12 +621,12 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         )
                         Column {
                             Text(
-                                text = "Sched lib name",
+                                text = stringResource(R.string.sched_lib_name),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                             Text(
-                                text = "Add apps packages into sched_lib_name list to report max frequency to unity task",
+                                text = stringResource(R.string.sched_lib_name_desc),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -664,7 +667,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                         )
                         Column {
                             Text(
-                                text = "TCP congestion algorithm",
+                                text = stringResource(R.string.tcp_congestion),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -686,7 +689,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = printk,
                 onValueChange = { printk = it },
-                label = { Text("printk") },
+                label = { Text(stringResource(R.string.printk)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -708,7 +711,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -716,7 +719,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 onClick = { openPD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -727,7 +730,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = schedLibName,
                 onValueChange = { schedLibName = it },
-                label = { Text("Sched lib name") },
+                label = { Text(stringResource(R.string.sched_lib_name)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done,
@@ -748,7 +751,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -756,7 +759,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 onClick = { openSLND.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -765,7 +768,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         state = openTCD,
         title = {
             Text(
-                text = "TCP congestion algorithm",
+                text = stringResource(R.string.tcp_congestion),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -789,7 +792,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 onClick = { openTCD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -828,7 +831,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     contentDescription = null,
                 )
                 Text(
-                    text = "Uclamp",
+                    text = stringResource(R.string.uclamp),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -859,7 +862,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Uclamp max",
+                                text = stringResource(R.string.uclamp_max),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -894,7 +897,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Uclamp min",
+                                text = stringResource(R.string.uclamp_min),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -936,7 +939,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         Modifier.fillMaxSize(),
                     ) {
                         Text(
-                            text = "Uclamp min RT default",
+                            text = stringResource(R.string.uclamp_min_rt),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
@@ -957,7 +960,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = uclampMax,
                 onValueChange = { uclampMax = it },
-                label = { Text("Uclamp max") },
+                label = { Text(stringResource(R.string.uclamp_max)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -979,7 +982,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -987,7 +990,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 onClick = { openUMX.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -998,7 +1001,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = uclampMin,
                 onValueChange = { uclampMin = it },
-                label = { Text("Uclamp min") },
+                label = { Text(stringResource(R.string.uclamp_min)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1020,7 +1023,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1028,7 +1031,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 onClick = { openUMN.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1039,7 +1042,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = uclampMinRt,
                 onValueChange = { uclampMinRt = it },
-                label = { Text("Uclamp min RT default") },
+                label = { Text(stringResource(R.string.uclamp_min_rt)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1061,7 +1064,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text(text = "Change")
+                Text(text = stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1069,7 +1072,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 onClick = { openUMRT.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1113,7 +1116,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "Memory",
+                text = stringResource(R.string.memory),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -1164,7 +1167,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             contentDescription = null,
                         )
                         Text(
-                            text = "It may take a few minutes to change the ZRAM parameters",
+                            text = stringResource(R.string.zram_warning),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
@@ -1205,7 +1208,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             ) {
                                 Column(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "ZRAM size",
+                                        text = stringResource(R.string.zram_size),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
@@ -1249,7 +1252,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                             ) {
                                 Column(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Swappiness",
+                                        text = stringResource(R.string.swappiness),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )
@@ -1284,7 +1287,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "ZRAM compression algorithm",
+                                text = stringResource(R.string.zram_comp_algo),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1317,7 +1320,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "dirty ratio",
+                                text = stringResource(R.string.dirty_ratio),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1337,7 +1340,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         state = openZD,
         title = {
             Text(
-                text = "ZRAM size",
+                text = stringResource(R.string.zram_size),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1361,7 +1364,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 onClick = { openZD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1370,7 +1373,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         state = openZCD,
         title = {
             Text(
-                text = "ZRAM compression algorithm",
+                text = stringResource(R.string.zram_comp_algo),
                 style = MaterialTheme.typography.titleMedium,
                 color = AlertDialogDefaults.titleContentColor,
             )
@@ -1393,7 +1396,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 onClick = { openZCD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1404,7 +1407,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = swappiness,
                 onValueChange = { swappiness = it },
-                label = { Text("Swappiness") },
+                label = { Text(stringResource(R.string.swappiness)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1426,7 +1429,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1434,7 +1437,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 onClick = { openSD.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1445,7 +1448,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = dirtyRatio,
                 onValueChange = { dirtyRatio = it },
-                label = { Text("dirty ratio") },
+                label = { Text(stringResource(R.string.dirty_ratio)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1467,7 +1470,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1475,7 +1478,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 onClick = { openDR.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1527,7 +1530,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 contentDescription = null,
             )
             Text(
-                text = "BORE Scheduler",
+                text = stringResource(R.string.bore_scheduler),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f),
@@ -1577,7 +1580,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "Enabled",
+                                text = stringResource(R.string.enabled),
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.weight(1f),
@@ -1613,17 +1616,13 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 Text(
-                                    text = "BORE Scheduler",
+                                    text = stringResource(R.string.bore_scheduler),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
                                 HorizontalDivider(color = MaterialTheme.colorScheme.onPrimary)
                                 Text(
-                                    text = "BORE (Burst-Oriented Response Enhancer) is an enhanced versions" +
-                                        " of the EEVDF (Earliest Eligible Virtual Deadline First) Linux schedulers." +
-                                        " Developed with the aim of maintaining these schedulers' high performance" +
-                                        " while delivering resilient responsiveness to user" +
-                                        " input under as versatile load scenario as possible.",
+                                    text = stringResource(R.string.bore_desc),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimary,
                                 )
@@ -1653,7 +1652,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst smoothness long",
+                                text = stringResource(R.string.burst_smooth_long),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1687,7 +1686,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst smoothness short",
+                                text = stringResource(R.string.burst_smooth_short),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1721,7 +1720,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst fork atavistic",
+                                text = stringResource(R.string.burst_fork),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1755,7 +1754,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst penalty offset",
+                                text = stringResource(R.string.burst_penalty_offset),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1789,7 +1788,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst penalty scale",
+                                text = stringResource(R.string.burst_penalty_scale),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1823,7 +1822,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
-                                text = "Burst cache lifetime",
+                                text = stringResource(R.string.burst_cache),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
@@ -1845,7 +1844,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstSmoothnessLong,
                 onValueChange = { burstSmoothnessLong = it },
-                label = { Text("Burst smoothness long") },
+                label = { Text(stringResource(R.string.burst_smooth_long)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1867,7 +1866,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1875,7 +1874,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBSL.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1885,7 +1884,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstSmoothnessShort,
                 onValueChange = { burstSmoothnessShort = it },
-                label = { Text("Burst smoothness short") },
+                label = { Text(stringResource(R.string.burst_smooth_short)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1907,7 +1906,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1915,7 +1914,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBSS.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1925,7 +1924,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstForkAtavistic,
                 onValueChange = { burstForkAtavistic = it },
-                label = { Text("Burst fork atavistic") },
+                label = { Text(stringResource(R.string.burst_fork)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1947,7 +1946,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1955,7 +1954,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBFA.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -1965,7 +1964,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstPenaltyOffset,
                 onValueChange = { burstPenaltyOffset = it },
-                label = { Text("Burst penalty offset") },
+                label = { Text(stringResource(R.string.burst_penalty_offset)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -1987,7 +1986,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -1995,7 +1994,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBPO.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -2005,7 +2004,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstPenaltyScale,
                 onValueChange = { burstPenaltyScale = it },
-                label = { Text("Burst penalty scale") },
+                label = { Text(stringResource(R.string.burst_penalty_scale)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -2027,7 +2026,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -2035,7 +2034,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBPS.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
@@ -2045,7 +2044,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
             OutlinedTextField(
                 value = burstCacheLifetime,
                 onValueChange = { burstCacheLifetime = it },
-                label = { Text("Burst cache lifetime") },
+                label = { Text(stringResource(R.string.burst_cache)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
@@ -2067,7 +2066,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Change")
+                Text(stringResource(R.string.change))
             }
         },
         dismissButton = {
@@ -2075,7 +2074,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                 onClick = { openBCL.visible = false },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
     )
