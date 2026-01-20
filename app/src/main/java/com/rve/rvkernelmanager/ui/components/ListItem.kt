@@ -18,6 +18,7 @@
 
 package com.rve.rvkernelmanager.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -45,9 +46,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-@Composable
-fun LazyListScope.Section(
-    text: Int,
+fun LazyListScope.section(
+    @StringRes text: Int,
     content: LazyListScope.() -> Unit,
 ) {
     item {
