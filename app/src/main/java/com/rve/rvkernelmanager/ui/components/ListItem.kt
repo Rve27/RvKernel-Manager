@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -41,26 +42,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Section(
-    text: String,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+fun LazyListScope.Section(
+    text: Int,
+    content: LazyListScope.() -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    item {
         Text(
-            text = text,
+            text = stringResource(text),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
-        content()
     }
+    content()
 }
 
 @Composable
