@@ -21,17 +21,11 @@ package com.rve.rvkernelmanager.ui.components
 import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -41,21 +35,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.core.net.toUri
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_settings_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
 
 @Composable
 fun SimpleTopAppBar() {
-    var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     TopAppBar(
@@ -66,52 +55,19 @@ fun SimpleTopAppBar() {
                 TooltipDefaults.rememberTooltipPositionProvider(
                     TooltipAnchorPosition.Left,
                 ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.menu)) } },
+                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.settings)) } },
                 state = rememberTooltipState(),
             ) {
-                IconButton(onClick = { expanded = true }) {
+                IconButton(
+                    onClick = {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    }
+                ) {
                     Icon(
-                        imageVector = Icons.Filled.MoreVert,
+                        painter = painterResource(materialsymbols_ic_settings_rounded_filled),
                         contentDescription = stringResource(R.string.menu),
                     )
                 }
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                shape = MaterialTheme.shapes.large,
-            ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(stringResource(R.string.telegram_group))
-                    },
-                    onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri()))
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_telegram),
-                            contentDescription = null,
-                        )
-                    },
-                )
-                HorizontalDivider()
-                DropdownMenuItem(
-                    text = {
-                        Text(stringResource(R.string.settings))
-                    },
-                    onClick = {
-                        context.startActivity(Intent(context, SettingsActivity::class.java))
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.Settings,
-                            contentDescription = null,
-                        )
-                    },
-                )
             }
         },
     )

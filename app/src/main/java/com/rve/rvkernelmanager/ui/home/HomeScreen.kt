@@ -252,7 +252,13 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri())) },
                 onLongClick = { /* Nothing */ },
             ),
-
+            HomeItem(
+                icon = painterResource(R.drawable.ic_telegram),
+                title = stringResource(R.string.telegram_group),
+                body = stringResource(R.string.telegram_group_desc),
+                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri())) },
+                onLongClick = { /* Nothing */ },
+            ),
         )
 
         Box(
