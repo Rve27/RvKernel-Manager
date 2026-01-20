@@ -19,17 +19,14 @@
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.ClipData
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -59,12 +56,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.composables.icons.materialsymbols.roundedfilled.R
-import com.rve.rvkernelmanager.R.drawable.ic_linux
-import com.rve.rvkernelmanager.R.string
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_android_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mobile_info_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_shield_rounded_filled
+import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ListItemCard
-import com.rve.rvkernelmanager.ui.components.Section
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
+import com.rve.rvkernelmanager.ui.components.section
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import kotlinx.coroutines.launch
 
@@ -101,6 +100,135 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
 
         val deviceInfo by viewModel.deviceInfo.collectAsStateWithLifecycle()
 
+        val deviceInfoItems = listOf(
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_mobile_info_rounded_filled),
+                title = stringResource(R.string.device),
+                body = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.device_codename),
+                                    "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
+                                ),
+                            ),
+                        )
+                    }
+                },
+            ),
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_android_rounded_filled),
+                title = stringResource(R.string.android),
+                body = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.android_version),
+                                    "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
+                                ),
+                            ),
+                        )
+                    }
+                },
+            ),
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+                title = stringResource(R.string.ram),
+                body = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.ram),
+                                    "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
+                                ),
+                            ),
+                        )
+                    }
+                }
+            ),
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+                title = stringResource(R.string.cpu),
+                body = deviceInfo.cpu,
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.cpu),
+                                    deviceInfo.cpu,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            ),
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+                title = stringResource(R.string.gpu),
+                body = deviceInfo.gpuModel,
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.gpu),
+                                    deviceInfo.gpuModel,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            ),
+            DeviceInfoItem(
+                icon = painterResource(materialsymbols_ic_shield_rounded_filled),
+                title = stringResource(R.string.wireguard),
+                body = deviceInfo.wireGuard,
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.wireguard),
+                                    deviceInfo.wireGuard,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            ),
+            DeviceInfoItem(
+                icon = painterResource(R.drawable.ic_linux),
+                title = stringResource(R.string.kernel),
+                body = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
+                onClick = { isFullKernelVersion = !isFullKernelVersion },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(
+                            ClipEntry(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.kernel),
+                                    if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
+                                ),
+                            ),
+                        )
+                    }
+                }
+            ),
+        )
+
         Box(
             modifier = Modifier
                 .padding(innerPadding)
@@ -110,148 +238,16 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         ) {
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                item {
-                    Section(stringResource(string.device_info_section)) {
+                section(R.string.device_info_section) {
+                    items(deviceInfoItems) { item ->
                         ListItemCard(
-                            icon = painterResource(R.drawable.materialsymbols_ic_mobile_info_rounded_filled),
-                            title = stringResource(string.device),
-                            body = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-                            onClick = { /* Nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.device_codename),
-                                                "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        )
-                        ListItemCard(
-                            icon = painterResource(R.drawable.materialsymbols_ic_android_rounded_filled),
-                            title = stringResource(string.android),
-                            body = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-                            onClick = { /* Nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.android_version),
-                                                "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        )
-                        ListItemCard(
-                            icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = stringResource(string.ram),
-                            body = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-                            onClick = { /* Nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.ram),
-                                                "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        )
-                        ListItemCard(
-                            icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = stringResource(string.cpu),
-                            body = deviceInfo.cpu,
-                            onClick = { /* Nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.cpu),
-                                                deviceInfo.cpu,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        )
-                        ListItemCard(
-                            icon = painterResource(R.drawable.materialsymbols_ic_memory_rounded_filled),
-                            title = stringResource(string.gpu),
-                            body = deviceInfo.gpuModel,
-                            onClick = { /* Nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.gpu),
-                                                deviceInfo.gpuModel,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        )
-                        AnimatedVisibility(
-                            visible = deviceInfo.hasWireGuard,
-                            enter = fadeIn(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
-                            ) + slideInVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
-                            ),
-                            exit = fadeOut(
-                                animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
-                            ) + slideOutVertically(
-                                animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
-                            ),
-                        ) {
-                            ListItemCard(
-                                icon = painterResource(R.drawable.materialsymbols_ic_shield_rounded_filled),
-                                title = stringResource(string.wireguard),
-                                body = deviceInfo.wireGuard,
-                                onClick = { /* Nothing */ },
-                                onLongClick = {
-                                    coroutineScope.launch {
-                                        clipboard.setClipEntry(
-                                            ClipEntry(
-                                                ClipData.newPlainText(
-                                                    context.getString(string.wireguard),
-                                                    deviceInfo.wireGuard,
-                                                ),
-                                            ),
-                                        )
-                                    }
-                                },
-                            )
-                        }
-                        ListItemCard(
-                            icon = painterResource(ic_linux),
-                            title = stringResource(string.kernel),
-                            body = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
-                            onClick = { isFullKernelVersion = !isFullKernelVersion },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(string.kernel),
-                                                if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
+                            icon = item.icon,
+                            title = item.title,
+                            body = item.body,
+                            onClick = item.onClick,
+                            onLongClick = item.onLongClick,
                         )
                     }
                 }
@@ -259,3 +255,11 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         }
     }
 }
+
+private data class DeviceInfoItem(
+    val icon: Any?,
+    val title: String,
+    val body: String,
+    val onClick: () -> Unit,
+    val onLongClick: () -> Unit
+)
