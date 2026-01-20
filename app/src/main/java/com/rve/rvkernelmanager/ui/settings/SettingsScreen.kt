@@ -19,7 +19,6 @@
 package com.rve.rvkernelmanager.ui.settings
 
 import android.app.Activity
-import android.content.ClipData
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,7 +30,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.AlertDialog
@@ -48,26 +46,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_android_rounded_filled
@@ -77,37 +68,18 @@ import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
-import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: LifecycleOwner) {
+fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val context = LocalContext.current
-    val clipboard = LocalClipboard.current
-    val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val pollingInterval by viewModel.pollingInterval.collectAsStateWithLifecycle()
     var value by remember { mutableStateOf((pollingInterval / 1000).toString()) }
     val intervalSeconds = value.toLongOrNull()
-    val appVersion by viewModel.appVersion.collectAsStateWithLifecycle()
 
     var openThemeDialog by remember { mutableStateOf(false) }
     var openPollingDialog by remember { mutableStateOf(false) }
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.loadSettingsData(context)
-                else -> {}
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -131,16 +103,6 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 title = stringResource(R.string.soc_polling),
                 summary = stringResource(R.string.soc_polling_summary),
                 onClick = { openPollingDialog = true },
-            )
-            CustomListItem(
-                icon = Icons.Default.Info,
-                title = stringResource(R.string.app_version),
-                summary = appVersion,
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(context.getString(R.string.app_version), appVersion)))
-                    }
-                },
             )
         }
     }

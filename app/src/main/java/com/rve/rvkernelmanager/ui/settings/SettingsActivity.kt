@@ -20,7 +20,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -29,10 +28,8 @@ class SettingsActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            val lifecycleOwner = LocalLifecycleOwner.current
-
             RvKernelManagerTheme {
-                SettingsScreen(lifecycleOwner = lifecycleOwner)
+                SettingsScreen()
             }
         }
     }

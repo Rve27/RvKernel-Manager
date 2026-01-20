@@ -34,9 +34,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     val themeMode: StateFlow<ThemeMode> = settingsPreference.themeMode
     val pollingInterval: StateFlow<Long> = settingsPreference.pollingInterval
 
-    private val _appVersion = MutableStateFlow("Unknown")
-    val appVersion: StateFlow<String> = _appVersion
-
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch {
             settingsPreference.setThemeMode(mode)
@@ -46,12 +43,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setPollingInterval(interval: Long) {
         viewModelScope.launch {
             settingsPreference.setPollingInterval(interval)
-        }
-    }
-
-    fun loadSettingsData(context: Context) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _appVersion.value = Utils.getAppVersion(context)
         }
     }
 }

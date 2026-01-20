@@ -67,6 +67,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mobile_info_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_shield_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_info_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ListItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
@@ -84,7 +85,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> viewModel.loadDeviceInfo(context)
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.loadDeviceInfo(context)
+                    viewModel.loadAppVersion(context)
+                }
                 else -> {}
             }
         }
@@ -107,6 +111,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
         val deviceInfo by viewModel.deviceInfo.collectAsStateWithLifecycle()
+        val appVersion by viewModel.appVersion.collectAsStateWithLifecycle()
 
         val deviceInfoItems = listOf(
             HomeItem(
@@ -259,6 +264,17 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri())) },
                 onLongClick = { /* Nothing */ },
             ),
+            HomeItem(
+                icon = painterResource(materialsymbols_ic_info_rounded_filled),
+                title = stringResource(R.string.app_version),
+                body = appVersion,
+                onClick = { /* Nothing */ },
+                onLongClick = {
+                    coroutineScope.launch {
+                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(context.getString(R.string.app_version), appVersion)))
+                    }
+                },
+            )
         )
 
         Box(

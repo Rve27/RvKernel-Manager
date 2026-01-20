@@ -48,6 +48,9 @@ class HomeViewModel : ViewModel() {
     private val _deviceInfo = MutableStateFlow(DeviceInfo())
     val deviceInfo: StateFlow<DeviceInfo> = _deviceInfo
 
+    private val _appVersion = MutableStateFlow("Unknown")
+    val appVersion: StateFlow<String> = _appVersion
+
     fun loadDeviceInfo(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _deviceInfo.value = DeviceInfo(
@@ -65,6 +68,12 @@ class HomeViewModel : ViewModel() {
                 kernelVersion = KernelUtils.getKernelVersion(context),
                 fullKernelVersion = KernelUtils.getFullKernelVersion(context),
             )
+        }
+    }
+
+    fun loadAppVersion(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _appVersion.value = Utils.getAppVersion(context)
         }
     }
 
