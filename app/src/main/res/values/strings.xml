@@ -30,6 +30,10 @@
 
     <!-- AppBar -->
     <string name="settings">Settings</string>
+    <string name="reboot_menu">Reboot menu</string>
+    <string name="reboot_system">Reboot system</string>
+    <string name="reboot_recovery">Reboot to recovery</string>
+    <string name="reboot_bootloader">Reboot to bootloader</string>
 
     <!-- Home Screen -->
     <string name="device_info_section">Device Information</string>

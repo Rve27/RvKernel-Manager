@@ -19,13 +19,17 @@
 package com.rve.rvkernelmanager.ui.components
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -35,38 +39,93 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_restart_alt_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_settings_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
+import com.rve.rvkernelmanager.utils.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun SimpleTopAppBar() {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val rebootMenu = listOf(
+        Pair(stringResource(R.string.reboot_system), ""),
+        Pair(stringResource(R.string.reboot_recovery), "recovery"),
+        Pair(stringResource(R.string.reboot_bootloader), "bootloader")
+    )
 
     TopAppBar(
         title = { Text(stringResource(R.string.app_name), maxLines = 1, overflow = TextOverflow.Ellipsis) },
         actions = {
-            TooltipBox(
-                positionProvider =
-                TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Left,
-                ),
-                tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.settings)) } },
-                state = rememberTooltipState(),
-            ) {
-                IconButton(
-                    onClick = {
-                        context.startActivity(Intent(context, SettingsActivity::class.java))
-                    }
+            Row {
+                TooltipBox(
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            TooltipAnchorPosition.Below,
+                        ),
+                    tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.settings)) } },
+                    state = rememberTooltipState(),
                 ) {
-                    Icon(
-                        painter = painterResource(materialsymbols_ic_settings_rounded_filled),
-                        contentDescription = stringResource(R.string.menu),
-                    )
+                    IconButton(
+                        onClick = {
+                            context.startActivity(Intent(context, SettingsActivity::class.java))
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(materialsymbols_ic_settings_rounded_filled),
+                            contentDescription = stringResource(R.string.menu),
+                        )
+                    }
+                }
+                TooltipBox(
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            TooltipAnchorPosition.Below,
+                        ),
+                    tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.reboot_menu)) } },
+                    state = rememberTooltipState(),
+                ) {
+                    IconButton(
+                        onClick = { isExpanded = true }
+                    ) {
+                        Icon(
+                            painter = painterResource(materialsymbols_ic_restart_alt_rounded_filled),
+                            contentDescription = stringResource(R.string.menu),
+                        )
+                    }
+                }
+                DropdownMenu(
+                    expanded = isExpanded,
+                    onDismissRequest = { isExpanded = false },
+                    shape = MaterialTheme.shapes.large,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ) {
+                    rebootMenu.forEach { r ->
+                        DropdownMenuItem(
+                            text = { Text(r.first) },
+                            onClick = {
+                                isExpanded = false
+                                scope.launch(Dispatchers.IO) {
+                                    Utils.reboot(r.second)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         },

@@ -118,4 +118,13 @@ object Utils {
         Log.e(TAG, "getAppVersion: ${it.message}", it)
         context.getString(R.string.unknown)
     }
+
+    fun reboot(mode: String = "") {
+        val command = if (mode.isBlank()) {
+            "reboot"
+        } else {
+            "reboot $mode"
+        }
+        Shell.cmd(command).exec()
+    }
 }
