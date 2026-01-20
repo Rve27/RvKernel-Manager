@@ -29,7 +29,6 @@
     <string name="root_required_desc">RvKernel Manager requires root access</string>
 
     <!-- AppBar -->
-    <string name="source_code">Source code</string>
     <string name="telegram_group">Telegram group</string>
     <string name="settings">Settings</string>
 
@@ -48,6 +47,8 @@
     <string name="about_app_section">About App</string>
     <string name="contributors">Contributors</string>
     <string name="contributors_desc">See who has contributed to the development of RvKernel Manager</string>
+    <string name="source_code">Source code</string>
+    <string name="source_code_desc">See how the magic happens under the hood</string>
 
     <!-- Battery Screen -->
     <string name="battery_monitor">Battery Monitor</string>

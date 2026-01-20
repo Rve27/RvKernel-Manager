@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Groups3
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -55,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -242,7 +244,15 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 body = stringResource(R.string.contributors_desc),
                 onClick = { context.startActivity(Intent(context, ContributorActivity::class.java)) },
                 onLongClick = { /* Nothing */ },
-            )
+            ),
+            HomeItem(
+                icon = Icons.Rounded.Code,
+                title = stringResource(R.string.source_code),
+                body = stringResource(R.string.source_code_desc),
+                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri())) },
+                onLongClick = { /* Nothing */ },
+            ),
+
         )
 
         Box(

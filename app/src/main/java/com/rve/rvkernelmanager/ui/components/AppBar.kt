@@ -21,7 +21,6 @@ package com.rve.rvkernelmanager.ui.components
 import android.content.Intent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
@@ -82,21 +81,6 @@ fun SimpleTopAppBar() {
                 onDismissRequest = { expanded = false },
                 shape = MaterialTheme.shapes.large,
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(stringResource(R.string.source_code))
-                    },
-                    onClick = {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri()))
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Default.Code,
-                            contentDescription = null,
-                        )
-                    },
-                )
                 DropdownMenuItem(
                     text = {
                         Text(stringResource(R.string.telegram_group))
