@@ -20,7 +20,10 @@ package com.rve.rvkernelmanager.ui.settings
 
 import android.app.Activity
 import android.content.ClipData
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,16 +31,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -46,17 +49,18 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -66,11 +70,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.composables.core.rememberDialogState
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_android_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dark_mode_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_light_mode_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.DialogTextButton
-import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 import kotlinx.coroutines.launch
@@ -87,8 +91,8 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
     val intervalSeconds = value.toLongOrNull()
     val appVersion by viewModel.appVersion.collectAsStateWithLifecycle()
 
-    val openThemeDialog = rememberDialogState(initiallyVisible = false)
-    val openPollingDialog = rememberDialogState(initiallyVisible = false)
+    var openThemeDialog by remember { mutableStateOf(false) }
+    var openPollingDialog by remember { mutableStateOf(false) }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -120,13 +124,13 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
                 icon = Icons.Default.Palette,
                 title = stringResource(R.string.app_theme),
                 summary = stringResource(R.string.theme_summary),
-                onClick = { openThemeDialog.visible = true },
+                onClick = { openThemeDialog = true },
             )
             CustomListItem(
                 icon = Icons.Default.Timer,
                 title = stringResource(R.string.soc_polling),
                 summary = stringResource(R.string.soc_polling_summary),
-                onClick = { openPollingDialog.visible = true },
+                onClick = { openPollingDialog = true },
             )
             CustomListItem(
                 icon = Icons.Default.Info,
@@ -141,111 +145,148 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel(), lifecycleOwner: L
         }
     }
 
-    DialogUnstyled(
-        state = openThemeDialog,
-        title = {
-            Text(
-                text = stringResource(R.string.select_theme),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                DialogTextButton(
-                    icon = Icons.Default.LightMode,
-                    text = stringResource(R.string.theme_light),
-                    onClick = {
-                        viewModel.setThemeMode(ThemeMode.LIGHT)
-                        openThemeDialog.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.DarkMode,
-                    text = stringResource(R.string.theme_dark),
-                    onClick = {
-                        viewModel.setThemeMode(ThemeMode.DARK)
-                        openThemeDialog.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.Android,
-                    text = stringResource(R.string.theme_system),
-                    onClick = {
-                        viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)
-                        openThemeDialog.visible = false
-                    },
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { openThemeDialog.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openPollingDialog,
-        title = {
-            Text(
-                text = stringResource(R.string.soc_polling),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
+    if (openThemeDialog) {
+        AlertDialog(
+            onDismissRequest = { openThemeDialog = false },
+            title = {
                 Text(
-                    text = stringResource(R.string.polling_dialog_desc),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = stringResource(R.string.select_theme),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
                 )
-                Spacer(Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text(stringResource(R.string.polling_hint)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            if (intervalSeconds != null && intervalSeconds in 1..30) {
-                                viewModel.setPollingInterval(intervalSeconds * 1000)
-                                openPollingDialog.visible = false
-                            }
+            },
+            text = {
+                Column {
+                    Button(
+                        onClick = {
+                            viewModel.setThemeMode(ThemeMode.LIGHT)
+                            openThemeDialog = false
                         },
-                    ),
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (intervalSeconds != null && intervalSeconds in 1..30) {
-                        viewModel.setPollingInterval(intervalSeconds * 1000)
-                        openPollingDialog.visible = false
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(materialsymbols_ic_light_mode_rounded_filled),
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.theme_light))
+                        }
                     }
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.apply))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openPollingDialog.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    Button(
+                        onClick = {
+                            viewModel.setThemeMode(ThemeMode.DARK)
+                            openThemeDialog = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(materialsymbols_ic_dark_mode_rounded_filled),
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.theme_dark))
+                        }
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.setThemeMode(ThemeMode.SYSTEM_DEFAULT)
+                            openThemeDialog = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(materialsymbols_ic_android_rounded_filled),
+                                contentDescription = null
+                            )
+                            Text(stringResource(R.string.theme_system))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openThemeDialog = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
+
+    if (openPollingDialog) {
+        AlertDialog(
+            onDismissRequest = { openPollingDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.soc_polling),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.polling_dialog_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = value,
+                        onValueChange = { value = it },
+                        label = { Text(stringResource(R.string.polling_hint)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                if (intervalSeconds != null && intervalSeconds in 1..30) {
+                                    viewModel.setPollingInterval(intervalSeconds * 1000)
+                                    openPollingDialog = false
+                                }
+                            },
+                        ),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (intervalSeconds != null && intervalSeconds in 1..30) {
+                            viewModel.setPollingInterval(intervalSeconds * 1000)
+                            openPollingDialog = false
+                        }
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.apply))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openPollingDialog = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }

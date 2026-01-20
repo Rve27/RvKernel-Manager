@@ -41,13 +41,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.Speed
-import androidx.compose.material.icons.filled.SportsEsports
-import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -95,10 +89,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.composables.core.rememberDialogState
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_call_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_camera_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_globe_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_cool_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_sports_esports_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_videocam_rounded_filled
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.DialogTextButton
-import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.BatteryUtils
@@ -536,7 +534,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     // MDC = Manual Design Capacity
-    val openMDC = rememberDialogState(initiallyVisible = false)
+    var openMDC by remember { mutableStateOf(false) }
 
     val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
     val manualDesignCapacity = batteryInfo.manualDesignCapacity.toString()
@@ -660,7 +658,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = {
                         if (batteryInfo.designCapacity == "N/A") {
-                            openMDC.visible = true
+                            openMDC  = true
                         }
                     },
                     onLongClick = {
@@ -760,58 +758,112 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openMDC,
-        title = {
-            Text(
-                text = stringResource(R.string.set_manual_capacity),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                OutlinedTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = { Text(stringResource(R.string.capacity_hint)) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.setManualDesignCapacity(context, value.toInt())
-                            openMDC.visible = false
-                        },
-                    ),
+    if (openMDC) {
+        AlertDialog(
+            onDismissRequest = { openMDC = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.set_manual_capacity),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
                 )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setManualDesignCapacity(context, value.toInt())
-                    openMDC.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.apply))
-            }
-        },
-    )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    OutlinedTextField(
+                        value = value,
+                        onValueChange = { value = it },
+                        label = { Text(stringResource(R.string.capacity_hint)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.setManualDesignCapacity(context, value.toInt())
+                                openMDC = false
+                            },
+                        ),
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.setManualDesignCapacity(context, value.toInt())
+                        openMDC = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.apply))
+                }
+            },
+        )
+    }
 }
 
 @Composable
 fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     // TPD = Thermal Profiles Dialog
-    val openTPD = rememberDialogState(initiallyVisible = false)
+    var openTPD by remember { mutableStateOf(false) }
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsStateWithLifecycle()
 
+    val thermalProfilesOptions = listOf(
+        Triple(
+            materialsymbols_ic_mode_cool_rounded_filled,
+            R.string.profile_default
+        ) {
+            viewModel.updateThermalSconfig("0")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_speed_rounded_filled,
+            R.string.profile_benchmark,
+        ) {
+            viewModel.updateThermalSconfig("10")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_globe_rounded_filled,
+            R.string.profile_browser,
+        ) {
+            viewModel.updateThermalSconfig("11")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_camera_rounded_filled,
+            R.string.profile_camera,
+        ) {
+            viewModel.updateThermalSconfig("12")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_call_rounded_filled,
+            R.string.profile_dialer,
+        ) {
+            viewModel.updateThermalSconfig("8")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_sports_esports_rounded_filled,
+            R.string.profile_gaming,
+        ) {
+            viewModel.updateThermalSconfig("13")
+            openTPD = false
+        },
+        Triple(
+            materialsymbols_ic_videocam_rounded_filled,
+            R.string.profile_streaming,
+        ) {
+            viewModel.updateThermalSconfig("14")
+            openTPD = false
+        },
+    )
+
     Button(
-        onClick = { openTPD.visible = true },
+        onClick = { openTPD = true },
         shapes = ButtonDefaults.shapes(),
         contentPadding = PaddingValues(16.dp),
     ) {
@@ -862,84 +914,48 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openTPD,
-        title = {
-            Text(
-                text = stringResource(R.string.thermal_profiles),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                DialogTextButton(
-                    icon = painterResource(R.drawable.ic_cool),
-                    text = stringResource(R.string.profile_default),
-                    onClick = {
-                        viewModel.updateThermalSconfig("0")
-                        openTPD.visible = false
-                    },
+    if (openTPD) {
+        AlertDialog(
+            onDismissRequest = { openTPD = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.thermal_profiles),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
                 )
-                DialogTextButton(
-                    icon = Icons.Default.Speed,
-                    text = stringResource(R.string.profile_benchmark),
-                    onClick = {
-                        viewModel.updateThermalSconfig("10")
-                        openTPD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.Language,
-                    text = stringResource(R.string.profile_browser),
-                    onClick = {
-                        viewModel.updateThermalSconfig("11")
-                        openTPD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.PhotoCamera,
-                    text = stringResource(R.string.profile_camera),
-                    onClick = {
-                        viewModel.updateThermalSconfig("12")
-                        openTPD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.Call,
-                    text = stringResource(R.string.profile_dialer),
-                    onClick = {
-                        viewModel.updateThermalSconfig("8")
-                        openTPD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.SportsEsports,
-                    text = stringResource(R.string.profile_gaming),
-                    onClick = {
-                        viewModel.updateThermalSconfig("13")
-                        openTPD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    icon = Icons.Default.Videocam,
-                    text = stringResource(R.string.profile_streaming),
-                    onClick = {
-                        viewModel.updateThermalSconfig("14")
-                        openTPD.visible = false
-                    },
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { openTPD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            text = {
+                Column {
+                    thermalProfilesOptions.forEach { item ->
+                        Button(
+                            onClick = item.third,
+                            shapes = ButtonDefaults.shapes(),
+                            contentPadding = PaddingValues(16.dp)
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(item.first),
+                                    contentDescription = stringResource(item.second)
+                                )
+                                Text(stringResource(item.second))
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openTPD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 }
 
 @Composable

@@ -45,6 +45,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -90,11 +91,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
-import com.rve.rvkernelmanager.ui.components.DialogTextButton
-import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
@@ -558,11 +556,11 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
     )
 
     // AMXF = Available Max Frequencies
-    val openAMXF = rememberDialogState(initiallyVisible = false)
+    var openAMXF by remember { mutableStateOf(false) }
     // AMNF = Available Min Frequencies
-    val openAMNF = rememberDialogState(initiallyVisible = false)
+    var openAMNF by remember { mutableStateOf(false) }
     // ACG = Available CPU Governor
-    val openACG = rememberDialogState(initiallyVisible = false)
+    var openACG by remember { mutableStateOf(false) }
 
     val cpu0State by viewModel.cpu0State.collectAsStateWithLifecycle()
     val minFreq = cpu0State.minFreq
@@ -619,7 +617,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                     Button(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(16.dp),
-                        onClick = { openAMNF.visible = true },
+                        onClick = { openAMNF = true },
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(
                                 topStart = 28.dp,
@@ -655,7 +653,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                     Button(
                         modifier = Modifier.weight(1f),
                         contentPadding = PaddingValues(16.dp),
-                        onClick = { openAMXF.visible = true },
+                        onClick = { openAMXF = true },
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(
                                 topStart = 8.dp,
@@ -691,7 +689,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                 }
                 Button(
                     contentPadding = PaddingValues(16.dp),
-                    onClick = { openACG.visible = true },
+                    onClick = { openACG = true },
                     shapes = ButtonDefaults.shapes(
                         RoundedCornerShape(
                             topStart = 8.dp,
@@ -729,113 +727,128 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openAMNF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (cpu0State.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(cpu0State.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("min", freq, "little")
-                                openAMNF.visible = false
-                            },
-                        )
+    if (openAMNF) {
+        AlertDialog(
+            onDismissRequest = { openAMNF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (cpu0State.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "little")
+                                    openAMNF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp),
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMNF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMNF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openAMXF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (cpu0State.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(cpu0State.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("max", freq, "little")
-                                openAMXF.visible = false
-                            },
-                        )
+    if (openAMXF) {
+        AlertDialog(
+            onDismissRequest = { openAMXF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (cpu0State.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "little")
+                                    openAMXF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMXF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMXF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openACG,
-        title = {
-            Text(
-                text = stringResource(R.string.available_governor),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (cpu0State.availableGov.isNotEmpty()) {
-                LazyColumn {
-                    items(cpu0State.availableGov) { gov ->
-                        DialogTextButton(
-                            text = gov,
-                            onClick = {
-                                viewModel.updateGov(gov, "little")
-                                openACG.visible = false
-                            },
-                        )
+    if (openACG) {
+        AlertDialog(
+            onDismissRequest = { openACG = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_governor),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (cpu0State.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(cpu0State.availableGov) { gov ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateGov(gov, "little")
+                                    openACG = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text(gov)
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_governors))
                 }
-            } else {
-                Text(stringResource(R.string.no_governors))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openACG.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openACG = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -847,11 +860,11 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     )
 
     // Available Max Frequencies
-    val openAMXF = rememberDialogState(initiallyVisible = false)
+    var openAMXF by remember { mutableStateOf(false) }
     // Available Min Frequencies
-    val openAMNF = rememberDialogState(initiallyVisible = false)
+    var openAMNF by remember { mutableStateOf(false) }
     // ACG = Available CPU Governor
-    val openACG = rememberDialogState(initiallyVisible = false)
+    var openACG by remember { mutableStateOf(false) }
 
     val bigClusterState by viewModel.bigClusterState.collectAsStateWithLifecycle()
     val minFreq = bigClusterState.minFreq
@@ -915,7 +928,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMNF.visible = true },
+                        onClick = { openAMNF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -951,7 +964,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMXF.visible = true },
+                        onClick = { openAMXF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -987,7 +1000,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             bottomEnd = 28.dp,
                         ),
                     ),
-                    onClick = { openACG.visible = true },
+                    onClick = { openACG = true },
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -1017,113 +1030,128 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openAMNF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (bigClusterState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(bigClusterState.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("min", freq, "big")
-                                openAMNF.visible = false
-                            },
-                        )
+    if (openAMNF) {
+        AlertDialog(
+            onDismissRequest = { openAMNF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (bigClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "big")
+                                    openAMNF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMNF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMNF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openAMXF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (bigClusterState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(bigClusterState.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("max", freq, "big")
-                                openAMXF.visible = false
-                            },
-                        )
+    if (openAMXF) {
+        AlertDialog(
+            onDismissRequest = { openAMXF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (bigClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "big")
+                                    openAMXF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMXF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMXF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openACG,
-        title = {
-            Text(
-                text = stringResource(R.string.available_governor),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (bigClusterState.availableGov.isNotEmpty()) {
-                LazyColumn {
-                    items(bigClusterState.availableGov) { gov ->
-                        DialogTextButton(
-                            text = gov,
-                            onClick = {
-                                viewModel.updateGov(gov, "big")
-                                openACG.visible = false
-                            },
-                        )
+    if (openACG) {
+        AlertDialog(
+            onDismissRequest = { openACG = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_governor),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (bigClusterState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(bigClusterState.availableGov) { gov ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateGov(gov, "big")
+                                    openACG = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text(gov)
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_governors))
                 }
-            } else {
-                Text(stringResource(R.string.no_governors))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openACG.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openACG = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -1135,11 +1163,11 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     )
 
     // Available Max Frequencies
-    val openAMXF = rememberDialogState(initiallyVisible = false)
+    var openAMXF by remember { mutableStateOf(false) }
     // Available Min Frequencies
-    val openAMNF = rememberDialogState(initiallyVisible = false)
+    var openAMNF by remember { mutableStateOf(false) }
     // ACG = Available CPU Governor
-    val openACG = rememberDialogState(initiallyVisible = false)
+    var openACG by remember { mutableStateOf(false) }
 
     val primeClusterState by viewModel.primeClusterState.collectAsStateWithLifecycle()
     val minFreq = primeClusterState.minFreq
@@ -1203,7 +1231,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMNF.visible = true },
+                        onClick = { openAMNF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -1239,7 +1267,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMXF.visible = true },
+                        onClick = { openAMXF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -1275,7 +1303,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             bottomEnd = 28.dp,
                         ),
                     ),
-                    onClick = { openACG.visible = true },
+                    onClick = { openACG = true },
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -1305,113 +1333,128 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openAMNF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (primeClusterState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(primeClusterState.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("min", freq, "prime")
-                                openAMNF.visible = false
-                            },
-                        )
+    if (openAMNF) {
+        AlertDialog(
+            onDismissRequest = { openAMNF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (primeClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "prime")
+                                    openAMNF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMNF.visible = true },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMNF = true },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openAMXF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (primeClusterState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(primeClusterState.availableFreq) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("max", freq, "prime")
-                                openAMXF.visible = false
-                            },
-                        )
+    if (openAMXF) {
+        AlertDialog(
+            onDismissRequest = { openAMXF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (primeClusterState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableFreq) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "prime")
+                                    openAMXF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMXF.visible = true },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMXF = true },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openACG,
-        title = {
-            Text(
-                text = stringResource(R.string.available_governor),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (primeClusterState.availableGov.isNotEmpty()) {
-                LazyColumn {
-                    items(primeClusterState.availableGov) { gov ->
-                        DialogTextButton(
-                            text = gov,
-                            onClick = {
-                                viewModel.updateGov(gov, "prime")
-                                openACG.visible = false
-                            },
-                        )
+    if (openACG) {
+        AlertDialog(
+            onDismissRequest = { openACG = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_governor),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (primeClusterState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(primeClusterState.availableGov) { gov ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateGov(gov, "prime")
+                                    openACG = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text(gov)
+                            }
+                        }
                     }
+                } else {
+                    Text(stringResource(R.string.no_governors))
                 }
-            } else {
-                Text(stringResource(R.string.no_governors))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openACG.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openACG = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -1423,7 +1466,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     )
 
     // CPU Input Boost Dialog
-    val openCIBD = rememberDialogState(initiallyVisible = false)
+    var openCIBD by remember { mutableStateOf(false) }
 
     val hasCpuInputBoostMs by viewModel.hasCpuInputBoostMs.collectAsStateWithLifecycle()
     val cpuInputBoostMs by viewModel.cpuInputBoostMs.collectAsStateWithLifecycle()
@@ -1502,7 +1545,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openCIBD.visible = true },
+                        onClick = { openCIBD = true },
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -1600,45 +1643,47 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openCIBD,
-        text = {
-            OutlinedTextField(
-                value = cpuInputBoostMsValue,
-                onValueChange = { cpuInputBoostMsValue = it },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openCIBD) {
+        AlertDialog(
+            onDismissRequest = { openCIBD = false },
+            text = {
+                OutlinedTextField(
+                    value = cpuInputBoostMsValue,
+                    onValueChange = { cpuInputBoostMsValue = it },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.updateCpuInputBoostMs(cpuInputBoostMsValue)
+                            openCIBD = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.updateCpuInputBoostMs(cpuInputBoostMsValue)
-                        openCIBD.visible = false
+                        openCIBD = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.updateCpuInputBoostMs(cpuInputBoostMsValue)
-                    openCIBD.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openCIBD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openCIBD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -1650,13 +1695,13 @@ fun GPUCard(viewModel: SoCViewModel) {
     )
 
     // Available Max Frequencies
-    val openAMXF = rememberDialogState(initiallyVisible = false)
+    var openAMXF by remember { mutableStateOf(false) }
     // Available Min Frequencies
-    val openAMNF = rememberDialogState(initiallyVisible = false)
+    var openAMNF by remember { mutableStateOf(false) }
     // AGG = Available GPU Governor
-    val openAGG = rememberDialogState(initiallyVisible = false)
+    var openAGG by remember { mutableStateOf(false) }
     // ABD = Adreno Boost Dialog
-    val openABD = rememberDialogState(initiallyVisible = false)
+    var openABD by remember { mutableStateOf(false) }
 
     val gpuState by viewModel.gpuState.collectAsStateWithLifecycle()
     val hasDefaultPwrlevel by viewModel.hasDefaultPwrlevel.collectAsStateWithLifecycle()
@@ -1729,7 +1774,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMNF.visible = true },
+                        onClick = { openAMNF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -1765,7 +1810,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 bottomEnd = 8.dp,
                             ),
                         ),
-                        onClick = { openAMXF.visible = true },
+                        onClick = { openAMXF = true },
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -1805,7 +1850,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             )
                         },
                     ),
-                    onClick = { openAGG.visible = true },
+                    onClick = { openAGG = true },
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -1858,7 +1903,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 )
                             },
                         ),
-                        onClick = { openABD.visible = true },
+                        onClick = { openABD = true },
                         contentPadding = PaddingValues(16.dp),
                     ) {
                         Row(
@@ -2056,162 +2101,191 @@ fun GPUCard(viewModel: SoCViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openAMNF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (gpuState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("min", freq, "gpu")
-                                openAMNF.visible = false
-                            },
-                        )
+    if (openAMNF) {
+        AlertDialog(
+            onDismissRequest = { openAMNF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (gpuState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("min", freq, "gpu")
+                                    openAMNF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
+                    }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMNF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
+
+    if (openAMXF) {
+        AlertDialog(
+            onDismissRequest = { openAMXF = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_frequencies),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (gpuState.availableFreq.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateFreq("max", freq, "gpu")
+                                    openAMXF = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text("$freq MHz")
+                            }
+                        }
+                    }
+                } else {
+                    Text(stringResource(R.string.no_frequencies))
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAMXF = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
+
+    if (openAGG) {
+        AlertDialog(
+            onDismissRequest = { openAGG = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.available_governor),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                if (gpuState.availableGov.isNotEmpty()) {
+                    LazyColumn {
+                        items(gpuState.availableGov) { gov ->
+                            Button(
+                                onClick = {
+                                    viewModel.updateGov(gov, "gpu")
+                                    openAGG = false
+                                },
+                                shapes = ButtonDefaults.shapes(),
+                                contentPadding = PaddingValues(16.dp)
+                            ) {
+                                Text(gov)
+                            }
+                        }
+                    }
+                } else {
+                    Text(stringResource(R.string.no_governors))
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openAGG = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
+                }
+            },
+        )
+    }
+
+    if (openABD) {
+        AlertDialog(
+            onDismissRequest = { openABD = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.adreno_boost),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                Column {
+                    Button(
+                        onClick = {
+                            viewModel.updateAdrenoBoost("0")
+                            openABD = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        Text(stringResource(R.string.off))
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.updateAdrenoBoost("1")
+                            openABD = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        Text(stringResource(R.string.low))
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.updateAdrenoBoost("2")
+                            openABD = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        Text(stringResource(R.string.medium))
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.updateAdrenoBoost("3")
+                            openABD = false
+                        },
+                        shapes = ButtonDefaults.shapes(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        Text(stringResource(R.string.high))
                     }
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMNF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openAMXF,
-        title = {
-            Text(
-                text = stringResource(R.string.available_frequencies),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (gpuState.availableFreq.isNotEmpty()) {
-                LazyColumn {
-                    items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                        DialogTextButton(
-                            text = "$freq MHz",
-                            onClick = {
-                                viewModel.updateFreq("max", freq, "gpu")
-                                openAMXF.visible = false
-                            },
-                        )
-                    }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openABD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.close))
                 }
-            } else {
-                Text(stringResource(R.string.no_frequencies))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openAMXF.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openAGG,
-        title = {
-            Text(
-                text = stringResource(R.string.available_governor),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            if (gpuState.availableGov.isNotEmpty()) {
-                LazyColumn {
-                    items(gpuState.availableGov) { gov ->
-                        DialogTextButton(
-                            text = gov,
-                            onClick = {
-                                viewModel.updateGov(gov, "gpu")
-                                openAGG.visible = false
-                            },
-                        )
-                    }
-                }
-            } else {
-                Text(stringResource(R.string.no_governors))
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = { openAGG.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openABD,
-        title = {
-            Text(
-                text = stringResource(R.string.adreno_boost),
-                style = MaterialTheme.typography.titleLarge,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                DialogTextButton(
-                    text = stringResource(R.string.off),
-                    onClick = {
-                        viewModel.updateAdrenoBoost("0")
-                        openABD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    text = stringResource(R.string.low),
-                    onClick = {
-                        viewModel.updateAdrenoBoost("1")
-                        openABD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    text = stringResource(R.string.medium),
-                    onClick = {
-                        viewModel.updateAdrenoBoost("2")
-                        openABD.visible = false
-                    },
-                )
-                DialogTextButton(
-                    text = stringResource(R.string.high),
-                    onClick = {
-                        viewModel.updateAdrenoBoost("3")
-                        openABD.visible = false
-                    },
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openABD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.close))
-            }
-        },
-    )
+            },
+        )
+    }
 }

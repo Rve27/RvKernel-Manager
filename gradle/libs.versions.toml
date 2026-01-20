@@ -59,5 +59,4 @@ io-coil-kt-coil3-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okht
 
 topjohnwu-libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsuVersion" }
 
-composables-core = { module = "com.composables:core-android", version.ref = "composables" }
 composables-icons-material-symbols-rounded-filled = { module = "com.composables:icons-material-symbols-rounded-filled-android", version.ref = "composables-icons" }

@@ -48,6 +48,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -104,10 +105,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.DialogTextButton
-import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.KernelUtils
@@ -353,11 +351,11 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
     var schedAutogroup = remember(kernelParameters.schedAutogroup) { kernelParameters.schedAutogroup == 1 }
 
     // PD = Printk Dialog
-    val openPD = rememberDialogState(initiallyVisible = false)
+    var openPD by remember { mutableStateOf(false) }
     // TCD = TCP Congestion Dialog
-    val openTCD = rememberDialogState(initiallyVisible = false)
+    var openTCD by remember { mutableStateOf(false) }
     // SLND = Sched Lib Name Dialog
-    val openSLND = rememberDialogState(initiallyVisible = false)
+    var openSLND by remember { mutableStateOf(false) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -557,7 +555,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
             ) {
                 Button(
-                    onClick = { openPD.visible = true },
+                    onClick = { openPD = true },
                     shapes = ButtonDefaults.shapes(
                         shape = RoundedCornerShape(28.dp),
                     ),
@@ -603,7 +601,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
             ) {
                 Button(
-                    onClick = { openSLND.visible = true },
+                    onClick = { openSLND = true },
                     shapes = ButtonDefaults.shapes(
                         shape = RoundedCornerShape(28.dp),
                     ),
@@ -649,7 +647,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
             ) {
                 Button(
-                    onClick = { openTCD.visible = true },
+                    onClick = { openTCD = true },
                     shapes = ButtonDefaults.shapes(
                         shape = RoundedCornerShape(28.dp),
                     ),
@@ -683,119 +681,126 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openPD,
-        text = {
-            OutlinedTextField(
-                value = printk,
-                onValueChange = { printk = it },
-                label = { Text(stringResource(R.string.printk)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        viewModel.setValue(KernelUtils.PRINTK, printk)
-                        openPD.visible = false
-                    },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.PRINTK, printk)
-                    openPD.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openPD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openSLND,
-        text = {
-            OutlinedTextField(
-                value = schedLibName,
-                onValueChange = { schedLibName = it },
-                label = { Text(stringResource(R.string.sched_lib_name)) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
-                        openSLND.visible = false
-                    },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
-                    openSLND.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openSLND.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openTCD,
-        title = {
-            Text(
-                text = stringResource(R.string.tcp_congestion),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
-                    DialogTextButton(
-                        text = algorithm,
-                        onClick = {
-                            viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
-                            tcpCongestionAlgorithm = algorithm
-                            openTCD.visible = false
+    if (openPD) {
+        AlertDialog(
+            onDismissRequest = { openPD = false },
+            text = {
+                OutlinedTextField(
+                    value = printk,
+                    onValueChange = { printk = it },
+                    label = { Text(stringResource(R.string.printk)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.PRINTK, printk)
+                            openPD = false
                         },
-                    )
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.setValue(KernelUtils.PRINTK, printk)
+                        openPD = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
                 }
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openTCD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openPD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openSLND) {
+        AlertDialog(
+            onDismissRequest = { openSLND = false },
+            text = {
+                OutlinedTextField(
+                    value = schedLibName,
+                    onValueChange = { schedLibName = it },
+                    label = { Text(stringResource(R.string.sched_lib_name)) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
+                            openSLND = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.setValue(KernelUtils.SCHED_LIB_NAME, schedLibName)
+                        openSLND = false
+                    },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openSLND = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openTCD) {
+        AlertDialog(
+            onDismissRequest = { openTCD = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.tcp_congestion),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                Column {
+                    kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
+                        Button(
+                            onClick = {
+                                viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
+                                tcpCongestionAlgorithm = algorithm
+                                openTCD = false
+                            },
+                        ) {
+                            Text(algorithm)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openTCD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -806,11 +811,11 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
     var uclampMinRt by remember { mutableStateOf(uclamp.uclampMinRt) }
 
     // UMX = Uclamp Max
-    val openUMX = rememberDialogState(initiallyVisible = false)
+    var openUMX by remember { mutableStateOf(false) }
     // UMN = Uclamp Min
-    val openUMN = rememberDialogState(initiallyVisible = false)
+    var openUMN by remember { mutableStateOf(false) }
     // UMRT = Uclamp Min RT
-    val openUMRT = rememberDialogState(initiallyVisible = false)
+    var openUMRT by remember { mutableStateOf(false) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -840,7 +845,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Button(
                         modifier = Modifier.weight(1f),
-                        onClick = { openUMX.visible = true },
+                        onClick = { openUMX = true },
                         shapes = ButtonDefaults.shapes(
                             if (uclamp.hasUclampMinRt) {
                                 RoundedCornerShape(
@@ -875,7 +880,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                     }
                     Button(
                         modifier = Modifier.weight(1f),
-                        onClick = { openUMN.visible = true },
+                        onClick = { openUMN = true },
                         shapes = ButtonDefaults.shapes(
                             if (uclamp.hasUclampMinRt) {
                                 RoundedCornerShape(
@@ -933,7 +938,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         ),
                     ),
                     contentPadding = PaddingValues(16.dp),
-                    onClick = { openUMRT.visible = true },
+                    onClick = { openUMRT = true },
                 ) {
                     Column(
                         Modifier.fillMaxSize(),
@@ -954,128 +959,134 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openUMX,
-        text = {
-            OutlinedTextField(
-                value = uclampMax,
-                onValueChange = { uclampMax = it },
-                label = { Text(stringResource(R.string.uclamp_max)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openUMX) {
+        AlertDialog(
+            onDismissRequest = { openUMX = false },
+            text = {
+                OutlinedTextField(
+                    value = uclampMax,
+                    onValueChange = { uclampMax = it },
+                    label = { Text(stringResource(R.string.uclamp_max)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MAX, uclampMax)
+                            openUMX = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MAX, uclampMax)
-                        openUMX.visible = false
+                        openUMX = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MAX, uclampMax)
-                    openUMX.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openUMX.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openUMX = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openUMN,
-        text = {
-            OutlinedTextField(
-                value = uclampMin,
-                onValueChange = { uclampMin = it },
-                label = { Text(stringResource(R.string.uclamp_min)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openUMN) {
+        AlertDialog(
+            onDismissRequest = { openUMN = false },
+            text = {
+                OutlinedTextField(
+                    value = uclampMin,
+                    onValueChange = { uclampMin = it },
+                    label = { Text(stringResource(R.string.uclamp_min)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN, uclampMin)
+                            openUMX = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN, uclampMin)
-                        openUMX.visible = false
+                        openUMN = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN, uclampMin)
-                    openUMN.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openUMN.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openUMN = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openUMRT,
-        text = {
-            OutlinedTextField(
-                value = uclampMinRt,
-                onValueChange = { uclampMinRt = it },
-                label = { Text(stringResource(R.string.uclamp_min_rt)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openUMRT) {
+        AlertDialog(
+            onDismissRequest = { openUMRT = false },
+            text = {
+                OutlinedTextField(
+                    value = uclampMinRt,
+                    onValueChange = { uclampMinRt = it },
+                    label = { Text(stringResource(R.string.uclamp_min_rt)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, uclampMinRt)
+                            openUMRT = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, uclampMinRt)
-                        openUMRT.visible = false
+                        openUMRT = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.SCHED_UTIL_CLAMP_MIN_RT_DEFAULT, uclampMinRt)
-                    openUMRT.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(text = stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openUMRT.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(text = stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openUMRT = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -1092,13 +1103,13 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     var dirtyRatio by remember { mutableStateOf(memory.dirtyRatio) }
 
     // ZD = ZRAM Dialog
-    val openZD = rememberDialogState(initiallyVisible = false)
+    var openZD by remember { mutableStateOf(false) }
     // ZCD = ZRAM Compression Dialog
-    val openZCD = rememberDialogState(initiallyVisible = false)
+    var openZCD by remember { mutableStateOf(false) }
     // SD = Swappiness Dialog
-    val openSD = rememberDialogState(initiallyVisible = false)
+    var openSD by remember { mutableStateOf(false) }
     // DR = Dirty Ratio
-    val openDR = rememberDialogState(initiallyVisible = false)
+    var openDR by remember { mutableStateOf(false) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -1204,7 +1215,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                                         RoundedCornerShape(28.dp)
                                     },
                                 ),
-                                onClick = { openZD.visible = true },
+                                onClick = { openZD = true },
                             ) {
                                 Column(Modifier.fillMaxSize()) {
                                     Text(
@@ -1248,7 +1259,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                                         RoundedCornerShape(28.dp)
                                     },
                                 ),
-                                onClick = { openSD.visible = true },
+                                onClick = { openSD = true },
                             ) {
                                 Column(Modifier.fillMaxSize()) {
                                     Text(
@@ -1283,7 +1294,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(RoundedCornerShape(28.dp)),
-                        onClick = { openZCD.visible = true },
+                        onClick = { openZCD = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1316,7 +1327,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                     Button(
                         contentPadding = PaddingValues(16.dp),
                         shapes = ButtonDefaults.shapes(RoundedCornerShape(28.dp)),
-                        onClick = { openDR.visible = true },
+                        onClick = { openDR = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1336,152 +1347,164 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openZD,
-        title = {
-            Text(
-                text = stringResource(R.string.zram_size),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                zramSizeOptions.forEach { size ->
-                    DialogTextButton(
-                        text = size,
-                        onClick = {
-                            val sizeInGb = size.substringBefore(" GB").toInt()
-                            viewModel.updateZramSize(sizeInGb)
-                            openZD.visible = false
-                        },
-                    )
+    if (openZD) {
+        AlertDialog(
+            onDismissRequest = { openZD = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.zram_size),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                Column {
+                    zramSizeOptions.forEach { size ->
+                        Button(
+                            onClick = {
+                                val sizeInGb = size.substringBefore(" GB").toInt()
+                                viewModel.updateZramSize(sizeInGb)
+                                openZD = false
+                            },
+                            shapes = ButtonDefaults.shapes()
+                        ) {
+                            Text(size)
+                        }
+                    }
                 }
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openZD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-
-    DialogUnstyled(
-        state = openZCD,
-        title = {
-            Text(
-                text = stringResource(R.string.zram_comp_algo),
-                style = MaterialTheme.typography.titleMedium,
-                color = AlertDialogDefaults.titleContentColor,
-            )
-        },
-        text = {
-            Column {
-                memory.availableZramCompAlgorithms.forEach { algorithm ->
-                    DialogTextButton(
-                        text = algorithm,
-                        onClick = {
-                            viewModel.updateZramCompAlgorithm(algorithm)
-                            openZCD.visible = false
-                        },
-                    )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openZD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
                 }
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openZCD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openSD,
-        text = {
-            OutlinedTextField(
-                value = swappiness,
-                onValueChange = { swappiness = it },
-                label = { Text(stringResource(R.string.swappiness)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openZCD) {
+        AlertDialog(
+            onDismissRequest = { openZCD = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.zram_comp_algo),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = AlertDialogDefaults.titleContentColor,
+                )
+            },
+            text = {
+                Column {
+                    memory.availableZramCompAlgorithms.forEach { algorithm ->
+                        Button(
+                            onClick = {
+                                viewModel.updateZramCompAlgorithm(algorithm)
+                                openZCD = false
+                            },
+                            shapes = ButtonDefaults.shapes()
+                        ) {
+                            Text(algorithm)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { openZCD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openSD) {
+        AlertDialog(
+            onDismissRequest = { openSD = false },
+            text = {
+                OutlinedTextField(
+                    value = swappiness,
+                    onValueChange = { swappiness = it },
+                    label = { Text(stringResource(R.string.swappiness)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.SWAPPINESS, swappiness)
+                            openSD = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.SWAPPINESS, swappiness)
-                        openSD.visible = false
+                        openSD = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.SWAPPINESS, swappiness)
-                    openSD.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openSD.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openSD = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 
-    DialogUnstyled(
-        state = openDR,
-        text = {
-            OutlinedTextField(
-                value = dirtyRatio,
-                onValueChange = { dirtyRatio = it },
-                label = { Text(stringResource(R.string.dirty_ratio)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openDR) {
+        AlertDialog(
+            onDismissRequest = { openDR = false },
+            text = {
+                OutlinedTextField(
+                    value = dirtyRatio,
+                    onValueChange = { dirtyRatio = it },
+                    label = { Text(stringResource(R.string.dirty_ratio)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.DIRTY_RATIO, dirtyRatio)
+                            openDR = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.DIRTY_RATIO, dirtyRatio)
-                        openDR.visible = false
+                        openDR = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.DIRTY_RATIO, dirtyRatio)
-                    openDR.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openDR.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openDR = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -1502,17 +1525,17 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
     var burstCacheLifetime by remember { mutableStateOf(boreScheduler.burstCacheLifetime) }
 
     // BSL = Burst Smoothness Long
-    val openBSL = rememberDialogState(initiallyVisible = false)
+    var openBSL by remember { mutableStateOf(false) }
     // BSS = Burst Smoothness Short
-    val openBSS = rememberDialogState(initiallyVisible = false)
+    var openBSS by remember { mutableStateOf(false) }
     // BFA = Burst Fork Atavistic
-    val openBFA = rememberDialogState(initiallyVisible = false)
+    var openBFA by remember { mutableStateOf(false) }
     // BPO = Burst Penalty Offset
-    val openBPO = rememberDialogState(initiallyVisible = false)
+    var openBPO by remember { mutableStateOf(false) }
     // BPS = Burst Penalty Scale
-    val openBPS = rememberDialogState(initiallyVisible = false)
+    var openBPS by remember { mutableStateOf(false) }
     // BCL = Burst Cache Lifetime
-    val openBCL = rememberDialogState(initiallyVisible = false)
+    var openBCL by remember { mutableStateOf(false) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -1648,7 +1671,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBSL.visible = true },
+                        onClick = { openBSL = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1682,7 +1705,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBSS.visible = true },
+                        onClick = { openBSS = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1716,7 +1739,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBFA.visible = true },
+                        onClick = { openBFA = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1750,7 +1773,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBPO.visible = true },
+                        onClick = { openBPO = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1784,7 +1807,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBPS.visible = true },
+                        onClick = { openBPS = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1818,7 +1841,7 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
                         shapes = ButtonDefaults.shapes(
                             RoundedCornerShape(28.dp),
                         ),
-                        onClick = { openBCL.visible = true },
+                        onClick = { openBCL = true },
                     ) {
                         Column(Modifier.fillMaxSize()) {
                             Text(
@@ -1838,246 +1861,263 @@ fun BoreSchedulerCard(viewModel: KernelParameterViewModel) {
         }
     }
 
-    DialogUnstyled(
-        state = openBSL,
-        text = {
-            OutlinedTextField(
-                value = burstSmoothnessLong,
-                onValueChange = { burstSmoothnessLong = it },
-                label = { Text(stringResource(R.string.burst_smooth_long)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+    if (openBSL) {
+        AlertDialog(
+            onDismissRequest = { openBSL = false },
+            text = {
+                OutlinedTextField(
+                    value = burstSmoothnessLong,
+                    onValueChange = { burstSmoothnessLong = it },
+                    label = { Text(stringResource(R.string.burst_smooth_long)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_LONG, burstSmoothnessLong)
+                            openBSL = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_LONG, burstSmoothnessLong)
-                        openBSL.visible = false
+                        openBSL = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_LONG, burstSmoothnessLong)
-                    openBSL.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBSL.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-    DialogUnstyled(
-        state = openBSS,
-        text = {
-            OutlinedTextField(
-                value = burstSmoothnessShort,
-                onValueChange = { burstSmoothnessShort = it },
-                label = { Text(stringResource(R.string.burst_smooth_short)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBSL = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openBSS) {
+        AlertDialog(
+            onDismissRequest = { openBSS = false },
+            text = {
+                OutlinedTextField(
+                    value = burstSmoothnessShort,
+                    onValueChange = { burstSmoothnessShort = it },
+                    label = { Text(stringResource(R.string.burst_smooth_short)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_SHORT, burstSmoothnessShort)
+                            openBSS = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_SHORT, burstSmoothnessShort)
-                        openBSS.visible = false
+                        openBSS = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_SMOOTHNESS_SHORT, burstSmoothnessShort)
-                    openBSS.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBSS.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-    DialogUnstyled(
-        state = openBFA,
-        text = {
-            OutlinedTextField(
-                value = burstForkAtavistic,
-                onValueChange = { burstForkAtavistic = it },
-                label = { Text(stringResource(R.string.burst_fork)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBSS = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openBFA) {
+        AlertDialog(
+            onDismissRequest = { openBFA = false },
+            text = {
+                OutlinedTextField(
+                    value = burstForkAtavistic,
+                    onValueChange = { burstForkAtavistic = it },
+                    label = { Text(stringResource(R.string.burst_fork)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_FORK_ATAVISTIC, burstForkAtavistic)
+                            openBFA = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_FORK_ATAVISTIC, burstForkAtavistic)
-                        openBFA.visible = false
+                        openBFA = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_FORK_ATAVISTIC, burstForkAtavistic)
-                    openBFA.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBFA.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-    DialogUnstyled(
-        state = openBPO,
-        text = {
-            OutlinedTextField(
-                value = burstPenaltyOffset,
-                onValueChange = { burstPenaltyOffset = it },
-                label = { Text(stringResource(R.string.burst_penalty_offset)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBFA = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openBPO) {
+        AlertDialog(
+            onDismissRequest = { openBPO = false },
+            text = {
+                OutlinedTextField(
+                    value = burstPenaltyOffset,
+                    onValueChange = { burstPenaltyOffset = it },
+                    label = { Text(stringResource(R.string.burst_penalty_offset)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_PENALTY_OFFSET, burstPenaltyOffset)
+                            openBPO = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_PENALTY_OFFSET, burstPenaltyOffset)
-                        openBPO.visible = false
+                        openBPO = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_PENALTY_OFFSET, burstPenaltyOffset)
-                    openBPO.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBPO.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-    DialogUnstyled(
-        state = openBPS,
-        text = {
-            OutlinedTextField(
-                value = burstPenaltyScale,
-                onValueChange = { burstPenaltyScale = it },
-                label = { Text(stringResource(R.string.burst_penalty_scale)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBPO = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openBPS) {
+        AlertDialog(
+            onDismissRequest = { openBPS = false },
+            text = {
+                OutlinedTextField(
+                    value = burstPenaltyScale,
+                    onValueChange = { burstPenaltyScale = it },
+                    label = { Text(stringResource(R.string.burst_penalty_scale)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_PENALTY_SCALE, burstPenaltyScale)
+                            openBPS = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_PENALTY_SCALE, burstPenaltyScale)
-                        openBPS.visible = false
+                        openBPS = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_PENALTY_SCALE, burstPenaltyScale)
-                    openBPS.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBPS.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
-    DialogUnstyled(
-        state = openBCL,
-        text = {
-            OutlinedTextField(
-                value = burstCacheLifetime,
-                onValueChange = { burstCacheLifetime = it },
-                label = { Text(stringResource(R.string.burst_cache)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBPS = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
+
+    if (openBCL) {
+        AlertDialog(
+            onDismissRequest = { openBCL = false },
+            text = {
+                OutlinedTextField(
+                    value = burstCacheLifetime,
+                    onValueChange = { burstCacheLifetime = it },
+                    label = { Text(stringResource(R.string.burst_cache)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.setValue(KernelUtils.BURST_CACHE_LIFETIME, burstCacheLifetime)
+                            openBCL = false
+                        },
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
                         viewModel.setValue(KernelUtils.BURST_CACHE_LIFETIME, burstCacheLifetime)
-                        openBCL.visible = false
+                        openBCL = false
                     },
-                ),
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    viewModel.setValue(KernelUtils.BURST_CACHE_LIFETIME, burstCacheLifetime)
-                    openBCL.visible = false
-                },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.change))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { openBCL.visible = false },
-                shapes = ButtonDefaults.shapes(),
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-    )
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.change))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openBCL = false },
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 }
 
 @Preview(showBackground = true)

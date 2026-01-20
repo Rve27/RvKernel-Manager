@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -37,16 +38,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.composables.core.rememberDialogState
 import com.rve.rvkernelmanager.BuildConfig
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.DialogUnstyled
 import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun RvKernelManagerApp() {
-        val showRootDialog = rememberDialogState(initiallyVisible = true)
+        var showRootDialog by remember { mutableStateOf(false) }
 
         if (isRoot) {
             Surface(
@@ -115,27 +115,15 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                DialogUnstyled(
-                    state = showRootDialog,
-                    title = {
-                        Text(
-                            text = stringResource(R.string.root_required_title),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
-                    text = {
-                        Text(
-                            text = stringResource(R.string.root_required_desc),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    },
+                AlertDialog(
+                    onDismissRequest = { showRootDialog = false },
+                    title = { Text(text = stringResource(R.string.root_required_title)) },
+                    text = { Text(text = stringResource(R.string.root_required_desc)) },
                     confirmButton = {
-                        TextButton(
-                            onClick = { showRootDialog.visible = false },
-                        ) {
+                        TextButton(onClick = { showRootDialog = false }) {
                             Text(text = stringResource(R.string.close))
                         }
-                    },
+                    }
                 )
             }
         }
