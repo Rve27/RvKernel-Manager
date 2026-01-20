@@ -19,15 +19,20 @@
 package com.rve.rvkernelmanager.ui.home
 
 import android.content.ClipData
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Groups3
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -64,6 +69,7 @@ import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.ListItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.components.section
+import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import kotlinx.coroutines.launch
 
@@ -101,7 +107,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         val deviceInfo by viewModel.deviceInfo.collectAsStateWithLifecycle()
 
         val deviceInfoItems = listOf(
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_mobile_info_rounded_filled),
                 title = stringResource(R.string.device),
                 body = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
@@ -119,7 +125,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 },
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_android_rounded_filled),
                 title = stringResource(R.string.android),
                 body = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
@@ -137,7 +143,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 },
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.ram),
                 body = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
@@ -155,7 +161,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 }
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.cpu),
                 body = deviceInfo.cpu,
@@ -173,7 +179,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 }
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.gpu),
                 body = deviceInfo.gpuModel,
@@ -191,7 +197,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 }
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(materialsymbols_ic_shield_rounded_filled),
                 title = stringResource(R.string.wireguard),
                 body = deviceInfo.wireGuard,
@@ -209,7 +215,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 }
             ),
-            DeviceInfoItem(
+            HomeItem(
                 icon = painterResource(R.drawable.ic_linux),
                 title = stringResource(R.string.kernel),
                 body = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
@@ -227,6 +233,16 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     }
                 }
             ),
+        )
+
+        val aboutAppItems = listOf(
+            HomeItem(
+                icon = Icons.Rounded.Groups3,
+                title = stringResource(R.string.contributors),
+                body = stringResource(R.string.contributors_desc),
+                onClick = { context.startActivity(Intent(context, ContributorActivity::class.java)) },
+                onLongClick = { /* Nothing */ },
+            )
         )
 
         Box(
@@ -251,12 +267,26 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                         )
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                section(R.string.about_app_section) {
+                    items(aboutAppItems) { item ->
+                        ListItemCard(
+                            icon = item.icon,
+                            title = item.title,
+                            body = item.body,
+                            onClick = item.onClick,
+                            onLongClick = item.onLongClick,
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-private data class DeviceInfoItem(
+private data class HomeItem(
     val icon: Any?,
     val title: String,
     val body: String,

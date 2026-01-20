@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,7 +52,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.net.toUri
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.settings.SettingsActivity
 
 @Composable
@@ -111,21 +109,6 @@ fun SimpleTopAppBar() {
                         Icon(
                             painter = painterResource(R.drawable.ic_telegram),
                             contentDescription = null,
-                        )
-                    },
-                )
-                DropdownMenuItem(
-                    text = {
-                        Text(stringResource(R.string.contributors))
-                    },
-                    onClick = {
-                        context.startActivity(Intent(context, ContributorActivity::class.java))
-                        expanded = false
-                    },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Filled.People,
-                            contentDescription = stringResource(R.string.contributors),
                         )
                     },
                 )
