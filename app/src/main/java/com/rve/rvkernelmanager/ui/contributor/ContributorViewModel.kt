@@ -20,11 +20,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.R
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.SocketTimeoutException
-import java.net.URL
-import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,8 +27,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+import java.net.URL
+import java.net.UnknownHostException
 
 @Serializable
 data class Contributor(val login: String, val id: Int, val avatar_url: String, val contributions: Int, val html_url: String) {
@@ -52,6 +51,10 @@ class ContributorViewModel(application: Application) : AndroidViewModel(applicat
     val error: StateFlow<String?> = _error.asStateFlow()
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    init {
+        loadContributors()
+    }
 
     fun loadContributors() {
         viewModelScope.launch {
