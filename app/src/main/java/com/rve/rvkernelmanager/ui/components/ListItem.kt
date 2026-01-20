@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -153,7 +154,11 @@ fun ListItemCard(
             .combinedClickable(
                 onClick = onClick ?: {},
                 onLongClick = onLongClick,
-            )
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        )
     ) {
         Row(
             modifier = Modifier
@@ -192,7 +197,6 @@ fun ListItemCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = body,
