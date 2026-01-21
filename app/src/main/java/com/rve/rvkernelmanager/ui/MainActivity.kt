@@ -89,19 +89,19 @@ class MainActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun RvKernelManagerApp() {
-        var showRootDialog by remember { mutableStateOf(false) }
+        var showRootDialog by remember { mutableStateOf(true) }
 
         if (isRoot) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                color = MaterialTheme.colorScheme.surfaceContainer,
             ) {
                 RvKernelManagerNavHost()
             }
         } else {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                color = MaterialTheme.colorScheme.surfaceContainer,
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,16 +115,24 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                AlertDialog(
-                    onDismissRequest = { showRootDialog = false },
-                    title = { Text(text = stringResource(R.string.root_required_title)) },
-                    text = { Text(text = stringResource(R.string.root_required_desc)) },
-                    confirmButton = {
-                        TextButton(onClick = { showRootDialog = false }) {
-                            Text(text = stringResource(R.string.close))
+
+                if (showRootDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showRootDialog = false },
+                        title = {
+                            Text(
+                                text = stringResource(R.string.root_required_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        },
+                        text = { Text(text = stringResource(R.string.root_required_desc)) },
+                        confirmButton = {
+                            TextButton(onClick = { showRootDialog = false }) {
+                                Text(text = stringResource(R.string.close))
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
