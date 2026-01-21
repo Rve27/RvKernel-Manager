@@ -28,8 +28,10 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -119,13 +121,13 @@ class MainActivity : ComponentActivity() {
     fun RvKernelManagerApp() {
         var showRootDialog by remember { mutableStateOf(true) }
         var isLoading by remember { mutableStateOf(true) }
-        var percentageVisible by remember { mutableStateOf(false) }
+        var visible by remember { mutableStateOf(false) }
         val progressAnim = remember { Animatable(0f) }
 
 
         if (isRoot) {
             LaunchedEffect(Unit) {
-                percentageVisible = true
+                visible = true
                 progressAnim.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(
@@ -133,7 +135,7 @@ class MainActivity : ComponentActivity() {
                         easing = FastOutSlowInEasing
                     )
                 )
-                percentageVisible = false
+                visible = false
                 isLoading = false
             }
 
@@ -157,7 +159,7 @@ class MainActivity : ComponentActivity() {
                                 val bias = (progressAnim.value * 2) - 1
 
                                 AnimatedVisibility(
-                                    visible = percentageVisible,
+                                    visible = visible,
                                     enter = fadeIn(
                                         animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
                                     ) + slideInVertically(
@@ -185,10 +187,30 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                                 Spacer(Modifier.height(12.dp))
-                                LinearWavyProgressIndicator(
-                                    progress = { progressAnim.value },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                                AnimatedVisibility(
+                                    visible = visible,
+                                    enter = fadeIn(
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                    ) + expandHorizontally(
+                                        animationSpec = tween(
+                                            durationMillis = 750,
+                                            easing = FastOutSlowInEasing
+                                        )
+                                    ),
+                                    exit = fadeOut(
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                    ) + shrinkHorizontally(
+                                        animationSpec = tween(
+                                            durationMillis = 750,
+                                            easing = FastOutSlowInEasing
+                                        )
+                                    )
+                                ) {
+                                    LinearWavyProgressIndicator(
+                                        progress = { progressAnim.value },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
                             }
                         }
                     } else {
