@@ -204,9 +204,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            color = MaterialTheme.colorScheme.surfaceBright,
         ),
-        colors = CardDefaults.cardColors(
+        colors = CardDefaults.outlinedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
@@ -216,6 +216,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                )
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -275,6 +278,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        )
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -311,6 +317,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
 
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                )
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -350,6 +359,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     Box(Modifier.weight(1f)) {
                         Card(
                             shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            )
                         ) {
                             CustomListItem(
                                 title = stringResource(R.string.little_cluster),
@@ -362,6 +374,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     Box(Modifier.weight(1f)) {
                         Card(
                             shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            )
                         ) {
                             CustomListItem(
                                 title = stringResource(R.string.big_cluster),
@@ -375,6 +390,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 if (hasPrimeCluster) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        )
                     ) {
                         CustomListItem(
                             title = stringResource(R.string.prime_cluster),
@@ -411,9 +429,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            color = MaterialTheme.colorScheme.surfaceBright,
         ),
-        colors = CardDefaults.cardColors(
+        colors = CardDefaults.outlinedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
@@ -423,6 +441,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                )
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -446,6 +467,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        )
                     ) {
                         Column(Modifier.padding(16.dp)) {
                             Row(
@@ -482,6 +506,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        )
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -518,6 +545,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
 
             Card(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                )
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp).fillMaxSize(),
@@ -569,6 +599,9 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Row(
             modifier = Modifier
@@ -872,6 +905,9 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Row(
             modifier = Modifier
@@ -1175,6 +1211,9 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Row(
             modifier = Modifier
@@ -1478,6 +1517,9 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Row(
             modifier = Modifier
@@ -1718,6 +1760,9 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Row(
             modifier = Modifier
