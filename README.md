@@ -80,7 +80,7 @@ Contributions to RvKernel Manager are welcome!  Please see [CONTRIBUTING.md](CON
 - [Group](https://t.me/rve_enterprises)
 
 ## Credits
-- RvKernel Manager icon by [Alister Grey](https://t.me/alisterhellground)
+- RvKernel Manager icon & banner by [Alister Grey](https://t.me/allisterhellground)
 
 ## License
 
