@@ -282,7 +282,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 .padding(innerPadding)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
