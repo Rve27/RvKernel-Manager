@@ -16,9 +16,7 @@
  */
 package com.rve.rvkernelmanager.utils
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.rve.rvkernelmanager.R
@@ -128,13 +126,5 @@ object Utils {
             "reboot $mode"
         }
         Shell.cmd(command).exec()
-    }
-
-    fun restartApp(context: Context) {
-        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-
-        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(intent)
-        (context as? Activity)?.finish()
     }
 }
