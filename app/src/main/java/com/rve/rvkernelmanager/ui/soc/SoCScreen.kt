@@ -137,7 +137,7 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
                 .padding(innerPadding)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             LazyColumn(
                 state = rememberLazyListState(),
@@ -207,7 +207,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
             color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
         Column(
@@ -267,7 +267,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                             LinearWavyProgressIndicator(
                                 progress = { animatedCpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
-                                trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                trackColor = MaterialTheme.colorScheme.surfaceContainer,
                             )
                         }
                     }
@@ -414,7 +414,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
             color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
         Column(
@@ -474,7 +474,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                             LinearWavyProgressIndicator(
                                 progress = { animatedGpuUsageProgress },
                                 modifier = Modifier.fillMaxWidth(),
-                                trackColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                trackColor = MaterialTheme.colorScheme.surfaceContainer,
                             )
                         }
                     }
