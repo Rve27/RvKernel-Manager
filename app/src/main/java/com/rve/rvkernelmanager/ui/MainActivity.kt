@@ -45,8 +45,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,6 +74,7 @@ import com.rve.rvkernelmanager.ui.navigation.RvKernelManagerNavHost
 import com.rve.rvkernelmanager.ui.theme.RvKernelManagerTheme
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -112,8 +117,6 @@ class MainActivity : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun RvKernelManagerApp() {
-        val scope = rememberCoroutineScope()
-
         var showRootDialog by remember { mutableStateOf(true) }
         var isLoading by remember { mutableStateOf(true) }
         var percentageVisible by remember { mutableStateOf(false) }
@@ -194,17 +197,47 @@ class MainActivity : ComponentActivity() {
                 }
             }
         } else {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.surfaceContainer,
-            ) {
+            val snackbarHostState = remember { SnackbarHostState() }
+            val scope = rememberCoroutineScope()
+
+            Scaffold(
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                floatingActionButtonPosition = FabPosition.Center,
+                floatingActionButton = {
+                    Button(
+                        shapes = ButtonDefaults.shapes(),
+                        onClick = {
+                            scope.launch(Dispatchers.IO) {
+                                Shell.getCachedShell()?.close()
+
+                                val shell = Shell.getShell()
+                                val hasRoot = shell.isRoot
+
+                                if (hasRoot) {
+                                    launch {
+                                        snackbarHostState.showSnackbar("Root access granted")
+                                    }
+                                    delay(1000)
+                                    isRoot = true
+                                } else {
+                                    snackbarHostState.showSnackbar("Root access denied")
+                                }
+                            }
+                        }
+                    ) {
+                        Text(text = stringResource(R.string.text_continue))
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            ) { innerPadding ->
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Column(
-                        modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
@@ -214,20 +247,6 @@ class MainActivity : ComponentActivity() {
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface,
                         )
-                    }
-                    Button(
-                        onClick = {
-                            scope.launch(Dispatchers.IO) {
-                                Shell.getCachedShell()?.close()
-                                Shell.getShell { shell ->
-                                    isRoot = shell.isRoot
-                                }
-                            }
-                        },
-                        shapes = ButtonDefaults.shapes(),
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                    ) {
-                        Text(stringResource(R.string.text_continue))
                     }
                 }
 
