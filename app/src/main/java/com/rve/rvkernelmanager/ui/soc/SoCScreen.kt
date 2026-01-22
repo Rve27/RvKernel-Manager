@@ -89,12 +89,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_data_usage_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dvr_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_emergency_heat_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_cool_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_heat_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_data_usage_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
@@ -294,34 +297,51 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                         }
                     }
                 }
-                Box(Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
                     Card(
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceBright
-                        )
+                        ),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Crossfade(
                                 targetState = cpuTemp.toIntOrNull() ?: 0,
                                 animationSpec = tween(durationMillis = 500),
                             ) { temp ->
-                                if (temp >= 60) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        contentDescription = null,
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        contentDescription = null,
-                                    )
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (temp >= 60) {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_emergency_heat_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    } else if (temp >= 50) {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_mode_heat_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_mode_cool_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    }
                                 }
                             }
                             Text(
