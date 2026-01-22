@@ -98,6 +98,16 @@ import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
+sealed interface SocCardType {
+    data object CpuMonitor : SocCardType
+    data object GpuMonitor : SocCardType
+    data object CpuLittleCluster : SocCardType
+    data object CpuBigCluster : SocCardType
+    data object CpuPrimeCluster : SocCardType
+    data object CpuBoost : SocCardType
+    data object GpuInfo : SocCardType
+}
+
 @Composable
 fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavController) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -108,6 +118,28 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
     val hasCpuSchedBoostOnInput by viewModel.hasCpuSchedBoostOnInput.collectAsStateWithLifecycle()
     val hasBigCluster by viewModel.hasBigCluster.collectAsStateWithLifecycle()
     val hasPrimeCluster by viewModel.hasPrimeCluster.collectAsStateWithLifecycle()
+
+    val socCards = remember(hasBigCluster, hasPrimeCluster, hasCpuInputBoostMs, hasCpuSchedBoostOnInput) {
+        buildList {
+            add(SocCardType.CpuMonitor)
+            add(SocCardType.GpuMonitor)
+            add(SocCardType.CpuLittleCluster)
+
+            if (hasBigCluster) {
+                add(SocCardType.CpuBigCluster)
+            }
+
+            if (hasPrimeCluster) {
+                add(SocCardType.CpuPrimeCluster)
+            }
+
+            if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
+                add(SocCardType.CpuBoost)
+            }
+
+            add(SocCardType.GpuInfo)
+        }
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -146,32 +178,17 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                item {
-                    CPUMonitorCard(viewModel)
-                }
-                item {
-                    GPUMonitorCard(viewModel)
-                }
-                item {
-                    CPULittleClusterCard(viewModel)
-                }
-                if (hasBigCluster) {
-                    item {
-                        BigClusterCard(viewModel)
+                items(items = socCards, key = { it.toString() }) { cardType ->
+
+                    when (cardType) {
+                        SocCardType.CpuMonitor -> CPUMonitorCard(viewModel)
+                        SocCardType.GpuMonitor -> GPUMonitorCard(viewModel)
+                        SocCardType.CpuLittleCluster -> CPULittleClusterCard(viewModel)
+                        SocCardType.CpuBigCluster -> BigClusterCard(viewModel)
+                        SocCardType.CpuPrimeCluster -> PrimeClusterCard(viewModel)
+                        SocCardType.CpuBoost -> CPUBoostCard(viewModel)
+                        SocCardType.GpuInfo -> GPUCard(viewModel)
                     }
-                }
-                if (hasPrimeCluster) {
-                    item {
-                        PrimeClusterCard(viewModel)
-                    }
-                }
-                if (hasCpuInputBoostMs || hasCpuSchedBoostOnInput) {
-                    item {
-                        CPUBoostCard(viewModel)
-                    }
-                }
-                item {
-                    GPUCard(viewModel)
                 }
             }
         }
