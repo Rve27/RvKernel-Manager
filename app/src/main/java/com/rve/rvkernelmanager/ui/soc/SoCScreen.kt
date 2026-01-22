@@ -94,6 +94,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_data_usage_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
@@ -245,19 +246,34 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
                     Card(
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.large,
                     ) {
-                        Column(Modifier.padding(16.dp)) {
+                        Column(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_usage),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    contentDescription = null,
-                                )
-                                Column {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(materialsymbols_ic_data_usage_rounded_filled),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
                                     Text(
                                         text = stringResource(R.string.usage),
                                         style = MaterialTheme.typography.titleMedium,
@@ -267,7 +283,6 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                         text = if (cpuUsage == "N/A") stringResource(R.string.na) else "$cpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(bottom = 8.dp),
                                     )
                                 }
                             }
