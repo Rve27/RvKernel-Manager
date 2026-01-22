@@ -28,7 +28,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,7 +77,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -91,7 +89,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
@@ -580,10 +582,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
 @Composable
 fun CPULittleClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val rotateArrow by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-    )
 
     // AMXF = Available Max Frequencies
     var openAMXF by remember { mutableStateOf(false) }
@@ -597,38 +595,12 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
     val maxFreq = cpu0State.maxFreq
     val hasBigCluster by viewModel.hasBigCluster.collectAsStateWithLifecycle()
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+        text = stringResource(if (hasBigCluster) R.string.little_cluster else R.string.cpu),
+        expanded = expanded,
+        onClick = { expanded = !expanded },
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = if (hasBigCluster) stringResource(R.string.little_cluster) else stringResource(R.string.cpu),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
@@ -887,10 +859,6 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun BigClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val rotateArrow by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-    )
 
     // Available Max Frequencies
     var openAMXF by remember { mutableStateOf(false) }
@@ -903,38 +871,12 @@ fun BigClusterCard(viewModel: SoCViewModel) {
     val minFreq = bigClusterState.minFreq
     val maxFreq = bigClusterState.maxFreq
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+        text = stringResource(R.string.big_cluster),
+        expanded = expanded,
+        onClick = { expanded = !expanded }
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.big_cluster),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
@@ -1193,10 +1135,6 @@ fun BigClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun PrimeClusterCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val rotateArrow by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-    )
 
     // Available Max Frequencies
     var openAMXF by remember { mutableStateOf(false) }
@@ -1209,38 +1147,12 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
     val minFreq = primeClusterState.minFreq
     val maxFreq = primeClusterState.maxFreq
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_memory_rounded_filled),
+        text = stringResource(R.string.prime_cluster),
+        expanded = expanded,
+        onClick = { expanded = !expanded }
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_cpu),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.prime_cluster),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
@@ -1499,10 +1411,6 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
 @Composable
 fun CPUBoostCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val rotateArrow by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-    )
 
     // CPU Input Boost Dialog
     var openCIBD by remember { mutableStateOf(false) }
@@ -1515,38 +1423,12 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
     val cpuSchedBoostOnInput by viewModel.cpuSchedBoostOnInput.collectAsStateWithLifecycle()
     val cpuSchedBoostOnInputChecked = cpuSchedBoostOnInput == "1"
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_rocket_launch_rounded_filled),
+        text = stringResource(R.string.cpu_boost),
+        expanded = expanded,
+        onClick = { expanded = !expanded }
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_rocket_launch),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.cpu_boost),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
@@ -1731,10 +1613,6 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
 @Composable
 fun GPUCard(viewModel: SoCViewModel) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    val rotateArrow by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
-    )
 
     // Available Max Frequencies
     var openAMXF by remember { mutableStateOf(false) }
@@ -1758,38 +1636,12 @@ fun GPUCard(viewModel: SoCViewModel) {
     val minPwrlevel = gpuState.minPwrlevel.toFloatOrNull() ?: 0f
     val maxPwrlevel = gpuState.maxPwrlevel.toFloatOrNull() ?: 0f
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_view_in_ar_rounded_filled),
+        text = stringResource(R.string.gpu),
+        expanded = expanded,
+        onClick = { expanded = !expanded }
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_video_card),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.gpu),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
