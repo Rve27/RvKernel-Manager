@@ -101,6 +101,7 @@ object Card {
     fun ItemCard(
         icon: Any? = null,
         title: String,
+        titleLarge: Boolean = false,
         body: String? = null,
         onClick: (() -> Unit)? = null,
     ) {
@@ -148,7 +149,7 @@ object Card {
                 ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = if (titleLarge) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium
                     )
                     if (body != null) {
                         Text(
