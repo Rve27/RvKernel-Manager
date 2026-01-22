@@ -99,7 +99,7 @@ object Card {
 
     @Composable
     fun ItemCard(
-        icon: Any?,
+        icon: Any? = null,
         title: String,
         body: String? = null,
         onClick: (() -> Unit)? = null,
@@ -117,24 +117,27 @@ object Card {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    when (icon) {
-                        is ImageVector -> Icon(
-                            imageVector = icon,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
-                        )
-                        is Painter -> Icon(
-                            painter = icon,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
-                        )
+                if (icon != null) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        when (icon) {
+                            is ImageVector -> Icon(
+                                imageVector = icon,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = null
+                            )
+
+                            is Painter -> Icon(
+                                painter = icon,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
                 Column(
