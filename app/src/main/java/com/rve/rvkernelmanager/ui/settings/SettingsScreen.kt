@@ -19,6 +19,8 @@
 package com.rve.rvkernelmanager.ui.settings
 
 import android.app.Activity
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -49,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,16 +65,20 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_android_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_build_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dark_mode_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_light_mode_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.CustomListItem
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     val pollingInterval by viewModel.pollingInterval.collectAsStateWithLifecycle()
@@ -90,8 +97,10 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 scrollBehavior = scrollBehavior,
             )
         },
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
+        ) {
             CustomListItem(
                 icon = Icons.Default.Palette,
                 title = stringResource(R.string.app_theme),
@@ -103,6 +112,17 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                 title = stringResource(R.string.soc_polling),
                 summary = stringResource(R.string.soc_polling_summary),
                 onClick = { openPollingDialog = true },
+            )
+            CustomListItem(
+                icon = painterResource(materialsymbols_ic_build_rounded_filled),
+                title = stringResource(R.string.developer_options),
+                summary = stringResource(R.string.developer_options_summary),
+                onClick = {
+                    scope.launch(Dispatchers.IO) {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                        context.startActivity(intent)
+                    }
+                },
             )
         }
     }

@@ -161,6 +161,8 @@
     <string name="soc_polling_summary">Set how often SoC data is updated (in seconds)</string>
     <string name="polling_dialog_desc">Set the polling interval for SoC data (1-30 seconds)</string>
     <string name="polling_hint">Interval (seconds)</string>
+    <string name="developer_options">Developer Options</string>
+    <string name="developer_options_summary">Open Android developer settings</string>
 
     <!-- Contributor Screen -->
     <string name="contributions">contributions</string>
