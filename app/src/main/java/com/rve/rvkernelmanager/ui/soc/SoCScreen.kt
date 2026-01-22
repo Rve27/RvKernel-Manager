@@ -89,12 +89,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dvr_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
-import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
@@ -233,29 +235,12 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceBright
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(R.string.cpu_monitor),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            ItemCard(
+                shape = CircleShape,
+                icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
+                title = stringResource(R.string.cpu_monitor),
+                titleLarge = true
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
@@ -334,92 +319,44 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 }
             }
 
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceBright
+            if (hasBigCluster) {
+                ItemCard(
+                    shape = CircleShape,
+                    icon = painterResource(materialsymbols_ic_speed_rounded_filled),
+                    title = stringResource(R.string.current_frequencies),
                 )
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_speed),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    if (!hasBigCluster) {
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = stringResource(R.string.current_frequencies),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.na) else "${cpu0State.currentFreq} MHz",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    } else {
-                        Text(
-                            text = stringResource(R.string.current_frequencies),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
+            } else {
+                ItemCard(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    icon = painterResource(materialsymbols_ic_speed_rounded_filled),
+                    title = stringResource(R.string.current_frequencies),
+                    body = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${cpu0State.currentFreq} MHz",
+                )
             }
 
             if (hasBigCluster) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceBright
-                            )
-                        ) {
-                            CustomListItem(
-                                title = stringResource(R.string.little_cluster),
-                                titleColor = MaterialTheme.colorScheme.onSurface,
-                                summary = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.na) else "${cpu0State.currentFreq} MHz",
-                                summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        ItemCard(
+                            shape = MaterialTheme.shapes.large,
+                            title = stringResource(R.string.little_cluster),
+                            body = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${cpu0State.currentFreq} MHz",
+                        )
                     }
                     Box(Modifier.weight(1f)) {
-                        Card(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceBright
-                            )
-                        ) {
-                            CustomListItem(
-                                title = stringResource(R.string.big_cluster),
-                                titleColor = MaterialTheme.colorScheme.onSurface,
-                                summary = if (bigClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${bigClusterState.currentFreq} MHz",
-                                summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        ItemCard(
+                            shape = MaterialTheme.shapes.large,
+                            title = stringResource(R.string.big_cluster),
+                            body = if (bigClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${bigClusterState.currentFreq} MHz",
+                        )
                     }
                 }
                 if (hasPrimeCluster) {
-                    Card(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
-                        )
-                    ) {
-                        CustomListItem(
-                            title = stringResource(R.string.prime_cluster),
-                            titleColor = MaterialTheme.colorScheme.onSurface,
-                            summary = if (primeClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${primeClusterState.currentFreq} MHz",
-                            summaryColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    ItemCard(
+                        shape = MaterialTheme.shapes.large,
+                        title = stringResource(R.string.prime_cluster),
+                        body = if (primeClusterState.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${primeClusterState.currentFreq} MHz",
+                    )
                 }
             }
         }
@@ -458,29 +395,12 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceBright
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(R.string.gpu_monitor),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            ItemCard(
+                shape = CircleShape,
+                icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
+                title = stringResource(R.string.gpu_monitor),
+                titleLarge = true
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
@@ -561,37 +481,12 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                     }
                 }
             }
-
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceBright
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_speed),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = stringResource(R.string.current_frequencies),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Text(
-                            text = if (gpuState.currentFreq.isEmpty()) stringResource(R.string.na) else "${gpuState.currentFreq} MHz",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
+            ItemCard(
+                shape = CircleShape,
+                icon = painterResource(materialsymbols_ic_speed_rounded_filled),
+                title = stringResource(R.string.current_frequencies),
+                body = if (gpuState.currentFreq.isEmpty()) stringResource(R.string.na) else "${gpuState.currentFreq} MHz",
+            )
         }
     }
 }
