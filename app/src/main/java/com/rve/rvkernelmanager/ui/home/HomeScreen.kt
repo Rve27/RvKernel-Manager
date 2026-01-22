@@ -18,7 +18,6 @@
 
 package com.rve.rvkernelmanager.ui.home
 
-import android.content.ClipData
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,14 +43,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,17 +60,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_android_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_info_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mobile_info_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_shield_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_info_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.components.section
 import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavController) {
@@ -105,9 +100,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
         bottomBar = { BottomNavigationBar(navController) },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
-        val clipboard = LocalClipboard.current
-        val coroutineScope = rememberCoroutineScope()
-
         var isFullKernelVersion by rememberSaveable { mutableStateOf(false) }
 
         val deviceInfo by viewModel.deviceInfo.collectAsStateWithLifecycle()
@@ -118,127 +110,37 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 icon = painterResource(materialsymbols_ic_mobile_info_rounded_filled),
                 title = stringResource(R.string.device),
                 body = "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.device_codename),
-                                    "${deviceInfo.manufacturer} ${deviceInfo.deviceName} (${deviceInfo.deviceCodename})",
-                                ),
-                            ),
-                        )
-                    }
-                },
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_android_rounded_filled),
                 title = stringResource(R.string.android),
                 body = "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.android_version),
-                                    "${deviceInfo.androidVersion} (${deviceInfo.sdkVersion})",
-                                ),
-                            ),
-                        )
-                    }
-                },
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.ram),
                 body = "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.ram),
-                                    "${deviceInfo.ramInfo} + ${deviceInfo.zram} (ZRAM)",
-                                ),
-                            ),
-                        )
-                    }
-                }
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.cpu),
                 body = deviceInfo.cpu,
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.cpu),
-                                    deviceInfo.cpu,
-                                ),
-                            ),
-                        )
-                    }
-                }
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_memory_rounded_filled),
                 title = stringResource(R.string.gpu),
                 body = deviceInfo.gpuModel,
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.gpu),
-                                    deviceInfo.gpuModel,
-                                ),
-                            ),
-                        )
-                    }
-                }
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_shield_rounded_filled),
                 title = stringResource(R.string.wireguard),
                 body = deviceInfo.wireGuard,
-                onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.wireguard),
-                                    deviceInfo.wireGuard,
-                                ),
-                            ),
-                        )
-                    }
-                }
             ),
             HomeItem(
                 icon = painterResource(R.drawable.ic_linux),
                 title = stringResource(R.string.kernel),
                 body = if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
                 onClick = { isFullKernelVersion = !isFullKernelVersion },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(
-                            ClipEntry(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.kernel),
-                                    if (isFullKernelVersion) deviceInfo.fullKernelVersion else deviceInfo.kernelVersion,
-                                ),
-                            ),
-                        )
-                    }
-                }
             ),
         )
 
@@ -248,32 +150,24 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 title = stringResource(R.string.contributors),
                 body = stringResource(R.string.contributors_desc),
                 onClick = { context.startActivity(Intent(context, ContributorActivity::class.java)) },
-                onLongClick = { /* Nothing */ },
             ),
             HomeItem(
                 icon = Icons.Rounded.Code,
                 title = stringResource(R.string.source_code),
                 body = stringResource(R.string.source_code_desc),
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://github.com/Rve27/RvKernel-Manager".toUri())) },
-                onLongClick = { /* Nothing */ },
             ),
             HomeItem(
                 icon = painterResource(R.drawable.ic_telegram),
                 title = stringResource(R.string.telegram_group),
                 body = stringResource(R.string.telegram_group_desc),
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, "https://t.me/rve_enterprises".toUri())) },
-                onLongClick = { /* Nothing */ },
             ),
             HomeItem(
                 icon = painterResource(materialsymbols_ic_info_rounded_filled),
                 title = stringResource(R.string.app_version),
                 body = appVersion,
                 onClick = { /* Nothing */ },
-                onLongClick = {
-                    coroutineScope.launch {
-                        clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(context.getString(R.string.app_version), appVersion)))
-                    }
-                },
             )
         )
 
@@ -295,7 +189,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                             title = item.title,
                             body = item.body,
                             onClick = item.onClick,
-                            onLongClick = item.onLongClick,
                         )
                     }
                 }
@@ -309,7 +202,6 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                             title = item.title,
                             body = item.body,
                             onClick = item.onClick,
-                            onLongClick = item.onLongClick,
                         )
                     }
                 }
@@ -322,6 +214,5 @@ private data class HomeItem(
     val icon: Any?,
     val title: String,
     val body: String,
-    val onClick: () -> Unit,
-    val onLongClick: () -> Unit
+    val onClick: (() -> Unit)? = null,
 )

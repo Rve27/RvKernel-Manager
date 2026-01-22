@@ -5,10 +5,10 @@ package com.rve.rvkernelmanager.ui.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -102,21 +102,14 @@ object Card {
         icon: Any?,
         title: String,
         body: String? = null,
-        onClick: (() -> Unit)?,
-        onLongClick: (() -> Unit)?,
+        onClick: (() -> Unit)? = null,
     ) {
-        Card(
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.extraLarge)
-                .combinedClickable(
-                    onClick = onClick ?: {},
-                    onLongClick = onLongClick,
-                ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceBright,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            )
-        ) {
+        val shape = MaterialTheme.shapes.extraLarge
+        val colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        )
+        val content: @Composable ColumnScope.() -> Unit = {
             Row(
                 modifier = Modifier
                     .padding(16.dp)
@@ -163,6 +156,21 @@ object Card {
                     }
                 }
             }
+        }
+
+        if (onClick != null) {
+            Card(
+                onClick = onClick,
+                shape = shape,
+                colors = colors,
+                content = content
+            )
+        } else {
+            Card(
+                shape = shape,
+                colors = colors,
+                content = content
+            )
         }
     }
 }
