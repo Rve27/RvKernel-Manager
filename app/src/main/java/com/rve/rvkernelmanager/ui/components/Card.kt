@@ -2,10 +2,13 @@
 
 package com.rve.rvkernelmanager.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -91,6 +94,75 @@ object Card {
                 )
             }
             content()
+        }
+    }
+
+    @Composable
+    fun ItemCard(
+        icon: Any?,
+        title: String,
+        body: String? = null,
+        onClick: (() -> Unit)?,
+        onLongClick: (() -> Unit)?,
+    ) {
+        Card(
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.extraLarge)
+                .combinedClickable(
+                    onClick = onClick ?: {},
+                    onLongClick = onLongClick,
+                ),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceBright,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (icon) {
+                        is ImageVector -> Icon(
+                            imageVector = icon,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null
+                        )
+                        is Painter -> Icon(
+                            painter = icon,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier.animateContentSize(
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    if (body != null) {
+                        Text(
+                            text = body,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
         }
     }
 }

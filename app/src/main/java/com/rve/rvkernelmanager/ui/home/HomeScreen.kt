@@ -69,7 +69,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_shield_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_info_rounded_filled
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.ListItemCard
+import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.components.section
 import com.rve.rvkernelmanager.ui.contributor.ContributorActivity
@@ -290,7 +290,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
             ) {
                 section(R.string.device_info_section) {
                     items(deviceInfoItems) { item ->
-                        ListItemCard(
+                        ItemCard(
                             icon = item.icon,
                             title = item.title,
                             body = item.body,
@@ -304,7 +304,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 }
                 section(R.string.about_app_section) {
                     items(aboutAppItems) { item ->
-                        ListItemCard(
+                        ItemCard(
                             icon = item.icon,
                             title = item.title,
                             body = item.body,
