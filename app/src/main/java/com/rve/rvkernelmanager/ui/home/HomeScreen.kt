@@ -185,6 +185,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 section(R.string.device_info_section) {
                     items(deviceInfoItems) { item ->
                         ItemCard(
+                            shape = MaterialTheme.shapes.extraLarge,
                             icon = item.icon,
                             title = item.title,
                             body = item.body,
@@ -198,6 +199,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 section(R.string.about_app_section) {
                     items(aboutAppItems) { item ->
                         ItemCard(
+                            shape = MaterialTheme.shapes.extraLarge,
                             icon = item.icon,
                             title = item.title,
                             body = item.body,
