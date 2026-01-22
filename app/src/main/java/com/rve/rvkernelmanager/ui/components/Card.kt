@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -99,13 +100,13 @@ object Card {
 
     @Composable
     fun ItemCard(
+        shape: Shape = CardDefaults.shape,
         icon: Any? = null,
         title: String,
         titleLarge: Boolean = false,
         body: String? = null,
         onClick: (() -> Unit)? = null,
     ) {
-        val shape = MaterialTheme.shapes.extraLarge
         val colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright,
             contentColor = MaterialTheme.colorScheme.onSurface,
