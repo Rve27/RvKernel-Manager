@@ -23,6 +23,8 @@
     <string name="high">High</string>
     <string name="enabled">Enabled</string>
     <string name="text_continue">Continue</string>
+    <string name="checked">Checked</string>
+    <string name="unchecked">Unchecked</string>
 
     <!-- MainActivity -->
     <string name="waiting_root">waiting for root access to be granted…</string>
