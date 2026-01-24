@@ -35,6 +35,7 @@
     <string name="reboot_system">Reboot system</string>
     <string name="reboot_recovery">Reboot to recovery</string>
     <string name="reboot_bootloader">Reboot to bootloader</string>
+    <string name="reboot_edl">Reboot to EDL</string>
 
     <!-- Home Screen -->
     <string name="device_info_section">Device Information</string>

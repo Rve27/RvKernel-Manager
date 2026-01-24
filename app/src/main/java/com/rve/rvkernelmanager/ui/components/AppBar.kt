@@ -66,7 +66,8 @@ fun SimpleTopAppBar() {
     val rebootMenu = listOf(
         Pair(stringResource(R.string.reboot_system), ""),
         Pair(stringResource(R.string.reboot_recovery), "recovery"),
-        Pair(stringResource(R.string.reboot_bootloader), "bootloader")
+        Pair(stringResource(R.string.reboot_bootloader), "bootloader"),
+        Pair(stringResource(R.string.reboot_edl), "edl"),
     )
 
     TopAppBar(
