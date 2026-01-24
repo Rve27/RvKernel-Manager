@@ -120,11 +120,6 @@ object Utils {
     }
 
     fun reboot(mode: String = "") {
-        val command = if (mode.isBlank()) {
-            "reboot"
-        } else {
-            "reboot $mode"
-        }
-        Shell.cmd(command).exec()
+        Shell.cmd("/system/bin/svc power reboot $mode || /system/bin/reboot $mode").submit()
     }
 }
