@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">RvKernel Manager</string>
+
+    <string name="nav_home">Beranda</string>
+    <string name="nav_soc">SoC</string>
+    <string name="nav_battery">Baterai</string>
+    <string name="nav_kernel">Kernel</string>
+
+    <string name="unknown">tidak diketahui</string>
+    <string name="na">N/A</string>
+    <string name="close">Tutup</string>
+    <string name="cancel">Batal</string>
+    <string name="change">Ubah</string>
+    <string name="apply">Terapkan</string>
+    <string name="menu">Menu</string>
+    <string name="back">Kembali</string>
+    <string name="off">Mati</string>
+    <string name="low">Rendah</string>
+    <string name="medium">Sedang</string>
+    <string name="high">Tinggi</string>
+    <string name="enabled">Diaktifkan</string>
+    <string name="text_continue">Lanjutkan</string>
+    <string name="checked">Dicentang</string>
+    <string name="unchecked">Tidak dicentang</string>
+
+    <string name="waiting_root">menunggu akses root diberikan…</string>
+    <string name="root_required_title">Akses root diperlukan</string>
+    <string name="root_required_desc">RvKernel Manager memerlukan akses root</string>
+
+    <string name="settings">Pengaturan</string>
+    <string name="reboot_menu">Menu mulai ulang</string>
+    <string name="reboot_system">Mulai ulang sistem</string>
+    <string name="reboot_recovery">Mulai ulang ke recovery</string>
+    <string name="reboot_bootloader">Mulai ulang ke bootloader</string>
+    <string name="reboot_edl">Mulai ulang ke EDL</string>
+
+    <string name="device_info_section">Informasi Perangkat</string>
+    <string name="device">Perangkat</string>
+    <string name="device_codename">Nama kode perangkat</string>
+    <string name="android">Android</string>
+    <string name="android_version">Versi Android</string>
+    <string name="ram">RAM</string>
+    <string name="cpu">CPU</string>
+    <string name="gpu">GPU</string>
+    <string name="wireguard">WireGuard</string>
+    <string name="kernel">Kernel</string>
+
+    <string name="about_app_section">Tentang Aplikasi</string>
+    <string name="contributors">Kontributor</string>
+    <string name="contributors_desc">Lihat siapa yang berkontribusi dalam pengembangan RvKernel Manager</string>
+    <string name="source_code">Kode sumber</string>
+    <string name="source_code_desc">Lihat kode di balik layar aplikasi ini</string>
+    <string name="telegram_group">Grup Telegram</string>
+    <string name="telegram_group_desc">Butuh bantuan atau punya saran? Bergabunglah di sini!</string>
+    <string name="app_version">Versi RvKernel Manager</string>
+
+    <string name="battery_monitor">Monitor Baterai</string>
+    <string name="voltage">Tegangan baterai</string>
+    <string name="temperature">Suhu baterai</string>
+    <string name="level">Level baterai</string>
+    <string name="uptime">Waktu aktif</string>
+    <string name="device_uptime">Waktu aktif perangkat</string>
+    <string name="deep_sleep">Deep sleep</string>
+    <string name="battery_info">Informasi Baterai</string>
+    <string name="tech">Teknologi baterai</string>
+    <string name="health">Kesehatan baterai</string>
+    <string name="design_capacity">Kapasitas desain</string>
+    <string name="battery_design_capacity">Kapasitas desain baterai</string>
+    <string name="tap_to_set_capacity">(Ketuk untuk mengatur kapasitas desain secara manual)</string>
+    <string name="max_capacity">Kapasitas maksimum</string>
+    <string name="battery_max_capacity">Kapasitas maksimum baterai</string>
+    <string name="set_manual_capacity">Atur kapasitas desain manual</string>
+    <string name="capacity_hint">Kapasitas desain (mAh)</string>
+    <string name="thermal_profiles">Profil termal</string>
+    <string name="profile_default">Bawaan</string>
+    <string name="profile_benchmark">Benchmark</string>
+    <string name="profile_browser">Browser</string>
+    <string name="profile_camera">Kamera</string>
+    <string name="profile_dialer">Telepon</string>
+    <string name="profile_gaming">Gaming</string>
+    <string name="profile_streaming">Streaming</string>
+    <string name="force_fast_charging">Paksa pengisian cepat</string>
+    <string name="bypass_charging">Bypass pengisian daya</string>
+
+    <string name="health_good">Baik</string>
+    <string name="health_overheat">Terlalu Panas</string>
+    <string name="health_dead">Mati</string>
+    <string name="health_over_voltage">Tegangan Berlebih</string>
+    <string name="health_unspecified">Kegagalan Tidak Spesifik</string>
+    <string name="health_cold">Dingin</string>
+
+    <string name="cpu_monitor">Monitor CPU</string>
+    <string name="usage">Penggunaan</string>
+    <string name="current_frequencies">Frekuensi saat ini</string>
+    <string name="little_cluster">Klaster Little</string>
+    <string name="big_cluster">Klaster Big</string>
+    <string name="prime_cluster">Klaster Prime</string>
+    <string name="min_freq">Frekuensi min</string>
+    <string name="max_freq">Frekuensi maks</string>
+    <string name="governor">Governor</string>
+    <string name="available_frequencies">Frekuensi yang tersedia</string>
+    <string name="available_governor">Governor yang tersedia</string>
+    <string name="no_frequencies">Tidak ada frekuensi yang tersedia ditemukan.</string>
+    <string name="no_governors">Tidak ada governor yang tersedia ditemukan.</string>
+    <string name="cpu_boost">CPU Boost</string>
+    <string name="input_boost_ms">Input boost ms</string>
+    <string name="sched_boost_input">Sched boost saat input</string>
+    <string name="gpu_monitor">Monitor GPU</string>
+    <string name="default_pwrlevel">Pwrlevel bawaan</string>
+    <string name="adreno_boost">Adreno boost</string>
+    <string name="gpu_throttling">Throttling GPU</string>
+
+    <string name="kernel_profiles_title">Profil Kernel</string>
+    <string name="profile_powersave">Hemat daya</string>
+    <string name="profile_balance">Seimbang</string>
+    <string name="profile_performance">Performa</string>
+    <string name="get_templates">Dapatkan templat profil kernel</string>
+    <string name="kernel_parameter_title">Parameter Kernel</string>
+    <string name="restrict_dmesg">Batasi output dmesg</string>
+    <string name="restrict_dmesg_title">Batasi Dmesg</string>
+    <string name="restrict_dmesg_desc">Tombol ini menunjukkan apakah pengguna tanpa hak istimewa dicegah menggunakan dmesg untuk melihat pesan dari buffer log kernel. Ketika dmesg_restrict diatur ke tidak aktif (0), tidak ada batasan.</string>
+    <string name="sched_auto_group">Sched auto group</string>
+    <string name="printk">printk</string>
+    <string name="sched_lib_name">Nama Sched lib</string>
+    <string name="sched_lib_name_desc">Tambahkan paket aplikasi ke daftar sched_lib_name untuk melaporkan frekuensi maksimum ke unity task</string>
+    <string name="tcp_congestion">Algoritma kemacetan TCP</string>
+    <string name="uclamp">Uclamp</string>
+    <string name="uclamp_max">Uclamp maks</string>
+    <string name="uclamp_min">Uclamp min</string>
+    <string name="uclamp_min_rt">Uclamp min RT bawaan</string>
+    <string name="memory">Memori</string>
+    <string name="zram_warning">Mungkin perlu beberapa menit untuk mengubah parameter ZRAM</string>
+    <string name="zram_size">Ukuran ZRAM</string>
+    <string name="swappiness">Swappiness</string>
+    <string name="zram_comp_algo">Algoritma kompresi ZRAM</string>
+    <string name="dirty_ratio">dirty ratio</string>
+    <string name="bore_scheduler">BORE Scheduler</string>
+    <string name="bore_desc">BORE (Burst-Oriented Response Enhancer) adalah versi yang ditingkatkan dari penjadwal Linux EEVDF. Dikembangkan dengan tujuan mempertahankan kinerja tinggi penjadwal ini sambil memberikan respons yang tangguh terhadap input pengguna dalam skenario beban yang serbaguna mungkin.</string>
+    <string name="burst_smooth_long">Burst smoothness long</string>
+    <string name="burst_smooth_short">Burst smoothness short</string>
+    <string name="burst_fork">Burst fork atavistic</string>
+    <string name="burst_penalty_offset">Burst penalty offset</string>
+    <string name="burst_penalty_scale">Burst penalty scale</string>
+    <string name="burst_cache">Burst cache lifetime</string>
+
+    <string name="app_theme">Tema aplikasi</string>
+    <string name="theme_summary">Pilih antara tema terang, gelap, atau default sistem</string>
+    <string name="select_theme">Pilih tema</string>
+    <string name="theme_light">Mode terang</string>
+    <string name="theme_dark">Mode gelap</string>
+    <string name="theme_system">Default sistem</string>
+    <string name="soc_polling">Interval polling SoC</string>
+    <string name="soc_polling_summary">Atur seberapa sering data SoC diperbarui (dalam detik)</string>
+    <string name="polling_dialog_desc">Atur interval polling untuk data SoC (1–30 detik)</string>
+    <string name="polling_hint">Interval (detik)</string>
+    <string name="developer_options">Opsi Pengembang</string>
+    <string name="developer_options_summary">Buka pengaturan pengembang Android</string>
+
+    <string name="contributions">kontribusi</string>
+    <string name="error_prefix">Kesalahan:</string>
+    <string name="no_contributors">Tidak ada kontributor ditemukan</string>
+    <string name="no_internet">Tidak ada koneksi internet</string>
+    <string name="timeout">Waktu koneksi habis</string>
+    <string name="network_error">Kesalahan jaringan</string>
+    <string name="server_error">Kesalahan server</string>
+    <string name="avatar_desc">avatar</string>
+</resources>
