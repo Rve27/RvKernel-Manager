@@ -250,6 +250,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 Box(Modifier.weight(1f)) {
                     Card(
                         shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        )
                     ) {
                         Column(
                             Modifier
@@ -440,22 +443,37 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
                     Card(
-                        shape = MaterialTheme.shapes.extraLarge,
+                        shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceBright
                         )
                     ) {
-                        Column(Modifier.padding(16.dp)) {
+                        Column(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_usage),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    contentDescription = null,
-                                )
-                                Column {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(materialsymbols_ic_data_usage_rounded_filled),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = null,
+                                    )
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
                                     Text(
                                         text = stringResource(R.string.usage),
                                         style = MaterialTheme.typography.titleMedium,
@@ -465,7 +483,6 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                         text = if (gpuUsage == "N/A") stringResource(R.string.na) else "$gpuUsage%",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(bottom = 8.dp),
                                     )
                                 }
                             }
@@ -477,34 +494,51 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                         }
                     }
                 }
-                Box(Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
                     Card(
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceBright
-                        )
+                        ),
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp).fillMaxSize(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Crossfade(
                                 targetState = gpuTemp.toIntOrNull() ?: 0,
                                 animationSpec = tween(durationMillis = 500),
                             ) { temp ->
-                                if (temp >= 60) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        contentDescription = null,
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        contentDescription = null,
-                                    )
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(4.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (temp >= 60) {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_emergency_heat_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    } else if (temp >= 50) {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_mode_heat_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(materialsymbols_ic_mode_cool_rounded_filled),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = null,
+                                        )
+                                    }
                                 }
                             }
                             Text(
