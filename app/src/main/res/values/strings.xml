@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RvKernel Manager</string>
+    <string name="app_name" translatable="false">RvKernel Manager</string>
 
     <!-- Navigation -->
     <string name="nav_home">Home</string>
@@ -162,7 +162,7 @@
     <string name="theme_system">System default</string>
     <string name="soc_polling">SoC polling interval</string>
     <string name="soc_polling_summary">Set how often SoC data is updated (in seconds)</string>
-    <string name="polling_dialog_desc">Set the polling interval for SoC data (1-30 seconds)</string>
+    <string name="polling_dialog_desc">Set the polling interval for SoC data (1–30 seconds)</string>
     <string name="polling_hint">Interval (seconds)</string>
     <string name="developer_options">Developer Options</string>
     <string name="developer_options_summary">Open Android developer settings</string>
