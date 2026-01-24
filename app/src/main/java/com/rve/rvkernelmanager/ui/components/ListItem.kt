@@ -19,13 +19,17 @@
 package com.rve.rvkernelmanager.ui.components
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -55,75 +59,62 @@ fun LazyListScope.section(
 }
 
 @Composable
-fun CustomListItem(
+fun ListItem(
     icon: Any? = null,
-    iconColor: Color? = null,
     title: String? = null,
-    titleSmall: Boolean = false,
-    titleLarge: Boolean = false,
-    titleColor: Color? = null,
     summary: String? = null,
-    summaryColor: Color? = null,
-    bodySmall: Boolean = false,
-    bodyLarge: Boolean = false,
+    contentPadding: PaddingValues = PaddingValues(16.dp),
     onClick: (() -> Unit)? = null,
-    onLongClick: (() -> Unit)? = null,
-    animateContentSize: Boolean = false,
 ) {
     Row(
         modifier = Modifier
             .then(
-                if (onClick != null || onLongClick != null) {
-                    Modifier.combinedClickable(
-                        onClick = onClick ?: {},
-                        onLongClick = onLongClick,
-                    )
-                } else {
-                    Modifier
-                },
+                if (onClick != null) Modifier.clickable(onClick = onClick)
+                else Modifier
             )
-            .padding(16.dp)
+            .padding(contentPadding)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (icon != null) {
-            when (icon) {
-                is ImageVector -> Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = iconColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp),
-                )
-                is Painter -> Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    tint = iconColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(end = 16.dp),
-                )
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                when (icon) {
+                    is ImageVector -> Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+
+                    is Painter -> Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
             }
         }
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             if (title != null) {
                 Text(
                     text = title,
-                    style = when {
-                        titleSmall -> MaterialTheme.typography.titleSmall
-                        titleLarge -> MaterialTheme.typography.titleLarge
-                        else -> MaterialTheme.typography.titleMedium
-                    },
-                    color = titleColor ?: MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             if (summary != null) {
                 Text(
                     text = summary,
-                    style = when {
-                        bodySmall -> MaterialTheme.typography.bodySmall
-                        bodyLarge -> MaterialTheme.typography.bodyLarge
-                        else -> MaterialTheme.typography.bodyMedium
-                    },
-                    color = summaryColor ?: MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = if (animateContentSize) Modifier.animateContentSize() else Modifier,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

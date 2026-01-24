@@ -69,7 +69,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dark_mode_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_light_mode_rounded_filled
 import com.rve.rvkernelmanager.R
-import com.rve.rvkernelmanager.ui.components.CustomListItem
+import com.rve.rvkernelmanager.ui.components.ListItem
 import com.rve.rvkernelmanager.ui.components.TopAppBarWithBackButton
 import com.rve.rvkernelmanager.ui.theme.ThemeMode
 import kotlinx.coroutines.Dispatchers
@@ -101,19 +101,19 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            CustomListItem(
+            ListItem(
                 icon = Icons.Default.Palette,
                 title = stringResource(R.string.app_theme),
                 summary = stringResource(R.string.theme_summary),
                 onClick = { openThemeDialog = true },
             )
-            CustomListItem(
+            ListItem(
                 icon = Icons.Default.Timer,
                 title = stringResource(R.string.soc_polling),
                 summary = stringResource(R.string.soc_polling_summary),
                 onClick = { openPollingDialog = true },
             )
-            CustomListItem(
+            ListItem(
                 icon = painterResource(materialsymbols_ic_build_rounded_filled),
                 title = stringResource(R.string.developer_options),
                 summary = stringResource(R.string.developer_options_summary),
