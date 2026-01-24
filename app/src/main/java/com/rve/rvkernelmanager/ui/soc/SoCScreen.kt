@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -61,8 +60,6 @@ import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -97,10 +94,12 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_heat_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_touch_app_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
+import com.rve.rvkernelmanager.ui.components.Card.SwitchOutlinedCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 
@@ -1491,58 +1490,25 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
-                    Card(
+                    SwitchOutlinedCard(
                         shape = RoundedCornerShape(
                             topStart = 8.dp,
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
                         ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
                         ),
-                        onClick = { viewModel.updateCpuSchedBoostOnInput(!cpuSchedBoostOnInputChecked) },
                         border = BorderStroke(
                             width = 2.0.dp,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = MaterialTheme.colorScheme.primary
                         ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_touch_app),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                contentDescription = null,
-                            )
-                            Text(
-                                text = stringResource(R.string.sched_boost_input),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.weight(1f),
-                            )
-                            Switch(
-                                checked = cpuSchedBoostOnInputChecked,
-                                onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) },
-                                thumbContent = {
-                                    Crossfade(
-                                        targetState = cpuSchedBoostOnInputChecked,
-                                        animationSpec = tween(durationMillis = 500),
-                                    ) { isChecked ->
-                                        if (isChecked) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_check),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        }
-                                    }
-                                },
-                            )
-                        }
-                    }
+                        icon = painterResource(materialsymbols_ic_touch_app_rounded_filled),
+                        text = stringResource(R.string.sched_boost_input),
+                        checked = cpuSchedBoostOnInputChecked,
+                        onCheckedChange = { isChecked -> viewModel.updateCpuSchedBoostOnInput(isChecked) },
+                    )
                 }
             }
         }
@@ -1909,71 +1875,25 @@ fun GPUCard(viewModel: SoCViewModel) {
                         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
-                    Card(
+                    SwitchOutlinedCard(
                         shape = RoundedCornerShape(
                             topStart = 8.dp,
                             topEnd = 8.dp,
                             bottomStart = 28.dp,
                             bottomEnd = 28.dp,
                         ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
                         ),
-                        onClick = { viewModel.updateGPUThrottling(!gpuThrottlingStatus) },
                         border = BorderStroke(
                             width = 2.0.dp,
                             color = MaterialTheme.colorScheme.primary,
                         ),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            Crossfade(
-                                targetState = gpuThrottlingStatus,
-                                animationSpec = tween(durationMillis = 500),
-                            ) { isChecked ->
-                                if (isChecked) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_cool),
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        contentDescription = null,
-                                    )
-                                } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_heat),
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        contentDescription = null,
-                                    )
-                                }
-                            }
-                            Text(
-                                text = stringResource(R.string.gpu_throttling),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.weight(1f),
-                            )
-                            Switch(
-                                checked = gpuThrottlingStatus,
-                                onCheckedChange = { isChecked -> viewModel.updateGPUThrottling(isChecked) },
-                                thumbContent = {
-                                    Crossfade(
-                                        targetState = gpuThrottlingStatus,
-                                        animationSpec = tween(durationMillis = 500),
-                                    ) { isChecked ->
-                                        if (isChecked) {
-                                            Icon(
-                                                painter = painterResource(R.drawable.ic_check),
-                                                contentDescription = null,
-                                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                                            )
-                                        }
-                                    }
-                                },
-                            )
-                        }
-                    }
+                        icon = painterResource(materialsymbols_ic_speed_rounded_filled),
+                        text = stringResource(R.string.gpu_throttling),
+                        checked = gpuThrottlingStatus,
+                        onCheckedChange = { isChecked -> viewModel.updateGPUThrottling(isChecked) },
+                    )
                 }
             }
         }
