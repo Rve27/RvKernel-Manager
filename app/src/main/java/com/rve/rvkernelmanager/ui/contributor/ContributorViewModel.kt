@@ -20,6 +20,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rve.rvkernelmanager.R
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.SocketTimeoutException
+import java.net.URL
+import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +33,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.SocketTimeoutException
-import java.net.URL
-import java.net.UnknownHostException
 
 @Serializable
 data class Contributor(val login: String, val id: Int, val avatar_url: String, val contributions: Int, val html_url: String) {

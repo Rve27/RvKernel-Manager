@@ -152,9 +152,11 @@ fun SoCScreen(viewModel: SoCViewModel = viewModel(), navController: NavControlle
                 Lifecycle.Event.ON_RESUME -> {
                     viewModel.startJob()
                 }
+
                 Lifecycle.Event.ON_PAUSE -> {
                     viewModel.stopJob()
                 }
+
                 else -> {}
             }
         }
@@ -242,7 +244,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 shape = CircleShape,
                 icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
                 title = stringResource(R.string.cpu_monitor),
-                titleLarge = true
+                titleLarge = true,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -250,14 +252,14 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     Card(
                         shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
-                        )
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
+                        ),
                     ) {
                         Column(
                             Modifier
                                 .fillMaxSize()
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -277,7 +279,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                     )
                                 }
                                 Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
                                         text = stringResource(R.string.usage),
@@ -301,12 +303,12 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 }
                 Box(
                     modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Card(
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
                         ),
                     ) {
                         Column(
@@ -323,7 +325,7 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.primaryContainer)
                                         .padding(4.dp),
-                                    contentAlignment = Alignment.Center
+                                    contentAlignment = Alignment.Center,
                                 ) {
                                     if (temp >= 60) {
                                         Icon(
@@ -377,14 +379,20 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                         ItemCard(
                             shape = MaterialTheme.shapes.large,
                             title = stringResource(R.string.little_cluster),
-                            body = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${cpu0State.currentFreq} MHz",
+                            body = if (cpu0State.currentFreq.isEmpty())
+                                stringResource(R.string.unknown)
+                            else
+                                "${cpu0State.currentFreq} MHz",
                         )
                     }
                     Box(Modifier.weight(1f)) {
                         ItemCard(
                             shape = MaterialTheme.shapes.large,
                             title = stringResource(R.string.big_cluster),
-                            body = if (bigClusterState.currentFreq.isEmpty()) stringResource(R.string.na) else "${bigClusterState.currentFreq} MHz",
+                            body = if (bigClusterState.currentFreq.isEmpty())
+                                stringResource(R.string.na)
+                            else
+                                "${bigClusterState.currentFreq} MHz",
                         )
                     }
                 }
@@ -392,7 +400,10 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     ItemCard(
                         shape = MaterialTheme.shapes.large,
                         title = stringResource(R.string.prime_cluster),
-                        body = if (primeClusterState.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${primeClusterState.currentFreq} MHz",
+                        body = if (primeClusterState.currentFreq.isEmpty())
+                            stringResource(R.string.unknown)
+                        else
+                            "${primeClusterState.currentFreq} MHz",
                     )
                 }
             }
@@ -436,7 +447,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 shape = CircleShape,
                 icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
                 title = stringResource(R.string.gpu_monitor),
-                titleLarge = true
+                titleLarge = true,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -444,14 +455,14 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                     Card(
                         shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
-                        )
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
+                        ),
                     ) {
                         Column(
                             Modifier
                                 .fillMaxSize()
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -471,7 +482,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                     )
                                 }
                                 Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
                                         text = stringResource(R.string.usage),
@@ -495,12 +506,12 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                 }
                 Box(
                     modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Card(
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
                         ),
                     ) {
                         Column(
@@ -517,7 +528,7 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
                                         .clip(CircleShape)
                                         .background(MaterialTheme.colorScheme.primaryContainer)
                                         .padding(4.dp),
-                                    contentAlignment = Alignment.Center
+                                    contentAlignment = Alignment.Center,
                                 ) {
                                     if (temp >= 60) {
                                         Icon(
@@ -773,7 +784,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                                     openAMXF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -814,7 +825,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                                     openACG = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text(gov)
                             }
@@ -855,7 +866,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
         icon = painterResource(materialsymbols_ic_memory_rounded_filled),
         text = stringResource(R.string.big_cluster),
         expanded = expanded,
-        onClick = { expanded = !expanded }
+        onClick = { expanded = !expanded },
     ) {
         AnimatedVisibility(
             visible = expanded,
@@ -1008,7 +1019,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                     openAMNF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1049,7 +1060,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                     openAMXF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1090,7 +1101,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                                     openACG = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text(gov)
                             }
@@ -1131,7 +1142,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
         icon = painterResource(materialsymbols_ic_memory_rounded_filled),
         text = stringResource(R.string.prime_cluster),
         expanded = expanded,
-        onClick = { expanded = !expanded }
+        onClick = { expanded = !expanded },
     ) {
         AnimatedVisibility(
             visible = expanded,
@@ -1284,7 +1295,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                     openAMNF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1325,7 +1336,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                     openAMXF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1366,7 +1377,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                                     openACG = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text(gov)
                             }
@@ -1407,7 +1418,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
         icon = painterResource(materialsymbols_ic_rocket_launch_rounded_filled),
         text = stringResource(R.string.cpu_boost),
         expanded = expanded,
-        onClick = { expanded = !expanded }
+        onClick = { expanded = !expanded },
     ) {
         AnimatedVisibility(
             visible = expanded,
@@ -1498,11 +1509,11 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                             bottomEnd = 28.dp,
                         ),
                         colors = CardDefaults.outlinedCardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
                         ),
                         border = BorderStroke(
                             width = 2.0.dp,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         ),
                         icon = painterResource(materialsymbols_ic_touch_app_rounded_filled),
                         text = stringResource(R.string.sched_boost_input),
@@ -1587,7 +1598,7 @@ fun GPUCard(viewModel: SoCViewModel) {
         icon = painterResource(materialsymbols_ic_view_in_ar_rounded_filled),
         text = stringResource(R.string.gpu),
         expanded = expanded,
-        onClick = { expanded = !expanded }
+        onClick = { expanded = !expanded },
     ) {
         AnimatedVisibility(
             visible = expanded,
@@ -1776,7 +1787,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                             else -> gpuState.adrenoBoost
                                         }
                                     }.let {
-                                        when(it) {
+                                        when (it) {
                                             "Off" -> stringResource(R.string.off)
                                             "Low" -> stringResource(R.string.low)
                                             "Medium" -> stringResource(R.string.medium)
@@ -1883,7 +1894,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             bottomEnd = 28.dp,
                         ),
                         colors = CardDefaults.outlinedCardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
                         ),
                         border = BorderStroke(
                             width = 2.0.dp,
@@ -1919,7 +1930,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     openAMNF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1960,7 +1971,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     openAMXF = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text("$freq MHz")
                             }
@@ -2001,7 +2012,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     openAGG = false
                                 },
                                 shapes = ButtonDefaults.shapes(),
-                                contentPadding = PaddingValues(16.dp)
+                                contentPadding = PaddingValues(16.dp),
                             ) {
                                 Text(gov)
                             }
@@ -2040,7 +2051,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             openABD = false
                         },
                         shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Text(stringResource(R.string.off))
                     }
@@ -2050,7 +2061,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             openABD = false
                         },
                         shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Text(stringResource(R.string.low))
                     }
@@ -2060,7 +2071,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             openABD = false
                         },
                         shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Text(stringResource(R.string.medium))
                     }
@@ -2070,7 +2081,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             openABD = false
                         },
                         shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp),
                     ) {
                         Text(stringResource(R.string.high))
                     }

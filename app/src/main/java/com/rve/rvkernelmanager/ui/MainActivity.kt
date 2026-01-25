@@ -124,7 +124,6 @@ class MainActivity : ComponentActivity() {
         var visible by remember { mutableStateOf(false) }
         val progressAnim = remember { Animatable(0f) }
 
-
         if (isRoot) {
             LaunchedEffect(Unit) {
                 visible = true
@@ -132,8 +131,8 @@ class MainActivity : ComponentActivity() {
                     targetValue = 1f,
                     animationSpec = tween(
                         durationMillis = 2000,
-                        easing = FastOutSlowInEasing
-                    )
+                        easing = FastOutSlowInEasing,
+                    ),
                 )
                 visible = false
                 isLoading = false
@@ -145,12 +144,12 @@ class MainActivity : ComponentActivity() {
             ) {
                 Crossfade(
                     targetState = isLoading,
-                    animationSpec = tween(durationMillis = 1000)
+                    animationSpec = tween(durationMillis = 1000),
                 ) { loading ->
                     if (loading) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Column(
                                 modifier = Modifier.padding(horizontal = 64.dp),
@@ -161,28 +160,28 @@ class MainActivity : ComponentActivity() {
                                 AnimatedVisibility(
                                     visible = visible,
                                     enter = fadeIn(
-                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                                     ) + slideInVertically(
                                         initialOffsetY = { it },
-                                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                                     ),
                                     exit = fadeOut(
-                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                                     ) + slideOutVertically(
                                         targetOffsetY = { it },
-                                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
-                                    )
+                                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
+                                    ),
                                 ) {
                                     Box(
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     ) {
                                         Text(
                                             text = "$percentage%",
                                             style = MaterialTheme.typography.titleMedium,
                                             color = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.align(
-                                                BiasAlignment(horizontalBias = bias, verticalBias = 0f)
-                                            )
+                                                BiasAlignment(horizontalBias = bias, verticalBias = 0f),
+                                            ),
                                         )
                                     }
                                 }
@@ -190,25 +189,25 @@ class MainActivity : ComponentActivity() {
                                 AnimatedVisibility(
                                     visible = visible,
                                     enter = fadeIn(
-                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                                     ) + expandHorizontally(
                                         animationSpec = tween(
                                             durationMillis = 750,
-                                            easing = FastOutSlowInEasing
-                                        )
+                                            easing = FastOutSlowInEasing,
+                                        ),
                                     ),
                                     exit = fadeOut(
-                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec()
+                                        animationSpec = MaterialTheme.motionScheme.slowEffectsSpec(),
                                     ) + shrinkHorizontally(
                                         animationSpec = tween(
                                             durationMillis = 750,
-                                            easing = FastOutSlowInEasing
-                                        )
-                                    )
+                                            easing = FastOutSlowInEasing,
+                                        ),
+                                    ),
                                 ) {
                                     LinearWavyProgressIndicator(
                                         progress = { progressAnim.value },
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier.fillMaxWidth(),
                                     )
                                 }
                             }
@@ -245,23 +244,23 @@ class MainActivity : ComponentActivity() {
                                     snackbarHostState.showSnackbar("Root access denied")
                                 }
                             }
-                        }
+                        },
                     ) {
                         Text(text = stringResource(R.string.text_continue))
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
             ) { innerPadding ->
                 Box(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         ContainedLoadingIndicator()
                         Text(
@@ -278,7 +277,7 @@ class MainActivity : ComponentActivity() {
                         title = {
                             Text(
                                 text = stringResource(R.string.root_required_title),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         },
                         text = { Text(text = stringResource(R.string.root_required_desc)) },
@@ -286,7 +285,7 @@ class MainActivity : ComponentActivity() {
                             TextButton(onClick = { showRootDialog = false }) {
                                 Text(text = stringResource(R.string.close))
                             }
-                        }
+                        },
                     )
                 }
             }

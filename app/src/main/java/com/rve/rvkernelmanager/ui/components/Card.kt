@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2026 Rve <rve27github@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 @file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 package com.rve.rvkernelmanager.ui.components
@@ -48,13 +64,7 @@ import com.rve.rvkernelmanager.R
 
 object Card {
     @Composable
-    fun ExpandableCard(
-        icon: Any?,
-        text: String,
-        onClick: () -> Unit,
-        expanded: Boolean,
-        content: @Composable () -> Unit
-    ) {
+    fun ExpandableCard(icon: Any?, text: String, onClick: () -> Unit, expanded: Boolean, content: @Composable () -> Unit) {
         val rotateArrow by animateFloatAsState(
             targetValue = if (expanded) 180f else 0f,
             animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
@@ -66,33 +76,33 @@ object Card {
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceBright,
                 contentColor = MaterialTheme.colorScheme.onSurface,
-            )
+            ),
         ) {
             Row(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(8.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     when (icon) {
                         is ImageVector -> Icon(
                             imageVector = icon,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
+                            contentDescription = null,
                         )
 
                         is Painter -> Icon(
                             painter = icon,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 }
@@ -131,7 +141,7 @@ object Card {
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 if (icon != null) {
                     Box(
@@ -139,38 +149,38 @@ object Card {
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primaryContainer)
                             .padding(8.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         when (icon) {
                             is ImageVector -> Icon(
                                 imageVector = icon,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                contentDescription = null
+                                contentDescription = null,
                             )
 
                             is Painter -> Icon(
                                 painter = icon,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                contentDescription = null
+                                contentDescription = null,
                             )
                         }
                     }
                 }
                 Column(
                     modifier = Modifier.animateContentSize(
-                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec()
+                        animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
                         text = title,
-                        style = if (titleLarge) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium
+                        style = if (titleLarge) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium,
                     )
                     if (body != null) {
                         Text(
                             text = body,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -182,13 +192,13 @@ object Card {
                 onClick = onClick,
                 shape = shape,
                 colors = colors,
-                content = content
+                content = content,
             )
         } else {
             Card(
                 shape = shape,
                 colors = colors,
-                content = content
+                content = content,
             )
         }
     }
@@ -201,7 +211,7 @@ object Card {
         icon: Any?,
         text: String,
         checked: Boolean,
-        onCheckedChange: (Boolean) -> Unit
+        onCheckedChange: (Boolean) -> Unit,
     ) {
         val interactionSource = remember { MutableInteractionSource() }
 
@@ -210,39 +220,40 @@ object Card {
             colors = colors,
             border = border,
             onClick = { onCheckedChange(!checked) },
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
         ) {
             Row(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(8.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     when (icon) {
                         is ImageVector -> Icon(
                             imageVector = icon,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
+                            contentDescription = null,
                         )
+
                         is Painter -> Icon(
                             painter = icon,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 }
                 Text(
                     text = text,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 Switch(
                     checked = checked,
@@ -251,7 +262,7 @@ object Card {
                     thumbContent = {
                         Crossfade(
                             targetState = checked,
-                            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
+                            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                         ) { isChecked ->
                             Icon(
                                 imageVector = if (isChecked) Icons.Rounded.Check else Icons.Rounded.Close,
@@ -259,7 +270,7 @@ object Card {
                                 modifier = Modifier.size(SwitchDefaults.IconSize),
                             )
                         }
-                    }
+                    },
                 )
             }
         }

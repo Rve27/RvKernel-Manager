@@ -43,16 +43,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
-fun LazyListScope.section(
-    @StringRes text: Int,
-    content: LazyListScope.() -> Unit,
-) {
+fun LazyListScope.section(@StringRes text: Int, content: LazyListScope.() -> Unit) {
     item {
         Text(
             text = stringResource(text),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(horizontal = 8.dp),
         )
     }
     content()
@@ -70,12 +67,12 @@ fun ListItem(
         modifier = Modifier
             .then(
                 if (onClick != null) Modifier.clickable(onClick = onClick)
-                else Modifier
+                else Modifier,
             )
             .padding(contentPadding)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         if (icon != null) {
             Box(
@@ -83,7 +80,7 @@ fun ListItem(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(8.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 when (icon) {
                     is ImageVector -> Icon(
@@ -101,7 +98,7 @@ fun ListItem(
             }
         }
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             if (title != null) {
                 Text(

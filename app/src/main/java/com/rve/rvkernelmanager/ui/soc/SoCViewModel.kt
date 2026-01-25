@@ -358,12 +358,15 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             ClusterConfig.Little.name -> {
                 _cpu0State.value = _cpu0State.value.copy(gov = newGovernor)
             }
+
             ClusterConfig.Big(4).name, ClusterConfig.Big(6).name -> {
                 _bigClusterState.value = _bigClusterState.value.copy(gov = newGovernor)
             }
+
             ClusterConfig.Prime.name -> {
                 _primeClusterState.value = _primeClusterState.value.copy(gov = newGovernor)
             }
+
             "gpu" -> {
                 _gpuState.value = _gpuState.value.copy(gov = newGovernor)
             }

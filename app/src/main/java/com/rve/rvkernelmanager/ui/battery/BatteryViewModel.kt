@@ -212,6 +212,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                             isFastChargingChecked = checked,
                         )
                     }
+
                     BatteryUtils.BYPASS_CHARGING -> {
                         _chargingState.value = _chargingState.value.copy(
                             isBypassChargingChecked = checked,

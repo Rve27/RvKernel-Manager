@@ -99,7 +99,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         ) {
             ListItem(
                 icon = Icons.Default.Palette,
@@ -149,11 +149,11 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
                                 painter = painterResource(materialsymbols_ic_light_mode_rounded_filled),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                             Text(stringResource(R.string.theme_light))
                         }
@@ -168,11 +168,11 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
                                 painter = painterResource(materialsymbols_ic_dark_mode_rounded_filled),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                             Text(stringResource(R.string.theme_dark))
                         }
@@ -187,11 +187,11 @@ fun SettingsScreen(viewModel: SettingsViewModel = viewModel()) {
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
                                 painter = painterResource(materialsymbols_ic_android_rounded_filled),
-                                contentDescription = null
+                                contentDescription = null,
                             )
                             Text(stringResource(R.string.theme_system))
                         }

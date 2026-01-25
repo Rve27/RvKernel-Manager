@@ -85,7 +85,7 @@ fun SimpleTopAppBar() {
                     IconButton(
                         onClick = {
                             context.startActivity(Intent(context, SettingsActivity::class.java))
-                        }
+                        },
                     ) {
                         Icon(
                             painter = painterResource(materialsymbols_ic_settings_rounded_filled),
@@ -102,7 +102,7 @@ fun SimpleTopAppBar() {
                     state = rememberTooltipState(),
                 ) {
                     IconButton(
-                        onClick = { isExpanded = true }
+                        onClick = { isExpanded = true },
                     ) {
                         Icon(
                             painter = painterResource(materialsymbols_ic_restart_alt_rounded_filled),
@@ -146,9 +146,9 @@ fun TopAppBarWithBackButton(text: String, onBack: () -> Unit, scrollBehavior: To
         navigationIcon = {
             TooltipBox(
                 positionProvider =
-                TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Below,
-                ),
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Below,
+                    ),
                 tooltip = { PlainTooltip(caretShape = TooltipDefaults.caretShape()) { Text(stringResource(R.string.back)) } },
                 state = rememberTooltipState(),
             ) {

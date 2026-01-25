@@ -116,6 +116,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             }
                         }
                     }
+
                     ContentState.Error -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -128,6 +129,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             )
                         }
                     }
+
                     ContentState.Empty -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -139,6 +141,7 @@ fun ContributorScreen(viewModel: ContributorViewModel = viewModel()) {
                             )
                         }
                     }
+
                     ContentState.Content -> {
                         LazyColumn(
                             modifier = Modifier.padding(horizontal = 16.dp),

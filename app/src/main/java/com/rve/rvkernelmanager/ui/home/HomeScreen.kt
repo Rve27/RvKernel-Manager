@@ -84,6 +84,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     viewModel.loadDeviceInfo(context)
                     viewModel.loadAppVersion(context)
                 }
+
                 else -> {}
             }
         }
@@ -168,7 +169,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                 title = stringResource(R.string.app_version),
                 body = appVersion,
                 onClick = { /* Nothing */ },
-            )
+            ),
         )
 
         Box(
@@ -212,9 +213,4 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
     }
 }
 
-private data class HomeItem(
-    val icon: Any?,
-    val title: String,
-    val body: String,
-    val onClick: (() -> Unit)? = null,
-)
+private data class HomeItem(val icon: Any?, val title: String, val body: String, val onClick: (() -> Unit)? = null)

@@ -123,10 +123,13 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
                     viewModel.initializeBatteryInfo(context)
                     viewModel.startJob()
                 }
+
                 Lifecycle.Event.ON_PAUSE -> {
                     viewModel.unregisterBatteryListeners(context)
                     viewModel.stopJob()
-                } else -> {}
+                }
+
+                else -> {}
             }
         }
 
@@ -658,7 +661,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 modifier = Modifier.clip(CircleShape).combinedClickable(
                     onClick = {
                         if (batteryInfo.designCapacity == "N/A") {
-                            openMDC  = true
+                            openMDC = true
                         }
                     },
                     onLongClick = {
@@ -813,7 +816,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     val thermalProfilesOptions = listOf(
         Triple(
             materialsymbols_ic_mode_cool_rounded_filled,
-            R.string.profile_default
+            R.string.profile_default,
         ) {
             viewModel.updateThermalSconfig("0")
             openTPD = false
@@ -896,7 +899,7 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                             else -> "Unknown"
                         }
                     }.let {
-                        when(it) {
+                        when (it) {
                             "Default" -> stringResource(R.string.profile_default)
                             "Benchmark" -> stringResource(R.string.profile_benchmark)
                             "Browser" -> stringResource(R.string.profile_browser)
@@ -930,15 +933,15 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
                         Button(
                             onClick = item.third,
                             shapes = ButtonDefaults.shapes(),
-                            contentPadding = PaddingValues(16.dp)
+                            contentPadding = PaddingValues(16.dp),
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     painter = painterResource(item.first),
-                                    contentDescription = stringResource(item.second)
+                                    contentDescription = stringResource(item.second),
                                 )
                                 Text(stringResource(item.second))
                             }
