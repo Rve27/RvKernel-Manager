@@ -28,6 +28,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +36,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -43,6 +47,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ElectricBolt
+import androidx.compose.material.icons.rounded.EnergySavingsLeaf
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
@@ -63,9 +70,11 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,11 +83,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -1816,7 +1833,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                         animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                     ),
                 ) {
-                    Card(
+                    OutlinedCard(
                         shape = if (hasGPUThrottling) {
                             RoundedCornerShape(8.dp)
                         } else {
@@ -1827,30 +1844,51 @@ fun GPUCard(viewModel: SoCViewModel) {
                                 bottomEnd = 28.dp,
                             )
                         },
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright,
                         ),
                         border = BorderStroke(
                             width = 2.0.dp,
                             color = MaterialTheme.colorScheme.primary,
                         ),
                     ) {
-                        Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_tune),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    contentDescription = null,
-                                )
-                                Column {
-                                    Text(
-                                        text = stringResource(R.string.default_pwrlevel),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                Box(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_tune),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = null,
                                     )
+                                }
+                                Text(
+                                    text = stringResource(R.string.default_pwrlevel),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
                                     Text(
                                         text = defaultPwrlevel,
                                         style = MaterialTheme.typography.bodyMedium,
@@ -1858,16 +1896,74 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     )
                                 }
                             }
-                            Slider(
+
+                            val sliderState = rememberSliderState(
                                 value = defaultPwrlevel.toFloatOrNull() ?: 0f,
-                                onValueChange = { newValue ->
-                                    defaultPwrlevel = newValue.toInt().toString()
-                                },
-                                onValueChangeFinished = { viewModel.updateDefaultPwrlevel(defaultPwrlevel) },
                                 valueRange = maxPwrlevel..minPwrlevel,
-                                colors = SliderDefaults.colors(
-                                    inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                ),
+                                onValueChangeFinished = {
+                                    viewModel.updateDefaultPwrlevel(defaultPwrlevel)
+                                },
+                            )
+
+                            LaunchedEffect(sliderState.value) {
+                                defaultPwrlevel = sliderState.value.toInt().toString()
+                            }
+
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val startIcon = rememberVectorPainter(Icons.Rounded.ElectricBolt)
+                            val endIcon = rememberVectorPainter(Icons.Rounded.EnergySavingsLeaf)
+
+                            Slider(
+                                state = sliderState,
+                                interactionSource = interactionSource,
+                                track = { sliderState ->
+                                    val iconSize = DpSize(20.dp, 20.dp)
+                                    val iconPadding = 10.dp
+                                    val thumbTrackGapSize = 6.dp
+                                    val activeIconColor = SliderDefaults.colors().activeTickColor
+                                    val inactiveIconColor = SliderDefaults.colors().inactiveTickColor
+
+                                    val trackIconStart: DrawScope.(Offset, Color) -> Unit = { offset, color ->
+                                        translate(offset.x + iconPadding.toPx(), offset.y) {
+                                            with(startIcon) { draw(iconSize.toSize(), colorFilter = ColorFilter.tint(color)) }
+                                        }
+                                    }
+                                    val trackIconEnd: DrawScope.(Offset, Color) -> Unit = { offset, color ->
+                                        translate(offset.x - iconPadding.toPx() - iconSize.toSize().width, offset.y) {
+                                            with(endIcon) { draw(iconSize.toSize(), colorFilter = ColorFilter.tint(color)) }
+                                        }
+                                    }
+
+                                    SliderDefaults.Track(
+                                        sliderState = sliderState,
+                                        modifier = Modifier.height(36.dp).drawWithContent {
+                                            drawContent()
+                                            val yOffset = size.height / 2 - iconSize.toSize().height / 2
+                                            val activeTrackStart = 0f
+                                            val activeTrackEnd = size.width * sliderState.coercedValueAsFraction - thumbTrackGapSize.toPx()
+                                            val inactiveTrackStart = activeTrackEnd + thumbTrackGapSize.toPx() * 2
+                                            val inactiveTrackEnd = size.width
+
+                                            val activeTrackWidth = activeTrackEnd - activeTrackStart
+                                            val inactiveTrackWidth = inactiveTrackEnd - inactiveTrackStart
+
+                                            if (iconSize.toSize().width < activeTrackWidth - iconPadding.toPx() * 2) {
+                                                trackIconStart(Offset(activeTrackStart, yOffset), activeIconColor)
+                                                trackIconEnd(Offset(activeTrackEnd, yOffset), activeIconColor)
+                                            }
+                                            if (iconSize.toSize().width < inactiveTrackWidth - iconPadding.toPx() * 2) {
+                                                trackIconStart(Offset(inactiveTrackStart, yOffset), inactiveIconColor)
+                                                trackIconEnd(Offset(inactiveTrackEnd, yOffset), inactiveIconColor)
+                                            }
+                                        },
+                                        trackCornerSize = 12.dp,
+                                        drawStopIndicator = null,
+                                        thumbTrackGapSize = thumbTrackGapSize,
+                                        colors = SliderDefaults.colors(
+                                            inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainer,
+                                        ),
+                                    )
+                                },
                             )
                         }
                     }
