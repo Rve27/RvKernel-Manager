@@ -101,13 +101,41 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         data class Big(val cpuIndex: Int) :
             ClusterConfig(
                 name = "big",
-                minFreqPath = if (cpuIndex == 4) SoCUtils.MIN_FREQ_CPU4 else SoCUtils.MIN_FREQ_CPU6,
-                maxFreqPath = if (cpuIndex == 4) SoCUtils.MAX_FREQ_CPU4 else SoCUtils.MAX_FREQ_CPU6,
-                currentFreqPath = if (cpuIndex == 4) SoCUtils.CURRENT_FREQ_CPU4 else SoCUtils.CURRENT_FREQ_CPU6,
-                govPath = if (cpuIndex == 4) SoCUtils.GOV_CPU4 else SoCUtils.GOV_CPU6,
-                availableFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_FREQ_CPU4 else SoCUtils.AVAILABLE_FREQ_CPU6,
-                availableGovPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_GOV_CPU4 else SoCUtils.AVAILABLE_GOV_CPU6,
-                availableBoostFreqPath = if (cpuIndex == 4) SoCUtils.AVAILABLE_BOOST_CPU4 else SoCUtils.AVAILABLE_BOOST_CPU6,
+                minFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.MIN_FREQ_CPU3
+                    4 -> SoCUtils.MIN_FREQ_CPU4
+                    else -> SoCUtils.MIN_FREQ_CPU6
+                },
+                maxFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.MAX_FREQ_CPU3
+                    4 -> SoCUtils.MAX_FREQ_CPU4
+                    else -> SoCUtils.MAX_FREQ_CPU6
+                },
+                currentFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.CURRENT_FREQ_CPU3
+                    4 -> SoCUtils.CURRENT_FREQ_CPU4
+                    else -> SoCUtils.CURRENT_FREQ_CPU6
+                },
+                govPath = when (cpuIndex) {
+                    3 -> SoCUtils.GOV_CPU3
+                    4 -> SoCUtils.GOV_CPU4
+                    else -> SoCUtils.GOV_CPU6
+                },
+                availableFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.AVAILABLE_FREQ_CPU3
+                    4 -> SoCUtils.AVAILABLE_FREQ_CPU4
+                    else -> SoCUtils.AVAILABLE_FREQ_CPU6
+                },
+                availableGovPath = when (cpuIndex) {
+                    3 -> SoCUtils.AVAILABLE_GOV_CPU3
+                    4 -> SoCUtils.AVAILABLE_GOV_CPU4
+                    else -> SoCUtils.AVAILABLE_GOV_CPU6
+                },
+                availableBoostFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.AVAILABLE_BOOST_CPU3
+                    4 -> SoCUtils.AVAILABLE_BOOST_CPU4
+                    else -> SoCUtils.AVAILABLE_BOOST_CPU6
+                },
             )
 
         object Prime : ClusterConfig(
@@ -258,6 +286,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun detectBigClusterConfig(): ClusterConfig.Big? {
         return when {
+            Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU3) -> ClusterConfig.Big(3)
             Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU4) -> ClusterConfig.Big(4)
             Utils.testFile(SoCUtils.AVAILABLE_FREQ_CPU6) -> ClusterConfig.Big(6)
             else -> null
