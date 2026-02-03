@@ -52,11 +52,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,6 +68,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,6 +84,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberTopAppBarState
@@ -106,6 +110,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpSize
@@ -765,15 +772,42 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (cpu0State.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(cpu0State.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                cpu0State.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == cpu0State.minFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("min", freq, "little")
                                     openAMNF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -806,15 +840,42 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (cpu0State.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(cpu0State.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                cpu0State.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == cpu0State.maxFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("max", freq, "little")
                                     openAMXF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -847,15 +908,42 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (cpu0State.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(cpu0State.availableGov) { gov ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(cpu0State.availableGov) { index, gov ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                cpu0State.availableGov.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = gov == cpu0State.gov,
+                                onCheckedChange = {
                                     viewModel.updateGov(gov, "little")
                                     openACG = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text(gov)
                             }
@@ -1041,15 +1129,42 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (bigClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(bigClusterState.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                bigClusterState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == bigClusterState.minFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("min", freq, "big")
                                     openAMNF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1082,15 +1197,42 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (bigClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(bigClusterState.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                bigClusterState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == bigClusterState.maxFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("max", freq, "big")
                                     openAMXF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1123,15 +1265,42 @@ fun BigClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (bigClusterState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(bigClusterState.availableGov) { gov ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(bigClusterState.availableGov) { index, gov ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                bigClusterState.availableGov.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = gov == bigClusterState.gov,
+                                onCheckedChange = {
                                     viewModel.updateGov(gov, "big")
                                     openACG = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text(gov)
                             }
@@ -1317,15 +1486,42 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (primeClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(primeClusterState.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                primeClusterState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == primeClusterState.minFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("min", freq, "prime")
                                     openAMNF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1337,7 +1533,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             },
             confirmButton = {
                 TextButton(
-                    onClick = { openAMNF = true },
+                    onClick = { openAMNF = false },
                     shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(stringResource(R.string.close))
@@ -1358,15 +1554,42 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (primeClusterState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableFreq) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(primeClusterState.availableFreq) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                primeClusterState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == primeClusterState.maxFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("max", freq, "prime")
                                     openAMXF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -1378,7 +1601,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             },
             confirmButton = {
                 TextButton(
-                    onClick = { openAMXF = true },
+                    onClick = { openAMXF = false },
                     shapes = ButtonDefaults.shapes(),
                 ) {
                     Text(stringResource(R.string.close))
@@ -1399,15 +1622,42 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (primeClusterState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(primeClusterState.availableGov) { gov ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(primeClusterState.availableGov) { index, gov ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                primeClusterState.availableGov.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = gov == primeClusterState.gov,
+                                onCheckedChange = {
                                     viewModel.updateGov(gov, "prime")
                                     openACG = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text(gov)
                             }
@@ -1563,6 +1813,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                     value = cpuInputBoostMsValue,
                     onValueChange = { cpuInputBoostMsValue = it },
                     singleLine = true,
+                    label = { Text(stringResource(R.string.input_boost_ms))},
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done,
@@ -1623,6 +1874,8 @@ fun GPUCard(viewModel: SoCViewModel) {
 
     val minPwrlevel = gpuState.minPwrlevel.toFloatOrNull() ?: 0f
     val maxPwrlevel = gpuState.maxPwrlevel.toFloatOrNull() ?: 0f
+
+    val adrenoBoostList = listOf("0", "1", "2", "3")
 
     ExpandableCard(
         icon = painterResource(materialsymbols_ic_view_in_ar_rounded_filled),
@@ -2031,15 +2284,42 @@ fun GPUCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (gpuState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(gpuState.availableFreq.sortedBy { it.toInt() }) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                gpuState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == gpuState.minFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("min", freq, "gpu")
                                     openAMNF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -2072,15 +2352,42 @@ fun GPUCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (gpuState.availableFreq.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableFreq.sortedBy { it.toInt() }) { freq ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(gpuState.availableFreq.sortedBy { it.toInt() }) { index, freq ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                gpuState.availableFreq.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = freq == gpuState.maxFreq,
+                                onCheckedChange = {
                                     viewModel.updateFreq("max", freq, "gpu")
                                     openAMXF = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text("$freq MHz")
                             }
@@ -2113,15 +2420,42 @@ fun GPUCard(viewModel: SoCViewModel) {
             },
             text = {
                 if (gpuState.availableGov.isNotEmpty()) {
-                    LazyColumn {
-                        items(gpuState.availableGov) { gov ->
-                            Button(
-                                onClick = {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(gpuState.availableGov) { index, gov ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                gpuState.availableGov.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = gov == gpuState.gov,
+                                onCheckedChange = {
                                     viewModel.updateGov(gov, "gpu")
                                     openAGG = false
                                 },
-                                shapes = ButtonDefaults.shapes(),
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
                                 contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
                             ) {
                                 Text(gov)
                             }
@@ -2153,46 +2487,53 @@ fun GPUCard(viewModel: SoCViewModel) {
                 )
             },
             text = {
-                Column {
-                    Button(
-                        onClick = {
-                            viewModel.updateAdrenoBoost("0")
-                            openABD = false
-                        },
-                        shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        Text(stringResource(R.string.off))
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.updateAdrenoBoost("1")
-                            openABD = false
-                        },
-                        shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        Text(stringResource(R.string.low))
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.updateAdrenoBoost("2")
-                            openABD = false
-                        },
-                        shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        Text(stringResource(R.string.medium))
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.updateAdrenoBoost("3")
-                            openABD = false
-                        },
-                        shapes = ButtonDefaults.shapes(),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        Text(stringResource(R.string.high))
+                LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                    itemsIndexed(adrenoBoostList) { index, boost ->
+                        val shape = when (index) {
+                            0 ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        topStart = CornerSize(100),
+                                        topEnd = CornerSize(100)
+                                    )
+
+                            adrenoBoostList.lastIndex ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        bottomStart = CornerSize(100),
+                                        bottomEnd = CornerSize(100)
+                                    )
+
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                        }
+
+                        ToggleButton(
+                            checked = boost == gpuState.adrenoBoost,
+                            onCheckedChange = {
+                                viewModel.updateAdrenoBoost(boost)
+                                openABD = false
+                            },
+                            shapes = ToggleButtonDefaults.shapes(
+                                shape = shape,
+                                checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                            ),
+                            contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics { role = Role.RadioButton },
+                        ) {
+                            Text(
+                                text = when (boost) {
+                                    "0" -> stringResource(R.string.off)
+                                    "1" -> stringResource(R.string.low)
+                                    "2" -> stringResource(R.string.medium)
+                                    "3" -> stringResource(R.string.high)
+                                    else -> stringResource(R.string.unknown)
+                                }
+                            )
+                        }
                     }
                 }
             },
