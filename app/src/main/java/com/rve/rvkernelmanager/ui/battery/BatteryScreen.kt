@@ -32,7 +32,6 @@
 package com.rve.rvkernelmanager.ui.battery
 
 import android.content.ClipData
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -102,14 +101,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_airline_seat_flat_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_alert_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_call_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_camera_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dvr_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_globe_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_history_2_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_cool_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_sports_esports_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_videocam_rounded_filled
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.BatteryUtils
@@ -230,26 +235,12 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_dvr),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(R.string.battery_monitor),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            ItemCard(
+                shape = CircleShape,
+                icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
+                title = stringResource(R.string.battery_monitor),
+                titleLarge = true,
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
@@ -446,99 +437,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .weight(1f)
-                        .combinedClickable(
-                            onClick = { /* do nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(R.string.device_uptime),
-                                                uptime,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        ),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_history),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = null,
-                        )
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = stringResource(R.string.uptime),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = uptime,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-
-                Card(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .weight(1f)
-                        .combinedClickable(
-                            onClick = { /* do nothing */ },
-                            onLongClick = {
-                                coroutineScope.launch {
-                                    clipboard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                context.getString(R.string.deep_sleep),
-                                                batteryInfo.deepSleep,
-                                            ),
-                                        ),
-                                    )
-                                }
-                            },
-                        ),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp).fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_nightlight),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            contentDescription = null,
-                        )
-                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = stringResource(R.string.deep_sleep),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                            Text(
-                                text = batteryInfo.deepSleep,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
-            }
+            ItemCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                icon = painterResource(materialsymbols_ic_history_2_rounded_filled),
+                title = stringResource(R.string.uptime),
+                body = uptime,
+            )
+            ItemCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                icon = painterResource(materialsymbols_ic_airline_seat_flat_rounded_filled),
+                title = stringResource(R.string.deep_sleep),
+                body = batteryInfo.deepSleep,
+            )
         }
     }
 }
@@ -553,9 +463,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     var openMDC by remember { mutableStateOf(false) }
 
     val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
-    val manualDesignCapacity = batteryInfo.manualDesignCapacity.toString()
-    var visible: Boolean = manualDesignCapacity == "0"
-    var value by remember { mutableStateOf(batteryInfo.manualDesignCapacity.toString()) }
+    var manualDesignCapacity by remember { mutableStateOf(batteryInfo.manualDesignCapacity.toString()) }
 
     OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
@@ -571,26 +479,12 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Card(
-                shape = MaterialTheme.shapes.extraLarge,
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_battery_android_frame_alert),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(R.string.battery_info),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
+            ItemCard(
+                shape = CircleShape,
+                icon = painterResource(materialsymbols_ic_battery_android_frame_alert_rounded_filled),
+                title = stringResource(R.string.battery_info),
+                titleLarge = true,
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Box(Modifier.weight(1f)) {
@@ -668,109 +562,19 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                     }
                 }
             }
-
-            Card(
-                shape = CircleShape,
-                modifier = Modifier.clip(CircleShape).combinedClickable(
-                    onClick = {
-                        if (batteryInfo.designCapacity == "N/A") {
-                            openMDC = true
-                        }
-                    },
-                    onLongClick = {
-                        coroutineScope.launch {
-                            clipboard.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText(
-                                        context.getString(R.string.battery_design_capacity),
-                                        batteryInfo.designCapacity,
-                                    ),
-                                ),
-                            )
-                        }
-                    },
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_battery_android_frame_full),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = stringResource(R.string.design_capacity),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Text(
-                            text = if (batteryInfo.designCapacity == "N/A") {
-                                "$manualDesignCapacity mAh"
-                            } else {
-                                batteryInfo.designCapacity
-                            },
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        if (batteryInfo.designCapacity == "unknown") {
-                            AnimatedVisibility(visible) {
-                                Text(
-                                    text = stringResource(R.string.tap_to_set_capacity),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            Card(
-                shape = CircleShape,
-                modifier = Modifier.clip(CircleShape).combinedClickable(
-                    onClick = { /* do nothing */ },
-                    onLongClick = {
-                        coroutineScope.launch {
-                            clipboard.setClipEntry(
-                                ClipEntry(
-                                    ClipData.newPlainText(
-                                        context.getString(R.string.battery_max_capacity),
-                                        batteryInfo.maximumCapacity,
-                                    ),
-                                ),
-                            )
-                        }
-                    },
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp).fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_battery_android_frame_full),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        contentDescription = null,
-                    )
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = stringResource(R.string.max_capacity),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Text(
-                            text = batteryInfo.maximumCapacity,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-            }
+            ItemCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                icon = painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
+                title = stringResource(R.string.design_capacity),
+                body = if (manualDesignCapacity == "0") batteryInfo.designCapacity else manualDesignCapacity,
+                onClick = { openMDC = true }
+            )
+            ItemCard(
+                shape = MaterialTheme.shapes.extraLarge,
+                icon = painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
+                title = stringResource(R.string.battery_max_capacity),
+                body = batteryInfo.maximumCapacity
+            )
         }
     }
 
@@ -787,8 +591,8 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     OutlinedTextField(
-                        value = value,
-                        onValueChange = { value = it },
+                        value = manualDesignCapacity,
+                        onValueChange = { manualDesignCapacity = it },
                         label = { Text(stringResource(R.string.capacity_hint)) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions.Default.copy(
@@ -797,7 +601,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.setManualDesignCapacity(context, value.toInt())
+                                viewModel.setManualDesignCapacity(context, manualDesignCapacity.toInt())
                                 openMDC = false
                             },
                         ),
@@ -807,7 +611,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.setManualDesignCapacity(context, value.toInt())
+                        viewModel.setManualDesignCapacity(context, manualDesignCapacity.toInt())
                         openMDC = false
                     },
                     shapes = ButtonDefaults.shapes(),

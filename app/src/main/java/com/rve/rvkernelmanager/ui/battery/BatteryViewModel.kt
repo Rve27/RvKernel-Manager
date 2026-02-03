@@ -44,6 +44,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -105,7 +106,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
                 val designCapacity = BatteryUtils.getBatteryDesignCapacity(context)
-                val manualDesignCapacity = batteryPreference.getManualDesignCapacity().toString()
+                val manualDesignCapacity = batteryPreference.getManualDesignCapacity()
                 val deepSleep = BatteryUtils.getDeepSleep(context)
 
                 _batteryInfo.value = _batteryInfo.value.copy(
@@ -113,7 +114,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                     tech = tech,
                     health = health,
                     designCapacity = designCapacity,
-                    manualDesignCapacity = manualDesignCapacity.toInt(),
+                    manualDesignCapacity = manualDesignCapacity,
                     deepSleep = deepSleep,
                 )
             } catch (e: Exception) {
@@ -127,9 +128,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
             val batteryPreference = BatteryPreference.getInstance(context)
             batteryPreference.setManualDesignCapacity(value)
 
-            _batteryInfo.value = _batteryInfo.value.copy(
-                manualDesignCapacity = value,
-            )
+            _batteryInfo.update { currentState ->
+                currentState.copy(manualDesignCapacity = value)
+            }
         }
     }
 
