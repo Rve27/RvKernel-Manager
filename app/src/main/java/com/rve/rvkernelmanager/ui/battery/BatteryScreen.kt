@@ -168,7 +168,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
                 .padding(innerPadding)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             LazyColumn(
                 state = rememberLazyListState(),
@@ -228,7 +228,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
             color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
         Column(
@@ -472,7 +472,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             color = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ),
     ) {
         Column(
