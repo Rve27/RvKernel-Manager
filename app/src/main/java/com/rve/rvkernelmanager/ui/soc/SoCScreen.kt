@@ -126,12 +126,15 @@ import androidx.navigation.NavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_data_usage_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_dvr_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_emergency_heat_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_manufacturing_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_cool_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_heat_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_rocket_launch_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_timer_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_touch_app_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_view_in_ar_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
@@ -665,7 +668,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -701,7 +704,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -738,7 +741,7 @@ fun CPULittleClusterCard(viewModel: SoCViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_settings),
+                            painter = painterResource(materialsymbols_ic_manufacturing_rounded_filled),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = null,
                         )
@@ -1022,7 +1025,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1058,7 +1061,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1095,7 +1098,7 @@ fun BigClusterCard(viewModel: SoCViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_settings),
+                            painter = painterResource(materialsymbols_ic_manufacturing_rounded_filled),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = null,
                         )
@@ -1379,7 +1382,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1415,7 +1418,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1452,7 +1455,7 @@ fun PrimeClusterCard(viewModel: SoCViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_settings),
+                            painter = painterResource(materialsymbols_ic_manufacturing_rounded_filled),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = null,
                         )
@@ -1748,7 +1751,7 @@ fun CPUBoostCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_timer),
+                                painter = painterResource(materialsymbols_ic_timer_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1919,7 +1922,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1955,7 +1958,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_speed),
+                                painter = painterResource(materialsymbols_ic_speed_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -1996,7 +1999,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_settings),
+                            painter = painterResource(materialsymbols_ic_manufacturing_rounded_filled),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             contentDescription = null,
                         )
@@ -2050,7 +2053,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.ic_rocket_launch),
+                                painter = painterResource(materialsymbols_ic_rocket_launch_rounded_filled),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = null,
                             )
@@ -2136,7 +2139,7 @@ fun GPUCard(viewModel: SoCViewModel) {
                                     contentAlignment = Alignment.Center,
                                 ) {
                                     Icon(
-                                        painter = painterResource(R.drawable.ic_tune),
+                                        painter = painterResource(materialsymbols_ic_tune_rounded_filled),
                                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                         contentDescription = null,
                                     )
