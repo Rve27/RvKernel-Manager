@@ -277,11 +277,20 @@ object Card {
                             targetState = checked,
                             animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                         ) { isChecked ->
-                            Icon(
-                                imageVector = if (isChecked) Icons.Rounded.Check else Icons.Rounded.Close,
-                                contentDescription = stringResource(if (isChecked) R.string.checked else R.string.unchecked),
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
+                            if (isChecked) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = stringResource(R.string.checked),
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    contentDescription = stringResource(R.string.unchecked),
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
                         }
                     },
                 )
