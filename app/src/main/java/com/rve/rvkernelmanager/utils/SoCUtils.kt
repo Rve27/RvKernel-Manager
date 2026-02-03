@@ -49,6 +49,14 @@ object SoCUtils {
     const val GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
     const val AVAILABLE_GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
 
+    const val MIN_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_min_freq"
+    const val MAX_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_max_freq"
+    const val CURRENT_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_cur_freq"
+    const val AVAILABLE_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_available_frequencies"
+    const val AVAILABLE_BOOST_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_boost_frequencies"
+    const val GOV_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_governor"
+    const val AVAILABLE_GOV_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_available_governors"
+
     const val MIN_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
     const val MAX_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
     const val CURRENT_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_cur_freq"
@@ -206,10 +214,9 @@ object SoCUtils {
     fun readAvailableFreqGPU(filePath: String): List<String> = runCatching {
         val result = Shell.cmd("cat $filePath").exec()
         if (result.isSuccess) {
-            result.out.firstOrNull()
-                ?.trim()
-                ?.split(" ")
-                ?: emptyList()
+            result.out
+                .flatMap { it.trim().split("\\s+".toRegex()) }
+                .filter { it.isNotEmpty() }
         } else {
             Log.e("readAvailableFreqGPU", "Command execution failed: ${result.err}")
             emptyList()
@@ -222,10 +229,9 @@ object SoCUtils {
     fun readAvailableGovGPU(filePath: String): List<String> = runCatching {
         val result = Shell.cmd("cat $filePath").exec()
         if (result.isSuccess) {
-            result.out.firstOrNull()
-                ?.trim()
-                ?.split(" ")
-                ?: emptyList()
+            result.out
+                .flatMap { it.trim().split("\\s+".toRegex()) }
+                .filter { it.isNotEmpty() }
         } else {
             emptyList()
         }
