@@ -66,6 +66,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -302,7 +303,9 @@ object Card {
     fun SwitchCard(
         shape: Shape = CardDefaults.shape,
         colors: CardColors = CardDefaults.cardColors(),
+        containerIconColor: Color = MaterialTheme.colorScheme.primaryContainer,
         icon: Any?,
+        iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
         text: String,
         checked: Boolean,
         onCheckedChange: (Boolean) -> Unit,
@@ -325,20 +328,20 @@ object Card {
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .background(containerIconColor)
                         .padding(8.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     when (icon) {
                         is ImageVector -> Icon(
                             imageVector = icon,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            tint = iconColor,
                             contentDescription = null,
                         )
 
                         is Painter -> Icon(
                             painter = icon,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            tint = iconColor,
                             contentDescription = null,
                         )
                     }
