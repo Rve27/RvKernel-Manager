@@ -282,6 +282,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             ItemCard(
                 shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
                 title = stringResource(R.string.cpu_monitor),
                 titleLarge = true,
@@ -401,12 +404,18 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
             if (hasBigCluster) {
                 ItemCard(
                     shape = CircleShape,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceBright
+                    ),
                     icon = painterResource(materialsymbols_ic_speed_rounded_filled),
                     title = stringResource(R.string.current_frequencies),
                 )
             } else {
                 ItemCard(
                     shape = MaterialTheme.shapes.extraLarge,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceBright
+                    ),
                     icon = painterResource(materialsymbols_ic_speed_rounded_filled),
                     title = stringResource(R.string.current_frequencies),
                     body = if (cpu0State.currentFreq.isEmpty()) stringResource(R.string.unknown) else "${cpu0State.currentFreq} MHz",
@@ -418,6 +427,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     Box(Modifier.weight(1f)) {
                         ItemCard(
                             shape = MaterialTheme.shapes.large,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            ),
                             title = stringResource(R.string.little_cluster),
                             body = if (cpu0State.currentFreq.isEmpty())
                                 stringResource(R.string.unknown)
@@ -428,6 +440,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                     Box(Modifier.weight(1f)) {
                         ItemCard(
                             shape = MaterialTheme.shapes.large,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            ),
                             title = stringResource(R.string.big_cluster),
                             body = if (bigClusterState.currentFreq.isEmpty())
                                 stringResource(R.string.na)
@@ -439,6 +454,9 @@ fun CPUMonitorCard(viewModel: SoCViewModel) {
                 if (hasPrimeCluster) {
                     ItemCard(
                         shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceBright
+                        ),
                         title = stringResource(R.string.prime_cluster),
                         body = if (primeClusterState.currentFreq.isEmpty())
                             stringResource(R.string.unknown)
@@ -485,6 +503,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
         ) {
             ItemCard(
                 shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
                 title = stringResource(R.string.gpu_monitor),
                 titleLarge = true,
@@ -602,6 +623,9 @@ fun GPUMonitorCard(viewModel: SoCViewModel) {
             }
             ItemCard(
                 shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_speed_rounded_filled),
                 title = stringResource(R.string.current_frequencies),
                 body = if (gpuState.currentFreq.isEmpty()) stringResource(R.string.na) else "${gpuState.currentFreq} MHz",

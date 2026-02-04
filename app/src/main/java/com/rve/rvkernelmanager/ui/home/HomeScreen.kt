@@ -46,6 +46,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Code
 import androidx.compose.material.icons.rounded.Groups3
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -200,6 +201,9 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     items(deviceInfoItems) { item ->
                         ItemCard(
                             shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            ),
                             icon = item.icon,
                             title = item.title,
                             body = item.body,
@@ -214,6 +218,9 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel(), navController: NavControl
                     items(aboutAppItems) { item ->
                         ItemCard(
                             shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceBright
+                            ),
                             icon = item.icon,
                             title = item.title,
                             body = item.body,

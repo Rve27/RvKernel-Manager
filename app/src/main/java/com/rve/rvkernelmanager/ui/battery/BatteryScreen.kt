@@ -243,6 +243,9 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         ) {
             ItemCard(
                 shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_dvr_rounded_filled),
                 title = stringResource(R.string.battery_monitor),
                 titleLarge = true,
@@ -406,12 +409,18 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
 
             ItemCard(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_history_2_rounded_filled),
                 title = stringResource(R.string.uptime),
                 body = uptime,
             )
             ItemCard(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_airline_seat_flat_rounded_filled),
                 title = stringResource(R.string.deep_sleep),
                 body = batteryInfo.deepSleep,
@@ -448,6 +457,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         ) {
             ItemCard(
                 shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_battery_android_frame_alert_rounded_filled),
                 title = stringResource(R.string.battery_info),
                 titleLarge = true,
@@ -523,6 +535,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             }
             ItemCard(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
                 title = stringResource(R.string.design_capacity),
                 body = if (manualDesignCapacity == "0") batteryInfo.designCapacity else "$manualDesignCapacity mAh",
@@ -530,6 +545,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
             )
             ItemCard(
                 shape = MaterialTheme.shapes.extraLarge,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceBright
+                ),
                 icon = painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
                 title = stringResource(R.string.battery_max_capacity),
                 body = batteryInfo.maximumCapacity
@@ -608,8 +626,11 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
     val currentProfile = thermalProfilesOptions.find { it.id == thermalSconfig }
 
     ItemCard(
-        icon = painterResource(currentProfile?.icon ?: materialsymbols_ic_question_mark_rounded_filled),
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        ),
+        icon = painterResource(currentProfile?.icon ?: materialsymbols_ic_question_mark_rounded_filled),
         title = stringResource(R.string.thermal_profiles),
         body = currentProfile?.title?.let { stringResource(it) } ?: stringResource(R.string.unknown),
         onClick = { openTPD = true }

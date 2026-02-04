@@ -139,16 +139,13 @@ object Card {
     @Composable
     fun ItemCard(
         shape: Shape = CardDefaults.shape,
+        colors: CardColors = CardDefaults.cardColors(),
         icon: Any? = null,
         title: String,
         titleLarge: Boolean = false,
         body: String? = null,
         onClick: (() -> Unit)? = null,
     ) {
-        val colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        )
         val content: @Composable ColumnScope.() -> Unit = {
             Row(
                 modifier = Modifier
