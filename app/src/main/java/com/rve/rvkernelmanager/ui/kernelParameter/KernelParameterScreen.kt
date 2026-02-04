@@ -118,6 +118,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_balance_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
@@ -247,15 +250,18 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
     )
 
     val icons = listOf(
-        painterResource(R.drawable.ic_battery_android_frame_plus),
-        painterResource(R.drawable.ic_balance),
-        painterResource(R.drawable.ic_speed),
+        painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
+        painterResource(materialsymbols_ic_balance_rounded_filled),
+        painterResource(materialsymbols_ic_speed_rounded_filled),
     )
 
     var selectedIndex by rememberSaveable { mutableIntStateOf(kernelProfile.currentProfile) }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Column(
             modifier = Modifier
