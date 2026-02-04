@@ -105,8 +105,8 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                 val level = BatteryUtils.getBatteryLevel(context)
                 val tech = BatteryUtils.getBatteryTechnology(context)
                 val health = BatteryUtils.getBatteryHealth(context)
-                val designCapacity = BatteryUtils.getBatteryDesignCapacity(context)
                 val manualDesignCapacity = batteryPreference.getManualDesignCapacity()
+                val designCapacity = if (manualDesignCapacity != 0) "$manualDesignCapacity mAh" else BatteryUtils.getBatteryDesignCapacity(context)
                 val deepSleep = BatteryUtils.getDeepSleep(context)
 
                 _batteryInfo.value = _batteryInfo.value.copy(

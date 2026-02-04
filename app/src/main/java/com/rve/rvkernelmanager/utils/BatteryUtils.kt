@@ -114,16 +114,15 @@ object BatteryUtils {
 
         var designCapacity = 0
 
-        val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
-        if (designCapacityResult.isSuccess && designCapacityResult.out.isNotEmpty()) {
-            designCapacity = designCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
-        }
+        val batteryPreference = BatteryPreference.getInstance(context)
+        val manualCapacity = batteryPreference.getManualDesignCapacity()
 
-        if (designCapacity == 0) {
-            val batteryPreference = BatteryPreference.getInstance(context)
-            val manualCapacity = batteryPreference.getManualDesignCapacity()
-            if (manualCapacity > 0) {
-                designCapacity = manualCapacity * 1000
+        if (manualCapacity > 0) {
+            designCapacity = manualCapacity * 1000
+        } else {
+            val designCapacityResult = Shell.cmd("cat $BATTERY_DESIGN_CAPACITY").exec()
+            if (designCapacityResult.isSuccess && designCapacityResult.out.isNotEmpty()) {
+                designCapacity = designCapacityResult.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
             }
         }
 

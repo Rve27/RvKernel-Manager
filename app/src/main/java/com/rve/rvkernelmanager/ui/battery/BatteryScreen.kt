@@ -463,7 +463,9 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
     var openMDC by remember { mutableStateOf(false) }
 
     val batteryInfo by viewModel.batteryInfo.collectAsStateWithLifecycle()
-    var manualDesignCapacity by remember { mutableStateOf(batteryInfo.manualDesignCapacity.toString()) }
+    var manualDesignCapacity by remember(batteryInfo.manualDesignCapacity) {
+        mutableStateOf(batteryInfo.manualDesignCapacity.toString())
+    }
 
     OutlinedCard(
         shape = MaterialTheme.shapes.extraLarge,
@@ -566,7 +568,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
                 shape = MaterialTheme.shapes.extraLarge,
                 icon = painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
                 title = stringResource(R.string.design_capacity),
-                body = if (manualDesignCapacity == "0") batteryInfo.designCapacity else manualDesignCapacity,
+                body = if (manualDesignCapacity == "0") batteryInfo.designCapacity else "$manualDesignCapacity mAh",
                 onClick = { openMDC = true }
             )
             ItemCard(
