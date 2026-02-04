@@ -225,7 +225,7 @@ fun BatteryMonitorCard(viewModel: BatteryViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            color = MaterialTheme.colorScheme.surfaceBright,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -469,7 +469,7 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(
             width = 2.0.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHighest,
+            color = MaterialTheme.colorScheme.surfaceBright,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
