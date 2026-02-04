@@ -297,4 +297,84 @@ object Card {
             }
         }
     }
+
+    @Composable
+    fun SwitchCard(
+        shape: Shape = CardDefaults.shape,
+        colors: CardColors = CardDefaults.cardColors(),
+        icon: Any?,
+        text: String,
+        checked: Boolean,
+        onCheckedChange: (Boolean) -> Unit,
+    ) {
+        val interactionSource = remember { MutableInteractionSource() }
+
+        Card(
+            shape = shape,
+            colors = colors,
+            onClick = { onCheckedChange(!checked) },
+            interactionSource = interactionSource,
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    when (icon) {
+                        is ImageVector -> Icon(
+                            imageVector = icon,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null,
+                        )
+
+                        is Painter -> Icon(
+                            painter = icon,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentDescription = null,
+                        )
+                    }
+                }
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Switch(
+                    checked = checked,
+                    onCheckedChange = onCheckedChange,
+                    interactionSource = interactionSource,
+                    thumbContent = {
+                        Crossfade(
+                            targetState = checked,
+                            animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+                        ) { isChecked ->
+                            if (isChecked) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = stringResource(R.string.checked),
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Rounded.Close,
+                                    contentDescription = stringResource(R.string.unchecked),
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
+                        }
+                    },
+                )
+            }
+        }
+    }
 }
