@@ -33,7 +33,6 @@ package com.rve.rvkernelmanager.ui.battery
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +43,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -55,7 +53,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
@@ -69,8 +66,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
@@ -130,6 +125,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_videocam_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
+import com.rve.rvkernelmanager.ui.components.Card.SwitchCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.BatteryUtils
@@ -145,7 +141,6 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
     val rvkernels = listOf(
         "RvKernel-Alioth-v1.2",
         "RvKernel-Alioth-v1.3",
-        "RvKernel-Alioth-v1.6",
     )
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsStateWithLifecycle()
 
@@ -693,108 +688,32 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
 fun ForceFastChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsStateWithLifecycle()
 
-    Button(
-        onClick = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = !chargingState.isFastChargingChecked) },
-        shapes = ButtonDefaults.shapes(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+    SwitchCard(
+        icon = painterResource(materialsymbols_ic_bolt_rounded_filled),
+        text = stringResource(R.string.force_fast_charging),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
         ),
-        border = BorderStroke(
-            width = 2.0.dp,
-            color = MaterialTheme.colorScheme.primary,
-        ),
-        contentPadding = PaddingValues(16.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_electric_bolt),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.force_fast_charging),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.weight(1f),
-            )
-            Switch(
-                checked = chargingState.isFastChargingChecked,
-                onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = it) },
-                thumbContent = {
-                    Crossfade(
-                        targetState = chargingState.isFastChargingChecked,
-                        animationSpec = tween(durationMillis = 500),
-                    ) { isChecked ->
-                        if (isChecked) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    }
-                },
-            )
-        }
-    }
+        checked = chargingState.isFastChargingChecked,
+        onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.FAST_CHARGING, checked = it) },
+    )
 }
 
 @Composable
 fun BypassChargingCard(viewModel: BatteryViewModel) {
     val chargingState by viewModel.chargingState.collectAsStateWithLifecycle()
 
-    Button(
-        onClick = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = !chargingState.isBypassChargingChecked) },
-        shapes = ButtonDefaults.shapes(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+    SwitchCard(
+        icon = painterResource(materialsymbols_ic_bolt_rounded_filled),
+        text = stringResource(R.string.force_fast_charging),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
         ),
-        border = BorderStroke(
-            width = 2.0.dp,
-            color = MaterialTheme.colorScheme.primary,
-        ),
-        contentPadding = PaddingValues(16.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_battery_android_frame_shield),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.bypass_charging),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.weight(1f),
-            )
-            Switch(
-                checked = chargingState.isBypassChargingChecked,
-                onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = it) },
-                thumbContent = {
-                    Crossfade(
-                        targetState = chargingState.isBypassChargingChecked,
-                        animationSpec = tween(durationMillis = 500),
-                    ) { isChecked ->
-                        if (isChecked) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_check),
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    }
-                },
-            )
-        }
-    }
+        checked = chargingState.isBypassChargingChecked,
+        onCheckedChange = { viewModel.updateCharging(filePath = BatteryUtils.BYPASS_CHARGING, checked = it) },
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
