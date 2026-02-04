@@ -580,37 +580,15 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
-                Button(
-                    onClick = { openSLND = true },
-                    shapes = ButtonDefaults.shapes(
-                        shape = RoundedCornerShape(28.dp),
-                    ),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_speed),
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            contentDescription = null,
-                        )
-                        Column {
-                            Text(
-                                text = stringResource(R.string.sched_lib_name),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                            Text(
-                                text = stringResource(R.string.sched_lib_name_desc),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-                }
+                ItemCard(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    containerIconColor = MaterialTheme.colorScheme.primary,
+                    icon = painterResource(materialsymbols_ic_speed_rounded_filled),
+                    iconColor = MaterialTheme.colorScheme.onPrimary,
+                    title = stringResource(R.string.sched_lib_name),
+                    body = stringResource(R.string.sched_lib_name_desc),
+                    onClick = { openSLND = true }
+                )
             }
 
             AnimatedVisibility(
