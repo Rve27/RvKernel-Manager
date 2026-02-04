@@ -100,6 +100,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -126,6 +127,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_account_tree_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.Card.SwitchCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
@@ -554,37 +556,15 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
-                Button(
-                    onClick = { openPD = true },
-                    shapes = ButtonDefaults.shapes(
-                        shape = RoundedCornerShape(28.dp),
-                    ),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_speaker_notes),
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            contentDescription = null,
-                        )
-                        Column {
-                            Text(
-                                text = stringResource(R.string.printk),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                            Text(
-                                text = printk,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-                }
+                ItemCard(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    containerIconColor = MaterialTheme.colorScheme.primary,
+                    icon = painterResource(materialsymbols_ic_speaker_notes_rounded_filled),
+                    iconColor = MaterialTheme.colorScheme.onPrimary,
+                    title = stringResource(R.string.printk),
+                    body = kernelParameters.printk,
+                    onClick = { openPD = true }
+                )
             }
 
             AnimatedVisibility(
