@@ -46,8 +46,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -55,6 +57,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,6 +73,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -85,6 +90,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +105,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_airline_seat_flat_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_question_mark_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_1_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_2_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_3_rounded_filled
@@ -106,7 +113,6 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_6_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_alert_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_plus_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_biotech_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_bolt_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_call_rounded_filled
@@ -118,6 +124,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_history_2_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_cool_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_mode_heat_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_question_mark_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_sports_esports_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_videocam_rounded_filled
@@ -582,86 +589,34 @@ fun BatteryInfoCard(viewModel: BatteryViewModel) {
 
 @Composable
 fun ThermalProfilesCard(viewModel: BatteryViewModel) {
+    data class ThermalProfileOption(
+        val id: String,
+        val icon: Int,
+        val title: Int
+    )
+
     // TPD = Thermal Profiles Dialog
     var openTPD by remember { mutableStateOf(false) }
 
     val thermalSconfig by viewModel.thermalSconfig.collectAsStateWithLifecycle()
 
     val thermalProfilesOptions = listOf(
-        Triple(
-            materialsymbols_ic_mode_cool_rounded_filled,
-            R.string.profile_default,
-        ) {
-            viewModel.updateThermalSconfig("0")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_speed_rounded_filled,
-            R.string.profile_benchmark,
-        ) {
-            viewModel.updateThermalSconfig("10")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_globe_rounded_filled,
-            R.string.profile_browser,
-        ) {
-            viewModel.updateThermalSconfig("11")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_camera_rounded_filled,
-            R.string.profile_camera,
-        ) {
-            viewModel.updateThermalSconfig("12")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_call_rounded_filled,
-            R.string.profile_dialer,
-        ) {
-            viewModel.updateThermalSconfig("8")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_sports_esports_rounded_filled,
-            R.string.profile_gaming,
-        ) {
-            viewModel.updateThermalSconfig("13")
-            openTPD = false
-        },
-        Triple(
-            materialsymbols_ic_videocam_rounded_filled,
-            R.string.profile_streaming,
-        ) {
-            viewModel.updateThermalSconfig("14")
-            openTPD = false
-        },
+        ThermalProfileOption("0", materialsymbols_ic_mode_cool_rounded_filled, R.string.profile_default),
+        ThermalProfileOption("10", materialsymbols_ic_speed_rounded_filled, R.string.profile_benchmark),
+        ThermalProfileOption("11", materialsymbols_ic_globe_rounded_filled, R.string.profile_browser),
+        ThermalProfileOption("12", materialsymbols_ic_camera_rounded_filled, R.string.profile_camera),
+        ThermalProfileOption("8", materialsymbols_ic_call_rounded_filled, R.string.profile_dialer),
+        ThermalProfileOption("13", materialsymbols_ic_sports_esports_rounded_filled, R.string.profile_gaming),
+        ThermalProfileOption("14", materialsymbols_ic_videocam_rounded_filled, R.string.profile_streaming),
     )
 
+    val currentProfile = thermalProfilesOptions.find { it.id == thermalSconfig }
+
     ItemCard(
-        icon = when (thermalSconfig) {
-            "0" -> painterResource(materialsymbols_ic_battery_android_frame_plus_rounded_filled)
-            "10" -> painterResource(materialsymbols_ic_speed_rounded_filled)
-            "11" -> painterResource(materialsymbols_ic_globe_rounded_filled)
-            "12" -> painterResource(materialsymbols_ic_camera_rounded_filled)
-            "8" -> painterResource(materialsymbols_ic_call_rounded_filled)
-            "13" -> painterResource(materialsymbols_ic_sports_esports_rounded_filled)
-            "14" -> painterResource(materialsymbols_ic_videocam_rounded_filled)
-            else -> painterResource(materialsymbols_ic_question_mark_rounded_filled)
-        },
+        icon = painterResource(currentProfile?.icon ?: materialsymbols_ic_question_mark_rounded_filled),
         shape = MaterialTheme.shapes.extraLarge,
         title = stringResource(R.string.thermal_profiles),
-        body = when (thermalSconfig) {
-            "0" -> stringResource(R.string.profile_default)
-            "10" -> stringResource(R.string.profile_benchmark)
-            "11" -> stringResource(R.string.profile_browser)
-            "12" -> stringResource(R.string.profile_camera)
-            "8" -> stringResource(R.string.profile_dialer)
-            "13" -> stringResource(R.string.profile_gaming)
-            "14" -> stringResource(R.string.profile_streaming)
-            else -> stringResource(R.string.unknown)
-        },
+        body = currentProfile?.title?.let { stringResource(it) } ?: stringResource(R.string.unknown),
         onClick = { openTPD = true }
     )
 
@@ -669,29 +624,54 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
         AlertDialog(
             onDismissRequest = { openTPD = false },
             title = {
-                Text(
-                    text = stringResource(R.string.thermal_profiles),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AlertDialogDefaults.titleContentColor,
-                )
+                Text(stringResource(R.string.thermal_profiles))
             },
             text = {
-                Column {
-                    thermalProfilesOptions.forEach { item ->
-                        Button(
-                            onClick = item.third,
-                            shapes = ButtonDefaults.shapes(),
+                LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                    itemsIndexed(thermalProfilesOptions) { index, item ->
+                        val shape = when (index) {
+                            0 ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        topStart = CornerSize(100),
+                                        topEnd = CornerSize(100)
+                                    )
+
+                            thermalProfilesOptions.lastIndex ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        bottomStart = CornerSize(100),
+                                        bottomEnd = CornerSize(100)
+                                    )
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                        }
+
+                        ToggleButton(
+                            checked = item.id == thermalSconfig,
+                            onCheckedChange = {
+                                viewModel.updateThermalSconfig(item.id)
+                                openTPD = false
+                            },
+                            shapes = ToggleButtonDefaults.shapes(
+                                shape = shape,
+                                checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                            ),
                             contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics { role = Role.RadioButton },
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Icon(
-                                    painter = painterResource(item.first),
-                                    contentDescription = stringResource(item.second),
+                                    painter = painterResource(item.icon),
+                                    contentDescription = null,
                                 )
-                                Text(stringResource(item.second))
+                                Text(stringResource(item.title))
                             }
                         }
                     }
