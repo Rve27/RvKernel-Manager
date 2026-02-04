@@ -185,7 +185,7 @@ fun KernelParameterScreen(viewModel: KernelParameterViewModel = viewModel(), nav
                 .padding(innerPadding)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             PullToRefreshBox(
                 isRefreshing = viewModel.isRefreshing,
