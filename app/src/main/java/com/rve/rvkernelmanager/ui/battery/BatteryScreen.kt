@@ -97,6 +97,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_airline_seat_flat_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_question_mark_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_1_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_2_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_3_rounded_filled
@@ -105,6 +106,7 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_6_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_alert_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_plus_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_biotech_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_bolt_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_call_rounded_filled
@@ -136,6 +138,7 @@ fun BatteryScreen(viewModel: BatteryViewModel = viewModel(), navController: NavC
     val rvkernels = listOf(
         "RvKernel-Alioth-v1.2",
         "RvKernel-Alioth-v1.3",
+        "RvKernel-Alioth-v1.6",
     )
     val hasThermalSconfig by viewModel.hasThermalSconfig.collectAsStateWithLifecycle()
 
@@ -636,57 +639,31 @@ fun ThermalProfilesCard(viewModel: BatteryViewModel) {
         },
     )
 
-    Button(
-        onClick = { openTPD = true },
-        shapes = ButtonDefaults.shapes(),
-        contentPadding = PaddingValues(16.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_battery_profile),
-                tint = MaterialTheme.colorScheme.onPrimary,
-                contentDescription = null,
-            )
-            Column {
-                Text(
-                    text = stringResource(R.string.thermal_profiles),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-                Text(
-                    text = remember(thermalSconfig) {
-                        when (thermalSconfig) {
-                            "0" -> "Default"
-                            "10" -> "Benchmark"
-                            "11" -> "Browser"
-                            "12" -> "Camera"
-                            "8" -> "Dialer"
-                            "13" -> "Gaming"
-                            "14" -> "Streaming"
-                            else -> "Unknown"
-                        }
-                    }.let {
-                        when (it) {
-                            "Default" -> stringResource(R.string.profile_default)
-                            "Benchmark" -> stringResource(R.string.profile_benchmark)
-                            "Browser" -> stringResource(R.string.profile_browser)
-                            "Camera" -> stringResource(R.string.profile_camera)
-                            "Dialer" -> stringResource(R.string.profile_dialer)
-                            "Gaming" -> stringResource(R.string.profile_gaming)
-                            "Streaming" -> stringResource(R.string.profile_streaming)
-                            else -> stringResource(R.string.unknown)
-                        }
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
-        }
-    }
+    ItemCard(
+        icon = when (thermalSconfig) {
+            "0" -> painterResource(materialsymbols_ic_battery_android_frame_plus_rounded_filled)
+            "10" -> painterResource(materialsymbols_ic_speed_rounded_filled)
+            "11" -> painterResource(materialsymbols_ic_globe_rounded_filled)
+            "12" -> painterResource(materialsymbols_ic_camera_rounded_filled)
+            "8" -> painterResource(materialsymbols_ic_call_rounded_filled)
+            "13" -> painterResource(materialsymbols_ic_sports_esports_rounded_filled)
+            "14" -> painterResource(materialsymbols_ic_videocam_rounded_filled)
+            else -> painterResource(materialsymbols_ic_question_mark_rounded_filled)
+        },
+        shape = MaterialTheme.shapes.extraLarge,
+        title = stringResource(R.string.thermal_profiles),
+        body = when (thermalSconfig) {
+            "0" -> stringResource(R.string.profile_default)
+            "10" -> stringResource(R.string.profile_benchmark)
+            "11" -> stringResource(R.string.profile_browser)
+            "12" -> stringResource(R.string.profile_camera)
+            "8" -> stringResource(R.string.profile_dialer)
+            "13" -> stringResource(R.string.profile_gaming)
+            "14" -> stringResource(R.string.profile_streaming)
+            else -> stringResource(R.string.unknown)
+        },
+        onClick = { openTPD = true }
+    )
 
     if (openTPD) {
         AlertDialog(
