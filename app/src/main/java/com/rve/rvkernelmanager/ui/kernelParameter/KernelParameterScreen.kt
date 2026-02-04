@@ -62,6 +62,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.SyncAlt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
@@ -100,7 +102,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -120,11 +121,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_account_tree_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_balance_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speaker_notes_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_account_tree_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
@@ -604,37 +605,15 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
-                Button(
-                    onClick = { openTCD = true },
-                    shapes = ButtonDefaults.shapes(
-                        shape = RoundedCornerShape(28.dp),
-                    ),
-                    contentPadding = PaddingValues(16.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_sync_alt),
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            contentDescription = null,
-                        )
-                        Column {
-                            Text(
-                                text = stringResource(R.string.tcp_congestion),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                            Text(
-                                text = tcpCongestionAlgorithm,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
-                    }
-                }
+                ItemCard(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    containerIconColor = MaterialTheme.colorScheme.primary,
+                    icon = Icons.Rounded.SyncAlt,
+                    iconColor = MaterialTheme.colorScheme.onPrimary,
+                    title = stringResource(R.string.tcp_congestion),
+                    body = tcpCongestionAlgorithm,
+                    onClick = { openTCD = true }
+                )
             }
         }
     }
