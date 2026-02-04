@@ -122,8 +122,11 @@ import androidx.navigation.compose.rememberNavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_balance_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speaker_notes_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_account_tree_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.components.Card.SwitchCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
 import com.rve.rvkernelmanager.ui.navigation.BottomNavigationBar
 import com.rve.rvkernelmanager.utils.KernelUtils
@@ -284,7 +287,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
                 ) {
                     Icon(
                         painter = painterResource(materialsymbols_ic_tune_rounded_filled),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         contentDescription = null,
                     )
                 }
@@ -402,11 +405,19 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_linux),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null,
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_linux),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        contentDescription = null,
+                    )
+                }
                 Text(
                     text = stringResource(R.string.kernel_parameter_title),
                     style = MaterialTheme.typography.titleLarge,
@@ -428,19 +439,16 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                 ),
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    Button(
-                        contentPadding = PaddingValues(0.dp),
-                        shapes = ButtonDefaults.shapes(
-                            RoundedCornerShape(28.dp),
+                    OutlinedCard(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
                         ),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        ),
-                        onClick = { viewModel.setDmesgRestrict(!dmesgRestrict) },
                         border = BorderStroke(
                             width = 2.0.dp,
                             color = MaterialTheme.colorScheme.primary,
                         ),
+                        onClick = { viewModel.setDmesgRestrict(!dmesgRestrict) },
                     ) {
                         Column {
                             Row(
@@ -522,55 +530,15 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                     animationSpec = MaterialTheme.motionScheme.slowSpatialSpec(),
                 ),
             ) {
-                Button(
-                    contentPadding = PaddingValues(16.dp),
-                    shapes = ButtonDefaults.shapes(
-                        RoundedCornerShape(28.dp),
-                    ),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    ),
-                    onClick = { viewModel.setSchedAutogroup(!schedAutogroup) },
-                    border = BorderStroke(
-                        width = 2.0.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                    ),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_account_tree),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentDescription = null,
-                        )
-                        Text(
-                            text = stringResource(R.string.sched_auto_group),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Switch(
-                            checked = schedAutogroup,
-                            onCheckedChange = { schedAutogroup = it },
-                            thumbContent = {
-                                Crossfade(
-                                    targetState = schedAutogroup,
-                                    animationSpec = tween(durationMillis = 500),
-                                ) { isChecked ->
-                                    if (isChecked) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_check),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                        )
-                                    }
-                                }
-                            },
-                        )
-                    }
-                }
+                SwitchCard(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    containerIconColor = MaterialTheme.colorScheme.primary,
+                    icon = painterResource(materialsymbols_ic_account_tree_rounded_filled),
+                    iconColor = MaterialTheme.colorScheme.onPrimary,
+                    text = stringResource(R.string.sched_auto_group),
+                    checked = schedAutogroup,
+                    onCheckedChange = { schedAutogroup = it },
+                )
             }
 
             AnimatedVisibility(
