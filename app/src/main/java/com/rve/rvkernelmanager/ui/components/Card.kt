@@ -140,7 +140,9 @@ object Card {
     fun ItemCard(
         shape: Shape = CardDefaults.shape,
         colors: CardColors = CardDefaults.cardColors(),
+        containerIconColor: Color = MaterialTheme.colorScheme.primaryContainer,
         icon: Any? = null,
+        iconColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
         title: String,
         titleLarge: Boolean = false,
         body: String? = null,
@@ -158,20 +160,20 @@ object Card {
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .background(containerIconColor)
                             .padding(8.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         when (icon) {
                             is ImageVector -> Icon(
                                 imageVector = icon,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                tint = iconColor,
                                 contentDescription = null,
                             )
 
                             is Painter -> Icon(
                                 painter = icon,
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                tint = iconColor,
                                 contentDescription = null,
                             )
                         }
