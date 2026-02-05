@@ -759,6 +759,8 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                             }
                         }
                     }
+                } else {
+                    Text(stringResource(R.string.no_tcp_congestion))
                 }
             },
             confirmButton = {
@@ -1384,18 +1386,50 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 )
             },
             text = {
-                Column {
-                    memory.availableZramCompAlgorithms.forEach { algorithm ->
-                        Button(
-                            onClick = {
-                                viewModel.updateZramCompAlgorithm(algorithm)
-                                openZCD = false
-                            },
-                            shapes = ButtonDefaults.shapes(),
-                        ) {
-                            Text(algorithm)
+                if (memory.availableZramCompAlgorithms.isNotEmpty()) {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(memory.availableZramCompAlgorithms) { index, algorithm ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                memory.availableZramCompAlgorithms.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = algorithm == memory.zramCompAlgorithm,
+                                onCheckedChange = {
+                                    viewModel.updateZramCompAlgorithm(algorithm)
+                                    openZCD = false
+                                },
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
+                                contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
+                            ) {
+                                Text(algorithm)
+                            }
                         }
                     }
+                } else {
+                    Text(stringResource(R.string.no_zram_comp_algo))
                 }
             },
             confirmButton = {
