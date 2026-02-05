@@ -126,10 +126,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_account_tree_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_balance_rounded_filled
-import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_full_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_battery_android_frame_plus_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speaker_notes_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_comments_disabled_rounded_filled
 import com.rve.rvkernelmanager.R
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.Card.SwitchCard
@@ -261,7 +262,7 @@ fun KernelProfileCard(viewModel: KernelParameterViewModel = viewModel()) {
     )
 
     val icons = listOf(
-        painterResource(materialsymbols_ic_battery_android_frame_full_rounded_filled),
+        painterResource(materialsymbols_ic_battery_android_frame_plus_rounded_filled),
         painterResource(materialsymbols_ic_balance_rounded_filled),
         painterResource(materialsymbols_ic_speed_rounded_filled),
     )
@@ -463,7 +464,7 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
                                 Icon(
-                                    painter = painterResource(R.drawable.ic_comments_disabled),
+                                    painter = painterResource(materialsymbols_ic_comments_disabled_rounded_filled),
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     contentDescription = stringResource(R.string.restrict_dmesg),
                                 )
@@ -786,6 +787,9 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
     ) {
         Column(
             modifier = Modifier
@@ -797,11 +801,19 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_tune),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null,
-                )
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(materialsymbols_ic_tune_rounded_filled),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                        contentDescription = null,
+                    )
+                }
                 Text(
                     text = stringResource(R.string.uclamp),
                     style = MaterialTheme.typography.titleLarge,
@@ -832,7 +844,10 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         ),
                         contentPadding = PaddingValues(16.dp),
                     ) {
-                        Column(Modifier.fillMaxSize()) {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
                             Text(
                                 text = stringResource(R.string.uclamp_max),
                                 style = MaterialTheme.typography.titleMedium,
@@ -867,7 +882,10 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                         ),
                         contentPadding = PaddingValues(16.dp),
                     ) {
-                        Column(Modifier.fillMaxSize()) {
+                        Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
                             Text(
                                 text = stringResource(R.string.uclamp_min),
                                 style = MaterialTheme.typography.titleMedium,
@@ -909,6 +927,7 @@ fun UclampCard(viewModel: KernelParameterViewModel) {
                 ) {
                     Column(
                         Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.uclamp_min_rt),
