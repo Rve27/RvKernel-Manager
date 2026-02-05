@@ -57,8 +57,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -85,6 +87,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -707,23 +710,50 @@ fun KernelParameterCard(viewModel: KernelParameterViewModel) {
         AlertDialog(
             onDismissRequest = { openTCD = false },
             title = {
-                Text(
-                    text = stringResource(R.string.tcp_congestion),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AlertDialogDefaults.titleContentColor,
-                )
+                Text(stringResource(R.string.tcp_congestion))
             },
             text = {
-                Column {
-                    kernelParameters.availableTcpCongestionAlgorithm.forEach { algorithm ->
-                        Button(
-                            onClick = {
-                                viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
-                                tcpCongestionAlgorithm = algorithm
-                                openTCD = false
-                            },
-                        ) {
-                            Text(algorithm)
+                if (kernelParameters.availableTcpCongestionAlgorithm.isNotEmpty()) {
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                        itemsIndexed(kernelParameters.availableTcpCongestionAlgorithm) { index, algorithm ->
+                            val shape = when (index) {
+                                0 ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            topStart = CornerSize(100),
+                                            topEnd = CornerSize(100)
+                                        )
+
+                                kernelParameters.availableTcpCongestionAlgorithm.lastIndex ->
+                                    (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                            as RoundedCornerShape)
+                                        .copy(
+                                            bottomStart = CornerSize(100),
+                                            bottomEnd = CornerSize(100)
+                                        )
+
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                            }
+
+                            ToggleButton(
+                                checked = tcpCongestionAlgorithm == algorithm,
+                                onCheckedChange = {
+                                    viewModel.setValue(KernelUtils.TCP_CONGESTION_ALGORITHM, algorithm)
+                                    tcpCongestionAlgorithm = algorithm
+                                    openTCD = false
+                                },
+                                shapes = ToggleButtonDefaults.shapes(
+                                    shape = shape,
+                                    checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                                ),
+                                contentPadding = PaddingValues(16.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics { role = Role.RadioButton },
+                            ) {
+                                Text(algorithm)
+                            }
                         }
                     }
                 }
