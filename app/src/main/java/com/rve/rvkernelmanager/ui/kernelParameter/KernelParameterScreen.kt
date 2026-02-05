@@ -131,7 +131,9 @@ import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsy
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_speed_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_tune_rounded_filled
 import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_comments_disabled_rounded_filled
+import com.composables.icons.materialsymbols.roundedfilled.R.drawable.materialsymbols_ic_memory_alt_rounded_filled
 import com.rve.rvkernelmanager.R
+import com.rve.rvkernelmanager.ui.components.Card.ExpandableCard
 import com.rve.rvkernelmanager.ui.components.Card.ItemCard
 import com.rve.rvkernelmanager.ui.components.Card.SwitchCard
 import com.rve.rvkernelmanager.ui.components.SimpleTopAppBar
@@ -1097,35 +1099,12 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
     // DR = Dirty Ratio
     var openDR by remember { mutableStateOf(false) }
 
-    Card(
-        shape = MaterialTheme.shapes.extraLarge,
+    ExpandableCard(
+        icon = painterResource(materialsymbols_ic_memory_alt_rounded_filled),
+        text = stringResource(R.string.memory),
+        expanded = expanded,
+        onClick = { expanded = !expanded },
     ) {
-        Row(
-            modifier = Modifier
-                .clickable(onClick = { expanded = !expanded })
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_memory_alt),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.memory),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = if (expanded) "Expanded" else "Collapsed",
-                modifier = Modifier.rotate(rotateArrow),
-            )
-        }
-
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn(
@@ -1146,7 +1125,7 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
                 OutlinedCard(
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        containerColor = MaterialTheme.colorScheme.surfaceBright,
                     ),
                     border = BorderStroke(
                         width = 2.0.dp,
