@@ -1316,22 +1316,46 @@ fun MemoryCard(viewModel: KernelParameterViewModel) {
         AlertDialog(
             onDismissRequest = { openZD = false },
             title = {
-                Text(
-                    text = stringResource(R.string.zram_size),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AlertDialogDefaults.titleContentColor,
-                )
+                Text(stringResource(R.string.zram_size))
             },
             text = {
-                Column {
-                    zramSizeOptions.forEach { size ->
-                        Button(
-                            onClick = {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy((4).dp)) {
+                    itemsIndexed(zramSizeOptions) { index, size ->
+                        val shape = when (index) {
+                            0 ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        topStart = CornerSize(100),
+                                        topEnd = CornerSize(100)
+                                    )
+
+                            zramSizeOptions.lastIndex ->
+                                (ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                        as RoundedCornerShape)
+                                    .copy(
+                                        bottomStart = CornerSize(100),
+                                        bottomEnd = CornerSize(100)
+                                    )
+
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                        }
+
+                        ToggleButton(
+                            checked = size == memory.zramSize,
+                            onCheckedChange = {
                                 val sizeInGb = size.substringBefore(" GB").toInt()
                                 viewModel.updateZramSize(sizeInGb)
                                 openZD = false
                             },
-                            shapes = ButtonDefaults.shapes(),
+                            shapes = ToggleButtonDefaults.shapes(
+                                shape = shape,
+                                checkedShape = ButtonGroupDefaults.connectedButtonCheckedShape,
+                            ),
+                            contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics { role = Role.RadioButton },
                         ) {
                             Text(size)
                         }
