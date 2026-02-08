@@ -42,41 +42,51 @@ object SoCUtils {
 
     const val CPU_TEMP = "/sys/class/thermal/thermal_zone0/temp"
 
+    // CPU 0
     const val MIN_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq"
     const val MAX_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq"
     const val CURRENT_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies"
+    const val CPUINFO_MAX_FREQ_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_max_freq" // NEW
     const val GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor"
     const val AVAILABLE_GOV_CPU0 = "/sys/devices/system/cpu/cpufreq/policy0/scaling_available_governors"
 
+    // CPU 3
     const val MIN_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_min_freq"
     const val MAX_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_max_freq"
     const val CURRENT_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_boost_frequencies"
+    const val CPUINFO_MAX_FREQ_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/cpuinfo_max_freq" // NEW
     const val GOV_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_governor"
     const val AVAILABLE_GOV_CPU3 = "/sys/devices/system/cpu/cpufreq/policy3/scaling_available_governors"
 
+    // CPU 4
     const val MIN_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq"
     const val MAX_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq"
     const val CURRENT_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_boost_frequencies"
+    const val CPUINFO_MAX_FREQ_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/cpuinfo_max_freq" // NEW
     const val GOV_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_governor"
     const val AVAILABLE_GOV_CPU4 = "/sys/devices/system/cpu/cpufreq/policy4/scaling_available_governors"
 
+    // CPU 6
     const val MIN_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_min_freq"
     const val MAX_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_max_freq"
     const val CURRENT_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_frequencies"
     const val AVAILABLE_BOOST_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_boost_frequencies"
+    const val CPUINFO_MAX_FREQ_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/cpuinfo_max_freq" // NEW
     const val GOV_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_governor"
     const val AVAILABLE_GOV_CPU6 = "/sys/devices/system/cpu/cpufreq/policy6/scaling_available_governors"
 
+    // CPU 7
     const val MIN_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq"
     const val MAX_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq"
     const val CURRENT_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_cur_freq"
     const val AVAILABLE_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_frequencies"
+    const val CPUINFO_MAX_FREQ_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/cpuinfo_max_freq" // NEW
     const val GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_governor"
     const val AVAILABLE_GOV_CPU7 = "/sys/devices/system/cpu/cpufreq/policy7/scaling_available_governors"
 
@@ -139,24 +149,47 @@ object SoCUtils {
         }
     }
 
-    fun readAvailableFreqCPU(filePath: String): List<String> = runCatching {
+    // UPDATED: Now accepts optional cpuInfoMaxPath
+    fun readAvailableFreqCPU(filePath: String, cpuInfoMaxPath: String? = null): List<String> = runCatching {
+        val frequencies = mutableListOf<String>()
+
+        // 1. Read standard available frequencies
         val file = File(filePath)
         if (file.exists()) {
-            file.readText()
+            val list = file.readText()
                 .trim()
                 .split(" ")
-                .map { (it.toInt() / 1000).toString() }
-        } else {
-            emptyList()
+                .mapNotNull { it.toIntOrNull()?.div(1000)?.toString() }
+            frequencies.addAll(list)
         }
+
+        // 2. Read cpuinfo_max_freq (Hardware Limit)
+        if (cpuInfoMaxPath != null) {
+            val maxFile = File(cpuInfoMaxPath)
+            if (maxFile.exists()) {
+                val maxFreqRaw = maxFile.readText().trim().toIntOrNull()
+                if (maxFreqRaw != null) {
+                    val maxFreqMhz = (maxFreqRaw / 1000).toString()
+                    frequencies.add(maxFreqMhz)
+                }
+            }
+        }
+
+        // 3. Merge, Remove Duplicates, and Sort
+        frequencies
+            .distinct()
+            .sortedBy { it.toIntOrNull() ?: 0 }
+
     }.getOrElse {
         Log.e(TAG, "readAvailableFreqCPU: ${it.message}", it)
         emptyList()
     }
 
-    fun readAvailableFreqBoost(freqPath: String, boostPath: String): List<String> = runCatching {
-        val regularFreq = readAvailableFreqCPU(freqPath)
-        val boostFreq = readAvailableFreqCPU(boostPath)
+    // UPDATED: Now accepts optional cpuInfoMaxPath
+    fun readAvailableFreqBoost(freqPath: String, boostPath: String, cpuInfoMaxPath: String? = null): List<String> = runCatching {
+        val regularFreq = readAvailableFreqCPU(freqPath, cpuInfoMaxPath) // Pass max info here
+        val boostFreq = readAvailableFreqCPU(boostPath, null) // Boost usually doesn't need max info check
+        
         (regularFreq + boostFreq)
             .distinct()
             .sortedBy { it.toIntOrNull() ?: 0 }
