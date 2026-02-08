@@ -78,6 +78,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // UPDATED: Added cpuInfoMaxFreqPath to the Sealed Class
     sealed class ClusterConfig(
         val name: String,
         val minFreqPath: String,
@@ -87,6 +88,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
         val availableFreqPath: String,
         val availableGovPath: String,
         val availableBoostFreqPath: String? = null,
+        val cpuInfoMaxFreqPath: String? = null, // NEW
     ) {
         object Little : ClusterConfig(
             name = "little",
@@ -96,6 +98,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             govPath = SoCUtils.GOV_CPU0,
             availableFreqPath = SoCUtils.AVAILABLE_FREQ_CPU0,
             availableGovPath = SoCUtils.AVAILABLE_GOV_CPU0,
+            cpuInfoMaxFreqPath = SoCUtils.CPUINFO_MAX_FREQ_CPU0 // NEW
         )
 
         data class Big(val cpuIndex: Int) :
@@ -136,6 +139,12 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
                     4 -> SoCUtils.AVAILABLE_BOOST_CPU4
                     else -> SoCUtils.AVAILABLE_BOOST_CPU6
                 },
+                // NEW: Logic to select correct cpuinfo_max_freq
+                cpuInfoMaxFreqPath = when (cpuIndex) {
+                    3 -> SoCUtils.CPUINFO_MAX_FREQ_CPU3
+                    4 -> SoCUtils.CPUINFO_MAX_FREQ_CPU4
+                    else -> SoCUtils.CPUINFO_MAX_FREQ_CPU6
+                }
             )
 
         object Prime : ClusterConfig(
@@ -146,6 +155,7 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             govPath = SoCUtils.GOV_CPU7,
             availableFreqPath = SoCUtils.AVAILABLE_FREQ_CPU7,
             availableGovPath = SoCUtils.AVAILABLE_GOV_CPU7,
+            cpuInfoMaxFreqPath = SoCUtils.CPUINFO_MAX_FREQ_CPU7 // NEW
         )
     }
 
@@ -299,7 +309,8 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
             maxFreq = SoCUtils.readFreqCPU(config.maxFreqPath),
             currentFreq = SoCUtils.readFreqCPU(config.currentFreqPath),
             gov = Utils.readFile(config.govPath),
-            availableFreq = SoCUtils.readAvailableFreqCPU(config.availableFreqPath),
+            // UPDATED: Passing the cpuInfoMaxFreqPath here
+            availableFreq = SoCUtils.readAvailableFreqCPU(config.availableFreqPath, config.cpuInfoMaxFreqPath),
             availableGov = SoCUtils.readAvailableGovCPU(config.availableGovPath),
         )
     }
@@ -307,9 +318,11 @@ class SoCViewModel(application: Application) : AndroidViewModel(application) {
     private fun loadClusterStateWithBoost(config: ClusterConfig.Big): CPUState {
         val availableBoostPath = config.availableBoostFreqPath
         val availableFreq = if (availableBoostPath != null) {
-            SoCUtils.readAvailableFreqBoost(config.availableFreqPath, availableBoostPath)
+            // UPDATED: Passing the cpuInfoMaxFreqPath here
+            SoCUtils.readAvailableFreqBoost(config.availableFreqPath, availableBoostPath, config.cpuInfoMaxFreqPath)
         } else {
-            SoCUtils.readAvailableFreqCPU(config.availableFreqPath)
+            // UPDATED: Passing the cpuInfoMaxFreqPath here
+            SoCUtils.readAvailableFreqCPU(config.availableFreqPath, config.cpuInfoMaxFreqPath)
         }
 
         return CPUState(
